@@ -57,36 +57,6 @@ int   FRAMES_PER_REMIND;
 
 namespace
 {
-  void EnterInt( Application* app, int* pi )
-  {
-    DOTRACE("EnterInt");
-
-    char word[STRINGSIZE];
-    app->graphics().xstuff().getWord(word, STRINGSIZE);
-
-    sscanf( word, "%d", pi );
-  }
-
-  void EnterFloat( Application* app, float* pf )
-  {
-    DOTRACE("EnterFloat");
-
-    char word[STRINGSIZE];
-    app->graphics().xstuff().getWord(word, STRINGSIZE);
-
-    sscanf( word, "%f", pf );
-  }
-
-  void EnterText( Application* app, char* ps )
-  {
-    DOTRACE("EnterText");
-
-    char word[STRINGSIZE];
-    app->graphics().xstuff().getWord(word, STRINGSIZE);
-
-    sscanf( word, "%s", ps );
-  }
-
   void date( char* p )
   {
     DOTRACE("date");
@@ -395,49 +365,49 @@ DOTRACE("SetParameters1");
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterInt( app, &BALL_NUMBER );
+  app->graphics().xstuff().getInt(&BALL_NUMBER);
   sprintf( word, "       %-6d", BALL_NUMBER );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterInt( app, &BALL_TRACK_NUMBER );
+  app->graphics().xstuff().getInt(&BALL_TRACK_NUMBER);
   sprintf( word, " %-6d", BALL_TRACK_NUMBER );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterInt( app, &BALL_VELOCITY );
+  app->graphics().xstuff().getInt(&BALL_VELOCITY);
   sprintf( word, " %-6d", BALL_VELOCITY );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterInt( app, &BALL_ARRAY_SIZE );
+  app->graphics().xstuff().getInt(&BALL_ARRAY_SIZE);
   sprintf( word, " %-6d", BALL_ARRAY_SIZE );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterInt( app, &BALL_MIN_DISTANCE );
+  app->graphics().xstuff().getInt(&BALL_MIN_DISTANCE);
   sprintf( word, " %-6d", BALL_MIN_DISTANCE );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterFloat( app, &BALL_RADIUS );
+  app->graphics().xstuff().getFloat(&BALL_RADIUS);
   sprintf( word, " %-6.1f", BALL_RADIUS );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterFloat( app, &BALL_SIGMA2 );
+  app->graphics().xstuff().getFloat(&BALL_SIGMA2);
   sprintf( word, " %-6.1f", BALL_SIGMA2 );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterFloat( app, &BALL_TWIST_ANGLE );
+  app->graphics().xstuff().getFloat(&BALL_TWIST_ANGLE);
   sprintf( word, " %-6.3f", BALL_TWIST_ANGLE );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
@@ -471,37 +441,37 @@ DOTRACE("SetParameters2");
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterInt( app, &CYCLE_NUMBER );
+  app->graphics().xstuff().getInt(&CYCLE_NUMBER);
   sprintf( word, "       %-8d", CYCLE_NUMBER );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterFloat( app, &WAIT_DURATION );
+  app->graphics().xstuff().getFloat(&WAIT_DURATION);
   sprintf( word, " %-8.2f", WAIT_DURATION );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterFloat( app, &EPOCH_DURATION );
+  app->graphics().xstuff().getFloat(&EPOCH_DURATION);
   sprintf( word, " %-8.2f", EPOCH_DURATION );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterFloat( app, &PAUSE_DURATION );
+  app->graphics().xstuff().getFloat(&PAUSE_DURATION);
   sprintf( word, " %-8.2f", PAUSE_DURATION );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterInt( app, &REMINDS_PER_EPOCH );
+  app->graphics().xstuff().getInt(&REMINDS_PER_EPOCH);
   sprintf( word, " %-8d", REMINDS_PER_EPOCH );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterFloat( app, &REMIND_DURATION );
+  app->graphics().xstuff().getFloat(&REMIND_DURATION);
   sprintf( word, " %-8.2f", REMIND_DURATION );
   strcat( text[1], word );
   gfx.showMenu(text, 4);
@@ -534,7 +504,7 @@ DOTRACE("SetParameters2");
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  EnterInt( app, &FMRI_SESSION_NUMBER );
+  app->graphics().xstuff().getInt(&FMRI_SESSION_NUMBER);
   sprintf( word, "       %-8d", FMRI_SESSION_NUMBER );
   strcat( text[1], word );
   gfx.showMenu(text, 4);

@@ -31,6 +31,9 @@ public:
   // FIXME use std::string
   void getWord(char* buf, int sz) const;
 
+  void getInt(int* pi) const;
+  void getFloat(float* pf) const;
+
 private:
   int itsWidth;
   int itsHeight;

@@ -107,15 +107,15 @@ DOTRACE("BallsExpt::onKey");
       break;
 
     case 'x':
-      SetParameters1(this);
+      SetParameters1(this->graphics());
       break;
 
     case 'y':
-      SetParameters2(this);
+      SetParameters2(this->graphics());
       break;
 
     case 'z':
-      SetParameters3(this);
+      SetParameters3(this->graphics());
       break;
 
     case 'p':

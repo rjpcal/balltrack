@@ -206,5 +206,25 @@ DOTRACE("XStuff::getWord");
   buf[n] = '\0';
 }
 
+void XStuff::getInt(int* pi) const
+{
+DOTRACE("XStuff::getInt");
+
+  char word[STRINGSIZE];
+  this->getWord(word, STRINGSIZE);
+
+  sscanf( word, "%d", pi );
+}
+
+void XStuff::getFloat(float* pf) const
+{
+DOTRACE("XStuff::getFloat");
+
+  char word[STRINGSIZE];
+  this->getWord(word, STRINGSIZE);
+
+  sscanf( word, "%f", pf );
+}
+
 static const char vcid_xstuff_cc[] = "$Header$";
 #endif // !XSTUFF_CC_DEFINED
