@@ -204,19 +204,7 @@ DOTRACE("BallsExpt::onKey");
       break;
 
     case 'r':
-      struct timeval tp;
-      gettimeofday(&tp, (struct timezone*)0);
-
-      // FIXME clean this up
-      p->rep->respTime0 = xtime;
-
-      p->rep->responses.clear();
-      p->rep->responses.push_back(Response(0.0, 0));
-      p->rep->stimuli.clear();
-      p->rep->stimuli.push_back(Stimulus(tp, 0));
-      p->rep->stimTime0 = tp;
-
-      p->runExperiment();
+      p->runExperiment(xtime);
       p->makeMenu();
       break;
 
@@ -312,9 +300,21 @@ DOTRACE("BallsExpt::runFixationCalibration");
     }
 }
 
-void BallsExpt::runExperiment()
+void BallsExpt::runExperiment(double xtime)
 {
 DOTRACE("BallsExpt::runExperiment");
+
+  struct timeval tp;
+  gettimeofday(&tp, (struct timezone*)0);
+
+  // FIXME clean this up
+  rep->respTime0 = xtime;
+
+  rep->responses.clear();
+  rep->responses.push_back(Response(0.0, 0));
+  rep->stimuli.clear();
+  rep->stimuli.push_back(Stimulus(tp, 0));
+  rep->stimTime0 = tp;
 
   ParamFile tmefile(rep->params.filestem, 'a', "tme");
 

@@ -34,7 +34,7 @@ protected:
 
 private:
   void runFixationCalibration();
-  void runExperiment();
+  void runExperiment(double xtime);
 
   void runFmriExpt();
   void runEyeTrackingExpt();
