@@ -12,6 +12,8 @@
 #ifndef PARAMS_H_DEFINED
 #define PARAMS_H_DEFINED
 
+#include "defs.h"
+
 #include <cstdio>
 #include <string>
 
@@ -51,6 +53,8 @@ public:
 class Params
 {
 public:
+  Params();
+
   void readParams(Graphics& gfx, char extension[]);
   void writeParams(char extension[]);
   void appendParams(ParamFile& pmfile);
@@ -62,32 +66,32 @@ public:
   void setGroup3(Graphics& gfx);
 
   enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
-  static AppMode APPLICATION_MODE;
-  static bool MAKING_MOVIE;
-  static char  FILENAME[];
-  static char  OBSERVER[];
-  static char  PROGRAM[];
-  static float BALL_RADIUS;
-  static float BALL_SIGMA2;
-  static float BALL_TWIST_ANGLE;  // = PI/16.0;
-  static float EPOCH_DURATION;
-  static float PAUSE_DURATION;
-  static float REMIND_DURATION;
-  static float WAIT_DURATION;
-  static int   BALL_ARRAY_SIZE;     // = 16;
-  static int   BALL_MIN_DISTANCE; // = 24;
-  static int   BALL_NUMBER;                 // = 8;
-  static int   BALL_TRACK_NUMBER; // = 2;
-  static int   BALL_VELOCITY;       // = 3;
-  static int   BORDER_X;                    // = ( width - 120 ) / 2;
-  static int   BORDER_Y;                    // = ( height - 120 ) / 2;
-  static int   CYCLE_NUMBER;
-  static int   DISPLAY_X;
-  static int   DISPLAY_Y;
-  static int   FRAMES_PER_REMIND; // = 11;
-  static int   FUDGEFRAME;
-  static int   REMINDS_PER_EPOCH; // = 72;
-  static int   FMRI_SESSION_NUMBER;
+  AppMode APPLICATION_MODE;
+  bool MAKING_MOVIE;
+  char  FILENAME[STRINGSIZE];
+  char  OBSERVER[STRINGSIZE];
+  char  PROGRAM[STRINGSIZE];
+  float BALL_RADIUS;
+  float BALL_SIGMA2;
+  float BALL_TWIST_ANGLE;  // = PI/16.0;
+  float EPOCH_DURATION;
+  float PAUSE_DURATION;
+  float REMIND_DURATION;
+  float WAIT_DURATION;
+  int   BALL_ARRAY_SIZE;     // = 16;
+  int   BALL_MIN_DISTANCE; // = 24;
+  int   BALL_NUMBER;                 // = 8;
+  int   BALL_TRACK_NUMBER; // = 2;
+  int   BALL_VELOCITY;       // = 3;
+  int   BORDER_X;                    // = ( width - 120 ) / 2;
+  int   BORDER_Y;                    // = ( height - 120 ) / 2;
+  int   CYCLE_NUMBER;
+  int   DISPLAY_X;
+  int   DISPLAY_Y;
+  int   FRAMES_PER_REMIND; // = 11;
+  int   FUDGEFRAME;
+  int   REMINDS_PER_EPOCH; // = 72;
+  int   FMRI_SESSION_NUMBER;
 
 private:
   void recompute(Graphics& gfx);

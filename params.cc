@@ -119,32 +119,38 @@ void ParamFile::putText(const char* var, const char* name)
 //
 //----------------------------------------------------------
 
-Params::AppMode Params::APPLICATION_MODE = EYE_TRACKING;
-bool Params::MAKING_MOVIE = false;
-char  Params::FILENAME[STRINGSIZE] = { '\0' };
-char  Params::OBSERVER[STRINGSIZE] = { '\0' };
-char  Params::PROGRAM[STRINGSIZE] = { '\0' };
-float Params::BALL_RADIUS;
-float Params::BALL_SIGMA2;
-float Params::BALL_TWIST_ANGLE;
-float Params::EPOCH_DURATION;
-float Params::PAUSE_DURATION;
-float Params::REMIND_DURATION;
-float Params::WAIT_DURATION;
-int   Params::BALL_ARRAY_SIZE;
-int   Params::BALL_MIN_DISTANCE;
-int   Params::BALL_NUMBER;
-int   Params::BALL_TRACK_NUMBER;
-int   Params::BALL_VELOCITY;
-int   Params::BORDER_X;
-int   Params::BORDER_Y;
-int   Params::CYCLE_NUMBER;
-int   Params::DISPLAY_X;
-int   Params::DISPLAY_Y;
-int   Params::FRAMES_PER_REMIND;
-int   Params::FUDGEFRAME = 10;
-int   Params::REMINDS_PER_EPOCH;
-int   Params::FMRI_SESSION_NUMBER = 1;
+Params::Params() :
+  APPLICATION_MODE(EYE_TRACKING),
+  MAKING_MOVIE(false),
+  FILENAME(),
+  OBSERVER(),
+  PROGRAM(),
+  BALL_RADIUS(),
+  BALL_SIGMA2(),
+  BALL_TWIST_ANGLE(),
+  EPOCH_DURATION(),
+  PAUSE_DURATION(),
+  REMIND_DURATION(),
+  WAIT_DURATION(),
+  BALL_ARRAY_SIZE(),
+  BALL_MIN_DISTANCE(),
+  BALL_NUMBER(),
+  BALL_TRACK_NUMBER(),
+  BALL_VELOCITY(),
+  BORDER_X(),
+  BORDER_Y(),
+  CYCLE_NUMBER(),
+  DISPLAY_X(),
+  DISPLAY_Y(),
+  FRAMES_PER_REMIND(),
+  FUDGEFRAME(10),
+  REMINDS_PER_EPOCH(),
+  FMRI_SESSION_NUMBER(1)
+{
+  FILENAME[0] = '\0';
+  OBSERVER[0] = '\0';
+  PROGRAM[0] = '\0';
+}
 
 void Params::readParams(Graphics& gfx, char extension[])
 {
