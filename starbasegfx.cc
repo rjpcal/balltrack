@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Thu Feb 24 14:59:00 2000
+// written: Thu Feb 24 15:42:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,6 @@
 
 #include "application.h"
 #include "applic.h"
-#include "balls.h"
 #include "params.h"
 #include "timing.h"
 #include "xstuff.h"
