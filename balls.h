@@ -35,32 +35,39 @@ struct vec
   { return vec(this->x + other.x,
                this->y + other.y); }
 
-  vec operator*(double v) const
-  { return vec(this->x * v,
-               this->y * v); }
-
-  vec operator/(double v) const
-  { return vec(this->x / v,
-               this->y / v); }
-
   double length() const
   { return sqrt(x*x + y*y); }
-
-  vec rot90() const
-  { return vec( -this->y,
-                 this->x ); }
-
-  vec unit() const
-  {
-    const double d = this->length();
-    return (*this) / d;
-  }
 };
 
 inline double dot(const vec& v1, const vec& v2)
 { return
     (v1.x * v2.x) +
     (v1.y * v2.y); }
+
+inline vec operator*(const vec& w, double v)
+{ return vec(w.x * v,
+             w.y * v); }
+
+inline vec operator*(double v, const vec& w)
+{ return vec(w.x * v,
+             w.y * v); }
+
+inline vec operator/(const vec& w, double v)
+{ return vec(w.x / v,
+             w.y / v); }
+
+inline vec operator/(double v, const vec& w)
+{ return vec(w.x / v,
+             w.y / v); }
+
+inline vec unit(const vec& w)
+{
+  return w / w.length();
+}
+
+inline vec rot90(const vec& w)
+{ return vec( -w.y,
+               w.x ); }
 
 class Ball
 {

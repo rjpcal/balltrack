@@ -200,8 +200,8 @@ DOTRACE("Ball::collideIfNeeded");
   if (fabs(ij.x) >= min_dist || fabs(ij.y) >= min_dist)
     return;
 
-  const vec a = ij.unit(); // [unitless] (unit vector along ij)
-  const vec o = a.rot90(); // [unitless] (unit vector normal to ij)
+  const vec a = unit(ij); // [unitless] (unit vector along ij)
+  const vec o = rot90(a); // [unitless] (unit vector normal to ij)
 
   // These are the velocities of (this) and (other) along the vector
   // pointing from (this) to (other)
@@ -228,11 +228,11 @@ DOTRACE("Ball::collideIfNeeded");
       const double fi   = sqrt(1. + vij2 / nvi2); // [unitless]
       const double fj   = sqrt(1. - vij2 / nvj2); // [unitless]
 
-      this->vel = vec(fi * (voi * o.x + vaj * a.x),
-                      fi * (voi * o.y + vaj * a.y)); // [pix/sec]
+      this->vel = fi * vec(voi * o.x + vaj * a.x,
+                           voi * o.y + vaj * a.y); // [pix/sec]
 
-      other.vel = vec(fj * (voj * o.x + vai * a.x),
-                      fj * (voj * o.y + vai * a.y)); // [pix/sec]
+      other.vel = fj * vec(voj * o.x + vai * a.x,
+                           voj * o.y + vai * a.y); // [pix/sec]
 
       this->next = this->pos + (this->vel * lapsed_seconds);
       other.next = other.pos + (other.vel * lapsed_seconds);
