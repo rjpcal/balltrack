@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Mon Feb 28 18:06:16 2000
+// written: Mon Feb 28 19:03:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,6 +76,8 @@ private:
   void saveColormap();
   void newColormap();
   void restoreColormap();	// called from MenuApplication::wrap()
+
+  XStuff* itsXStuff;
 
   int itsFildes;
 };
