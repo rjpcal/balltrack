@@ -13,7 +13,7 @@ objdir := obj
 srcdir := .
 
 CXX      := g++
-CXXFLAGS := -O2 -Wall -Werror
+CXXFLAGS := -O2 -Wall -Werror -I/usr/X11R6/include
 LDFLAGS  := -L/usr/X11R6/lib
 LIBS     := -lGLU -lGL -lX11 -lm
 
