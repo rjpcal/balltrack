@@ -3,7 +3,7 @@
 // xstuff.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:55 2000
-// written: Mon Feb 28 17:49:31 2000
+// written: Wed Mar  1 11:34:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,15 +163,6 @@ DOTRACE("XStuff::createWindow");
 									  ( CWBackPixel | CWColormap | CWBorderPixel | 
 										 CWEventMask ),
 									  &winAttributes );
-
-  hints.flags = ( USSize | USPosition );
-  hints.x = 0;
-  hints.y = 0;
-  hints.width	 = itsWidth;
-  hints.height = itsHeight;
-
-  XSetStandardProperties( itsDisplay, itsWindow, name, name,
-								  None, itsArgv, itsArgc, &hints );
 }
 
 void XStuff::selectInput() {
@@ -198,7 +189,11 @@ DOTRACE("XStuff::setWmProperty");
   class_hint->res_class = "Test";
 
   size_hints = XAllocSizeHints(  );
-  size_hints->flags	  = USSize|PMinSize|PMaxSize;
+  size_hints->flags	  = USSize|USPosition|PMinSize|PMaxSize;
+  size_hints->x = 500;
+  size_hints->y = 500;
+  size_hints->width = itsWidth;
+  size_hints->height = itsHeight;
   size_hints->min_width = itsWidth;
   size_hints->max_width = itsWidth;
   size_hints->min_height= itsHeight;
