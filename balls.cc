@@ -342,7 +342,6 @@ DOTRACE("Balls::runTrial");
 
   timer.reset();
 
-  gfx.clearFrontBuffer();
   gfx.clearBackBuffer();
 
   if (ttype == Balls::PASSIVE)
@@ -377,13 +376,12 @@ DOTRACE("Balls::runTrial");
   // Show the initial position of the balls
   timer.reset();
 
-  gfx.clearFrontBuffer();
+  gfx.clearBackBuffer();
   gfx.drawCross();
 
   drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
 
-  if (ttype == Balls::CHECK_ALL ||
-      ttype == Balls::CHECK_ONE)
+  if (ttype == Balls::CHECK_ALL || ttype == Balls::CHECK_ONE)
     {
       drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
       gfx.drawCross();
@@ -393,10 +391,9 @@ DOTRACE("Balls::runTrial");
 
   gfx.gfxWait(timer, itsParams.remindSeconds);
 
-  if (ttype == Balls::CHECK_ALL ||
-      ttype == Balls::CHECK_ONE)
+  if (ttype == Balls::CHECK_ALL || ttype == Balls::CHECK_ONE)
     {
-      gfx.clearFrontBuffer();
+      gfx.clearBackBuffer();
       gfx.drawCross();
       drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
       gfx.swapBuffers();
@@ -489,13 +486,12 @@ DOTRACE("Balls::runTrial");
           gfx.gfxWait(timer, itsParams.remindSeconds);
         }
 
-      gfx.clearFrontBuffer();
+      gfx.clearBackBuffer();
       gfx.drawCross();
 
       drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
     }
 
-  gfx.clearFrontBuffer();
   gfx.clearBackBuffer();
   gfx.drawCross();
   gfx.swapBuffers();

@@ -338,7 +338,6 @@ DOTRACE("Params::showSettings");
       params.push_back(buf);
     }
 
-  gfx.clearFrontBuffer();
   gfx.clearBackBuffer();
   gfx.drawStrings(&params[0], params.size(),
                   50, gfx.height() - 50, 10 /* cwidth */);
@@ -354,12 +353,7 @@ DOTRACE("Params::setGroup1");
 
   std::string menu[4];
 
-  gfx.clearFrontBuffer();
-  for (int ii = 0; ii < 2; ++ii)
-    {
-      gfx.clearBackBuffer();
-      gfx.swapBuffers();
-    }
+  gfx.clearBackBuffer();
 
   menu[0] = " BALL  NUMBER TRACK  VELOC  SIZE   MINDIS RADIUS SIGMA2 TWIST";
   menu[1] = "";
@@ -433,12 +427,7 @@ DOTRACE("Params::setGroup2");
 
   std::string menu[4];
 
-  gfx.clearFrontBuffer();
-  for (int ii = 0; ii < 2; ++ii)
-    {
-      gfx.clearBackBuffer();
-      gfx.swapBuffers();
-    }
+  gfx.clearBackBuffer();
 
   menu[0] = "       CYCL_NUM WAIT_DUR EPCH_DUR PAUS_DUR RMND_NUM RMND_DUR";
   menu[1] = "";
@@ -499,12 +488,7 @@ DOTRACE("Params::setGroup2");
 
   std::string menu[4];
 
-  gfx.clearFrontBuffer();
-  for (int ii = 0; ii < 2; ++ii)
-    {
-      gfx.clearBackBuffer();
-      gfx.swapBuffers();
-    }
+  gfx.clearBackBuffer();
 
   menu[0] = "       SESSION_NUMBER";
   menu[1] = "";

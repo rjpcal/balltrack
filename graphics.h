@@ -46,7 +46,6 @@ public:
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
 
-  void clearFrontBuffer();
   void clearBackBuffer();
 
   void swapBuffers();

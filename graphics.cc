@@ -165,13 +165,6 @@ double Graphics::frameTime()
   return itsFrameTime;
 }
 
-void Graphics::clearFrontBuffer()
-{
-DOTRACE("Graphics::clearFrontBuffer");
-
-  glClear(GL_COLOR_BUFFER_BIT);
-}
-
 void Graphics::clearBackBuffer()
 {
 DOTRACE("Graphics::clearBackBuffer");
@@ -261,10 +254,6 @@ void Graphics::drawStrings(const std::string* strings, int nstrings,
                            double xpos, double ypos, double char_width)
 {
 DOTRACE("Graphics::drawStrings");
-  clearFrontBuffer();
-
-  glFlush();
-  glXSwapBuffers(itsXStuff.display(), itsXStuff.window());
 
   const double char_height = char_width*1.5;
 
@@ -317,7 +306,7 @@ DOTRACE("Graphics::computeFrameTime");
 
   struct timeval tp[2];
 
-  clearFrontBuffer();
+  clearBackBuffer();
 
   waitFrameCount(1);
 

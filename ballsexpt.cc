@@ -266,6 +266,7 @@ DOTRACE("BallsExpt::makeMenu");
 
   menu[7] = std::string("recent percent correct: ") + buf;
 
+  rep->gfx.clearBackBuffer();
   rep->gfx.drawStrings(menu, nitems, 100, -200, 20);
 
   rep->gfx.swapBuffers();
@@ -285,7 +286,7 @@ DOTRACE("BallsExpt::runFixationCalibration");
 
   for (int i = 0; i < 11; ++i)
     {
-      rep->gfx.clearFrontBuffer();
+      rep->gfx.clearBackBuffer();
       rep->gfx.drawCross(x[seq[i]], y[seq[i]]);
       rep->gfx.swapBuffers();
       Timer t;
@@ -318,8 +319,6 @@ DOTRACE("BallsExpt::runExperiment");
 
   tmefile.putLine("");
   tmefile.putLine("");
-
-  rep->gfx.clearFrontBuffer();
 
   for (int k = 0; k < 2; ++k)
     {
@@ -397,8 +396,6 @@ DOTRACE("BallsExpt::runFmriExpt");
       // If there will be more trials, then do a fixation cross interval
       if (trial < (NUM_TRIALS-1))
         {
-          rep->gfx.clearFrontBuffer();
-
           for (int k = 0; k < 2; ++k)
             {
               rep->gfx.clearBackBuffer();
