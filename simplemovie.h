@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 28 12:20:41 2001
-// written: Wed Feb 28 12:27:27 2001
+// written: Wed Feb 28 13:04:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,13 @@ public:
 
   void addSillyFrames();
 
+  int width() const { return itsWidth; }
+  int height() const { return itsHeight; }
+
 private:
+  int itsWidth;
+  int itsHeight;
+
   MVid itsMovie;
   DMparams* itsMovieParams;
 

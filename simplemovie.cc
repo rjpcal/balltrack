@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 28 12:21:07 2001
-// written: Wed Feb 28 12:58:22 2001
+// written: Wed Feb 28 13:05:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,8 @@ void SimpleMovie::handleError(const char* message) {
 
 SimpleMovie::SimpleMovie(const char* filename, MVfileformat fileFormat,
 								 int width, int height) :
+  itsWidth(width),
+  itsHeight(height),
   itsMovie(0),
   itsMovieParams(0),
   itsImageTrack(0),
