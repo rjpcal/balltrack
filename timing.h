@@ -14,6 +14,7 @@
 
 #include <cstdio>
 #include <sys/time.h>
+#include <vector>
 
 class ParamFile;
 
@@ -30,6 +31,23 @@ public:
 private:
   double itsSec;
   double itsUsec;
+};
+
+struct Stimulus
+{
+  Stimulus(double t, int v) : time(t), correct_val(v) {}
+  double time;
+  int correct_val;
+
+  double reaction_time;
+  bool reaction_correct;
+};
+
+struct Response
+{
+  Response(double t, int v) : time(t), val(v) {}
+  double time;
+  int val;
 };
 
 class Timing
@@ -52,6 +70,16 @@ public:
 
   Timer mainTimer;
   Timer logTimer;
+
+private:
+  std::vector<Stimulus> stimulus_hist;
+  std::vector<Response> response_hist;
+
+  struct timeval ss_0;
+  double response_time_stack_0;
+  struct timeval response_timeval_0;
+
+  double percent_correct;
 };
 
 

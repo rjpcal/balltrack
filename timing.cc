@@ -88,7 +88,13 @@ DOTRACE("Timer::wait");
 
 Timing::Timing() :
   mainTimer(),
-  logTimer()
+  logTimer(),
+  stimulus_hist(),
+  response_hist(),
+  ss_0(),
+  response_time_stack_0(),
+  response_timeval_0(),
+  percent_correct(0.0)
 {}
 
 void Timing::getTime(timeval* tp)
@@ -112,31 +118,14 @@ DOTRACE("Timing::elapsedMsec");
 }
 
 
-struct Stimulus
-{
-  Stimulus(double t, int v) : time(t), correct_val(v) {}
-  double time;
-  int correct_val;
+// std::vector<Stimulus> stimulus_hist;
+// std::vector<Response> response_hist;
 
-  double reaction_time;
-  bool reaction_correct;
-};
+// struct timeval ss_0;
+// double response_time_stack_0;
+// struct timeval response_timeval_0;
 
-struct Response
-{
-  Response(double t, int v) : time(t), val(v) {}
-  double time;
-  int val;
-};
-
-std::vector<Stimulus> stimulus_hist;
-std::vector<Response> response_hist;
-
-struct timeval ss_0;
-double response_time_stack_0;
-struct timeval response_timeval_0;
-
-double percent_correct = 0.0;
+// double percent_correct = 0.0;
 
 void Timing::initTimeStack(double xtime, timeval* tp)
 {
