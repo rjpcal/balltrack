@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Fri Mar  3 11:30:49 2000
+// written: Wed Mar  8 09:03:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,8 +57,10 @@ DOTRACE("BallsExpt::fillMenu");
 void BallsExpt::runExperiment() {
 DOTRACE("BallsExpt::runExperiment");
 
-  /// XXX this needs to be at least as big as (CYCLE_NUMBER+1)*2
-  struct timeval tp[10];
+  const int NUM_CONDITIONS = 3; 
+
+  /// XXX this needs to be at least as big as (CYCLE_NUMBER+1)*NUM_CONDITIONS
+  struct timeval tp[32];
 
   Balls theBalls;
 
@@ -82,28 +84,30 @@ DOTRACE("BallsExpt::runExperiment");
 
   Timing::mainTimer.wait( WAIT_DURATION );
 
+  int timepoint = 1;
+
   int cycle;
   for( cycle=0; cycle<CYCLE_NUMBER; ++cycle ) {
 
 	 // Run active tracking trial
-	 theBalls.runTrial(graphics(), &tp[2*cycle+1], Balls::CHECK_ALL);
+	 theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ALL);
 
 	 // Run active tracking trial with objective check
-	 theBalls.runTrial(graphics(), &tp[2*cycle+2], Balls::CHECK_ONE);
+	 theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
 
-// 	 // Run passive trial
-// 	 theBalls.runTrial(graphics(), &tp[2*cycle+2], Balls::PASSIVE);
+	 // Run passive trial
+  	 theBalls.runTrial(graphics(), &tp[timepoint++], Balls::PASSIVE);
   }
 
   Timing::mainTimer.set();
 
-  Timing::getTime( &tp[2*cycle+1] );
+  Timing::getTime( &tp[timepoint++] );
 
   Timing::mainTimer.wait( WAIT_DURATION );
 
-  Timing::getTime( &tp[2*cycle+2] );
+  Timing::getTime( &tp[timepoint++] );
 
-  for( int i=0; i<2*cycle+2; i++ )
+  for( int i=0; i<timepoint; i++ )
     {
 		printf( " %d %lf\n", i, Timing::elapsedMsec( &tp[0], &tp[i] ) );
 		fprintf( fl, " %d %lf\n", i, Timing::elapsedMsec( &tp[0], &tp[i] ) );
