@@ -326,14 +326,6 @@ DOTRACE("Balls::drawNBalls");
     }
 }
 
-void Balls::drawNHiBalls(Graphics& gfx, int first, int last,
-                         unsigned char* bitmap)
-{
-DOTRACE("Balls::drawNHiBalls");
-
-  drawNBalls(gfx, first, last, bitmap);
-}
-
 void Balls::runTrial(Graphics& gfx, std::vector<Stimulus>& stimuli,
                      TrialType ttype)
 {
@@ -372,16 +364,12 @@ DOTRACE("Balls::runTrial");
   timer.reset();
 
   gfx.clearBackBuffer();
-
   drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
-  gfx.drawCross();
-
   if (ttype == Balls::CHECK_ALL || ttype == Balls::CHECK_ONE)
     {
-      drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
-      gfx.drawCross();
+      drawNBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
     }
-
+  gfx.drawCross();
   gfx.swapBuffers();
 
   gfx.gfxWait(timer, itsParams.remindSeconds);
@@ -396,18 +384,13 @@ DOTRACE("Balls::runTrial");
 
   for (int i=0; i<itsParams.remindsPerEpoch; ++i)
     {
+      // Here's the main loop where the balls are moving randomly
       for (int j=0; j<itsParams.framesPerRemind; ++j)
         {
           nextBalls(gfx);
 
           gfx.clearBackBuffer();
-
-          for (int i = 0; i < itsParams.ballNumber; ++i)
-            {
-              itsBalls[i].draw(gfx, &pixmap[0],
-                               itsParams.ballPixmapSize);
-            }
-
+          drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
           gfx.drawCross();
           gfx.swapBuffers();
 
@@ -416,14 +399,13 @@ DOTRACE("Balls::runTrial");
 
       timer.reset();
 
+      // Now set up to get the observer's response
       if (ttype == Balls::CHECK_ALL)
         {
           gfx.clearBackBuffer();
-
           drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
-          drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
+          drawNBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
           gfx.drawCross();
-
           gfx.swapBuffers();
 
           stimuli.push_back(Stimulus(Timing::now(), BUTTON1));
@@ -434,26 +416,27 @@ DOTRACE("Balls::runTrial");
         {
           // Randomly choose whether the highlighted ball will be a
           // target or a non-target
-          bool pick_target = (drand48() > 0.5);
+          const bool pick_target = (drand48() > 0.5);
 
           // Pick a random ball
           int random_ball;
           if (pick_target)
             random_ball = int(itsParams.ballTrackNumber * drand48());
           else
-            random_ball = int((itsParams.ballNumber - itsParams.ballTrackNumber) * drand48())
-              + itsParams.ballTrackNumber;
+            random_ball =
+              itsParams.ballTrackNumber
+              + int((itsParams.ballNumber - itsParams.ballTrackNumber)
+                    * drand48());
 
           // Redraw the balls with the random ball highlighted
           gfx.clearBackBuffer();
-
           drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
-          drawNHiBalls(gfx, random_ball, random_ball+1, &hilitemap[0]);
+          drawNBalls(gfx, random_ball, random_ball+1, &hilitemap[0]);
           gfx.drawCross();
-
           gfx.swapBuffers();
 
-          // Note what the correct response should be for the random ball
+          // Note what the correct response should be for the random
+          // ball
           if (random_ball < itsParams.ballTrackNumber)
             stimuli.push_back(Stimulus(Timing::now(), BUTTON1));
           else
@@ -466,10 +449,8 @@ DOTRACE("Balls::runTrial");
           // Redraw the balls, but now with the correct balls
           // highlighted in order to cue the next trial
           gfx.clearBackBuffer();
-
-          drawNHiBalls(gfx, random_ball, random_ball+1, &pixmap[0]);
           drawNBalls(gfx, itsParams.ballTrackNumber, itsParams.ballNumber, &pixmap[0]);
-          drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
+          drawNBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
           gfx.drawCross();
 
           gfx.swapBuffers();

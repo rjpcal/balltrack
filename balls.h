@@ -76,8 +76,8 @@ private:
   void nextBalls(Graphics& gfx);
   void copyBalls();
 
-  void drawNBalls(Graphics& gfx, int first, int last, unsigned char* bitmap);
-  void drawNHiBalls(Graphics& gfx, int first, int last, unsigned char* bitmap);
+  void drawNBalls(Graphics& gfx, int first, int last,
+                  unsigned char* bitmap);
 
 public:
   static const int MAX_BALLS = 25;
