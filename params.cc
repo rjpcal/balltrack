@@ -477,7 +477,8 @@ namespace
           oss.setf(std::ios::right);
           oss << std::setw(descrwid) << items[i].descr;
 
-          oss << sep << std::setw(namewid+2) << ('(' + items[i].name + ')');
+          oss << sep << std::setw(namewid+2)
+              << ('(' + items[i].name + ')');
 
           oss << sep << std::setw(6);
           items[i].putorig(oss);
@@ -488,23 +489,22 @@ namespace
             {
               oss << sep << marker << std::setw(6);
               items[i].putvar(oss);
-            }
-          else if (i == nitems)
-            {
-              oss << sep << marker << std::setw(6) << "???";
-            }
 
-          if (i < nitems)
-            {
               if (items[i].changed())
                 vmenu.push_back(TextLine(oss.str(), 0.7, 0.7, 0.5, 2));
               else
                 vmenu.push_back(TextLine(oss.str(), 0.5, 0.5, 0.3, 1));
             }
           else if (i == nitems)
-            vmenu.push_back(TextLine(oss.str(), 0.2, 1.0, 0.2, 2));
+            {
+              oss << sep << marker << std::setw(6) << "???";
+
+              vmenu.push_back(TextLine(oss.str(), 0.2, 1.0, 0.2, 2));
+            }
           else
-            vmenu.push_back(TextLine(oss.str(), 0.5, 0.6, 0.5, 1));
+            {
+              vmenu.push_back(TextLine(oss.str(), 0.5, 0.6, 0.5, 1));
+            }
         }
 
       gfx.clearBackBuffer();
