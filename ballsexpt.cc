@@ -22,6 +22,7 @@
 #include <cstring>
 #include <string>
 #include <time.h>
+#include <vector>
 
 #include "trace.h"
 #include "debug.h"
@@ -48,7 +49,6 @@ struct BallsExpt::Impl
 {
   Impl(Params& p, Graphics& g) :
     timepoints(),
-    timepointIdx(0),
     ballset(p),
     params(p),
     gfx(g),
@@ -56,8 +56,7 @@ struct BallsExpt::Impl
   {}
 
   /// XXX this needs to be at least as big as (cycleNumber+1)*NUM_CONDITIONS
-  timeval timepoints[128];
-  int timepointIdx;
+  std::vector<timeval> timepoints;
   Balls ballset;
   Params& params;
   Graphics& gfx;
@@ -65,7 +64,7 @@ struct BallsExpt::Impl
 
   void logTimePoints(ParamFile& f)
   {
-    for (int i = 0; i < timepointIdx; ++i)
+    for (unsigned int i = 0; i < timepoints.size(); ++i)
       {
         char buf[512];
         snprintf(buf, 512, " %d %lf", i,
@@ -257,10 +256,10 @@ DOTRACE("BallsExpt::runExperiment");
   timer.reset();
 
   // FIXME use a vector here with push_back()
-  rep->timepoints[0] = Timing::getTime();
-  rep->gfx.gfxWait(timer, rep->params.waitSeconds);
+  rep->timepoints.clear();
 
-  rep->timepointIdx = 1;
+  rep->timepoints.push_back(Timing::getTime());
+  rep->gfx.gfxWait(timer, rep->params.waitSeconds);
 
   if (Params::FMRI_SESSION == rep->params.appMode)
     runFmriExpt();
@@ -269,7 +268,7 @@ DOTRACE("BallsExpt::runExperiment");
   else if (Params::TRAINING == rep->params.appMode)
     runTrainingExpt();
 
-  rep->timepoints[rep->timepointIdx++] = Timing::getTime();
+  rep->timepoints.push_back(Timing::getTime());
 
   rep->logTimePoints(tmefile);
 
@@ -301,8 +300,8 @@ DOTRACE("BallsExpt::runFmriExpt");
       else if (track_number == 0)
         {
           // Run passive trial
-          rep->timepoints[rep->timepointIdx++] =
-            rep->ballset.runTrial
+          rep->timepoints.push_back(Timing::getTime());
+          rep->ballset.runTrial
             (rep->gfx, rep->timing, Balls::PASSIVE);
         }
       else
@@ -310,8 +309,8 @@ DOTRACE("BallsExpt::runFmriExpt");
           rep->params.ballTrackNumber = track_number;
 
           // Run active tracking trial with objective check
-          rep->timepoints[rep->timepointIdx++] =
-            rep->ballset.runTrial
+          rep->timepoints.push_back(Timing::getTime());
+          rep->ballset.runTrial
             (rep->gfx, rep->timing, Balls::CHECK_ONE);
         }
 
@@ -329,7 +328,7 @@ DOTRACE("BallsExpt::runFmriExpt");
 
           Timer t;
           t.reset();
-          rep->timepoints[rep->timepointIdx++] = Timing::getTime();
+          rep->timepoints.push_back(Timing::getTime());
           rep->gfx.gfxWait(t, rep->params.waitSeconds);
         }
     }
@@ -346,20 +345,20 @@ DOTRACE("BallsExpt::runEyeTrackingExpt");
     {
       // Run active tracking trial
       runFixationCalibration();
-      rep->timepoints[rep->timepointIdx++] =
-        rep->ballset.runTrial
+      rep->timepoints.push_back(Timing::getTime());
+      rep->ballset.runTrial
         (rep->gfx, rep->timing, Balls::CHECK_ALL);
 
       // Run active tracking trial with objective check
       runFixationCalibration();
-      rep->timepoints[rep->timepointIdx++] =
-        rep->ballset.runTrial
+      rep->timepoints.push_back(Timing::getTime());
+      rep->ballset.runTrial
         (rep->gfx, rep->timing, Balls::CHECK_ONE);
 
       // Run passive trial
       runFixationCalibration();
-      rep->timepoints[rep->timepointIdx++] =
-        rep->ballset.runTrial
+      rep->timepoints.push_back(Timing::getTime());
+      rep->ballset.runTrial
         (rep->gfx, rep->timing, Balls::PASSIVE);
     }
 }
@@ -371,12 +370,12 @@ DOTRACE("BallsExpt::runTrainingExpt");
   for (int cycle=0; cycle < rep->params.cycleNumber; ++cycle)
     {
       // Run active tracking trial
-      rep->timepoints[rep->timepointIdx++] =
-        rep->ballset.runTrial
+      rep->timepoints.push_back(Timing::getTime());
+      rep->ballset.runTrial
         (rep->gfx, rep->timing, Balls::CHECK_ALL);
       // Run active tracking trial with objective check
-      rep->timepoints[rep->timepointIdx++] =
-        rep->ballset.runTrial
+      rep->timepoints.push_back(Timing::getTime());
+      rep->ballset.runTrial
         (rep->gfx, rep->timing, Balls::CHECK_ONE);
     }
 }
