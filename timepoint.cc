@@ -20,18 +20,15 @@ void Timepoint::reset()
 DOTRACE("Timepoint::reset");
 
   struct timezone tzp;
-  gettimeofday(&itsStartTime, &tzp);
+  gettimeofday(&m_tv, &tzp);
 }
 
 double Timepoint::elapsedSecSince(const Timepoint& start) const
 {
 DOTRACE("Timepoint::elapsedSecSince");
 
-  const timeval& tp0 = start.itsStartTime;
-  const timeval& tp1 = this->itsStartTime;
-
-  const double sec_lapsed  = double(tp1.tv_sec  - tp0.tv_sec);
-  const double usec_lapsed = double(tp1.tv_usec - tp0.tv_usec);
+  const double sec_lapsed  = double(this->m_tv.tv_sec  - start.m_tv.tv_sec);
+  const double usec_lapsed = double(this->m_tv.tv_usec - start.m_tv.tv_usec);
 
   return sec_lapsed + usec_lapsed/1000000.0;
 }

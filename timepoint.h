@@ -27,10 +27,10 @@ public:
   double elapsedSec() const;
   double elapsedSecAndReset();
 
-  unsigned long tv_sec() const { return itsStartTime.tv_sec; }
+  unsigned long tv_sec() const { return m_tv.tv_sec; }
 
 private:
-  timeval itsStartTime;
+  timeval m_tv;
 };
 
 static const char vcid_timing_h[] = "$Header$";
