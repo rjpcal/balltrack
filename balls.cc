@@ -139,18 +139,11 @@ void Ball::collideIfNeeded(Ball& other, int min_dist)
 {
 DOTRACE("Ball::collideIfNeeded");
 
-  const double dx = this->xnext - other.xnext;
-  const double dy = this->ynext - other.ynext;
+  const double xij = this->xnext - other.xnext;
+  const double yij = this->ynext - other.ynext;
 
-  if (fabs(dx) < min_dist && fabs(dy) < min_dist)
-    {
-      collide(other, dx, dy);
-    }
-}
-
-void Ball::collide(Ball& other, double xij, double yij)
-{
-DOTRACE("Ball::collide");
+  if (fabs(xij) >= min_dist || fabs(yij) >= min_dist)
+    return;
 
   const double d    =  sqrt(xij*xij + yij*yij);
   const double xa   =  xij/d;
@@ -189,12 +182,13 @@ DOTRACE("Ball::collide");
 
   other.xnext = other.xpos + other.xvel;
   other.ynext = other.ypos + other.yvel;
-
 }
 
 void Ball::twist(double angle)
 {
 DOTRACE("Ball::twist");
+
+  // Rotate the velocity vector by either +angle or -angle
 
   const double a11  =  cos(angle);
   const double a12  =  sin(angle);

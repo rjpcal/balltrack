@@ -12,6 +12,8 @@
 #ifndef BALLS_H_DEFINED
 #define BALLS_H_DEFINED
 
+#include "timing.h"
+
 #include <vector>
 
 class Graphics;
@@ -36,8 +38,6 @@ public:
   void draw(Graphics& gfx, unsigned char* bitmap, int size);
 
 private:
-  void collide(Ball& other, double xij, double yij);
-
   double xpos;
   double ypos;
   double xnext;
@@ -45,8 +45,6 @@ private:
   double xvel;
   double yvel;
 };
-
-#include "timing.h"
 
 struct Stimulus
 {
