@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Wed Mar  1 11:16:43 2000
+// written: Thu Mar  2 09:43:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -558,7 +558,9 @@ DOTRACE("Balls::runTrial");
 
   gfx->writeAllPlanes();
   gfx->clearFrontBuffer();
+  gfx->clearBackBuffer();
   gfx->drawCross();
+  gfx->swapBuffers();
 }
 
 static const char vcid_balls_c[] = "$Header$";
