@@ -148,6 +148,7 @@ Params::Params(int argc, char** argv) :
   filestem(""),
   ballRadius(),
   ballSigma2(),
+  ballSpeed(1.0),
   ballTwistAngle(),
   epochSeconds(),
   pauseSeconds(),
@@ -157,7 +158,6 @@ Params::Params(int argc, char** argv) :
   ballNumber(),
   ballPixmapSize(),
   ballTrackNumber(),
-  ballVelocity(),
   borderX(),
   borderY(),
   cycleNumber(),
@@ -260,7 +260,7 @@ DOTRACE("Params::readFromFile");
   pmfile.getInt   (this->framesPerRemind);
   pmfile.getInt   (this->ballNumber);
   pmfile.getInt   (this->ballTrackNumber);
-  pmfile.getInt   (this->ballVelocity);
+  pmfile.getDouble(this->ballSpeed);
   pmfile.getInt   (this->ballPixmapSize);
   pmfile.getInt   (this->ballMinDistance);
   pmfile.getDouble(this->ballRadius);
@@ -302,7 +302,7 @@ DOTRACE("Params::appendToFile");
   pmfile.putInt   (this->framesPerRemind,   "FRAMES_PER_REMIND");
   pmfile.putInt   (this->ballNumber,        "BALL_NUMBER");
   pmfile.putInt   (this->ballTrackNumber,   "BALL_TRACK_NUMBER");
-  pmfile.putInt   (this->ballVelocity,      "BALL_VELOCITY");
+  pmfile.putDouble(this->ballSpeed,         "BALL_SPEED");
   pmfile.putInt   (this->ballPixmapSize,    "BALL_ARRAY_SIZE");
   pmfile.putInt   (this->ballMinDistance,   "BALL_MIN_DISTANCE");
   pmfile.putDouble(this->ballRadius,        "BALL_RADIUS");
@@ -355,11 +355,11 @@ DOTRACE("Params::setGroup1");
 
   gfx.clearBackBuffer();
 
-  menu[0] = " BALL  NUMBER TRACK  VELOC  SIZE   MINDIS RADIUS SIGMA2 TWIST";
+  menu[0] = " BALL  NUMBER TRACK  SPEED  SIZE   MINDIS RADIUS SIGMA2 TWIST";
   menu[1] = "";
   menu[2] = "";
-  snprintf(buf, bufsize, "       %-6d %-6d %-6d %-6d %-6d %-6.1f %-6.1f %-6.3f",
-           this->ballNumber, this->ballTrackNumber, this->ballVelocity,
+  snprintf(buf, bufsize, "       %-6d %-6d %-6.1f %-6d %-6d %-6.1f %-6.1f %-6.3f",
+           this->ballNumber, this->ballTrackNumber, this->ballSpeed,
            this->ballPixmapSize, this->ballMinDistance, this->ballRadius,
            this->ballSigma2, this->ballTwistAngle);
   menu[3] = buf;
@@ -379,8 +379,8 @@ DOTRACE("Params::setGroup1");
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getInt(this->ballVelocity);
-  snprintf(buf, bufsize, " %-6d", this->ballVelocity);
+  gfx.getDouble(this->ballSpeed);
+  snprintf(buf, bufsize, " %-6.3f", this->ballSpeed);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();

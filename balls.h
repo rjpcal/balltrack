@@ -28,11 +28,12 @@ public:
                       int xborder, int yborder,
                       int arraysize);
   bool isTooClose(const Ball& other, int min_dist) const;
-  void randomVelocity(int vel);
+  void randomSpeed(double vel);
   void nextPosition(int width, int height,
                     int xborder, int yborder,
-                    int arraysize);
-  void collideIfNeeded(Ball& other, int min_dist);
+                    int arraysize, double lapsed_seconds);
+  void collideIfNeeded(Ball& other, int min_dist,
+                       double lapsed_seconds);
   void twist(double angle);
   void copy();
   void draw(Graphics& gfx, unsigned char* bitmap, int size);
@@ -42,8 +43,8 @@ private:
   double ypos;
   double xnext;
   double ynext;
-  double xvel;
-  double yvel;
+  double velx; // pixels per second
+  double vely; // pixels per second
 };
 
 struct Stimulus
@@ -71,7 +72,7 @@ class Balls
 private:
   void pickInitialPositions(Graphics& gfx);
 
-  void pickNextPositions(Graphics& gfx);
+  void pickNextPositions(Graphics& gfx, double lapsed_seconds);
 
   void drawNBalls(Graphics& gfx, int first, int last,
                   unsigned char* bitmap);

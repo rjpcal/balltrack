@@ -15,6 +15,7 @@
 #include "balls.h"
 
 #include <cmath>
+#include <iostream>
 #include <vector>
 
 #include "graphics.h"
@@ -102,86 +103,87 @@ DOTRACE("Ball::isTooClose");
           fabs(this->ypos - other.ypos) < min_dist);
 }
 
-void Ball::randomVelocity(int vel)
+void Ball::randomSpeed(double vel)
 {
 DOTRACE("Ball::randomVelocity");
 
   // Pick a random direction for the velocity
   const double angle = 2 * M_PI * drand48();
 
-  this->xvel = vel * cos(angle);
-  this->yvel = vel * sin(angle);
+  this->velx = vel * cos(angle);
+  this->vely = vel * sin(angle);
 }
 
 void Ball::nextPosition(int width, int height,
                         int xborder, int yborder,
-                        int arraysize)
+                        int arraysize, double lapsed_seconds)
 {
 DOTRACE("Ball::nextPosition");
 
-  this->xnext = this->xpos + this->xvel;
-  this->ynext = this->ypos + this->yvel;
+  this->xnext = this->xpos + (lapsed_seconds * this->velx);
+  this->ynext = this->ypos + (lapsed_seconds * this->vely);
 
   if (this->xnext < xborder || this->xnext > width - xborder - arraysize)
     {
-      this->xvel  = -this->xvel;
-      this->xnext = this->xpos + this->xvel;
+      this->velx  = -this->velx;
+      this->xnext = this->xpos + (lapsed_seconds * this->velx);
     }
 
   if (this->ynext < yborder || this->ynext > height - yborder - arraysize)
     {
-      this->yvel  = -this->yvel;
-      this->ynext = this->ypos + this->yvel;
+      this->vely  = -this->vely;
+      this->ynext = this->ypos + (lapsed_seconds * this->vely);
     }
 }
 
-void Ball::collideIfNeeded(Ball& other, int min_dist)
+void Ball::collideIfNeeded(Ball& other, int min_dist,
+                           double lapsed_seconds)
 {
 DOTRACE("Ball::collideIfNeeded");
 
-  const double xij = this->xnext - other.xnext;
-  const double yij = this->ynext - other.ynext;
+  const double xij = this->xnext - other.xnext; // units pixels
+  const double yij = this->ynext - other.ynext; // units pixels
 
   if (fabs(xij) >= min_dist || fabs(yij) >= min_dist)
     return;
 
-  const double d    =  sqrt(xij*xij + yij*yij);
-  const double xa   =  xij/d;
-  const double ya   =  yij/d;
-  const double xo   = -ya;
-  const double yo   =  xa;
+  const double d    =  sqrt(xij*xij + yij*yij); // units pixels
+  const double xa   =  xij/d; // unitless
+  const double ya   =  yij/d; // unitless
+  const double xo   = -ya;    // unitless
+  const double yo   =  xa;    // unitless
 
-  const double vai  = this->xvel*xa + this->yvel*ya;
-  const double vaj  = other.xvel*xa + other.yvel*ya;
+  const double vai  = this->velx*xa + this->vely*ya; // units pix/sec
+  const double vaj  = other.velx*xa + other.vely*ya; // units pix/sec
 
   if (vai - vaj < 0.0)
     {
-      const double voi  = this->xvel*xo + this->yvel*yo;
-      const double voj  = other.xvel*xo + other.yvel*yo;
+      const double voi  = this->velx*xo + this->vely*yo; // pix/sec
+      const double voj  = other.velx*xo + other.vely*yo; // pix/sec
       /*
         ovi2 = vai*vai + voi*voi;
         ovj2 = vaj*vaj + voj*voj;
       */
-      const double nvi2 = vaj*vaj + voi*voi;
-      const double nvj2 = vai*vai + voj*voj;
+      const double nvi2 = vaj*vaj + voi*voi; // pix^2/sec^2
+      const double nvj2 = vai*vai + voj*voj; // pix^2/sec^2
 
-      const double vij2 = vai*vai - vaj*vaj;
+      const double vij2 = vai*vai - vaj*vaj; // pix^2/sec^2
 
-      const double fi   = sqrt(1. + vij2 / nvi2);
-      const double fj   = sqrt(1. - vij2 / nvj2);
+      const double fi   = sqrt(1. + vij2 / nvi2); // unitless
+      const double fj   = sqrt(1. - vij2 / nvj2); // unitless
 
-      this->xvel = fi * (voi * xo + vaj * xa);
-      this->yvel = fi * (voi * yo + vaj * ya);
+      this->velx = fi * (voi * xo + vaj * xa); // pix/sec
+      this->vely = fi * (voi * yo + vaj * ya); // pix/sec
 
-      other.xvel = fj * (voj * xo + vai * xa);
-      other.yvel = fj * (voj * yo + vai * ya);
+      other.velx = fj * (voj * xo + vai * xa); // pix/sec
+      other.vely = fj * (voj * yo + vai * ya); // pix/sec
     }
 
-  this->xnext = this->xpos + this->xvel;
-  this->ynext = this->ypos + this->yvel;
+  this->xnext = this->xpos + (lapsed_seconds * this->velx);
+  this->ynext = this->ypos + (lapsed_seconds * this->vely);
 
-  other.xnext = other.xpos + other.xvel;
-  other.ynext = other.ypos + other.yvel;
+  other.xnext = other.xpos + (lapsed_seconds * other.velx);
+  other.ynext = other.ypos + (lapsed_seconds * other.vely);
 }
 
 void Ball::twist(double angle)
@@ -195,18 +197,18 @@ DOTRACE("Ball::twist");
   const double a21  = -sin(angle);
   const double a22  =  cos(angle);
 
-  const double x = this->xvel;
-  const double y = this->yvel;
+  const double x = this->velx;
+  const double y = this->vely;
 
   if (drand48() < 0.5)
     {
-      this->xvel = a11*x + a12*y;
-      this->yvel = a21*x + a22*y;
+      this->velx = a11*x + a12*y;
+      this->vely = a21*x + a22*y;
     }
   else
     {
-      this->xvel =  a11*x - a12*y;
-      this->yvel = -a21*x + a22*y;
+      this->velx =  a11*x - a12*y;
+      this->vely = -a21*x + a22*y;
     }
 }
 
@@ -270,11 +272,12 @@ DOTRACE("Balls::pickInitialPositions");
             }
         }
 
-      itsBalls[i].randomVelocity(itsParams.ballVelocity);
+      itsBalls[i].randomSpeed(itsParams.ballSpeed *
+                              itsParams.ballRadius);
     }
 }
 
-void Balls::pickNextPositions(Graphics& gfx)
+void Balls::pickNextPositions(Graphics& gfx, double lapsed_seconds)
 {
 DOTRACE("Balls::pickNextPositions");
 
@@ -282,7 +285,8 @@ DOTRACE("Balls::pickNextPositions");
     {
       itsBalls[i].nextPosition(gfx.width(), gfx.height(),
                                itsParams.borderX, itsParams.borderY,
-                               itsParams.ballPixmapSize);
+                               itsParams.ballPixmapSize,
+                               lapsed_seconds);
     }
 
   for (int i=0; i<itsParams.ballNumber-1; ++i)
@@ -290,7 +294,8 @@ DOTRACE("Balls::pickNextPositions");
       for (int j=i+1; j<itsParams.ballNumber; ++j)
         {
           itsBalls[i].collideIfNeeded(itsBalls[j],
-                                      itsParams.ballMinDistance);
+                                      itsParams.ballMinDistance,
+                                      lapsed_seconds);
         }
     }
 
@@ -375,6 +380,10 @@ DOTRACE("Balls::runTrial");
 
   for (int i=0; i<itsParams.remindsPerEpoch; ++i)
     {
+      const timeval tstart = Timing::now();
+
+      timeval t0 = tstart;
+
       // Here's the main loop where the balls are moving randomly
       for (int j=0; j<itsParams.framesPerRemind; ++j)
         {
@@ -383,8 +392,21 @@ DOTRACE("Balls::runTrial");
           gfx.drawCross();
           gfx.swapBuffers();
 
-          pickNextPositions(gfx);
+          timeval t1 = Timing::now();
+
+          pickNextPositions(gfx, Timing::elapsedMsec(t0, t1)/1000.0);
+
+          t0 = t1;
         }
+
+      const timeval tstop = Timing::now();
+
+      const double lapse = Timing::elapsedMsec(tstart, tstop);
+
+      std::cout << " " << itsParams.framesPerRemind
+                << " frames in " << lapse << " msec ("
+                << lapse/itsParams.framesPerRemind
+                << " msec per frame)\n";
 
       timer.reset();
 
