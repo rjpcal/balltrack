@@ -34,14 +34,14 @@ public:
   void draw(Graphics& gfx, unsigned char* bitmap, int size);
 
 private:
-  void collide(Ball& other, int xij, int yij);
+  void collide(Ball& other, double xij, double yij);
 
-  int itsXpos;
-  int itsYpos;
-  int itsNx;
-  int itsNy;
-  int itsXvel;
-  int itsYvel;
+  double xpos;
+  double ypos;
+  double xnext;
+  double ynext;
+  double xvel;
+  double yvel;
 };
 
 class Balls

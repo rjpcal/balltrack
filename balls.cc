@@ -36,8 +36,6 @@ namespace
 
 namespace Local
 {
-  int roundVelocity(int x);
-
   void makeBallMap(std::vector<unsigned char>& vec, int size,
                    float radius, float sigma,
                    unsigned char background);
@@ -50,16 +48,6 @@ namespace Local
 // Local function definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-int Local::roundVelocity(int x)
-{
-DOTRACE("Local::roundVelocity");
-
-  int ix = (x < 0) ? (x - VELOSCALE/2) / VELOSCALE
-                   : (x + VELOSCALE/2) / VELOSCALE;
-
-  return ix;
-}
 
 void Local::makeBallMap(std::vector<unsigned char>& vec, int size,
                         float radius, float sigma,
@@ -120,16 +108,16 @@ void Ball::randomPosition(int width, int height,
 {
 DOTRACE("Ball::randomPosition");
 
-  itsXpos = xborder + int((width - arraysize - 2*xborder) * drand48());
-  itsYpos = yborder + int((height - arraysize - 2*yborder) * drand48());
+  this->xpos = xborder + (width - arraysize - 2*xborder) * drand48();
+  this->ypos = yborder + (height - arraysize - 2*yborder) * drand48();
 }
 
 bool Ball::isTooClose(const Ball& other, int min_dist) const
 {
 DOTRACE("Ball::isTooClose");
 
-  return (abs(itsXpos - other.itsXpos) < min_dist &&
-          abs(itsYpos - other.itsYpos) < min_dist);
+  return (fabs(this->xpos - other.xpos) < min_dist &&
+          fabs(this->ypos - other.ypos) < min_dist);
 }
 
 void Ball::randomVelocity(int vel)
@@ -139,8 +127,8 @@ DOTRACE("Ball::randomVelocity");
   // Pick a random direction for the velocity
   float angle = TWOPI * drand48();
 
-  itsXvel = int(VELOSCALE * vel * cos(angle));
-  itsYvel = int(VELOSCALE * vel * sin(angle));
+  this->xvel = VELOSCALE * vel * cos(angle);
+  this->yvel = VELOSCALE * vel * sin(angle);
 }
 
 void Ball::nextPosition(int width, int height,
@@ -149,19 +137,19 @@ void Ball::nextPosition(int width, int height,
 {
 DOTRACE("Ball::nextPosition");
 
-  itsNx = itsXpos + Local::roundVelocity(itsXvel);
-  itsNy = itsYpos + Local::roundVelocity(itsYvel);
+  this->xnext = this->xpos + (this->xvel / VELOSCALE);
+  this->ynext = this->ypos + (this->yvel / VELOSCALE);
 
-  if (itsNx < xborder || itsNx > width - xborder - arraysize)
+  if (this->xnext < xborder || this->xnext > width - xborder - arraysize)
     {
-      itsXvel = -itsXvel;
-      itsNx   = itsXpos + Local::roundVelocity(itsXvel);
+      this->xvel  = -this->xvel;
+      this->xnext = this->xpos + (this->xvel / VELOSCALE);
     }
 
-  if (itsNy < yborder || itsNy > height - yborder - arraysize)
+  if (this->ynext < yborder || this->ynext > height - yborder - arraysize)
     {
-      itsYvel = -itsYvel;
-      itsNy   = itsYpos + Local::roundVelocity(itsYvel);
+      this->yvel  = -this->yvel;
+      this->ynext = this->ypos + (this->yvel / VELOSCALE);
     }
 }
 
@@ -169,32 +157,32 @@ void Ball::collideIfNeeded(Ball& other, int min_dist)
 {
 DOTRACE("Ball::collideIfNeeded");
 
-  const int dx = itsNx - other.itsNx;
-  const int dy = itsNy - other.itsNy;
+  const double dx = this->xnext - other.xnext;
+  const double dy = this->ynext - other.ynext;
 
-  if (abs(dx) < min_dist && abs(dy) < min_dist)
+  if (fabs(dx) < min_dist && fabs(dy) < min_dist)
     {
       collide(other, dx, dy);
     }
 }
 
-void Ball::collide(Ball& other, int xij, int yij)
+void Ball::collide(Ball& other, double xij, double yij)
 {
 DOTRACE("Ball::collide");
 
-  float d    =  sqrt(double(xij*xij + yij*yij));
-  float xa   =  xij/d;
-  float ya   =  yij/d;
-  float xo   = -ya;
-  float yo   =  xa;
+  const double d    =  sqrt(xij*xij + yij*yij);
+  const double xa   =  xij/d;
+  const double ya   =  yij/d;
+  const double xo   = -ya;
+  const double yo   =  xa;
 
-  float vai  = itsXvel*xa + itsYvel*ya;
-  float vaj  = other.itsXvel*xa + other.itsYvel*ya;
+  const double vai  = this->xvel*xa + this->yvel*ya;
+  const double vaj  = other.xvel*xa + other.yvel*ya;
 
   if (vai - vaj < 0.0)
     {
-      const float voi  = itsXvel*xo + itsYvel*yo;
-      const float voj  = other.itsXvel*xo + other.itsYvel*yo;
+      const float voi  = this->xvel*xo + this->yvel*yo;
+      const float voj  = other.xvel*xo + other.yvel*yo;
       /*
         ovi2 = vai*vai + voi*voi;
         ovj2 = vaj*vaj + voj*voj;
@@ -207,18 +195,18 @@ DOTRACE("Ball::collide");
       const float fi   = sqrt(1. + vij2 / nvi2);
       const float fj   = sqrt(1. - vij2 / nvj2);
 
-      itsXvel = int(round(fi * (voi * xo + vaj * xa)));
-      itsYvel = int(round(fi * (voi * yo + vaj * ya)));
+      this->xvel = fi * (voi * xo + vaj * xa);
+      this->yvel = fi * (voi * yo + vaj * ya);
 
-      other.itsXvel = int(round(fj * (voj * xo + vai * xa)));
-      other.itsYvel = int(round(fj * (voj * yo + vai * ya)));
+      other.xvel = fj * (voj * xo + vai * xa);
+      other.yvel = fj * (voj * yo + vai * ya);
     }
 
-  itsNx = itsXpos + Local::roundVelocity(itsXvel);
-  itsNy = itsYpos + Local::roundVelocity(itsYvel);
+  this->xnext = this->xpos + (this->xvel / VELOSCALE);
+  this->ynext = this->ypos + (this->yvel / VELOSCALE);
 
-  other.itsNx = other.itsXpos + Local::roundVelocity(other.itsXvel);
-  other.itsNy = other.itsYpos + Local::roundVelocity(other.itsYvel);
+  other.xnext = other.xpos + (other.xvel / VELOSCALE);
+  other.ynext = other.ypos + (other.yvel / VELOSCALE);
 
 }
 
@@ -226,23 +214,23 @@ void Ball::twist(double angle)
 {
 DOTRACE("Ball::twist");
 
-  static float a11  =  cos(angle);
-  static float a12  =  sin(angle);
-  static float a21  = -sin(angle);
-  static float a22  =  cos(angle);
+  const double a11  =  cos(angle);
+  const double a12  =  sin(angle);
+  const double a21  = -sin(angle);
+  const double a22  =  cos(angle);
 
-  int x = itsXvel;
-  int y = itsYvel;
+  const double x = this->xvel;
+  const double y = this->yvel;
 
   if (drand48() < 0.5)
     {
-      itsXvel = int(round(a11*x + a12*y));
-      itsYvel = int(round(a21*x + a22*y));
+      this->xvel = a11*x + a12*y;
+      this->yvel = a21*x + a22*y;
     }
   else
     {
-      itsXvel = int(round(a11*x - a12*y));
-      itsYvel = int(round(-a21*x + a22*y));
+      this->xvel =  a11*x - a12*y;
+      this->yvel = -a21*x + a22*y;
     }
 }
 
@@ -250,15 +238,17 @@ void Ball::copy()
 {
 DOTRACE("Ball::copy");
 
-  itsXpos = itsNx;
-  itsYpos = itsNy;
+  this->xpos = this->xnext;
+  this->ypos = this->ynext;
 }
 
 void Ball::draw(Graphics& gfx, unsigned char* bitmap, int size)
 {
 DOTRACE("Ball::draw");
 
-  gfx.writePixmap(itsXpos, itsYpos, bitmap, size);
+  gfx.writePixmap(int(round(this->xpos)),
+                  int(round(this->ypos)),
+                  bitmap, size);
 }
 
 ///////////////////////////////////////////////////////////////////////
