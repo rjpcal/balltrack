@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Thu Feb 24 15:04:03 2000
+// written: Fri Feb 25 10:44:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,6 @@ public:
   StarbaseGfx(XStuff* xinfo, int aWidth, int aHeight);
 
   void wrapGraphics();
-
-  virtual int width() const;
-  virtual int height() const;
 
   virtual void writeUpperPlanes();
   virtual void writeLowerPlanes();
@@ -76,8 +73,6 @@ private:
   void restoreColormap();	// called from MenuApplication::wrap()
 
   int itsFildes;
-  int itsWidth;
-  int itsHeight;
 };
 
 
