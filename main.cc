@@ -44,20 +44,31 @@ const bool USE_RGBA = true;
 
 int main( int argc, char** argv )
 {
-
-#if defined(MODE_TRAINING)
   APPLICATION_MODE = TRAINING;
-#elif defined(MODE_EYE_TRACKING)
-  APPLICATION_MODE = EYE_TRACKING;
-#elif defined(MODE_FMRI_SESSION)
-  APPLICATION_MODE = FMRI_SESSION;
-#else
-#  error No application mode macro.
-#endif
 
-#if defined(MAKE_MOVIE)
-  MAKING_MOVIE = true;
-#endif
+  for (int i = 0; i < argc; ++i)
+    {
+      if (strcmp(argv[i], "--session") == 0)
+        {
+          FMRI_SESSION_NUMBER = atoi(argv[++i]);
+        }
+      else if (strcmp(argv[i], "--fmri") == 0)
+        {
+          APPLICATION_MODE = FMRI_SESSION;
+        }
+      else if (strcmp(argv[i], "--train") == 0)
+        {
+          APPLICATION_MODE = TRAINING;
+        }
+      else if (strcmp(argv[i], "--itrk") == 0)
+        {
+          APPLICATION_MODE = EYE_TRACKING;
+        }
+      else if (strcmp(argv[i], "--makemovie") == 0)
+        {
+          MAKING_MOVIE = true;
+        }
+    }
 
   XHints hints;
 
@@ -73,13 +84,12 @@ int main( int argc, char** argv )
     .doubleBuffer(DOUBLEBUFFER)
     .rgba(USE_RGBA);
 
-  if (FMRI_SESSION == APPLICATION_MODE && argc >= 3)
+  if (FMRI_SESSION == APPLICATION_MODE)
     {
-      FMRI_SESSION_NUMBER = atoi(argv[2]);
-      if ( FMRI_SESSION_NUMBER < 0 || FMRI_SESSION_NUMBER > 4 )
+      if (FMRI_SESSION_NUMBER < 0 || FMRI_SESSION_NUMBER > 4)
         {
-          std::cout << "session number must be 1, 2, 3, or 4" << std::endl;
-          return 0;
+          std::cout << "session number must be 1, 2, 3, or 4\n";
+          return 1;
         }
     }
 
