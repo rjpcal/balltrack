@@ -70,7 +70,6 @@ private:
 
   GlxWindow itsGlx;
 
-  bool itsUsingVsync;
   bool isItRecording;
   int itsFrameCounter;
   Timepoint itsFrameTimer;

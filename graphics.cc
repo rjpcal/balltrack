@@ -25,7 +25,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <sstream>
 #include <unistd.h>
 
 #define LOCAL_PROF
@@ -68,7 +67,6 @@ namespace
 Graphics::Graphics(const char* winname,
                    int w, int h, int depth) :
   itsGlx(w, h),
-  itsUsingVsync(false),
   isItRecording(false),
   itsFrameCounter(0),
   itsFrameTimer(Timepoint::now())
@@ -76,27 +74,6 @@ Graphics::Graphics(const char* winname,
 DOTRACE("Graphics::Graphics");
 
   itsGlx.openWindow(winname, depth);
-
-  const std::string extensions =
-    glXQueryExtensionsString(itsGlx.display(),
-                             DefaultScreen(itsGlx.display()));
-
-  std::istringstream s(extensions);
-
-  std::string ext;
-
-  std::cout << " glx extensions: \n";
-
-  while (s >> ext)
-    {
-      std::cout << " \t" << ext << '\n';
-    }
-
-  if (extensions.find("GLX_SGI_video_sync") != std::string::npos)
-    {
-      itsUsingVsync = true;
-      std::cout << " got GLX_SGI_video_sync extension\n";
-    }
 
   this->clearBackBuffer();
   this->swapBuffers();
@@ -135,29 +112,11 @@ DOTRACE("Graphics::clearBackBuffer");
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
-extern "C"
-{
-  extern int glXGetVideoSyncSGI (unsigned int *);
-  extern int glXWaitVideoSyncSGI (int, int, unsigned int *);
-}
-
 double Graphics::swapBuffers()
 {
 DOTRACE("Graphics::swapBuffers");
-  glFlush();
-  unsigned int counter = 0;
-  if (itsUsingVsync)
-    glXGetVideoSyncSGI(&counter);
 
-  glXSwapBuffers(itsGlx.display(), itsGlx.window());
-
-  if (itsUsingVsync)
-    glXWaitVideoSyncSGI(counter + 1, 0, &counter);
-  else
-    {
-      glXWaitX();
-      glXWaitGL();
-    }
+  itsGlx.swapBuffers();
 
   if (isItRecording)
     {

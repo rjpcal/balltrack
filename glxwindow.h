@@ -36,6 +36,8 @@ public:
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
 
+  void swapBuffers();
+
   char getKeypress() const;
 
   void getInt(int& i) const;
@@ -55,6 +57,7 @@ private:
   GLXContext itsGLXContext;
   Display* itsDisplay;
   Window itsWindow;
+  bool itsUsingVsync;
 };
 
 static const char vcid_glxwindow_h[] = "$Header$";

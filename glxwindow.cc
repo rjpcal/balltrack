@@ -17,11 +17,18 @@
 #include <cstdlib>              // for getenv
 #include <cstdio>
 #include <iostream>
+#include <sstream>
 #include <X11/keysym.h>
 #include <X11/Xutil.h>
 
 #include "trace.h"
 #include "debug.h"
+
+extern "C"
+{
+  extern int glXGetVideoSyncSGI (unsigned int *);
+  extern int glXWaitVideoSyncSGI (int, int, unsigned int *);
+}
 
 namespace
 {
@@ -80,7 +87,8 @@ GlxWindow::GlxWindow(int width, int height) :
   itsHeight(height),
   itsGLXContext(0),
   itsDisplay(0),
-  itsWindow(0)
+  itsWindow(0),
+  itsUsingVsync(false)
 {
 DOTRACE("GlxWindow::GlxWindow");
 
@@ -185,6 +193,46 @@ DOTRACE("GlxWindow::openWindow");
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(0, itsWidth, 0, itsHeight, -1.0, 1.0);
+
+  const std::string extensions =
+    glXQueryExtensionsString(itsDisplay,
+                             DefaultScreen(itsDisplay));
+
+  std::istringstream s(extensions);
+
+  std::string ext;
+
+  std::cout << " glx extensions: \n";
+
+  while (s >> ext)
+    {
+      std::cout << " \t" << ext << '\n';
+    }
+
+  if (extensions.find("GLX_SGI_video_sync") != std::string::npos)
+    {
+      itsUsingVsync = true;
+      std::cout << " got GLX_SGI_video_sync extension\n";
+    }
+}
+
+void GlxWindow::swapBuffers()
+{
+DOTRACE("GlxWindow::swapBuffers");
+  glFlush();
+  unsigned int counter = 0;
+  if (itsUsingVsync)
+    glXGetVideoSyncSGI(&counter);
+
+  glXSwapBuffers(itsDisplay, itsWindow);
+
+  if (itsUsingVsync)
+    glXWaitVideoSyncSGI(counter + 1, 0, &counter);
+  else
+    {
+      glXWaitX();
+      glXWaitGL();
+    }
 }
 
 char GlxWindow::getKeypress() const
