@@ -3,7 +3,7 @@
 // graphics.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:01:32 2000
-// written: Tue Mar  6 16:55:21 2001
+// written: Wed Jun 27 15:31:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,8 +40,29 @@ void Graphics::gfxWait(double delaySeconds)
 
 double Graphics::frameTime() {
   if (itsFrameTime < 0)
-	 itsFrameTime = computeFrameTime();
+    itsFrameTime = computeFrameTime();
   return itsFrameTime;
+}
+
+double Graphics::computeFrameTime()
+{
+DOTRACE("Graphics::computeFrameTime");
+
+  struct timeval tp[2];
+
+  clearFrontBuffer();
+
+  waitFrameCount( 1 );
+
+  Timing::getTime( &tp[0] );
+
+  waitFrameCount( 99 );
+
+  Timing::getTime( &tp[1] );
+
+  double frametime = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
+
+  return frametime;
 }
 
 static const char vcid_graphics_cc[] = "$Header$";

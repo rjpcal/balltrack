@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Wed Jun 27 15:18:20 2001
+// written: Wed Jun 27 15:31:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -444,33 +444,6 @@ DOTRACE("OpenglGfx::gfxWait");
     {
       Graphics::gfxWait(delaySeconds);
     }
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// OpenglGfx private member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-double OpenglGfx::computeFrameTime()
-{
-DOTRACE("OpenglGfx::computeFrameTime");
-
-  struct timeval tp[2];
-
-  clearFrontBuffer();
-
-  waitFrameCount( 1 );
-
-  Timing::getTime( &tp[0] );
-
-  waitFrameCount( 99 );
-
-  Timing::getTime( &tp[1] );
-
-  double frametime = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
-
-  return frametime;
 }
 
 static const char vcid_openglgfx_cc[] = "$Header$";

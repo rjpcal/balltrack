@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Tue Mar  6 17:04:07 2001
+// written: Wed Jun 27 15:32:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "starbasegfx.h"
 
 #include <starbase.c.h>
-#include <cstdlib>				  // for exit()
+#include <cstdlib>              // for exit()
 
 #include "params.h"
 #include "timing.h"
@@ -46,7 +46,7 @@ void StarbaseGfx::initWindow() {
 DOTRACE("StarbaseGfx::initWindow");
 
   char* device = ( char * ) make_X11_gopen_string( itsXStuff->display(),
-																	itsXStuff->window() );
+                                                   itsXStuff->window() );
   itsFildes = gopen( device, OUTDEV, NULL, INT_XFORM|CMAP_FULL );
 
   gescape_arg arg1, arg2;
@@ -56,8 +56,8 @@ DOTRACE("StarbaseGfx::initWindow");
 
   if ( itsFildes < 0 )
     {
-		fprintf( stdout,"Could not gopen window.\n" );
-		exit( -1 );
+      fprintf( stdout,"Could not gopen window.\n" );
+      exit( -1 );
     }
 
   sizeColormap();
@@ -95,12 +95,12 @@ DOTRACE("StarbaseGfx::isDoubleBuffered");
 
 void StarbaseGfx::writeUpperPlanes() {
 DOTRACE("StarbaseGfx::writeUpperPlanes");
-  write_enable(fildes(), 0xc0);	// 11000000
+  write_enable(fildes(), 0xc0);  // 11000000
 }
 
 void StarbaseGfx::writeLowerPlanes() {
 DOTRACE("StarbaseGfx::writeLowerPlanes");
-  write_enable(fildes(), 0x3f);	// 00111111
+  write_enable(fildes(), 0x3f);  // 00111111
 }
 
 void StarbaseGfx::writeAllPlanes() {
@@ -121,7 +121,7 @@ DOTRACE("StarbaseGfx::swapBuffers");
 void StarbaseGfx::waitFrameCount(int number) {
 DOTRACE("StarbaseGfx::waitFrameCount");
   while( number-- )
-	 waitVerticalRetrace();
+    waitVerticalRetrace();
 }
 
 void StarbaseGfx::drawMessage(char word[]) {
@@ -131,16 +131,16 @@ DOTRACE("StarbaseGfx::drawMessage");
 
 
   if (APPLICATION_MODE == FMRI_SESSION)
-	 {
-		// Use mirror-reversed text if we are in magnet
-		setText(-150, 300);
-		dctext( fildes(), width()/2 + 500, height()/2+100, word );
-	 }
+    {
+      // Use mirror-reversed text if we are in magnet
+      setText(-150, 300);
+      dctext( fildes(), width()/2 + 500, height()/2+100, word );
+    }
   else
-	 {
-		setText(150, 300);
-		dctext( fildes(), width()/2 - 500, height()/2+100, word );
-	 }
+    {
+      setText(150, 300);
+      dctext( fildes(), width()/2 - 500, height()/2+100, word );
+    }
 
   writeLowerPlanes();
 }
@@ -201,10 +201,10 @@ DOTRACE("StarbaseGfx::showMenu");
 
   for( i=0; i<nmenu; i++ )
     {
-		dctext( fildes(),
-				  width()/2 - 400,
-				  height()/2 - 200 + i * 40,
-				  menu[i] );
+      dctext( fildes(),
+              width()/2 - 400,
+              height()/2 - 200 + i * 40,
+              menu[i] );
     }
 }
 
@@ -218,20 +218,20 @@ DOTRACE("StarbaseGfx::showParams");
 
   for( int i=0; i<col1; i++ )
     {
-		dctext( fildes(),
-				  width()/2 - 500,
-				  height()/2 -  450 + i * 40,
-				  params[i] );
+      dctext( fildes(),
+              width()/2 - 500,
+              height()/2 -  450 + i * 40,
+              params[i] );
     }
 
   if( col1+1 < col2 ) {
     for( int i=col1+1; i<col2; i++ )
-		{
+      {
         dctext( fildes(),
-					 width()/2 + 100,
-					 height()/2 - 1370 + i * 40,
-					 params[i] );
-		}
+                width()/2 + 100,
+                height()/2 - 1370 + i * 40,
+                params[i] );
+      }
   }
 }
 
@@ -272,14 +272,14 @@ DOTRACE("StarbaseGfx::sizeColormap");
   int color_number;
 
   inquire_sizes( fildes(), dummy, dummy[0],
-					  dummy[0], dummy[0], &color_number);
+                 dummy[0], dummy[0], &color_number);
 
   if( color_number != COLOR_NUMBER )
     {
-		printf( " Colormap is of size %d instead of %d\n",
-				  color_number, COLOR_NUMBER );
+      printf( " Colormap is of size %d instead of %d\n",
+              color_number, COLOR_NUMBER );
 
-		exit(0);
+      exit(0);
     }
 }
 
@@ -291,26 +291,6 @@ DOTRACE("StarbaseGfx::saveColormap");
 void StarbaseGfx::restoreColormap() {
 DOTRACE("StarbaseGfx::restoreColormap");
   define_color_table( fildes(), 0, COLOR_NUMBER, ORIGINAL_COLORS );
-}
-
-double StarbaseGfx::computeFrameTime() {
-DOTRACE("StarbaseGfx::computeFrameTime");
-
-  struct timeval tp[2];
-
-  clearFrontBuffer();
-
-  waitFrameCount( 1 );
-
-  Timing::getTime( &tp[0] );
-
-  waitFrameCount( 99 );
-
-  Timing::getTime( &tp[1] );
-
-  double frametime = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
-
-  return frametime;
 }
 
 static const char vcid_starbasegfx_cc[] = "$Header$";
