@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Feb 29 17:57:30 2000
+// written: Tue Feb 29 18:06:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -243,7 +243,7 @@ DOTRACE("OpenglGfx::clearFrontBuffer");
 void OpenglGfx::clearBackBufferRegion(bool use_scissor) {
 DOTRACE("OpenglGfx::clearBackBufferRegion");
 
-  if (use_scissor) { 
+  if (false & use_scissor) { 
 	 glEnable(GL_SCISSOR_TEST);
 	 glScissor( (width() - DISPLAY_X)/2, (height() - DISPLAY_Y)/2,
 					DISPLAY_X, DISPLAY_Y );
