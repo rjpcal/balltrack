@@ -26,7 +26,8 @@
 
 namespace
 {
-  FILE* openfile(const char* filebase, char mode, char extension[])
+  FILE* openfile(const std::string& filebase,
+                 char mode, const char* extension)
   {
     DOTRACE("<params.cc>::openfile");
 
@@ -34,7 +35,7 @@ namespace
 
     char fname[STRINGSIZE];
 
-    sprintf(fname, "%s.%s", filebase, extension);
+    sprintf(fname, "%s.%s", filebase.c_str(), extension);
 
     char mode_string[2] = { mode, '\0' };
 
@@ -59,7 +60,8 @@ void ParamFile::fetchLine()
   fgets(itsLine, 120, itsFile);
 }
 
-ParamFile::ParamFile(const char* filebase, char mode, char extension[]) :
+ParamFile::ParamFile(const std::string& filebase, char mode,
+                     const char* extension) :
   itsFile(openfile(filebase, mode, extension))
 {}
 
@@ -80,16 +82,13 @@ void ParamFile::getFloat(float& var)
   sscanf(itsLine, "%s %f", itsText, &var);
 }
 
-void ParamFile::getText(char* var)
+std::string ParamFile::getString()
 {
+  // FIXME stdio
   fetchLine();
-  sscanf(itsLine, "%s %s", itsText, var);
-}
-
-void ParamFile::ignoreText()
-{
-  char dummy[STRINGSIZE];
-  getText(dummy);
+  char buf[256];
+  sscanf(itsLine, "%s %s", itsText, buf);
+  return std::string(&buf[0]);
 }
 
 void ParamFile::putInt(int var, const char* name)
@@ -107,9 +106,9 @@ void ParamFile::putFloat(float var, const char* name)
   fprintf(itsFile, "%-19s %.2f\n", name, var);
 }
 
-void ParamFile::putText(const char* var, const char* name)
+void ParamFile::putText(const std::string& str, const char* name)
 {
-  fprintf(itsFile, "%-19s %+s\n", name, var);
+  fprintf(itsFile, "%-19s %+s\n", name, str.c_str());
 }
 
 //----------------------------------------------------------
@@ -121,8 +120,8 @@ void ParamFile::putText(const char* var, const char* name)
 Params::Params(int argc, char** argv) :
   appMode(EYE_TRACKING),
   doMovie(false),
-  filestem(),
-  observer(),
+  filestem(""),
+  observer(""),
   ballRadius(),
   ballSigma2(),
   ballTwistAngle(),
@@ -145,9 +144,6 @@ Params::Params(int argc, char** argv) :
   remindsPerEpoch(),
   fmriSessionNumber(1)
 {
-  this->filestem[0] = '\0';
-  this->observer[0] = '\0';
-
   this->appMode = Params::TRAINING;
 
   bool got_filename = false;
@@ -176,8 +172,8 @@ Params::Params(int argc, char** argv) :
         }
       else if (!got_filename)
         {
-          strncpy(this->filestem, argv[i], STRINGSIZE);
-          strncpy(this->observer, argv[i], STRINGSIZE);
+          this->filestem = argv[i];
+          this->observer = argv[i];
           fprintf(stdout, " filename '%s'\n", argv[i]);
           got_filename = true;
         }
@@ -229,13 +225,13 @@ DOTRACE("Params::readFromFile");
   pmfile.getFloat (ballRadius);
   pmfile.getFloat (ballSigma2);
   pmfile.getFloat (ballTwistAngle);
-  pmfile.getText  (observer);
-  pmfile.getText  (filestem);
+  observer = pmfile.getString();
+  filestem = pmfile.getString();
 
   // this is a placeholder for the application mode, but we ignore the
   // value in the file since the actual application mode is set at
   // startup time
-  pmfile.ignoreText();
+  std::string appmode = pmfile.getString();
 
   pmfile.getInt(fmriSessionNumber);
 

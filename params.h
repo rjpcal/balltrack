@@ -31,21 +31,20 @@ private:
   void fetchLine();
 
 public:
-  ParamFile(const char* filebase, char mode, char extension[]);
+  ParamFile(const std::string& filebase, char mode,
+            const char* extension);
   ~ParamFile();
 
   FILE* fp() { return itsFile; }
 
   void getInt(int& var);
   void getFloat(float& var);
-  void getText(char* var);
-
-  void ignoreText();
+  std::string getString();
 
   void putInt(int var, const char* name);
   void putChar(char var, const char* name);
   void putFloat(float var, const char* name);
-  void putText(const char* var, const char* name);
+  void putText(const std::string& str, const char* name);
 };
 
 class Params
@@ -65,8 +64,8 @@ public:
   enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
   AppMode appMode;
   bool  doMovie;
-  char  filestem[STRINGSIZE];
-  char  observer[STRINGSIZE];
+  std::string filestem;
+  std::string observer;
   float ballRadius;
   float ballSigma2;
   float ballTwistAngle;  // = PI/16.0;
