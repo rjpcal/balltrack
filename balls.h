@@ -12,9 +12,10 @@
 #ifndef BALLS_H_DEFINED
 #define BALLS_H_DEFINED
 
+#include "timing.h"
+
 class Graphics;
 class Params;
-class ResponseData;
 
 struct timeval;
 
@@ -63,7 +64,8 @@ public:
 
   Balls(const Params& params);
 
-  void runTrial(Graphics& gfx, ResponseData& rdata, TrialType ttype);
+  void runTrial(Graphics& gfx, std::vector<Stimulus>& stimuli,
+                TrialType ttype);
 
 private:
   Ball itsBalls[MAX_BALLS];

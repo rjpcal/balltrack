@@ -128,13 +128,6 @@ DOTRACE("ResponseData::initTimeStack");
   itsStimulusTime0 = *tp;
 }
 
-void ResponseData::addToStimulusStack(int correct_nbutton)
-{
-DOTRACE("ResponseData::addToStimulusStack");
-
-  itsStimuli.push_back(Stimulus(Timing::now(), correct_nbutton));
-}
-
 void ResponseData::addToResponseStack(double xtime, int nbutton)
 {
 DOTRACE("ResponseData::addToResponseStack");

@@ -70,9 +70,6 @@ class ResponseData
 public:
   ResponseData();
 
-  // Used in Balls::runTrial
-  void addToStimulusStack(int correct_nbutton);
-
   // Used in BallsExpt::onButton
   void addToResponseStack(double xtime, int nbutton);
 
@@ -84,7 +81,6 @@ public:
 
   double recentPercentCorrect();
 
-private:
   std::vector<Stimulus> itsStimuli;
   std::vector<Response> itsResponses;
 

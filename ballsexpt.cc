@@ -297,7 +297,7 @@ DOTRACE("BallsExpt::runFmriExpt");
           // Run passive trial
           rep->timepoints.push_back(Timing::now());
           rep->ballset.runTrial
-            (rep->gfx, rep->rdata, Balls::PASSIVE);
+            (rep->gfx, rep->rdata.itsStimuli, Balls::PASSIVE);
         }
       else
         {
@@ -306,7 +306,7 @@ DOTRACE("BallsExpt::runFmriExpt");
           // Run active tracking trial with objective check
           rep->timepoints.push_back(Timing::now());
           rep->ballset.runTrial
-            (rep->gfx, rep->rdata, Balls::CHECK_ONE);
+            (rep->gfx, rep->rdata.itsStimuli, Balls::CHECK_ONE);
         }
 
       // If there will be more trials, then do a fixation cross interval
@@ -342,19 +342,19 @@ DOTRACE("BallsExpt::runEyeTrackingExpt");
       runFixationCalibration();
       rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->rdata, Balls::CHECK_ALL);
+        (rep->gfx, rep->rdata.itsStimuli, Balls::CHECK_ALL);
 
       // Run active tracking trial with objective check
       runFixationCalibration();
       rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->rdata, Balls::CHECK_ONE);
+        (rep->gfx, rep->rdata.itsStimuli, Balls::CHECK_ONE);
 
       // Run passive trial
       runFixationCalibration();
       rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->rdata, Balls::PASSIVE);
+        (rep->gfx, rep->rdata.itsStimuli, Balls::PASSIVE);
     }
 }
 
@@ -367,11 +367,11 @@ DOTRACE("BallsExpt::runTrainingExpt");
       // Run active tracking trial
       rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->rdata, Balls::CHECK_ALL);
+        (rep->gfx, rep->rdata.itsStimuli, Balls::CHECK_ALL);
       // Run active tracking trial with objective check
       rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->rdata, Balls::CHECK_ONE);
+        (rep->gfx, rep->rdata.itsStimuli, Balls::CHECK_ONE);
     }
 }
 
