@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 28 12:21:07 2001
-// written: Wed Feb 28 13:05:04 2001
+// written: Wed Feb 28 13:09:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,6 +94,10 @@ char* SimpleMovie::tempFrameBuffer() {
   if (itsTempFrameBuffer == 0)
 	 itsTempFrameBuffer = new char [itsFrameSize];
   return itsTempFrameBuffer;
+}
+
+void SimpleMovie::appendTempBuffer() {
+  appendFrames(1, tempFrameBuffer());
 }
 
 void SimpleMovie::addSillyFrames() {

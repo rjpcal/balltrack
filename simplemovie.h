@@ -30,6 +30,9 @@ public:
 
   char* tempFrameBuffer();
 
+  // Appends the data stored in tempFrameBuffer()
+  void appendTempBuffer();
+
   void addSillyFrames();
 
   int width() const { return itsWidth; }
