@@ -464,21 +464,19 @@ DOTRACE("Params::setGroup1");
 
   pm.redraw(gfx);
 
-  { MenuItem i(this->ballNumber); i.doit(pm, gfx); }
+  std::vector<MenuItem> items;
 
-  { MenuItem i(this->ballTrackNumber); i.doit(pm, gfx); }
+  items.push_back(MenuItem(this->ballNumber));
+  items.push_back(MenuItem(this->ballTrackNumber));
+  items.push_back(MenuItem(this->ballSpeed));
+  items.push_back(MenuItem(this->ballPixmapSize));
+  items.push_back(MenuItem(this->ballMinDistance));
+  items.push_back(MenuItem(this->ballRadius));
+  items.push_back(MenuItem(this->ballSigma2));
+  items.push_back(MenuItem(this->ballTwistAngle));
 
-  { MenuItem i(this->ballSpeed); i.doit(pm, gfx); }
-
-  { MenuItem i(this->ballPixmapSize); i.doit(pm, gfx); }
-
-  { MenuItem i(this->ballMinDistance); i.doit(pm, gfx); }
-
-  { MenuItem i(this->ballRadius); i.doit(pm, gfx); }
-
-  { MenuItem i(this->ballSigma2); i.doit(pm, gfx); }
-
-  { MenuItem i(this->ballTwistAngle); i.doit(pm, gfx); }
+  for (unsigned int i = 0; i < items.size(); ++i)
+    items[i].doit(pm, gfx);
 }
 
 void Params::setGroup2(Graphics& gfx)
