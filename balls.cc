@@ -200,18 +200,16 @@ DOTRACE("Ball::collideIfNeeded");
   if (fabs(ij.x) >= min_dist || fabs(ij.y) >= min_dist)
     return;
 
-  const double d    =  ij.length(); // units pixels
-  const vec a       =  ij / d;
-  const double xo   = -a.y;    // unitless
-  const double yo   =  a.x;    // unitless
+  const vec a       =  ij.unit(); // unitless (unit vector in direction of ij)
+  const vec o       =  a.rot90(); // unitless (unit vector in direction normal to ij)
 
-  const double vai  = this->vel.x*a.x + this->vel.y*a.y; // units pix/sec
-  const double vaj  = other.vel.x*a.x + other.vel.y*a.y; // units pix/sec
+  const double vai  = dot(this->vel, a); // units pix/sec
+  const double vaj  = dot(other.vel, a); // units pix/sec
 
   if (vai - vaj < 0.0)
     {
-      const double voi  = this->vel.x*xo + this->vel.y*yo; // pix/sec
-      const double voj  = other.vel.x*xo + other.vel.y*yo; // pix/sec
+      const double voi  = dot(this->vel, o); // pix/sec
+      const double voj  = dot(other.vel, o); // pix/sec
       /*
         ovi2 = vai*vai + voi*voi;
         ovj2 = vaj*vaj + voj*voj;
@@ -224,11 +222,11 @@ DOTRACE("Ball::collideIfNeeded");
       const double fi   = sqrt(1. + vij2 / nvi2); // unitless
       const double fj   = sqrt(1. - vij2 / nvj2); // unitless
 
-      this->vel.x = fi * (voi * xo + vaj * a.x); // pix/sec
-      this->vel.y = fi * (voi * yo + vaj * a.y); // pix/sec
+      this->vel.x = fi * (voi * o.x + vaj * a.x); // pix/sec
+      this->vel.y = fi * (voi * o.y + vaj * a.y); // pix/sec
 
-      other.vel.x = fj * (voj * xo + vai * a.x); // pix/sec
-      other.vel.y = fj * (voj * yo + vai * a.y); // pix/sec
+      other.vel.x = fj * (voj * o.x + vai * a.x); // pix/sec
+      other.vel.y = fj * (voj * o.y + vai * a.y); // pix/sec
 
       this->next.x = this->pos.x + (lapsed_seconds * this->vel.x);
       this->next.y = this->pos.y + (lapsed_seconds * this->vel.y);

@@ -41,7 +41,22 @@ struct vec
 
   double length() const
   { return sqrt(x*x + y*y); }
+
+  vec rot90() const
+  { return vec( -this->y,
+                 this->x ); }
+
+  vec unit() const
+  {
+    const double d = this->length();
+    return (*this) / d;
+  }
 };
+
+inline double dot(const vec& v1, const vec& v2)
+{ return
+    (v1.x * v2.x) +
+    (v1.y * v2.y); }
 
 class Ball
 {
