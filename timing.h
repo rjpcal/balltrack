@@ -71,14 +71,13 @@ public:
   double recentPercentCorrect();
 
 private:
-  std::vector<Stimulus> stimulus_hist;
-  std::vector<Response> response_hist;
+  std::vector<Stimulus> itsStimuli;
+  std::vector<Response> itsResponses;
 
-  struct timeval ss_0;
-  double response_time_stack_0;
-  struct timeval response_timeval_0;
+  struct timeval itsStimulusTime0;
+  double itsResponseTime0;
 
-  double percent_correct;
+  double itsPercentCorrect;
 };
 
 

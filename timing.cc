@@ -87,12 +87,11 @@ DOTRACE("Timer::wait");
 ///////////////////////////////////////////////////////////////////////
 
 Timing::Timing() :
-  stimulus_hist(),
-  response_hist(),
-  ss_0(),
-  response_time_stack_0(),
-  response_timeval_0(),
-  percent_correct(0.0)
+  itsStimuli(),
+  itsResponses(),
+  itsStimulusTime0(),
+  itsResponseTime0(),
+  itsPercentCorrect(0.0)
 {}
 
 void Timing::getTime(timeval* tp)
@@ -116,28 +115,17 @@ DOTRACE("Timing::elapsedMsec");
 }
 
 
-// std::vector<Stimulus> stimulus_hist;
-// std::vector<Response> response_hist;
-
-// struct timeval ss_0;
-// double response_time_stack_0;
-// struct timeval response_timeval_0;
-
-// double percent_correct = 0.0;
-
 void Timing::initTimeStack(double xtime, timeval* tp)
 {
 DOTRACE("Timing::initTimeStack");
 
-  response_time_stack_0 = xtime;
+  itsResponseTime0 = xtime;
 
-  response_timeval_0 = *tp;
-
-  response_hist.clear();
-  response_hist.push_back(Response(0.0, 0));
-  stimulus_hist.clear();
-  stimulus_hist.push_back(Stimulus(0.0, 0));
-  ss_0 = *tp;
+  itsResponses.clear();
+  itsResponses.push_back(Response(0.0, 0));
+  itsStimuli.clear();
+  itsStimuli.push_back(Stimulus(0.0, 0));
+  itsStimulusTime0 = *tp;
 }
 
 void Timing::addToStimulusStack(int correct_nbutton)
@@ -150,7 +138,7 @@ DOTRACE("Timing::addToStimulusStack");
 
   // (1) Compute the trial onset time relative to the first time
   // (2) Note the correct response value
-  stimulus_hist.push_back(Stimulus(elapsedMsec(&ss_0, &tp),
+  itsStimuli.push_back(Stimulus(elapsedMsec(&itsStimulusTime0, &tp),
                                    correct_nbutton));
 }
 
@@ -158,12 +146,12 @@ void Timing::addToResponseStack(double xtime, int nbutton)
 {
 DOTRACE("Timing::addToResponseStack");
 
-  double delta = xtime - response_time_stack_0;
+  double delta = xtime - itsResponseTime0;
 
   if (delta < 0.0)
     delta = delta + 4294967295.0;
 
-  response_hist.push_back(Response(delta, nbutton));
+  itsResponses.push_back(Response(delta, nbutton));
 }
 
 void Timing::tallyReactionTime(ParamFile& f, float remind_duration)
@@ -175,72 +163,72 @@ DOTRACE("Timing::tallyReactionTime");
 
   // Compute the response time for each stimulus (or indicate a
   // non-response with -1.0)
-  for (unsigned int i = 1;  i < stimulus_hist.size(); ++i)
+  for (unsigned int i = 1;  i < itsStimuli.size(); ++i)
     {
       unsigned int j;
 
       // Find the first response (j'th) that came after the i'th stimulus
-      for (j = 0; j < response_hist.size(); ++j)
+      for (j = 0; j < itsResponses.size(); ++j)
         {
-          if (response_hist[j].time > stimulus_hist[i].time)
+          if (itsResponses[j].time > itsStimuli[i].time)
             break;
         }
 
       // If we found a corresponding response, compute the response time...
-      if (j < response_hist.size())
+      if (j < itsResponses.size())
         {
-          stimulus_hist[i].reaction_time =
-            response_hist[j].time - stimulus_hist[i].time;
-          stimulus_hist[i].reaction_correct =
-            (response_hist[j].val == stimulus_hist[i].correct_val);
+          itsStimuli[i].reaction_time =
+            itsResponses[j].time - itsStimuli[i].time;
+          itsStimuli[i].reaction_correct =
+            (itsResponses[j].val == itsStimuli[i].correct_val);
         }
 
       // But if there was no corresponding response, indicate a
       // non-response with -1.0
       else
         {
-          stimulus_hist[i].reaction_time = -1.0;
-          stimulus_hist[i].reaction_correct = false;
+          itsStimuli[i].reaction_time = -1.0;
+          itsStimuli[i].reaction_correct = false;
         }
 
       // If the reaction time was too large, it doesn't count, so
       // indicate a non-response with -1.0
-      if (stimulus_hist[i].reaction_time > remind_duration*1000)
+      if (itsStimuli[i].reaction_time > remind_duration*1000)
         {
-          stimulus_hist[i].reaction_time = -1.0;
-          stimulus_hist[i].reaction_correct = false;
+          itsStimuli[i].reaction_time = -1.0;
+          itsStimuli[i].reaction_correct = false;
         }
 
       ++total_stims;
-      if (stimulus_hist[i].reaction_correct) ++number_correct;
+      if (itsStimuli[i].reaction_correct) ++number_correct;
   }
 
-  percent_correct = (100.0 * number_correct) / total_stims;
+  itsPercentCorrect = (100.0 * number_correct) / total_stims;
 
   // write reactions to the log file
 
   char buf[512];
 
   f.putLine(" reaction times:");
-  for (unsigned int i = 1; i < stimulus_hist.size(); ++i)
+  for (unsigned int i = 1; i < itsStimuli.size(); ++i)
     {
       snprintf(buf, 512, " %d %.0lf",
-               i, stimulus_hist[i].reaction_time);
+               i, itsStimuli[i].reaction_time);
       f.putLine(buf);
     }
   f.putLine("");
   f.putLine("");
 
   f.putLine(" reaction correct?:");
-  for (unsigned int j = 1; j < stimulus_hist.size(); ++j)
+  for (unsigned int j = 1; j < itsStimuli.size(); ++j)
     {
       snprintf(buf, 512, " %d %d",
-               j, int(stimulus_hist[j].reaction_correct));
+               j, int(itsStimuli[j].reaction_correct));
       f.putLine(buf);
     }
   f.putLine("");
 
-  snprintf(buf, 512, " percent correct: %d", int(percent_correct));
+  snprintf(buf, 512, " percent correct: %d", int(itsPercentCorrect));
   f.putLine(buf);
   f.putLine("");
 }
@@ -248,7 +236,7 @@ DOTRACE("Timing::tallyReactionTime");
 double Timing::recentPercentCorrect()
 {
 DOTRACE("Timing::recentPercentCorrect");
-  return percent_correct;
+  return itsPercentCorrect;
 }
 
 static const char vcid_timing_cc[] = "$Header$";
