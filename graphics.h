@@ -13,6 +13,8 @@
 
 #include "xstuff.h"
 
+#include <string>
+
 #include <GL/gl.h>
 #include <GL/glx.h>
 
@@ -47,7 +49,7 @@ public:
 
   void swapBuffers();
 
-  void drawMessage(char word[]);
+  void drawMessage(const std::string& word);
   void drawCross();
   void drawCross(int x, int y);
 

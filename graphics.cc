@@ -24,6 +24,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <string>
 
 #define LOCAL_PROF
 #include "trace.h"
@@ -31,7 +32,7 @@
 
 namespace
 {
-  void drawGLText(const char* word, int stroke_width,
+  void drawGLText(const std::string& word, int stroke_width,
                   int x_pos, int y_pos,
                   int char_width, int char_height)
   {
@@ -54,7 +55,7 @@ namespace
         glScaled(x_scale, y_scale, 1.0);
 
         glListBase(listbase);
-        glCallLists(strlen(word), GL_BYTE, word);
+        glCallLists(word.length(), GL_BYTE, word.c_str());
       }
       glPopAttrib();
     }
@@ -215,20 +216,15 @@ DOTRACE("Graphics::swapBuffers");
         }
 
       itsMovie->appendTempBuffer();
-
-//     if (f > 90)
-//       exit(1);
     }
 }
 
-void Graphics::drawMessage(char word[])
+void Graphics::drawMessage(const std::string& word)
 {
 DOTRACE("Graphics::drawMessage");
 
-  int nchars = 0;
-
-  char* p = &word[0];
-  while (*p) { ++p; ++nchars; }
+  if (word.length() == 0)
+    return;
 
   int availWidth = int(0.8 * width());
 
@@ -237,8 +233,8 @@ DOTRACE("Graphics::drawMessage");
       availWidth = itsMovie->width();
     }
 
-  int charWidth = availWidth / nchars;
-  int charHeight = int (charWidth * 1.4);
+  const int charWidth = availWidth / word.length();
+  const int charHeight = int (charWidth * 1.4);
 
   drawGLText(word, 4,
              (width()-availWidth)/2, (height()-charHeight)/2,
