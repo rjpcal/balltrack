@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Tue Feb 29 18:17:28 2000
+// written: Tue Feb 29 18:24:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -541,6 +541,7 @@ DOTRACE("Balls::runTrial");
 		  gfx->clearBackBuffer();
 
 		  gfx->drawCross();
+		  drawNHiBalls(gfx, random_ball, random_ball+1, &theirBallmap[0]);
 		  drawNBalls(gfx, BALL_TRACK_NUMBER, BALL_NUMBER, &theirBallmap[0]);
 		  drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, &theirHimap[0]);
 
