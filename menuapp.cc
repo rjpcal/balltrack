@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:06:33 2000
-// written: Tue Feb 29 14:51:07 2000
+// written: Tue Feb 29 16:16:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,13 +14,9 @@
 
 #include "applic.h"
 
-#include <cstring>
-
-#include "balls.h"
 #include "defs.h"
 #include "graphics.h"
 #include "params.h"
-#include "timing.h"
 
 #include "trace.h"
 #include "debug.h"
@@ -53,19 +49,10 @@ DOTRACE("MenuApplication::onExpose");
 void MenuApplication::makeMenu() {
 DOTRACE("MenuApplication::makeMenu");
 
-  int nmenu;
-  char menu[10][STRINGSIZE];
+  const int nmenu = 7;
+  char menu[nmenu][STRINGSIZE];
 
-  strcpy( menu[0], "r     run experiment");
-  strcpy( menu[1], "x     set parameters 1");
-  strcpy( menu[2], "y     set parameters 2");
-  strcpy( menu[3], "p     show parameters");
-  strcpy( menu[4], "q     quit program");
-  strcpy( menu[5], "");
-  sprintf( menu[6], "recent percent correct: %d",
-			  int(Timing::recentPercentCorrect()) );
-
-  nmenu = 7;
+  fillMenu(menu, nmenu);
 
   graphics()->clearFrontBuffer();
 
