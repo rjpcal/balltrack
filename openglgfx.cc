@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Mar  6 17:02:25 2001
+// written: Wed Jun 27 15:18:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,36 +30,36 @@
 
 namespace {
   void drawGLText(const char* word, int stroke_width,
-						int x_pos, int y_pos,
-						int char_width, int char_height,
-						bool rgba) {
+                  int x_pos, int y_pos,
+                  int char_width, int char_height,
+                  bool rgba) {
   DOTRACE("<openglgfx.cc>::drawGLText");
 
-	 unsigned int listbase = GLFont::getStrokeFontListBase();
+    unsigned int listbase = GLFont::getStrokeFontListBase();
 
-	 double x_scale = char_width/5.0;
-	 double y_scale = char_height/6.0;
+    double x_scale = char_width/5.0;
+    double y_scale = char_height/6.0;
 
-	 if (rgba)
-		glColor3d(1.0, 1.0, 1.0);
-	 else
-		glIndexi(1);
+    if (rgba)
+      glColor3d(1.0, 1.0, 1.0);
+    else
+      glIndexi(1);
 
-	 glMatrixMode(GL_MODELVIEW);
-	 glPushMatrix();
-	 {
-		glPushAttrib(GL_LIST_BIT|GL_LINE_BIT);
-		{
-		  glLineWidth(stroke_width);
-		  glTranslated(x_pos, y_pos, 0.0);
-		  glScaled(x_scale, y_scale, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    {
+      glPushAttrib(GL_LIST_BIT|GL_LINE_BIT);
+      {
+        glLineWidth(stroke_width);
+        glTranslated(x_pos, y_pos, 0.0);
+        glScaled(x_scale, y_scale, 1.0);
 
-		  glListBase( listbase );
-		  glCallLists(strlen(word), GL_BYTE, word);
-		}
-		glPopAttrib();
-	 }
-	 glPopMatrix();
+        glListBase( listbase );
+        glCallLists(strlen(word), GL_BYTE, word);
+      }
+      glPopAttrib();
+    }
+    glPopMatrix();
   }
 }
 
@@ -70,7 +70,7 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 OpenglGfx::OpenglGfx(XStuff* xinfo, const XHints& hints,
-							int aWidth, int aHeight) :
+                     int aWidth, int aHeight) :
   Graphics(aWidth, aHeight),
   itsXStuff(xinfo),
   itsGLXContext(0),
@@ -81,19 +81,19 @@ OpenglGfx::OpenglGfx(XStuff* xinfo, const XHints& hints,
 DOTRACE("OpenglGfx::OpenglGfx");
   std::vector<int> attribList;
 
-  if (hints.doubleBuffer()) 
-	 attribList.push_back(GLX_DOUBLEBUFFER);
+  if (hints.doubleBuffer())
+    attribList.push_back(GLX_DOUBLEBUFFER);
 
   if (hints.rgba())
-	 attribList.push_back(GLX_RGBA);
-  
+    attribList.push_back(GLX_RGBA);
+
   attribList.push_back(GLX_BUFFER_SIZE);
   attribList.push_back(hints.depth());
   attribList.push_back(None);
 
   XVisualInfo* vi = glXChooseVisual(itsXStuff->display(),
-												DefaultScreen(itsXStuff->display()),
-												&attribList[0]);
+                                    DefaultScreen(itsXStuff->display()),
+                                    &attribList[0]);
 
   itsXStuff->setPrefVisInfo(vi);
 
@@ -101,16 +101,18 @@ DOTRACE("OpenglGfx::OpenglGfx");
 
   if ( itsGLXContext == 0 )
     {
-		fprintf( stdout,"Couldn't get an OpenGL graphics context.\n" );
-		exit( -1 );
+      fprintf( stdout,"Couldn't get an OpenGL graphics context.\n" );
+      exit( -1 );
     }
 }
 
-OpenglGfx::~OpenglGfx() {
+OpenglGfx::~OpenglGfx()
+{
   delete itsMovie;
 }
 
-void OpenglGfx::initWindow() {
+void OpenglGfx::initWindow()
+{
 DOTRACE("OpenglGfx::initWindow");
 
   glXMakeCurrent(itsXStuff->display(), itsXStuff->window(), itsGLXContext);
@@ -138,91 +140,101 @@ DOTRACE("OpenglGfx::initWindow");
   }
 }
 
-void OpenglGfx::wrapGraphics() {
+void OpenglGfx::wrapGraphics()
+{
 DOTRACE("OpenglGfx::wrapGraphics");
   glXDestroyContext(itsXStuff->display(), itsGLXContext);
 }
 
-bool OpenglGfx::isRgba() {
+bool OpenglGfx::isRgba()
+{
 DOTRACE("OpenglGfx::isRgba");
   GLboolean is_rgba;
   glGetBooleanv(GL_RGBA_MODE, &is_rgba);
   return bool(is_rgba);
 }
 
-bool OpenglGfx::isDoubleBuffered() {
+bool OpenglGfx::isDoubleBuffered()
+{
 DOTRACE("OpenglGfx::isDoubleBuffered");
   GLboolean is_db;
   glGetBooleanv(GL_DOUBLEBUFFER, &is_db);
   return bool(is_db);
 }
 
-void OpenglGfx::writeUpperPlanes() {
+void OpenglGfx::writeUpperPlanes()
+{
 DOTRACE("OpenglGfx::writeUpperPlanes");
   glIndexMask(0xc0);
 }
 
-void OpenglGfx::writeLowerPlanes() {
+void OpenglGfx::writeLowerPlanes()
+{
 DOTRACE("OpenglGfx::writeLowerPlanes");
   glIndexMask(0x3f);
 }
 
-void OpenglGfx::writeAllPlanes() {
+void OpenglGfx::writeAllPlanes()
+{
 DOTRACE("OpenglGfx::writeAllPlanes");
   glIndexMask(0xff);
 }
 
-void OpenglGfx::waitVerticalRetrace() {
+void OpenglGfx::waitVerticalRetrace()
+{
 DOTRACE("OpenglGfx::waitVerticalRetrace");
   /* do nothing */;
 }
 
-void OpenglGfx::swapBuffers() {
+void OpenglGfx::swapBuffers()
+{
 DOTRACE("OpenglGfx::swapBuffers");
   glXSwapBuffers(itsXStuff->display(), itsXStuff->window());
   glXWaitGL();
   glXWaitX();
 
   if (itsMovie && itsIsRecording) {
-	 static int f = 0;
-	 ++f;
+    static int f = 0;
+    ++f;
 
-	 glReadBuffer( GL_FRONT );
-	 glReadPixels( (width()-itsMovie->width()) / 2,
-						(height()-itsMovie->height()) / 2,
-						itsMovie->width(),
-						itsMovie->height(),
-						GL_RGBA,
-						GL_UNSIGNED_BYTE,
-						itsMovie->tempFrameBuffer() );
+    glReadBuffer( GL_FRONT );
+    glReadPixels( (width()-itsMovie->width()) / 2,
+                  (height()-itsMovie->height()) / 2,
+                  itsMovie->width(),
+                  itsMovie->height(),
+                  GL_RGBA,
+                  GL_UNSIGNED_BYTE,
+                  itsMovie->tempFrameBuffer() );
 
-	 unsigned int* buf = (unsigned int*) itsMovie->tempFrameBuffer();
+    unsigned int* buf = (unsigned int*) itsMovie->tempFrameBuffer();
 
-	 for (int i = 0; i < itsMovie->frameSize()/4; ++i)
-		{
-		  unsigned int reformat = 0;
+    for (int i = 0; i < itsMovie->frameSize()/4; ++i)
+      {
+        unsigned int reformat = 0;
 
-		  reformat |= (buf[i] & 0xff000000) >> 24;
-		  reformat |= (buf[i] & 0x00ff0000) >> 8;
-		  reformat |= (buf[i] & 0x0000ff00) << 8;
+        reformat |= (buf[i] & 0xff000000) >> 24;
+        reformat |= (buf[i] & 0x00ff0000) >> 8;
+        reformat |= (buf[i] & 0x0000ff00) << 8;
 
-		  buf[i] = reformat;
-		}
+        buf[i] = reformat;
+      }
 
-	 itsMovie->appendTempBuffer();
+    itsMovie->appendTempBuffer();
 
-//  	 if (f > 90)
-//  		exit(1);
+//     if (f > 90)
+//       exit(1);
   }
 }
 
-void OpenglGfx::waitFrameCount(int number) {
+void OpenglGfx::waitFrameCount(int number)
+{
 DOTRACE("OpenglGfx::waitFrameCount");
   while( number-- )
- 	 swapBuffers();
+    swapBuffers();
 }
 
-void OpenglGfx::drawMessage(char word[]) {
+void OpenglGfx::drawMessage(char word[])
+{
 DOTRACE("OpenglGfx::drawMessage");
 
   writeUpperPlanes();
@@ -234,35 +246,38 @@ DOTRACE("OpenglGfx::drawMessage");
 
   int availWidth = 0.8 * width();
 
-  if (itsMovie && itsIsRecording) {
-	 availWidth = itsMovie->width();
-  }
+  if (itsMovie && itsIsRecording)
+    {
+      availWidth = itsMovie->width();
+    }
 
   int charWidth = availWidth / nchars;
   int charHeight = int (charWidth * 1.4);
 
   drawGLText(word, 4,
-				 (width()-availWidth)/2, (height()-charHeight)/2,
-				 charWidth, charHeight,
-				 isRgba());
+             (width()-availWidth)/2, (height()-charHeight)/2,
+             charWidth, charHeight,
+             isRgba());
 
   writeLowerPlanes();
 }
 
-void OpenglGfx::drawCross() {
+void OpenglGfx::drawCross()
+{
 DOTRACE("OpenglGfx::drawCross");
   drawCross( width()/2, height()/2 );
 }
 
-void OpenglGfx::drawCross(int x, int y) {
+void OpenglGfx::drawCross(int x, int y)
+{
 DOTRACE("OpenglGfx::drawCross");
 
   writeUpperPlanes();
 
   if (isRgba())
-	 glColor3d(1.0, 1.0, 1.0);
+    glColor3d(1.0, 1.0, 1.0);
   else
-	 glIndexi(192);
+    glIndexi(192);
 
   glBegin(GL_LINES);
   glVertex2i(x-50, y);
@@ -274,7 +289,8 @@ DOTRACE("OpenglGfx::drawCross");
   writeLowerPlanes();
 }
 
-void OpenglGfx::clearUpperPlanes() {
+void OpenglGfx::clearUpperPlanes()
+{
 DOTRACE("OpenglGfx::clearUpperPlanes");
 
   writeUpperPlanes();
@@ -284,50 +300,55 @@ DOTRACE("OpenglGfx::clearUpperPlanes");
   writeLowerPlanes();
 }
 
-void OpenglGfx::loadColormap(float colors[][3], int ncolors) {
+void OpenglGfx::loadColormap(float colors[][3], int ncolors)
+{
 DOTRACE("OpenglGfx::loadColormap");
 
   waitVerticalRetrace();
   for (int i = 0; i < ncolors; ++i) {
-	 itsXStuff->storeColor(i, colors[i][0], colors[i][1], colors[i][2]);
+    itsXStuff->storeColor(i, colors[i][0], colors[i][1], colors[i][2]);
   }
 }
 
-void OpenglGfx::clearFrontBuffer() {
+void OpenglGfx::clearFrontBuffer()
+{
 DOTRACE("OpenglGfx::clearFrontBuffer");
 
-  glClear(GL_COLOR_BUFFER_BIT); 
+  glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void OpenglGfx::clearBackBufferRegion(bool use_scissor) {
+void OpenglGfx::clearBackBufferRegion(bool use_scissor)
+{
 DOTRACE("OpenglGfx::clearBackBufferRegion");
 
-  if (false & use_scissor) { 
-	 glEnable(GL_SCISSOR_TEST);
-	 glScissor( (width() - DISPLAY_X)/2, (height() - DISPLAY_Y)/2,
-					DISPLAY_X, DISPLAY_Y );
+  if (false & use_scissor) {
+    glEnable(GL_SCISSOR_TEST);
+    glScissor( (width() - DISPLAY_X)/2, (height() - DISPLAY_Y)/2,
+               DISPLAY_X, DISPLAY_Y );
   }
 
-  glDrawBuffer(GL_BACK); 
+  glDrawBuffer(GL_BACK);
   glClear(GL_COLOR_BUFFER_BIT);
 
   if (use_scissor) {
-	 glDisable(GL_SCISSOR_TEST);
+    glDisable(GL_SCISSOR_TEST);
   }
 }
 
-void OpenglGfx::clearBackBuffer() {
+void OpenglGfx::clearBackBuffer()
+{
 DOTRACE("OpenglGfx::clearBackBuffer");
 
   clearBackBufferRegion(true);
 }
 
-void OpenglGfx::showMenu(char menu[][STRINGSIZE], int nmenu) {
+void OpenglGfx::showMenu(char menu[][STRINGSIZE], int nmenu)
+{
 DOTRACE("OpenglGfx::showMenu");
   clearFrontBuffer();
-	 
+
   glIndexi(1);
-	 
+
   glFlush();
   glXSwapBuffers(itsXStuff->display(), itsXStuff->window());
 
@@ -335,33 +356,35 @@ DOTRACE("OpenglGfx::showMenu");
   int char_height = 25;
 
   for( int i=0; i<nmenu; i++ )
-	 drawGLText(menu[i], 2,
-					100, height() - 200 - i * (char_height*2),
-					char_width, char_height,
-					isRgba());
+    drawGLText(menu[i], 2,
+               100, height() - 200 - i * (char_height*2),
+               char_width, char_height,
+               isRgba());
 }
 
-void OpenglGfx::showParams(char params[][STRINGSIZE], int nparams) {
+void OpenglGfx::showParams(char params[][STRINGSIZE], int nparams)
+{
 DOTRACE("OpenglGfx::showParams");
   int col1 = (nparams < 23) ? nparams : 23;
   int col2 = (nparams < 23) ? 0       : nparams;
 
   for( int i=0; i<col1; i++ )
-	 drawGLText(params[i], 2,
-					width()/2 - 500, height()/2 -  450 + i * 40,
-					10, 15,
-					isRgba());
+    drawGLText(params[i], 2,
+               width()/2 - 500, height()/2 -  450 + i * 40,
+               10, 15,
+               isRgba());
 
   if( col1+1 < col2 ) {
-	 for( int i=col1+1; i<col2; i++ ) 
-		drawGLText(params[i], 2,
-					  width()/2 + 100, height()/2 - 1370 + i * 40,
-					  10, 15,
-					  isRgba());
+    for( int i=col1+1; i<col2; i++ )
+      drawGLText(params[i], 2,
+                 width()/2 + 100, height()/2 - 1370 + i * 40,
+                 10, 15,
+                 isRgba());
   }
 }
 
-void OpenglGfx::moveBlock(int x, int y, int xsz, int ysz, int nx, int ny) {
+void OpenglGfx::moveBlock(int x, int y, int xsz, int ysz, int nx, int ny)
+{
 DOTRACE("OpenglGfx::moveBlock");
   glRasterPos2i(nx, ny);
   glReadBuffer(GL_FRONT);
@@ -369,51 +392,58 @@ DOTRACE("OpenglGfx::moveBlock");
   glCopyPixels(x, y, xsz, ysz, GL_COLOR);
 }
 
-void OpenglGfx::writeBitmap(unsigned char* ptr, int x, int y, int size) {
+void OpenglGfx::writeBitmap(unsigned char* ptr, int x, int y, int size)
+{
 DOTRACE("OpenglGfx::writeBitmap");
   glRasterPos2i(x,y);
- 
+
   glDrawPixels(size, size, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, ptr);
 }
 
-void OpenglGfx::writeTrueColorMap(unsigned char* ptr, int x, int y, int size) {
+void OpenglGfx::writeTrueColorMap(unsigned char* ptr, int x, int y, int size)
+{
 DOTRACE("OpenglGfx::writeTrueColorMap");
   glRasterPos2i(x,y);
- 
+
   glDrawPixels(size, size, GL_RGBA, GL_UNSIGNED_BYTE, ptr);
 }
 
-void OpenglGfx::startRecording() {
+void OpenglGfx::startRecording()
+{
 DOTRACE("OpenglGfx::startRecording");
 
   if (MAKING_MOVIE && (itsMovie == 0))
-	 itsMovie = new SimpleMovie("ballmovie.mov", MV_FORMAT_QT,
-  										 DISPLAY_X, DISPLAY_Y);
+    itsMovie = new SimpleMovie("ballmovie.mov", MV_FORMAT_QT,
+                               DISPLAY_X, DISPLAY_Y);
 
   itsIsRecording = true;
 }
 
-void OpenglGfx::stopRecording() {
+void OpenglGfx::stopRecording()
+{
 DOTRACE("OpenglGfx::stopRecording");
 
   if (itsMovie != 0)
-	 itsMovie->flush();
+    itsMovie->flush();
 
   itsIsRecording = false;
 }
 
-void OpenglGfx::gfxWait(double delaySeconds) {
+void OpenglGfx::gfxWait(double delaySeconds)
+{
 DOTRACE("OpenglGfx::gfxWait");
-  if (itsMovie && itsIsRecording) {
-	 int nframes = delaySeconds * itsMovie->frameRate();
+  if (itsMovie && itsIsRecording)
+    {
+      int nframes = delaySeconds * itsMovie->frameRate();
 
-	 // Repeat frames of whatever was most recently appended
-	 for (int i = 0; i < nframes; ++i)
-		itsMovie->appendTempBuffer();
-  }
-  else {
-	 Graphics::gfxWait(delaySeconds);
-  }
+      // Repeat frames of whatever was most recently appended
+      for (int i = 0; i < nframes; ++i)
+        itsMovie->appendTempBuffer();
+    }
+  else
+    {
+      Graphics::gfxWait(delaySeconds);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -422,7 +452,8 @@ DOTRACE("OpenglGfx::gfxWait");
 //
 ///////////////////////////////////////////////////////////////////////
 
-double OpenglGfx::computeFrameTime() {
+double OpenglGfx::computeFrameTime()
+{
 DOTRACE("OpenglGfx::computeFrameTime");
 
   struct timeval tp[2];
