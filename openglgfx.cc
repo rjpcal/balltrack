@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Thu Mar 30 17:06:57 2000
+// written: Fri Jun 23 17:59:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ DOTRACE("OpenglGfx::drawMessage");
 
   drawGLText(word, 4,
 				 width()/2 - 500, height()/2-100,
-				 200, 250,
+				 140, 250,
 				 isRgba());
 
   writeLowerPlanes();
