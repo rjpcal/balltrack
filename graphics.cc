@@ -139,7 +139,7 @@ DOTRACE("Graphics::initWindow");
   swapBuffers();
 }
 
-void Graphics::gfxWait(double delaySeconds)
+void Graphics::gfxWait(Timer& t, double delaySeconds)
 {
 DOTRACE("Graphics::gfxWait");
   if (itsMovie && isItRecording)
@@ -152,7 +152,7 @@ DOTRACE("Graphics::gfxWait");
     }
   else
     {
-      Timing::mainTimer.wait(delaySeconds);
+      t.wait(delaySeconds);
     }
 }
 

@@ -338,7 +338,7 @@ void Balls::runTrial(Graphics& gfx, Timing& timing,
 {
 DOTRACE("Balls::runTrial");
 
-  Timing::mainTimer.set();
+  timing.mainTimer.set();
 
   Timing::getTime(starttime);
 
@@ -372,10 +372,10 @@ DOTRACE("Balls::runTrial");
                  itsParams.ballRadius, itsParams.ballSigma2,
                  0, 0, 0);
 
-  gfx.gfxWait(itsParams.pauseSeconds);
+  gfx.gfxWait(timing.mainTimer, itsParams.pauseSeconds);
 
   // Show the initial position of the balls
-  Timing::mainTimer.set();
+  timing.mainTimer.set();
 
   gfx.clearFrontBuffer();
   gfx.drawCross();
@@ -391,7 +391,7 @@ DOTRACE("Balls::runTrial");
 
   gfx.swapBuffers();
 
-  gfx.gfxWait(itsParams.remindSeconds);
+  gfx.gfxWait(timing.mainTimer, itsParams.remindSeconds);
 
   if (ttype == Balls::CHECK_ALL ||
       ttype == Balls::CHECK_ONE)
@@ -422,7 +422,7 @@ DOTRACE("Balls::runTrial");
           copyBalls();
         }
 
-      Timing::mainTimer.set();
+      timing.mainTimer.set();
 
       if (ttype == Balls::CHECK_ALL)
         {
@@ -436,7 +436,7 @@ DOTRACE("Balls::runTrial");
 
           timing.addToStimulusStack(LEFTBUTTON);
 
-          gfx.gfxWait(itsParams.remindSeconds);
+          gfx.gfxWait(timing.mainTimer, itsParams.remindSeconds);
         }
       else if (ttype == Balls::CHECK_ONE)
         {
@@ -467,9 +467,9 @@ DOTRACE("Balls::runTrial");
           else
             timing.addToStimulusStack(MIDDLEBUTTON);
 
-          gfx.gfxWait(itsParams.remindSeconds / 2.0);
+          gfx.gfxWait(timing.mainTimer, itsParams.remindSeconds / 2.0);
 
-          Timing::mainTimer.set();
+          timing.mainTimer.set();
 
           // Redraw the balls, but now with the correct balls
           // highlighted in order to cue the next trial
@@ -482,11 +482,11 @@ DOTRACE("Balls::runTrial");
 
           gfx.swapBuffers();
 
-          gfx.gfxWait(itsParams.remindSeconds / 2.0);
+          gfx.gfxWait(timing.mainTimer, itsParams.remindSeconds / 2.0);
       }
       else
         {
-          gfx.gfxWait(itsParams.remindSeconds);
+          gfx.gfxWait(timing.mainTimer, itsParams.remindSeconds);
         }
 
       gfx.clearFrontBuffer();

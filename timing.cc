@@ -86,8 +86,10 @@ DOTRACE("Timer::wait");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Timer Timing::mainTimer;
-Timer Timing::logTimer;
+Timing::Timing() :
+  mainTimer(),
+  logTimer()
+{}
 
 void Timing::getTime(timeval* tp)
 {

@@ -35,13 +35,12 @@ private:
 class Timing
 {
 public:
+  Timing();
+
   // Used in Balls::runTrial
   void addToStimulusStack(int correct_nbutton);
 
   void addToResponseStack(double xtime, int nbutton);
-
-  static Timer mainTimer;
-  static Timer logTimer;
 
   static void getTime(timeval* tp);
   static double elapsedMsec(timeval* tp0, timeval* tp1);
@@ -49,6 +48,10 @@ public:
   void tallyReactionTime(ParamFile& f, float remind_duration);
 
   double recentPercentCorrect();
+
+
+  Timer mainTimer;
+  Timer logTimer;
 };
 
 

@@ -21,6 +21,7 @@
 class XStuff;
 class XHints;
 class SimpleMovie;
+class Timer;
 
 class Graphics
 {
@@ -39,7 +40,7 @@ public:
 
   // This gives a hook to allow movie frames to be recorded during the
   // delay
-  void gfxWait(double delaySeconds);
+  void gfxWait(Timer& t, double delaySeconds);
 
   // Returns the number of milliseconds per graphics frame
   double frameTime();
