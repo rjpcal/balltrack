@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Tue Feb 29 16:22:07 2000
+// written: Mon Jun 12 12:19:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,6 @@
 
 #include "application.h"
 
-#include <cstdlib>				  // for exit
-#include <cstring>
-#include <X11/Xlib.h>
-#include <X11/keysym.h>
-#include <X11/Xutil.h>
-
 #include "defs.h"
 #include "openglgfx.h"
 #include "params.h"
@@ -26,6 +20,13 @@
 #include "timing.h"
 #include "xhints.h"
 #include "xstuff.h"
+
+#include <cstdlib>				  // for exit
+#include <cstring>
+#include <X11/Xlib.h>
+#include <X11/keysym.h>
+#include <X11/Xutil.h>
+#include <iostream.h>
 
 #include "trace.h"
 #include "debug.h"
@@ -157,13 +158,16 @@ DOTRACE("Application::buttonPressLoop");
 
   XEvent event;
 
-  while( XCheckMaskEvent( itsXStuff->display(), ButtonPressMask, &event ) ) {
-
-	 if( event.type == ButtonPress &&
-		  event.xbutton.window == itsXStuff->window() ) {
-		timeButtonEvent( &event );
+  while( XCheckMaskEvent( itsXStuff->display(),
+								  ButtonPressMask | KeyPressMask,
+								  &event ) )
+	 {
+		if( ((event.type == ButtonPress) || (event.type == KeyPress)) &&
+			 event.xbutton.window == itsXStuff->window() )
+		  {
+			 timeButtonEvent( &event );
+		  }
 	 }
-  }
 } 
 
 void Application::keyPressAction( XEvent* event ) {
@@ -200,20 +204,43 @@ DOTRACE("Application::keyPressAction");
 void Application::timeButtonEvent( XEvent* event ) {
 DOTRACE("Application::timeButtonEvent");
 
-  int nbutton;    
+  int nbutton = 0;
 
-  if( event->xbutton.button == Button1 )
-	 nbutton = LEFTBUTTON;
-  else
-    if( event->xbutton.button == Button2 )
-		nbutton = MIDDLEBUTTON;
-    else
-		if( event->xbutton.button == Button3 )
-        nbutton = RIGHTBUTTON;
+  if (event->type == ButtonPress)
+	 {
+		if( event->xbutton.button == Button1 )
+		  nbutton = LEFTBUTTON;
 		else
-        nbutton = 0;
+		  if( event->xbutton.button == Button2 )
+			 nbutton = MIDDLEBUTTON;
+		  else
+			 if( event->xbutton.button == Button3 )
+				nbutton = RIGHTBUTTON;
+			 else
+				nbutton = 0;
 
-  Timing::addToResponseStack( (double) event->xbutton.time, nbutton );
+		Timing::addToResponseStack( (double) event->xbutton.time, nbutton );
+	 }
+  else if (event->type = KeyPress)
+	 {
+		char buf[20];
+
+		int count = XLookupString(&(event->xkey), buf, 20, 0, 0);
+		DebugEvalNL(buf[0]);
+		switch (buf[0]) {
+		case 'a': case 'b': case 'c': case 'd':
+		  nbutton = LEFTBUTTON;
+		  break;
+		case 'e': case 'f': case 'g': case 'h':
+		  nbutton = MIDDLEBUTTON;
+		  break;
+		default:
+		  nbutton = 0;
+		  break;
+		}
+
+		Timing::addToResponseStack( (double) event->xkey.time, nbutton );
+	 }
 }
 
 char Application::getKeystroke() {
