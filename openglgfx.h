@@ -3,7 +3,7 @@
 // openglgfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:03:44 2000
-// written: Thu Mar 30 17:16:03 2000
+// written: Wed Feb 28 12:49:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@ class Application;
 class XStuff;
 
 class XHints;
+
+class SimpleMovie;
 
 class OpenglGfx : public Graphics {
 public:
@@ -70,6 +72,8 @@ private:
   GLXContext itsGLXContext;
 
   int itsClearIndex;
+
+  SimpleMovie* itsMovie;
 };
 
 static const char vcid_openglgfx_h[] = "$Header$";
