@@ -3,7 +3,7 @@
 // timing.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb  1 16:42:55 2000
-// written: Mon Feb 28 16:54:04 2000
+// written: Thu Mar  2 17:41:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,7 +168,9 @@ namespace {
 	 fprintf( f,  " reaction correct?:\n" );
 	 for( int j=1; j<STIMULUSSTACKSIZE; ++j )
 		fprintf( f, " %d %d\n", j, int(reaction_stack[ j ].correct) );
-	 fprintf( f, " \n\n" );
+	 fprintf( f, " \n" );
+
+	 fprintf( f, " percent correct: %d\n\n", int(percent_correct) );
   }
 }
 
@@ -274,10 +276,10 @@ DOTRACE("Timing::tallyReactionTime");
 	if (reaction_stack[i].correct) ++number_correct;
   }
 
+  percent_correct = (100.0 * number_correct) / total_stims;
+
   log_reactions(stdout);
   log_reactions(fl);
-
-  percent_correct = (100.0 * number_correct) / total_stims;
 }
 
 double Timing::recentPercentCorrect() {
