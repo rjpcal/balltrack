@@ -13,16 +13,12 @@
 
 #include "application.h"
 
-#include "graphics.h"
-#include "params.h"
 #include "timing.h"
 #include "xstuff.h"
 
-#include <cstdlib>              // for exit
-#include <cstring>
+#include <cstdlib>              // for srand48()
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-#include <X11/Xutil.h>
 
 #include "trace.h"
 #include "debug.h"
@@ -33,8 +29,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-Application::Application(Graphics& gfx) :
-  itsGraphics(gfx)
+Application::Application(XStuff& x) :
+  itsXStuff(x)
 {
 DOTRACE("Application::Application");
 
@@ -57,13 +53,13 @@ DOTRACE("Application::run");
 
   while (true)
     {
-      XNextEvent(itsGraphics.xstuff().display(), &event);
+      XNextEvent(itsXStuff.display(), &event);
 
       switch (event.type)
         {
         case Expose:
           if (event.xexpose.count == 0)
-            if (event.xexpose.window == itsGraphics.xstuff().window())
+            if (event.xexpose.window == itsXStuff.window())
               onExpose();
           break;
 
@@ -75,7 +71,7 @@ DOTRACE("Application::run");
           break;
 
         case KeyPress:
-          if (event.xkey.window == itsGraphics.xstuff().window())
+          if (event.xkey.window == itsXStuff.window())
             {
               Timing::logTimer.set();
               Timing::mainTimer.set();
@@ -98,7 +94,7 @@ DOTRACE("Application::buttonPressLoop");
 
   XEvent event;
 
-  while (XCheckMaskEvent(itsGraphics.xstuff().display(),
+  while (XCheckMaskEvent(itsXStuff.display(),
                          ButtonPressMask | KeyPressMask,
                          &event))
     {
@@ -194,7 +190,7 @@ char Application::getKeystroke()
 {
 DOTRACE("Application::getKeystroke");
 
-  return itsGraphics.xstuff().getKeypress();
+  return itsXStuff.getKeypress();
 }
 
 static const char vcid_application_cc[] = "$Header$";

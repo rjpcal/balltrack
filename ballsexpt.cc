@@ -46,11 +46,12 @@ namespace
 
 struct BallsExpt::Impl
 {
-  Impl(Params& p) :
+  Impl(Params& p, Graphics& g) :
     timepoints(),
     timepointIdx(0),
     ballset(p),
-    params(p)
+    params(p),
+    gfx(g)
   {}
 
   /// XXX this needs to be at least as big as (cycleNumber+1)*NUM_CONDITIONS
@@ -58,6 +59,7 @@ struct BallsExpt::Impl
   int timepointIdx;
   Balls ballset;
   Params& params;
+  Graphics& gfx;
 
   void logTimePoints(ParamFile& f)
   {
@@ -74,8 +76,8 @@ struct BallsExpt::Impl
 };
 
 BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
-  Application(gfx),
-  rep(new Impl(p))
+  Application(gfx.xstuff()),
+  rep(new Impl(p, gfx))
 {
 DOTRACE("BallsExpt::BallsExpt");
 
@@ -113,19 +115,19 @@ DOTRACE("BallsExpt::onKey");
       break;
 
     case 'x':
-      rep->params.setGroup1(this->graphics());
+      rep->params.setGroup1(rep->gfx);
       break;
 
     case 'y':
-      rep->params.setGroup2(this->graphics());
+      rep->params.setGroup2(rep->gfx);
       break;
 
     case 'z':
-      rep->params.setGroup3(this->graphics());
+      rep->params.setGroup3(rep->gfx);
       break;
 
     case 'p':
-      rep->params.showSettings(this->graphics());
+      rep->params.showSettings(rep->gfx);
       break;
 
     default:
@@ -164,17 +166,17 @@ DOTRACE("BallsExpt::makeMenu");
   menu[7] = "recent percent correct: "
     + makestring(int(Timing::recentPercentCorrect()));
 
-  graphics().drawStrings(menu, nitems, 100, -200, 20);
+  rep->gfx.drawStrings(menu, nitems, 100, -200, 20);
 
-  graphics().swapBuffers();
+  rep->gfx.swapBuffers();
 }
 
 void BallsExpt::runFixationCalibration()
 {
 DOTRACE("BallsExpt::runFixationCalibration");
 
-  int w = graphics().width();
-  int h = graphics().height();
+  int w = rep->gfx.width();
+  int h = rep->gfx.height();
 
   int x[] = { w/2, 50, w/2, w-50,  50, w/2, w-50,   50,  w/2, w-50, w/2 };
   int y[] = { h/2, 50,  50,   50, h/2, h/2,  h/2, h-50, h-50, h-50, h/2 };
@@ -183,11 +185,11 @@ DOTRACE("BallsExpt::runFixationCalibration");
 
   for (int i = 0; i < 11; ++i)
     {
-      graphics().clearFrontBuffer();
-      graphics().drawCross(x[seq[i]], y[seq[i]]);
-      graphics().swapBuffers();
+      rep->gfx.clearFrontBuffer();
+      rep->gfx.drawCross(x[seq[i]], y[seq[i]]);
+      rep->gfx.swapBuffers();
       Timing::mainTimer.set();
-      graphics().gfxWait(1.0);
+      rep->gfx.gfxWait(1.0);
     }
 }
 
@@ -213,18 +215,18 @@ DOTRACE("BallsExpt::runExperiment");
   tmefile.putLine("");
   tmefile.putLine("");
 
-  graphics().clearFrontBuffer();
+  rep->gfx.clearFrontBuffer();
 
   for (int k = 0; k < 2; ++k)
     {
-      graphics().clearBackBuffer();
-      graphics().drawCross();
-      graphics().swapBuffers();
+      rep->gfx.clearBackBuffer();
+      rep->gfx.drawCross();
+      rep->gfx.swapBuffers();
     }
 
   Timing::mainTimer.set();
   Timing::getTime(&rep->timepoints[0]);
-  graphics().gfxWait(rep->params.waitSeconds);
+  rep->gfx.gfxWait(rep->params.waitSeconds);
 
   rep->timepointIdx = 1;
 
@@ -250,7 +252,7 @@ void BallsExpt::runFmriExpt()
 DOTRACE("BallsExpt::runFmriExpt");
 
   if (rep->params.doMovie)
-    graphics().startRecording(rep->params.displayX,
+    rep->gfx.startRecording(rep->params.displayX,
                               rep->params.displayY);
 
   for (int trial = 0; trial < NUM_TRIALS; ++trial)
@@ -267,7 +269,7 @@ DOTRACE("BallsExpt::runFmriExpt");
         {
           // Run passive trial
           rep->ballset.runTrial
-            (graphics(), &rep->timepoints[rep->timepointIdx++],
+            (rep->gfx, &rep->timepoints[rep->timepointIdx++],
              Balls::PASSIVE);
         }
       else
@@ -276,30 +278,30 @@ DOTRACE("BallsExpt::runFmriExpt");
 
           // Run active tracking trial with objective check
           rep->ballset.runTrial
-            (graphics(), &rep->timepoints[rep->timepointIdx++],
+            (rep->gfx, &rep->timepoints[rep->timepointIdx++],
              Balls::CHECK_ONE);
         }
 
       // If there will be more trials, then do a fixation cross interval
       if (trial < (NUM_TRIALS-1))
         {
-          graphics().clearFrontBuffer();
+          rep->gfx.clearFrontBuffer();
 
           for (int k = 0; k < 2; ++k)
             {
-              graphics().clearBackBuffer();
-              graphics().drawCross();
-              graphics().swapBuffers();
+              rep->gfx.clearBackBuffer();
+              rep->gfx.drawCross();
+              rep->gfx.swapBuffers();
             }
 
           Timing::mainTimer.set();
           Timing::getTime(&rep->timepoints[rep->timepointIdx++]);
-          graphics().gfxWait(rep->params.waitSeconds);
+          rep->gfx.gfxWait(rep->params.waitSeconds);
         }
     }
 
   if (rep->params.doMovie)
-    graphics().stopRecording();
+    rep->gfx.stopRecording();
 }
 
 void BallsExpt::runEyeTrackingExpt()
@@ -311,19 +313,19 @@ DOTRACE("BallsExpt::runEyeTrackingExpt");
       // Run active tracking trial
       runFixationCalibration();
       rep->ballset.runTrial
-        (graphics(), &rep->timepoints[rep->timepointIdx++],
+        (rep->gfx, &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ALL);
 
       // Run active tracking trial with objective check
       runFixationCalibration();
       rep->ballset.runTrial
-        (graphics(), &rep->timepoints[rep->timepointIdx++],
+        (rep->gfx, &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ONE);
 
       // Run passive trial
       runFixationCalibration();
       rep->ballset.runTrial
-        (graphics(), &rep->timepoints[rep->timepointIdx++],
+        (rep->gfx, &rep->timepoints[rep->timepointIdx++],
          Balls::PASSIVE);
     }
 }
@@ -336,11 +338,11 @@ DOTRACE("BallsExpt::runTrainingExpt");
     {
       // Run active tracking trial
       rep->ballset.runTrial
-        (graphics(), &rep->timepoints[rep->timepointIdx++],
+        (rep->gfx, &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ALL);
       // Run active tracking trial with objective check
       rep->ballset.runTrial
-        (graphics(), &rep->timepoints[rep->timepointIdx++],
+        (rep->gfx, &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ONE);
     }
 }

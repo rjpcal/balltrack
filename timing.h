@@ -17,6 +17,10 @@
 
 class ParamFile;
 
+#define      LEFTBUTTON            'l'
+#define      RIGHTBUTTON           'r'
+#define      MIDDLEBUTTON          'm'
+
 class Timer
 {
 public:
