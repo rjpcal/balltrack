@@ -3,7 +3,7 @@
 // openglgfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:03:44 2000
-// written: Tue Feb 29 15:29:06 2000
+// written: Tue Feb 29 16:47:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,8 @@ public:
   virtual void initWindow();
 
   virtual void wrapGraphics();
+
+  virtual bool isRgba();
 
   virtual void clearFrontBuffer();
   virtual void clearBackBuffer();

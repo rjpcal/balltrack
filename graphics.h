@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Tue Feb 29 15:20:35 2000
+// written: Tue Feb 29 16:46:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,8 @@ public:
 
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
+
+  virtual bool isRgba() = 0;
 
   virtual void clearFrontBuffer() = 0;
   virtual void clearBackBuffer() = 0;

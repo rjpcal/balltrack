@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Tue Feb 29 16:01:22 2000
+// written: Tue Feb 29 16:51:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,6 +80,11 @@ DOTRACE("StarbaseGfx::wrapGraphics");
   restoreColormap();
 
   gclose( itsFildes );
+}
+
+bool StarbaseGfx::isRgba() {
+DOTRACE("StarbaseGfx::isRgba");
+  return false;
 }
 
 void StarbaseGfx::writeUpperPlanes() {
