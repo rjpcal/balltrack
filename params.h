@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:05:04 2000
-// written: Mon Mar  5 10:07:05 2001
+// written: Tue Mar  6 17:02:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,6 @@ extern float BALL_TWIST_ANGLE;  // = PI/16.0;
 extern char  PROGRAM[];
 extern char  FILENAME[];
 extern char  OBSERVER[];
-extern double FRAMETIME;
 
 #define      NOBUTTON            'n'
 #define      LEFTBUTTON      	   'l'
