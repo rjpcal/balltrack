@@ -391,11 +391,14 @@ namespace
 {
   struct MenuItem
   {
-    MenuItem(const std::string& n, int& v)    : name(n), width(6), dvar(0), ivar(&v)
+    MenuItem(const std::string& n, int& v) :
+      name(n), width(6), dvar(0), ivar(&v), dorig(0.0), iorig(v)
     {
       width = std::max(6u, n.length() + 1);
     }
-    MenuItem(const std::string& n, double& v) : name(n), width(6), dvar(&v), ivar(0)
+
+    MenuItem(const std::string& n, double& v) :
+      name(n), width(6), dvar(&v), ivar(0), dorig(v), iorig(0)
     {
       width = std::max(6u, n.length() + 1);
     }
@@ -405,6 +408,9 @@ namespace
 
     double* dvar;
     int* ivar;
+
+    double dorig;
+    int iorig;
   };
 
   class ParamMenu
@@ -418,79 +424,83 @@ namespace
       items.push_back(MenuItem(n, v));
     }
 
-    void go(Graphics& gfx)
+    void showVmenu(Graphics& gfx, unsigned int nitems)
     {
-      this->setupMenu0();
-      this->menu[1] = "";
-      this->menu[2] = "";
-      this->setupMenu3();
+      std::vector<std::string> vmenu;
 
-      this->redraw(gfx);
+      unsigned int maxwid = 0;
+
+      for (unsigned int i = 0; i < items.size(); ++i)
+        {
+          if (items[i].width > maxwid) maxwid = items[i].width;
+        }
 
       std::ostringstream oss;
 
-      oss.setf(std::ios::left | std::ios::fixed);
+      oss.setf(std::ios::fixed);
       oss.precision(2);
+
+      const char* sep = "  ";
+
+      for (unsigned int i = 0; i < items.size(); ++i)
+        {
+          oss.str("");
+          oss.setf(std::ios::right);
+          oss << std::setw(maxwid) << items[i].name;
+
+          if (items[i].dvar != 0)
+            {
+              oss << sep << std::setw(6) << items[i].dorig;
+            }
+          else if (items[i].ivar != 0)
+            {
+              oss << sep << std::setw(6) << items[i].iorig;
+            }
+
+          if (i < nitems)
+            {
+              if (items[i].dvar != 0)
+                {
+                  oss << sep << std::setw(6) << *items[i].dvar;
+                }
+              else if (items[i].ivar != 0)
+                {
+                  oss << sep << std::setw(6) << *items[i].ivar;
+                }
+            }
+          else if (i == nitems)
+            {
+              oss << sep << std::setw(6) << "???";
+            }
+
+          vmenu.push_back(oss.str());
+        }
+
+      gfx.clearBackBuffer();
+      gfx.drawStrings(&vmenu[0], vmenu.size(), 50, -100, 16, 2);
+      gfx.swapBuffers();
+    }
+
+    void goVert(Graphics& gfx)
+    {
+      showVmenu(gfx, 0);
 
       for (unsigned int i = 0; i < items.size(); ++i)
         {
           if (items[i].dvar != 0)
             {
               gfx.getValueFromKeyboard(*items[i].dvar);
-              oss << " " << std::setw(items[i].width) << *items[i].dvar;
             }
           else if (items[i].ivar != 0)
             {
               gfx.getValueFromKeyboard(*items[i].ivar);
-              oss << " " << std::setw(items[i].width) << *items[i].ivar;
             }
-          menu[1] = oss.str();
-          this->redraw(gfx);
+
+          showVmenu(gfx, i+1);
         }
     }
 
   private:
-
-    void redraw(Graphics& gfx)
-    {
-      gfx.clearBackBuffer();
-      gfx.drawStrings(menu, 4, 100, -200, 16, 2);
-      gfx.swapBuffers();
-    }
-
-    void setupMenu0()
-    {
-      std::ostringstream s;
-      s.setf(std::ios::left | std::ios::fixed);
-      s.precision(2);
-      for (unsigned int i = 0; i < items.size(); ++i)
-        {
-          s << " " << std::setw(items[i].width) << items[i].name;
-        }
-      menu[0] = s.str();
-    }
-
-    void setupMenu3()
-    {
-      std::ostringstream s;
-      s.setf(std::ios::left | std::ios::fixed);
-      s.precision(2);
-      for (unsigned int i = 0; i < items.size(); ++i)
-        {
-          if (items[i].dvar != 0)
-            {
-              s << " " << std::setw(items[i].width) << *items[i].dvar;
-            }
-          else if (items[i].ivar != 0)
-            {
-              s << " " << std::setw(items[i].width) << *items[i].ivar;
-            }
-        }
-      menu[3] = s.str();
-    }
-
-    const char* prefix;
-    std::string menu[4];
     std::vector<MenuItem> items;
   };
 }
@@ -501,16 +511,16 @@ DOTRACE("Params::setGroup1");
 
   ParamMenu pm;
 
-  pm.addItem("BALL#", this->ballNumber);
-  pm.addItem("TRACK#", this->ballTrackNumber);
-  pm.addItem("SPEED", this->ballSpeed);
-  pm.addItem("SIZE", this->ballPixmapSize);
-  pm.addItem("MINDIS", this->ballMinDistance);
-  pm.addItem("RADIUS", this->ballRadius);
-  pm.addItem("SIGMA2", this->ballSigma2);
-  pm.addItem("TWIST", this->ballTwistAngle);
+  pm.addItem("number of balls (total) ", this->ballNumber);
+  pm.addItem("number of balls to track", this->ballTrackNumber);
+  pm.addItem("ball speed (ball widths/second)", this->ballSpeed);
+  pm.addItem("ball pixmap size (#pixels)", this->ballPixmapSize);
+  pm.addItem("minimum distance before collision (#pixels)", this->ballMinDistance);
+  pm.addItem("ball radius (#pixels)", this->ballRadius);
+  pm.addItem("ball sigma^2 (#pixels)", this->ballSigma2);
+  pm.addItem("ball twist angle (radians)", this->ballTwistAngle);
 
-  pm.go(gfx);
+  pm.goVert(gfx);
 }
 
 void Params::setGroup2(Graphics& gfx)
@@ -519,14 +529,14 @@ DOTRACE("Params::setGroup2");
 
   ParamMenu pm;
 
-  pm.addItem("CYCL_NUM", this->cycleNumber);
-  pm.addItem("WAIT_DUR", this->waitSeconds);
-  pm.addItem("EPCH_DUR", this->epochSeconds);
-  pm.addItem("PAUS_DUR", this->pauseSeconds);
-  pm.addItem("RMND_NUM", this->remindsPerEpoch);
-  pm.addItem("RMDN_DUR", this->remindSeconds);
+  pm.addItem("# of cycles", this->cycleNumber);
+  pm.addItem("wait duration (seconds)", this->waitSeconds);
+  pm.addItem("epoch duration (seconds)", this->epochSeconds);
+  pm.addItem("pause duration (seconds)", this->pauseSeconds);
+  pm.addItem("# of reminds per epoch", this->remindsPerEpoch);
+  pm.addItem("remind duration (seconds)", this->remindSeconds);
 
-  pm.go(gfx);
+  pm.goVert(gfx);
 }
 
 void Params::setGroup3(Graphics& gfx)
@@ -535,9 +545,9 @@ DOTRACE("Params::setGroup2");
 
   ParamMenu pm;
 
-  pm.addItem("SESSION_NUMBER", this->fmriSessionNumber);
+  pm.addItem("fMRI session #", this->fmriSessionNumber);
 
-  pm.go(gfx);
+  pm.goVert(gfx);
 }
 
 static const char vcid_params_cc[] = "$Header$";
