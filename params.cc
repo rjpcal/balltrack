@@ -22,6 +22,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -386,6 +387,14 @@ DOTRACE("Params::showSettings");
   gfx.swapBuffers();
 }
 
+namespace
+{
+  struct ParamMenu
+  {
+    std::string menu[4];
+  };
+}
+
 void Params::setGroup1(Graphics& gfx)
 {
 DOTRACE("Params::setGroup1");
@@ -393,68 +402,73 @@ DOTRACE("Params::setGroup1");
   const int bufsize = 256;
   char buf[bufsize];
 
-  std::string menu[4];
+  ParamMenu pm;
 
   gfx.clearBackBuffer();
 
-  menu[0] = " BALL  NUMBER TRACK  SPEED  SIZE   MINDIS RADIUS SIGMA2 TWIST";
-  menu[1] = "";
-  menu[2] = "";
-  snprintf(buf, bufsize, "       %-6d %-6d %-6.1f %-6d %-6d %-6.1f %-6.1f %-6.3f",
+  pm.menu[0] = " BALL  NUMBER TRACK  SPEED  SIZE   MINDIS RADIUS SIGMA2 TWIST";
+  pm.menu[1] = "";
+  pm.menu[2] = "";
+  snprintf(buf, bufsize, "       %-6d %-6d %-6.2f %-6d %-6d %-6.2f %-6.2f %-6.2f",
            this->ballNumber, this->ballTrackNumber, this->ballSpeed,
            this->ballPixmapSize, this->ballMinDistance, this->ballRadius,
            this->ballSigma2, this->ballTwistAngle);
-  menu[3] = buf;
+  pm.menu[3] = buf;
 
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
+  gfx.drawStrings(pm.menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
+  std::ostringstream oss;
+  oss.setf(std::ios::left | std::ios::fixed);
+  oss.precision(2);
+  oss << "      ";
+
   gfx.getIntFromKeyboard(this->ballNumber);
-  snprintf(buf, bufsize, "       %-6d", this->ballNumber);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
+  oss << " " << std::setw(6) << this->ballNumber;
+  pm.menu[1] = oss.str();
+  gfx.drawStrings(pm.menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
   gfx.getIntFromKeyboard(this->ballTrackNumber);
-  snprintf(buf, bufsize, " %-6d", this->ballTrackNumber);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
+  oss << " " << std::setw(6) << this->ballTrackNumber;
+  pm.menu[1] = oss.str();
+  gfx.drawStrings(pm.menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
   gfx.getDoubleFromKeyboard(this->ballSpeed);
-  snprintf(buf, bufsize, " %-6.1f", this->ballSpeed);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
+  oss << " " << std::setw(6) << this->ballSpeed;
+  pm.menu[1] = oss.str();
+  gfx.drawStrings(pm.menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
   gfx.getIntFromKeyboard(this->ballPixmapSize);
-  snprintf(buf, bufsize, " %-6d", this->ballPixmapSize);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
+  oss << " " << std::setw(6) << this->ballPixmapSize;
+  pm.menu[1] = oss.str();
+  gfx.drawStrings(pm.menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
   gfx.getIntFromKeyboard(this->ballMinDistance);
-  snprintf(buf, bufsize, " %-6d", this->ballMinDistance);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
+  oss << " " << std::setw(6) << this->ballMinDistance;
+  pm.menu[1] = oss.str();
+  gfx.drawStrings(pm.menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
   gfx.getDoubleFromKeyboard(this->ballRadius);
-  snprintf(buf, bufsize, " %-6.1f", this->ballRadius);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
+  oss << " " << std::setw(6) << this->ballRadius;
+  pm.menu[1] = oss.str();
+  gfx.drawStrings(pm.menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
   gfx.getDoubleFromKeyboard(this->ballSigma2);
-  snprintf(buf, bufsize, " %-6.1f", this->ballSigma2);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
+  oss << " " << std::setw(6) << this->ballSigma2;
+  pm.menu[1] = oss.str();
+  gfx.drawStrings(pm.menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
   gfx.getDoubleFromKeyboard(this->ballTwistAngle);
-  snprintf(buf, bufsize, " %-6.3f", this->ballTwistAngle);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
+  oss << " " << std::setw(6) << this->ballTwistAngle;
+  pm.menu[1] = oss.str();
+  gfx.drawStrings(pm.menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 }
 
