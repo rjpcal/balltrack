@@ -49,14 +49,14 @@ DOTRACE("Timing::elapsedMsec");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void CountdownTimer::reset()
+void Timepoint::reset()
 {
 DOTRACE("Timer::set");
 
   itsStartTime = Timing::now();
 }
 
-double CountdownTimer::elapsedMsec() const
+double Timepoint::elapsedMsec() const
 {
 DOTRACE("Timer::wait");
 
@@ -65,9 +65,9 @@ DOTRACE("Timer::wait");
   return Timing::elapsedMsec(itsStartTime, tv);
 }
 
-double CountdownTimer::elapsedMsecAndReset()
+double Timepoint::elapsedMsecAndReset()
 {
-DOTRACE("CountdownTimer::elapsedMsecAndReset");
+DOTRACE("Timepoint::elapsedMsecAndReset");
 
   const timeval tv = Timing::now();
 

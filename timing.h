@@ -20,10 +20,10 @@ namespace Timing
   double elapsedMsec(const timeval& tp0, const timeval& tp1);
 }
 
-class CountdownTimer
+class Timepoint
 {
 public:
-  CountdownTimer() { reset(); }
+  Timepoint() { reset(); }
 
   void reset();
 

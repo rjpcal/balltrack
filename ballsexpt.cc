@@ -270,7 +270,7 @@ DOTRACE("BallsExpt::runFixationCalibration");
       rep->gfx.clearBackBuffer();
       rep->gfx.drawCross(x[seq[i]], y[seq[i]]);
       rep->gfx.swapBuffers();
-      CountdownTimer t;
+      Timepoint t;
       rep->gfx.gfxWait(t, 1.0);
     }
 }
@@ -304,7 +304,7 @@ DOTRACE("BallsExpt::runExperiment");
   rep->gfx.drawCross();
   rep->gfx.swapBuffers();
 
-  CountdownTimer timer;
+  Timepoint timer;
 
   rep->timepoints.clear();
 
@@ -391,7 +391,7 @@ DOTRACE("BallsExpt::runFmriExpt");
           rep->gfx.drawCross();
           rep->gfx.swapBuffers();
 
-          CountdownTimer t;
+          Timepoint t;
           rep->timepoints.push_back(Timing::now());
           rep->gfx.gfxWait(t, rep->params.waitSeconds);
         }

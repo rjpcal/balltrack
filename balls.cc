@@ -342,7 +342,7 @@ void Balls::runTrial(Graphics& gfx, std::vector<Stimulus>& stimuli,
 {
 DOTRACE("Balls::runTrial");
 
-  CountdownTimer timer;
+  Timepoint timer;
 
   timer.reset();
 
@@ -402,9 +402,9 @@ DOTRACE("Balls::runTrial");
 
   for (int i=0; i<itsParams.remindsPerEpoch; ++i)
     {
-      CountdownTimer tstart;
+      Timepoint tstart;
 
-      CountdownTimer t0 = tstart;
+      Timepoint t0 = tstart;
 
       // Here's the main loop where the balls are moving randomly
       int nframes = 0;
