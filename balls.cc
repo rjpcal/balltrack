@@ -342,9 +342,7 @@ void Balls::runTrial(Graphics& gfx, std::vector<Stimulus>& stimuli,
 {
 DOTRACE("Balls::runTrial");
 
-  Timepoint timer;
-
-  timer.reset();
+  Timepoint timer = Timepoint::now();
 
   gfx.clearBackBuffer();
 
@@ -402,7 +400,7 @@ DOTRACE("Balls::runTrial");
 
   for (int i=0; i<itsParams.remindsPerEpoch; ++i)
     {
-      Timepoint tstart;
+      const Timepoint tstart = Timepoint::now();
 
       Timepoint t0 = tstart;
 
@@ -447,7 +445,7 @@ DOTRACE("Balls::runTrial");
           gfx.drawCross();
           gfx.swapBuffers();
 
-          stimuli.push_back(Stimulus(Timing::now(), BUTTON1));
+          stimuli.push_back(Stimulus(Timepoint::now(), BUTTON1));
 
           gfx.gfxWait(timer, itsParams.remindSeconds);
         }
@@ -479,9 +477,9 @@ DOTRACE("Balls::runTrial");
           // Note what the correct response should be for the random
           // ball
           if (random_ball < itsParams.ballTrackNumber)
-            stimuli.push_back(Stimulus(Timing::now(), BUTTON1));
+            stimuli.push_back(Stimulus(Timepoint::now(), BUTTON1));
           else
-            stimuli.push_back(Stimulus(Timing::now(), BUTTON2));
+            stimuli.push_back(Stimulus(Timepoint::now(), BUTTON2));
 
           gfx.gfxWait(timer, itsParams.remindSeconds / 2.0);
 

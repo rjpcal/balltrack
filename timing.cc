@@ -23,9 +23,15 @@
 #include "debug.h"
 #include "trace.h"
 
-timeval Timing::now()
+namespace taux
 {
-DOTRACE("Timing::now");
+  timeval now();
+  double elapsedMsec(const timeval& tp0, const timeval& tp1);
+}
+
+timeval taux::now()
+{
+DOTRACE("taux::now");
 
   struct timeval tp;
   struct timezone tzp;
@@ -33,9 +39,9 @@ DOTRACE("Timing::now");
   return tp;
 }
 
-double Timing::elapsedMsec(const timeval& tp0, const timeval& tp1)
+double taux::elapsedMsec(const timeval& tp0, const timeval& tp1)
 {
-DOTRACE("Timing::elapsedMsec");
+DOTRACE("taux::elapsedMsec");
 
   const double sec_lapsed  = double(tp1.tv_sec  - tp0.tv_sec);
   const double msec_lapsed = double(tp1.tv_usec - tp0.tv_usec) / 1000.0;
@@ -53,25 +59,31 @@ void Timepoint::reset()
 {
 DOTRACE("Timer::set");
 
-  itsStartTime = Timing::now();
+  itsStartTime = taux::now();
+}
+
+double Timepoint::elapsedMsecSince(const Timepoint& start) const
+{
+DOTRACE("Timepoint::elapsedMsecSince");
+  return taux::elapsedMsec(start.itsStartTime, this->itsStartTime);
 }
 
 double Timepoint::elapsedMsec() const
 {
 DOTRACE("Timer::wait");
 
-  const timeval tv = Timing::now();
+  const timeval tv = taux::now();
 
-  return Timing::elapsedMsec(itsStartTime, tv);
+  return taux::elapsedMsec(itsStartTime, tv);
 }
 
 double Timepoint::elapsedMsecAndReset()
 {
 DOTRACE("Timepoint::elapsedMsecAndReset");
 
-  const timeval tv = Timing::now();
+  const timeval tv = taux::now();
 
-  const double result = Timing::elapsedMsec(itsStartTime, tv);
+  const double result = taux::elapsedMsec(itsStartTime, tv);
 
   itsStartTime = tv;
 

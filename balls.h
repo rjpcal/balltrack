@@ -50,15 +50,15 @@ private:
 
 struct Stimulus
 {
-  Stimulus(const timeval& now, int v) :
+  Stimulus(const Timepoint& now, int v) :
     time(now),
     correct_val(v)
   {}
-  timeval time;
+  Timepoint time;
   int correct_val;
 
-  double msecFrom(const timeval& time0) const
-  { return Timing::elapsedMsec(time0, this->time); }
+  double msecFrom(const Timepoint& time0) const
+  { return this->time.elapsedMsecSince(time0); }
 };
 
 enum Buttons

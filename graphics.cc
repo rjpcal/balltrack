@@ -145,7 +145,7 @@ DOTRACE("Graphics::~Graphics");
   glXDestroyContext(itsXStuff.display(), itsGLXContext);
 }
 
-void Graphics::gfxWait(Timepoint& t, double delaySeconds)
+void Graphics::gfxWait(const Timepoint& t, double delaySeconds)
 {
 DOTRACE("Graphics::gfxWait");
   while (t.elapsedMsec() < 1000*delaySeconds)

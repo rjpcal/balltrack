@@ -36,7 +36,7 @@ public:
 
   // This gives a hook to allow movie frames to be recorded during the
   // delay
-  void gfxWait(Timepoint& t, double delaySeconds);
+  void gfxWait(const Timepoint& t, double delaySeconds);
 
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }

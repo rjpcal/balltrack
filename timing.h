@@ -14,22 +14,24 @@
 
 #include <sys/time.h>
 
-namespace Timing
-{
-  timeval now();
-  double elapsedMsec(const timeval& tp0, const timeval& tp1);
-}
-
 class Timepoint
 {
-public:
+private:
   Timepoint() { reset(); }
+public:
+//   Timepoint() { reset(); }
+
+  static Timepoint now() { return Timepoint(); }
 
   void reset();
+
+  double elapsedMsecSince(const Timepoint& start) const;
 
   double elapsedMsec() const;
 
   double elapsedMsecAndReset();
+
+  unsigned long tv_sec() const { return itsStartTime.tv_sec; }
 
 private:
   timeval itsStartTime;
