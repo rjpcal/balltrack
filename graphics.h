@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Mon Feb 28 19:04:47 2000
+// written: Tue Feb 29 10:16:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,9 +58,6 @@ public:
 
   // called from <params.c>::ListParams()
   virtual void showParams(char params[][STRINGSIZE], int nparams) = 0;
-
-  // called from showMenu(), showParams(), setMessage()
-  virtual void setText(int wd, int ht) = 0;
 
   // called from BallsExpt:runApplication()
   virtual void setMessage() = 0;
