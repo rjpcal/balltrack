@@ -389,15 +389,15 @@ DOTRACE("Params::showSettings");
 
 namespace
 {
-  struct MenuItem
+  struct ParamInfo
   {
-    MenuItem(const std::string& n, int& v) :
+    ParamInfo(const std::string& n, int& v) :
       name(n), width(6), dvar(0), ivar(&v), dorig(0.0), iorig(v)
     {
       width = std::max(6u, n.length() + 1);
     }
 
-    MenuItem(const std::string& n, double& v) :
+    ParamInfo(const std::string& n, double& v) :
       name(n), width(6), dvar(&v), ivar(0), dorig(v), iorig(0)
     {
       width = std::max(6u, n.length() + 1);
@@ -421,7 +421,7 @@ namespace
     template <class T>
     void addItem(const std::string& n, T& v)
     {
-      items.push_back(MenuItem(n, v));
+      items.push_back(ParamInfo(n, v));
     }
 
     void showVmenu(Graphics& gfx, unsigned int nitems)
@@ -501,7 +501,7 @@ namespace
     }
 
   private:
-    std::vector<MenuItem> items;
+    std::vector<ParamInfo> items;
   };
 }
 
