@@ -66,7 +66,7 @@ namespace
 
 Graphics::Graphics(const char* winname,
                    int w, int h, int depth) :
-  itsGlx(winname, w, h, depth),
+  GlxWindow(winname, w, h, depth),
   isItRecording(false),
   itsFrameCounter(0),
   itsFrameTimer(Timepoint::now())
@@ -114,7 +114,7 @@ double Graphics::swapBuffers()
 {
 DOTRACE("Graphics::swapBuffers");
 
-  itsGlx.swapBuffers();
+  GlxWindow::swapBuffers();
 
   if (isItRecording)
     {

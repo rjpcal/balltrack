@@ -29,8 +29,6 @@ public:
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
 
-  void swapBuffers();
-
   char getKeypress() const;
 
   void getInt(int& i) const;
@@ -42,11 +40,14 @@ public:
 
   bool getButtonPress(double& xtime, int& button_number);
 
+protected:
+  void swapBuffers();
+
 private:
   std::string getWord() const;
 
-  int itsWidth;
-  int itsHeight;
+  const int itsWidth;
+  const int itsHeight;
   GLXContext itsGLXContext;
   Display* itsDisplay;
   Window itsWindow;

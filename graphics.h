@@ -21,7 +21,7 @@
 
 class Timepoint;
 
-class Graphics
+class Graphics : public GlxWindow
 {
 public:
   Graphics(const char* winname,
@@ -29,17 +29,9 @@ public:
 
   ~Graphics();
 
-  GlxWindow& glxwindow() { return itsGlx; }
-
-  void getInt(int& i) const { itsGlx.getInt(i); }
-  void getDouble(double& d) const { itsGlx.getDouble(d); }
-
   // This gives a hook to allow movie frames to be recorded during the
   // delay
   void gfxWait(const Timepoint& t, double delaySeconds);
-
-  int width() const { return itsGlx.width(); }
-  int height() const { return itsGlx.height(); }
 
   void clearBackBuffer();
 
@@ -67,8 +59,6 @@ public:
 
 private:
   void dumpFrames(int count);
-
-  GlxWindow itsGlx;
 
   bool isItRecording;
   int itsFrameCounter;

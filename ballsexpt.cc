@@ -57,7 +57,7 @@ struct BallsExpt::Impl
 
     std::vector<Response> responses;
 
-    while (this->gfx.glxwindow().getButtonPress(xtime, nbutton))
+    while (this->gfx.getButtonPress(xtime, nbutton))
       {
         double delta = xtime - this->respTime0;
 
@@ -174,9 +174,9 @@ DOTRACE("BallsExpt::~BallsExpt");
 void BallsExpt::run()
 {
 DOTRACE("BallsExpt::run");
-  rep->gfx.glxwindow().eventLoop(static_cast<void*>(this),
-                                 &onExpose,
-                                 &onKey);
+  rep->gfx.eventLoop(static_cast<void*>(this),
+                     &onExpose,
+                     &onKey);
 }
 
 void BallsExpt::onExpose(void* cdata)
