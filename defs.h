@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:37:03 2000
-// written: Thu Feb 24 14:48:58 2000
+// written: Tue Mar  6 17:21:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,14 +12,14 @@
 #ifndef DEFS_H_DEFINED
 #define DEFS_H_DEFINED
 
-#define PI       3.1415926535
-#define TWOPI    6.2831853070
-#define SQRT2    1.4142135623
-#define SQRT3    1.7320508075
-#define DEG2RAD  (TWOPI/360.)
-#define RAD2DEG  (360./TWOPI)
-
-#define STRINGSIZE      100
+const double PI       	 = 3.1415926535;
+const double TWOPI    	 = 6.2831853070;
+const double SQRT2    	 = 1.4142135623;
+const double SQRT3    	 = 1.7320508075;
+const double DEG2RAD  	 = (TWOPI/360.);
+const double RAD2DEG  	 = (360./TWOPI);
+  	
+const int STRINGSIZE  	 = 100;
 
 const int BALL_COLOR_MIN = 8;
 const int BALL_COLOR_MAX = 63;
