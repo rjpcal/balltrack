@@ -77,8 +77,6 @@ private:
                   unsigned char* bitmap);
 
 public:
-  static const int MAX_BALLS = 25;
-
   enum TrialType { PASSIVE, CHECK_ALL, CHECK_ONE };
 
   Balls(const Params& params);
@@ -87,8 +85,8 @@ public:
                 TrialType ttype);
 
 private:
-  Ball itsBalls[MAX_BALLS];
   const Params& itsParams;
+  std::vector<Ball> itsBalls;
 };
 
 static const char vcid_balls_h[] = "$Header$";

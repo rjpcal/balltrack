@@ -233,13 +233,16 @@ DOTRACE("Ball::draw");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Balls::Balls(const Params& params) : itsParams(params) {}
-
-const int Balls::MAX_BALLS;
+Balls::Balls(const Params& params) :
+  itsParams(params),
+  itsBalls()
+{}
 
 void Balls::pickInitialPositions(Graphics& gfx)
 {
 DOTRACE("Balls::pickInitialPositions");
+
+  itsBalls.resize(itsParams.ballNumber);
 
   for (int i=0; i < itsParams.ballNumber; ++i)
     {
