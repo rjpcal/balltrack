@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Mon Feb 28 14:08:29 2000
+// written: Mon Feb 28 17:45:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,9 @@ class StarbaseGfx : public Graphics {
 public:
   StarbaseGfx(XStuff* xinfo, int aWidth, int aHeight);
 
-  void wrapGraphics();
+  virtual void makeCurrent();
+
+  virtual void wrapGraphics();
 
   virtual void writeUpperPlanes();
   virtual void writeLowerPlanes();

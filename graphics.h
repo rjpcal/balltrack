@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Mon Feb 28 14:07:22 2000
+// written: Mon Feb 28 17:44:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,8 @@ public:
 
   // Virtual destructor ensures proper destruction of base classes.
   virtual ~Graphics();
+
+  virtual void makeCurrent() = 0;
 
   virtual void wrapGraphics() = 0;
 
