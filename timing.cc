@@ -3,7 +3,7 @@
 // timing.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb  1 16:42:55 2000
-// written: Tue Feb  1 16:43:29 2000
+// written: Wed Feb 23 15:00:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,191 +15,131 @@
 
 #include <cmath>
 
-#include "image.h"
+#include "application.h"
 #include "defs.h"
-#include "main.h"
+#include "image.h"
+#include "params.h"
 
-double FRAMETIME;
+#include "debug.h"
+#include "trace.h"
 
-void CheckFrameTime()
-{
+///////////////////////////////////////////////////////////////////////
+//
+// Timer member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+void Timer::set() {
+DOTRACE("Timer::set");
+  struct timeval  tp;
+  struct timezone tzp;
+
+  gettimeofday( &tp, &tzp );
+
+  itsSec  = tp.tv_sec;
+  itsUsec = tp.tv_usec;
+}
+
+void Timer::wait(double requested_delay) {
+DOTRACE("Timer::wait");
+
+  struct timeval  tp;
+  struct timezone tzp;
+
+  long aim_for_secs  = (long)             floor( requested_delay );
+  long aim_for_usecs = (long)( 1000000. *  fmod( requested_delay, 1.0 ) );
+
+  long sec_stop  = aim_for_secs  + itsSec;
+  long usec_stop = aim_for_usecs + itsUsec;
+
+  while ( usec_stop > 1000000L ) {
+	 sec_stop  += 1L;
+	 usec_stop -= 1000000L;
+  }
+
+  while ( usec_stop < 0L ) {
+	 sec_stop  -= 1L;
+	 usec_stop += 1000000L;
+  }
+
+  do {
+	 gettimeofday( &tp, &tzp );
+  }
+  while( tp.tv_sec < sec_stop );
+
+  do {
+	 gettimeofday( &tp, &tzp );
+  }
+  while( tp.tv_usec < usec_stop );
+
+  itsSec  = tp.tv_sec;
+  itsUsec = tp.tv_usec;
+}
+
+void Timer::logToFile(FILE* fl) const {
+DOTRACE("Timer::logToFile");
+
+  struct timeval  tp;
+  struct timezone tzp;
+
+  gettimeofday( &tp, &tzp );
+
+  long sec_stop    = tp.tv_sec;
+  long usec_stop  = tp.tv_usec;
+
+  double time_elapsed =
+	 sec_stop - itsSec + (usec_stop - itsUsec)/1000000.0;
+
+  fprintf( fl, " %7.4lf\n", time_elapsed );
+  fflush( stdout );
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Timing member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+Timer Timing::mainTimer;
+Timer Timing::logTimer;
+
+void Timing::checkFrameTime(Application* app) {
+DOTRACE("Timing::checkFrameTime");
+
   struct timeval tp[2];
 
-  ClearWindow();
+  ClearWindow(app->fildes());
 
-  FrameCount( 1 );
+  Graphics::waitFrameCount( app->fildes(), 1 );
 
-  GetTime( &tp[0] );
+  Timing::getTime( &tp[0] );
 
-  FrameCount( 99 );
+  Graphics::waitFrameCount( app->fildes(), 99 );
 
-  GetTime( &tp[1] );
+  Timing::getTime( &tp[1] );
 
-  FRAMETIME = DeltaTime( &tp[0], &tp[1] ) / 100.0;
+  FRAMETIME = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
 
   printf( " Video frame time %7.4lf ms\n", FRAMETIME );  
 }
 
 /*************************************************/
 
-double sec_video, usec_video;
+void Timing::getTime( timeval* tp ) {
+DOTRACE("Timing::getTime");
 
-void SetVideoCount()
-{
-  struct timeval  tp;
-  struct timezone tzp;
-
-  gettimeofday( &tp, &tzp );
-
-  sec_video  = tp.tv_sec;
-
-  usec_video = tp.tv_usec;
-}
-
-void CheckVideoCount( int number )
-{
-  struct timeval  tp;
-  struct timezone tzp;
-  double aim_for_time, actual_time;
-  long aim_for_secs, aim_for_usecs;
-  long sec_stop, usec_stop;
-
-  aim_for_time  = number*FRAMETIME/1000.;
-  aim_for_secs  = (long)             floor( aim_for_time );
-  aim_for_usecs = (long)( 1000000. *  fmod( aim_for_time, 1.0 ) );
-
-  sec_stop  = aim_for_secs  + sec_video;
-  usec_stop = aim_for_usecs + usec_video;
-
-  if( usec_stop > 1000000L )
-    {
-		sec_stop  += 1L;
-		usec_stop -= 1000000L;
-    }
-
-  do
-    {
-		gettimeofday( &tp, &tzp );
-    }
-  while( tp.tv_sec < sec_stop );
-
-  do
-    {
-		gettimeofday( &tp, &tzp );
-    }
-  while( tp.tv_usec < usec_stop );
-
-  sec_video  = tp.tv_sec;
-
-  usec_video = tp.tv_usec;
-}
-
-/*************************************************/
-
-double sec_timer1, usec_timer1;
-
-void SetTimer()
-{
-  struct timeval  tp;
-  struct timezone tzp;
-
-  gettimeofday( &tp, &tzp );
-
-  sec_timer1  = tp.tv_sec;
-
-  usec_timer1 = tp.tv_usec;
-}
-
-void CheckTimer( double aim_for_time )
-{
-  struct timeval  tp;
-  struct timezone tzp;
-  long aim_for_secs, aim_for_usecs;
-  long sec_stop, usec_stop;
-
-  aim_for_time  = (double) aim_for_time;
-  aim_for_secs  = (long)             floor( aim_for_time );
-  aim_for_usecs = (long)( 1000000. *  fmod( aim_for_time, 1.0 ) );
-
-  sec_stop  = aim_for_secs  + sec_timer1;
-  usec_stop = aim_for_usecs + usec_timer1;
-
-  if( usec_stop > 1000000L )
-    {
-		sec_stop  += 1L;
-		usec_stop -= 1000000L;
-    }
-
-  do
-    {
-		gettimeofday( &tp, &tzp );
-    }
-  while( tp.tv_sec < sec_stop );
-
-  do
-    {
-		gettimeofday( &tp, &tzp );
-    }
-  while( tp.tv_usec < usec_stop );
-
-  sec_timer1  = tp.tv_sec;
-
-  usec_timer1 = tp.tv_usec;
-}
-
-/*************************************************/
-
-double sec_timer2, usec_timer2;
-
-void SetLogTimer()
-{
-  struct timeval  tp;
-  struct timezone tzp;
-
-  gettimeofday( &tp, &tzp );
-
-  sec_timer2  = tp.tv_sec;
-
-  usec_timer2 = tp.tv_usec;
-}
-
-void CheckLogTimer( FILE* fl )
-{
-  struct timeval  tp;
-  struct timezone tzp;
-  double time_elapsed;
-  long sec_stop, usec_stop;
-
-  gettimeofday( &tp, &tzp );
-
-  sec_stop    = tp.tv_sec;
-
-  usec_stop  = tp.tv_usec;
-
-  time_elapsed = sec_stop - sec_timer2 + (usec_stop - usec_timer2)/1000000.0;
-
-  fprintf( fl, " %7.4lf\n", time_elapsed );
-  fflush( stdout );
-
-}
-
-/*************************************************/
-
-void GetTime( timeval* tp )
-{
   struct timezone tzp;
   gettimeofday( tp, &tzp );
 }
 
-double DeltaTime( timeval* tp0, timeval* tp1 )
-{
-  double sec_lapsed, msec_lapsed, delta;
+double Timing::elapsedMsec( timeval* tp0, timeval* tp1 ) {
+DOTRACE("Timing::elapsedMsec");
 
-  sec_lapsed  = (double)( tp1->tv_sec  - tp0->tv_sec );
+  double sec_lapsed  = (double)( tp1->tv_sec  - tp0->tv_sec );
 
-  msec_lapsed = (double)( tp1->tv_usec - tp0->tv_usec ) / 1000.;
+  double msec_lapsed = (double)( tp1->tv_usec - tp0->tv_usec ) / 1000.;
 
-  delta       = sec_lapsed * 1000. + msec_lapsed;
+  double delta       = sec_lapsed * 1000. + msec_lapsed;
 
   return( delta );
 }
@@ -217,8 +157,9 @@ double stimulusstack[ MAXTIMESTACKSIZE ];
 double reactiontime[ MAXTIMESTACKSIZE ];
 struct timeval ss[ MAXTIMESTACKSIZE ];
 
-void InitTimeStack( double xtime, timeval* tp )
-{
+void Timing::initTimeStack( double xtime, timeval* tp ) {
+DOTRACE("Timing::initTimeStack");
+
   responsestack[0] = xtime;
   ss[0] = *tp;
 
@@ -227,23 +168,25 @@ void InitTimeStack( double xtime, timeval* tp )
 }
 
 
-void AddToResponseStack( double xtime, int nbutton )
-{
+void Timing::addToResponseStack(Application* app, double xtime, int nbutton ) {
+DOTRACE("Timing::addToResponseStack");
+
   responsestack[ RESPONSESTACKSIZE ] = xtime;
   RESPONSESTACKSIZE++;
 
   if( RESPONSESTACKSIZE >= MAXTIMESTACKSIZE )
     {
 		printf( " MAXTIMESTACKSIZE too small\n" );
-		Exit(0);
+		app->quit(0);
     }
 }
 
-void AddToStimulusStack()
-{
+void Timing::addToStimulusStack(Application* app) {
+DOTRACE("Timing::addToStimulusStack");
+
   struct timeval tp;
 
-  GetTime( &tp );
+  Timing::getTime( &tp );
 
   ss[ STIMULUSSTACKSIZE ] = tp;
   STIMULUSSTACKSIZE++;
@@ -251,18 +194,19 @@ void AddToStimulusStack()
   if( STIMULUSSTACKSIZE >= MAXTIMESTACKSIZE )
     {
 		printf( " MAXTIMESTACKSIZE too small\n" );
-		Exit(0);
+		app->quit(0);
     }
 }
 
-void TallyReactionTime( FILE* fl )
-{
+void Timing::tallyReactionTime( FILE* fl ) {
+DOTRACE("Timing::tallyReactionTime");
+
   int i, j;
   double delta;
 
   for( i=0; i<STIMULUSSTACKSIZE; i++ )
     {
-		delta = DeltaTime( &ss[0], &ss[i] );
+		delta = Timing::elapsedMsec( &ss[0], &ss[i] );
 
 		stimulusstack[i] = delta;
 
