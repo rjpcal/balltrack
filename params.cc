@@ -493,7 +493,7 @@ namespace
         }
 
       gfx.clearBackBuffer();
-      gfx.drawText(&vmenu[0], vmenu.size(), 50, -100, 16);
+      gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 14);
       gfx.swapBuffers();
     }
 
