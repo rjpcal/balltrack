@@ -64,7 +64,7 @@ public:
   void addToResponseStack(double xtime, int nbutton);
 
   static timeval getTime();
-  static double elapsedMsec(const timeval* tp0, const timeval* tp1);
+  static double elapsedMsec(const timeval& tp0, const timeval& tp1);
   void initTimeStack(double xtime, timeval* tp);
   void tallyReactionTime(ParamFile& f, float remind_duration);
 

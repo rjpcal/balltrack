@@ -339,7 +339,7 @@ DOTRACE("Graphics::computeFrameTime");
 
   tp[1] = Timing::getTime();
 
-  double frametime = Timing::elapsedMsec(&tp[0], &tp[1]) / 100.0;
+  double frametime = Timing::elapsedMsec(tp[0], tp[1]) / 100.0;
 
   return frametime;
 }

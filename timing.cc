@@ -104,16 +104,14 @@ DOTRACE("Timing::getTime");
   return tp;
 }
 
-double Timing::elapsedMsec(const timeval* tp0, const timeval* tp1)
+double Timing::elapsedMsec(const timeval& tp0, const timeval& tp1)
 {
 DOTRACE("Timing::elapsedMsec");
 
-  const double sec_lapsed  = double(tp1->tv_sec  - tp0->tv_sec);
-  const double msec_lapsed = double(tp1->tv_usec - tp0->tv_usec) / 1000.0;
+  const double sec_lapsed  = double(tp1.tv_sec  - tp0.tv_sec);
+  const double msec_lapsed = double(tp1.tv_usec - tp0.tv_usec) / 1000.0;
 
-  const double delta       = sec_lapsed * 1000. + msec_lapsed;
-
-  return delta;
+  return sec_lapsed * 1000. + msec_lapsed;
 }
 
 
@@ -138,7 +136,7 @@ DOTRACE("Timing::addToStimulusStack");
 
   // (1) Compute the trial onset time relative to the first time
   // (2) Note the correct response value
-  itsStimuli.push_back(Stimulus(elapsedMsec(&itsStimulusTime0, &tp),
+  itsStimuli.push_back(Stimulus(elapsedMsec(itsStimulusTime0, tp),
                                    correct_nbutton));
 }
 

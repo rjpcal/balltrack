@@ -69,7 +69,7 @@ struct BallsExpt::Impl
       {
         char buf[512];
         snprintf(buf, 512, " %d %lf", i,
-                 Timing::elapsedMsec(&timepoints[0], &timepoints[i]));
+                 Timing::elapsedMsec(timepoints[0], timepoints[i]));
 
         printf("%s\n", buf);
         f.putLine(buf);
