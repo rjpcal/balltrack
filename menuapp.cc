@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:06:33 2000
-// written: Tue Feb  1 16:41:53 2000
+// written: Tue Feb 22 17:18:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,17 +26,17 @@
 
 char  PROGRAM[STRINGSIZE];
 
-void WhoAreYou( int argc, char** argv )
+void WhoAreYou( Application* app )
 {
-  if( argc < 2 )
+  if( app->argc() < 2 )
     {
 		printf( " Who are you?\n" );
-		Exit(0);
+		app->quit(0);
     }
 
-  strcpy( PROGRAM,  argv[0] );
-  strcpy( OBSERVER, argv[1] );
-  strcpy( FILENAME, argv[1] );
+  strcpy( PROGRAM,  app->argv(0) );
+  strcpy( OBSERVER, app->argv(1) );
+  strcpy( FILENAME, app->argv(1) );
 }
 
 void InitApplication()
