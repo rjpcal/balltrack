@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// xstuff.cc
+// glxwindow.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:55 2000
 // written: Wed Sep  3 16:23:15 2003
@@ -11,7 +11,7 @@
 #ifndef XSTUFF_CC_DEFINED
 #define XSTUFF_CC_DEFINED
 
-#include "xstuff.h"
+#include "glxwindow.h"
 
 #include <cstring>              // for strncpy
 #include <cstdlib>              // for getenv
@@ -43,7 +43,7 @@ namespace
 
   char extractKey(XEvent* event)
   {
-    DOTRACE("<xstuff.cc>::extractKey");
+    DOTRACE("<glxwindow.cc>::extractKey");
 
     char buffer[10];
     KeySym keysym;
@@ -70,17 +70,17 @@ namespace
 
 ///////////////////////////////////////////////////////////////////////
 //
-// XStuff member definitions
+// GlxWindow member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-XStuff::XStuff(int width, int height) :
+GlxWindow::GlxWindow(int width, int height) :
   itsWidth(width),
   itsHeight(height),
   itsDisplay(0),
   itsWindow(0)
 {
-DOTRACE("XStuff::XStuff");
+DOTRACE("GlxWindow::GlxWindow");
 
   itsDisplay = XOpenDisplay(0);
 
@@ -96,16 +96,17 @@ DOTRACE("XStuff::XStuff");
 
 }
 
-XStuff::~XStuff()
+GlxWindow::~GlxWindow()
 {
-DOTRACE("XStuff::~XStuff");
+DOTRACE("GlxWindow::~GlxWindow");
   XDestroyWindow(itsDisplay, itsWindow);
   XCloseDisplay(itsDisplay);
 }
 
-void XStuff::openWindow(const char* winname, const XVisualInfo* vinfo)
+void GlxWindow::openWindow(const char* winname,
+                           const XVisualInfo* vinfo)
 {
-DOTRACE("XStuff::openWindow");
+DOTRACE("GlxWindow::openWindow");
 
   if (vinfo == 0)
     {
@@ -149,9 +150,9 @@ DOTRACE("XStuff::openWindow");
   XMapWindow(itsDisplay, itsWindow);
 }
 
-char XStuff::getKeypress() const
+char GlxWindow::getKeypress() const
 {
-DOTRACE("XStuff::getKeypress");
+DOTRACE("GlxWindow::getKeypress");
 
   while (true)
     {
@@ -168,29 +169,29 @@ DOTRACE("XStuff::getKeypress");
     }
 }
 
-void XStuff::getInt(int& i) const
+void GlxWindow::getInt(int& i) const
 {
-DOTRACE("XStuff::getInt");
+DOTRACE("GlxWindow::getInt");
 
   const std::string buf = this->getWord();
 
   sscanf(&buf[0], "%d", &i);
 }
 
-void XStuff::getDouble(double& d) const
+void GlxWindow::getDouble(double& d) const
 {
-DOTRACE("XStuff::getDouble");
+DOTRACE("GlxWindow::getDouble");
 
   const std::string buf = this->getWord();
 
   sscanf(&buf[0], "%lf", &d);
 }
 
-void XStuff::eventLoop(void* cdata,
-                       ExposeFunc* onExpose,
-                       KeyFunc* onKey)
+void GlxWindow::eventLoop(void* cdata,
+                          ExposeFunc* onExpose,
+                          KeyFunc* onKey)
 {
-DOTRACE("XStuff::eventLoop");
+DOTRACE("GlxWindow::eventLoop");
 
   XEvent event;
 
@@ -229,9 +230,9 @@ DOTRACE("XStuff::eventLoop");
     }
 }
 
-std::string XStuff::getWord() const
+std::string GlxWindow::getWord() const
 {
-DOTRACE("XStuff::getWord");
+DOTRACE("GlxWindow::getWord");
 
   char c;
 
@@ -245,9 +246,9 @@ DOTRACE("XStuff::getWord");
   return result;
 }
 
-bool XStuff::getButtonPress(double& xtime, int& button_number)
+bool GlxWindow::getButtonPress(double& xtime, int& button_number)
 {
-DOTRACE("XStuff::getButtonPress");
+DOTRACE("GlxWindow::getButtonPress");
 
   XEvent event;
 
@@ -275,5 +276,5 @@ DOTRACE("XStuff::getButtonPress");
   return false;
 }
 
-static const char vcid_xstuff_cc[] = "$Header$";
+static const char vcid_glxwindow_cc[] = "$Header$";
 #endif // !XSTUFF_CC_DEFINED

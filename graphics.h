@@ -11,15 +11,14 @@
 #ifndef GRAPHICS_H_DEFINED
 #define GRAPHICS_H_DEFINED
 
+#include "glxwindow.h"
 #include "timepoint.h"
-#include "xstuff.h"
 
 #include <string>
 
 #include <GL/gl.h>
 #include <GL/glx.h>
 
-class XStuff;
 class Timepoint;
 
 class Graphics
@@ -30,17 +29,17 @@ public:
 
   ~Graphics();
 
-  XStuff& xstuff() { return itsXStuff; }
+  GlxWindow& glxwindow() { return itsGlx; }
 
-  void getInt(int& i) const { itsXStuff.getInt(i); }
-  void getDouble(double& d) const { itsXStuff.getDouble(d); }
+  void getInt(int& i) const { itsGlx.getInt(i); }
+  void getDouble(double& d) const { itsGlx.getDouble(d); }
 
   // This gives a hook to allow movie frames to be recorded during the
   // delay
   void gfxWait(const Timepoint& t, double delaySeconds);
 
-  int width() const { return itsXStuff.width(); }
-  int height() const { return itsXStuff.height(); }
+  int width() const { return itsGlx.width(); }
+  int height() const { return itsGlx.height(); }
 
   void clearBackBuffer();
 
@@ -69,7 +68,7 @@ public:
 private:
   void dumpFrames(int count);
 
-  XStuff itsXStuff;
+  GlxWindow itsGlx;
   GLXContext itsGLXContext;
 
   bool itsUsingVsync;

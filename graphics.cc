@@ -14,9 +14,9 @@
 #include "graphics.h"
 
 #include "glfont.h"
+#include "glxwindow.h"
 #include "timepoint.h"
 #include "trace.h"
-#include "xstuff.h"
 
 #include <GL/glu.h>
 
@@ -67,7 +67,7 @@ namespace
 
 Graphics::Graphics(const char* winname,
                    int w, int h, int depth) :
-  itsXStuff(w, h),
+  itsGlx(w, h),
   itsGLXContext(0),
   itsUsingVsync(false),
   isItRecording(false),
@@ -85,11 +85,11 @@ DOTRACE("Graphics::Graphics");
       None
     };
 
-  XVisualInfo* vi = glXChooseVisual(itsXStuff.display(),
-                                    DefaultScreen(itsXStuff.display()),
+  XVisualInfo* vi = glXChooseVisual(itsGlx.display(),
+                                    DefaultScreen(itsGlx.display()),
                                     &attribList[0]);
 
-  itsGLXContext = glXCreateContext(itsXStuff.display(), vi, 0, GL_TRUE);
+  itsGLXContext = glXCreateContext(itsGlx.display(), vi, 0, GL_TRUE);
 
   if (itsGLXContext == 0)
     {
@@ -100,11 +100,11 @@ DOTRACE("Graphics::Graphics");
   glPixelStorei(GL_PACK_ALIGNMENT, 4);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-  itsXStuff.openWindow(winname, vi);
+  itsGlx.openWindow(winname, vi);
 
   XFree(vi);
 
-  glXMakeCurrent(itsXStuff.display(), itsXStuff.window(),
+  glXMakeCurrent(itsGlx.display(), itsGlx.window(),
                  itsGLXContext);
 
   glViewport(0, 0, width(), height());
@@ -114,8 +114,8 @@ DOTRACE("Graphics::Graphics");
   glOrtho(0, width(), 0, height(), -1.0, 1.0);
 
   const std::string extensions =
-    glXQueryExtensionsString(itsXStuff.display(),
-                             DefaultScreen(itsXStuff.display()));
+    glXQueryExtensionsString(itsGlx.display(),
+                             DefaultScreen(itsGlx.display()));
 
   std::istringstream s(extensions);
 
@@ -143,7 +143,7 @@ DOTRACE("Graphics::Graphics");
 Graphics::~Graphics()
 {
 DOTRACE("Graphics::~Graphics");
-  glXDestroyContext(itsXStuff.display(), itsGLXContext);
+  glXDestroyContext(itsGlx.display(), itsGLXContext);
 }
 
 void Graphics::gfxWait(const Timepoint& t, double delaySeconds)
@@ -186,7 +186,7 @@ DOTRACE("Graphics::swapBuffers");
   if (itsUsingVsync)
     glXGetVideoSyncSGI(&counter);
 
-  glXSwapBuffers(itsXStuff.display(), itsXStuff.window());
+  glXSwapBuffers(itsGlx.display(), itsGlx.window());
 
   if (itsUsingVsync)
     glXWaitVideoSyncSGI(counter + 1, 0, &counter);

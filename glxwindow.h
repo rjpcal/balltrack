@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// xstuff.h
+// glxwindow.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:27 2000
 // written: Wed Sep  3 16:12:22 2003
@@ -19,11 +19,11 @@
 typedef void ExposeFunc(void*);
 typedef bool KeyFunc(void*, double xtime, char c);
 
-struct XStuff
+class GlxWindow
 {
 public:
-  XStuff(int width, int height);
-  ~XStuff();
+  GlxWindow(int width, int height);
+  ~GlxWindow();
 
   void openWindow(const char* winname, const XVisualInfo* vinfo);
 
@@ -53,5 +53,5 @@ private:
   Window itsWindow;
 };
 
-static const char vcid_xstuff_h[] = "$Header$";
+static const char vcid_glxwindow_h[] = "$Header$";
 #endif // !XSTUFF_H_DEFINED
