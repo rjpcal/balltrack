@@ -13,6 +13,7 @@
 
 #include "ballsexpt.h"
 
+#include "application.h"
 #include "balls.h"
 #include "graphics.h"
 #include "params.h"
@@ -46,7 +47,8 @@ namespace
 
 struct BallsExpt::Impl
 {
-  Impl(Params& p, Graphics& g) :
+  Impl(Params& p, Graphics& g, void* cdata) :
+    appl(g, cdata, &BallsExpt::onExpose, &BallsExpt::onKey),
     timepoints(),
     timepointIdx(0),
     ballset(p),
@@ -55,6 +57,7 @@ struct BallsExpt::Impl
   {}
 
   /// XXX this needs to be at least as big as (cycleNumber+1)*NUM_CONDITIONS
+  Application appl;
   timeval timepoints[128];
   int timepointIdx;
   Balls ballset;
@@ -76,8 +79,7 @@ struct BallsExpt::Impl
 };
 
 BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
-  Application(gfx, static_cast<void*>(this), &onExpose, &onKey),
-  rep(new Impl(p, gfx))
+  rep(new Impl(p, gfx, static_cast<void*>(this)))
 {
 DOTRACE("BallsExpt::BallsExpt");
 
@@ -91,6 +93,12 @@ DOTRACE("BallsExpt::~BallsExpt");
   rep->params.writeToFile("sta");
 
   delete rep;
+}
+
+void BallsExpt::run()
+{
+DOTRACE("BallsExpt::run");
+  rep->appl.run();
 }
 
 void BallsExpt::onExpose(void* cdata)
@@ -243,7 +251,7 @@ DOTRACE("BallsExpt::runExperiment");
 
   rep->logTimePoints(tmefile);
 
-  buttonPressLoop();
+  rep->appl.buttonPressLoop();
 
   Timing::tallyReactionTime(tmefile,
                             rep->params.remindSeconds);

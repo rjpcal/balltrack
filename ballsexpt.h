@@ -11,16 +11,16 @@
 #ifndef BALLSEXPT_H_DEFINED
 #define BALLSEXPT_H_DEFINED
 
-#include "application.h"
-
 class Graphics;
 class Params;
 
-class BallsExpt : public Application
+class BallsExpt
 {
 public:
   BallsExpt(Graphics& gfx, Params& p);
   virtual ~BallsExpt();
+
+  void run();
 
 protected:
   static void onExpose(void* cdata);

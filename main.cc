@@ -24,9 +24,9 @@ int main(int argc, char** argv)
                1024, // window height
                24);  // window bit depth
 
-  BallsExpt theApp(gfx, p);
+  BallsExpt expt(gfx, p);
 
-  theApp.run();
+  expt.run();
 
   return 0;
 }
