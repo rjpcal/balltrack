@@ -264,15 +264,6 @@ DOTRACE("Ball::twist");
     }
 }
 
-void Ball::move(Graphics& gfx)
-{
-DOTRACE("Ball::move");
-
-  gfx.moveBlock(itsXpos, itsYpos,
-                BALL_ARRAY_SIZE, BALL_ARRAY_SIZE,
-                itsNx, itsNy);
-}
-
 void Ball::copy()
 {
 DOTRACE("Ball::copy");

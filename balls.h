@@ -25,7 +25,6 @@ public:
   void nextPosition(int width, int height);
   void collideIfNeeded(Ball& other);
   void twist();
-  void move(Graphics& gfx);
   void copy();
   void draw(Graphics& gfx, unsigned char* bitmap);
 

@@ -319,15 +319,6 @@ DOTRACE("Graphics::writeTrueColorMap");
 
 }
 
-void Graphics::moveBlock(int x, int y, int xsz, int ysz, int nx, int ny)
-{
-DOTRACE("Graphics::moveBlock");
-  glRasterPos2i(nx, ny);
-  glReadBuffer(GL_FRONT);
-  glDrawBuffer(GL_BACK);
-  glCopyPixels(x, y, xsz, ysz, GL_COLOR);
-}
-
 void Graphics::startRecording()
 {
 DOTRACE("Graphics::startRecording");

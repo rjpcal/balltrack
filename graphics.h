@@ -58,7 +58,6 @@ public:
   void showParams(char params[][STRINGSIZE], int nparams);
 
   void writeTrueColorMap(unsigned char* ptr, int x, int y, int size);
-  void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
 
   // To control starting, stopping of movie recording
   void startRecording();
