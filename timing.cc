@@ -18,6 +18,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
 
 #include "debug.h"
 #include "trace.h"
@@ -184,6 +185,32 @@ namespace
 
     fprintf(f, " percent correct: %d\n\n", int(percent_correct));
   }
+
+  void log_reactions(ParamFile& f)
+  {
+    char buf[512];
+
+    f.putLine(" reaction times:");
+    for (int i=1; i<STIMULUSSTACKSIZE; ++i)
+      {
+        snprintf(buf, 512, " %d %.0lf", i, reaction_stack[i].time);
+        f.putLine(buf);
+      }
+    f.putLine("");
+    f.putLine("");
+
+    f.putLine(" reaction correct?:");
+    for (int j=1; j<STIMULUSSTACKSIZE; ++j)
+      {
+        snprintf(buf, 512, " %d %d", j, int(reaction_stack[j].correct));
+        f.putLine(buf);
+      }
+    f.putLine("");
+
+    snprintf(buf, 512, " percent correct: %d", int(percent_correct));
+    f.putLine(buf);
+    f.putLine("");
+  }
 }
 
 void Timing::initTimeStack(double xtime, timeval* tp)
@@ -273,7 +300,7 @@ DOTRACE("Timing::addToStimulusStack");
     }
 }
 
-void Timing::tallyReactionTime(FILE* fl, float remind_duration)
+void Timing::tallyReactionTime(ParamFile& f, float remind_duration)
 {
 DOTRACE("Timing::tallyReactionTime");
 
@@ -325,7 +352,7 @@ DOTRACE("Timing::tallyReactionTime");
   percent_correct = (100.0 * number_correct) / total_stims;
 
   log_reactions(stdout);
-  log_reactions(fl);
+  log_reactions(f);
 }
 
 double Timing::recentPercentCorrect()

@@ -82,6 +82,17 @@ std::string ParamFile::getString()
   return std::string(&buf[0]);
 }
 
+bool ParamFile::getLine(std::string& str)
+{
+  char buf[512];
+  if (fgets(buf, 512, itsFile) != NULL)
+    {
+      str = &buf[0];
+      return true;
+    }
+  return false;
+}
+
 void ParamFile::putInt(int var, const char* name)
 {
   fprintf(itsFile, "%-19s %d\n", name, var);
@@ -100,6 +111,11 @@ void ParamFile::putFloat(float var, const char* name)
 void ParamFile::putString(const std::string& str, const char* name)
 {
   fprintf(itsFile, "%-19s %+s\n", name, str.c_str());
+}
+
+void ParamFile::putLine(const char* str)
+{
+  fprintf(itsFile, "%s\n", str);
 }
 
 //----------------------------------------------------------
@@ -276,17 +292,14 @@ DOTRACE("Params::showSettings");
 
   writeToFile("sta");
 
-  const int bufsize = 256;
-  char buf[bufsize];
-
   std::vector<std::string> params;
 
-  // FIXME iostreams;
   ParamFile pmfile(filestem, 'r', "sta");
 
-  while (fgets(buf, bufsize, pmfile.fp()) !=  NULL)
+  std::string buf;
+  while (pmfile.getLine(buf))
     {
-      params.push_back(std::string(&buf[0]));
+      params.push_back(buf);
     }
 
   gfx.clearFrontBuffer();

@@ -31,16 +31,18 @@ public:
             const char* extension);
   ~ParamFile();
 
-  FILE* fp() { return itsFile; }
-
   void getInt(int& var);
   void getFloat(float& var);
   std::string getString();
+
+  bool getLine(std::string& str);
 
   void putInt(int var, const char* name);
   void putChar(char var, const char* name);
   void putFloat(float var, const char* name);
   void putString(const std::string& str, const char* name);
+
+  void putLine(const char* str);
 };
 
 class Params

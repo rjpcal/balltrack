@@ -59,14 +59,16 @@ struct BallsExpt::Impl
   Balls ballset;
   Params& params;
 
-  void logTimePoints(FILE* fp)
+  void logTimePoints(ParamFile& f)
   {
     for (int i = 0; i < timepointIdx; ++i)
       {
-        printf(" %d %lf\n", i,
-               Timing::elapsedMsec(&timepoints[0], &timepoints[i]));
-        fprintf(fp, " %d %lf\n", i,
-                Timing::elapsedMsec(&timepoints[0], &timepoints[i]));
+        char buf[512];
+        snprintf(buf, 512, " %d %lf", i,
+                 Timing::elapsedMsec(&timepoints[0], &timepoints[i]));
+
+        printf("%s\n", buf);
+        f.putLine(buf);
       }
   }
 };
@@ -199,11 +201,17 @@ DOTRACE("BallsExpt::runExperiment");
 
   time_t t = time(0);
   char* p = ctime(&t);
-  fprintf(tmefile.fp(), "\n\n%s\n\n", p);
+
+  tmefile.putLine("");
+  tmefile.putLine("");
+  tmefile.putLine(p);
+  tmefile.putLine("");
+  tmefile.putLine("");
 
   rep->params.appendToFile(tmefile);
 
-  fprintf(tmefile.fp(), "\n\n");
+  tmefile.putLine("");
+  tmefile.putLine("");
 
   graphics().clearFrontBuffer();
 
@@ -229,11 +237,11 @@ DOTRACE("BallsExpt::runExperiment");
 
   Timing::getTime(&rep->timepoints[rep->timepointIdx++]);
 
-  rep->logTimePoints(tmefile.fp());
+  rep->logTimePoints(tmefile);
 
   buttonPressLoop();
 
-  Timing::tallyReactionTime(tmefile.fp(),
+  Timing::tallyReactionTime(tmefile,
                             rep->params.remindSeconds);
 }
 
