@@ -3,7 +3,7 @@
 // main.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 12:27:11 2000
-// written: Tue Feb 22 20:40:40 2000
+// written: Wed Feb 23 11:08:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,6 @@ Application theApp;
 int main( int argc, char** argv ) {
 
   theApp.initialize(argc, argv); 
-
-  theApp.install();
 
   WhoAreYou( &theApp );
 
