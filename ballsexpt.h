@@ -3,7 +3,7 @@
 // ballsexpt.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:20 2000
-// written: Thu Mar 30 16:43:09 2000
+// written: Tue Jun 13 14:02:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,9 @@ protected:
   virtual void runExperiment();
 
   virtual void fillMenu(char menu[][STRINGSIZE], int nitems);
+
+private:
+  virtual void onMenuChoice(char c);
 };
 
 static const char vcid_ballsexpt_h[] = "$Header$";
