@@ -24,46 +24,31 @@
 #include "trace.h"
 #include "debug.h"
 
-namespace
-{
-  FILE* openfile(const std::string& filebase,
-                 char mode, const char* extension)
-  {
-    DOTRACE("<params.cc>::openfile");
-
-    FILE* fp;
-
-    char fname[STRINGSIZE];
-
-    sprintf(fname, "%s.%s", filebase.c_str(), extension);
-
-    char mode_string[2] = { mode, '\0' };
-
-    if ((fp = fopen(fname, mode_string)) == NULL)
-      {
-        printf("cannot open %s in mode '%s'\n", fname, mode_string);
-        exit(0);
-      }
-
-    return fp;
-  }
-}
-
 //----------------------------------------------------------
 //
 // ParamFile class
 //
 //----------------------------------------------------------
 
-void ParamFile::fetchLine()
-{
-  fgets(itsLine, 120, itsFile);
-}
-
 ParamFile::ParamFile(const std::string& filebase, char mode,
                      const char* extension) :
-  itsFile(openfile(filebase, mode, extension))
-{}
+  itsFile(0)
+{
+  DOTRACE("<params.cc>::openfile");
+
+  std::string fname = filebase + "." + extension;
+
+  char mode_string[2] = { mode, '\0' };
+
+  itsFile = fopen(fname.c_str(), mode_string);
+
+  if (itsFile == NULL)
+    {
+      printf("cannot open %s in mode '%s'\n",
+             fname.c_str(), mode_string);
+      exit(0);
+    }
+}
 
 ParamFile::~ParamFile()
 {
@@ -72,22 +57,28 @@ ParamFile::~ParamFile()
 
 void ParamFile::getInt(int& var)
 {
-  fetchLine();
-  sscanf(itsLine, "%s %d", itsText, &var);
+  char line[256];
+  char dummy[256];
+  fgets(line, 256, itsFile);
+  sscanf(line, "%s %d", dummy, &var);
 }
 
 void ParamFile::getFloat(float& var)
 {
-  fetchLine();
-  sscanf(itsLine, "%s %f", itsText, &var);
+  char line[256];
+  char dummy[256];
+  fgets(line, 256, itsFile);
+  sscanf(line, "%s %f", dummy, &var);
 }
 
 std::string ParamFile::getString()
 {
   // FIXME stdio
-  fetchLine();
+  char line[256];
+  char dummy[256];
+  fgets(line, 256, itsFile);
   char buf[256];
-  sscanf(itsLine, "%s %s", itsText, buf);
+  sscanf(line, "%s %s", dummy, buf);
   return std::string(&buf[0]);
 }
 
@@ -106,7 +97,7 @@ void ParamFile::putFloat(float var, const char* name)
   fprintf(itsFile, "%-19s %.2f\n", name, var);
 }
 
-void ParamFile::putText(const std::string& str, const char* name)
+void ParamFile::putString(const std::string& str, const char* name)
 {
   fprintf(itsFile, "%-19s %+s\n", name, str.c_str());
 }
@@ -121,7 +112,6 @@ Params::Params(int argc, char** argv) :
   appMode(EYE_TRACKING),
   doMovie(false),
   filestem(""),
-  observer(""),
   ballRadius(),
   ballSigma2(),
   ballTwistAngle(),
@@ -173,7 +163,6 @@ Params::Params(int argc, char** argv) :
       else if (!got_filename)
         {
           this->filestem = argv[i];
-          this->observer = argv[i];
           fprintf(stdout, " filename '%s'\n", argv[i]);
           got_filename = true;
         }
@@ -225,7 +214,6 @@ DOTRACE("Params::readFromFile");
   pmfile.getFloat (ballRadius);
   pmfile.getFloat (ballSigma2);
   pmfile.getFloat (ballTwistAngle);
-  observer = pmfile.getString();
   filestem = pmfile.getString();
 
   // this is a placeholder for the application mode, but we ignore the
@@ -268,8 +256,7 @@ DOTRACE("Params::appendToFile");
   pmfile.putFloat (ballRadius,        "BALL_RADIUS");
   pmfile.putFloat (ballSigma2,        "BALL_SIGMA2");
   pmfile.putFloat (ballTwistAngle,    "BALL_TWIST_ANGLE");
-  pmfile.putText  (observer,          "OBSERVER");
-  pmfile.putText  (filestem,          "FILENAME");
+  pmfile.putString(filestem,          "FILENAME");
 
   const char* app_mode = "unknown";
   switch (appMode)
@@ -279,8 +266,8 @@ DOTRACE("Params::appendToFile");
     case FMRI_SESSION:  app_mode = "FMRI_SESSION"; break;
     }
 
-  pmfile.putText   (app_mode,         "APPLICATION_MODE");
-  pmfile.putInt    (fmriSessionNumber, "FMRI_SESSION_NUMBER");
+  pmfile.putString(app_mode,          "APPLICATION_MODE");
+  pmfile.putInt   (fmriSessionNumber, "FMRI_SESSION_NUMBER");
 }
 
 void Params::showSettings(Graphics& gfx)

@@ -25,10 +25,6 @@ class ParamFile
 {
 private:
   FILE* itsFile;
-  char itsLine[120];
-  char itsText[120];
-
-  void fetchLine();
 
 public:
   ParamFile(const std::string& filebase, char mode,
@@ -44,7 +40,7 @@ public:
   void putInt(int var, const char* name);
   void putChar(char var, const char* name);
   void putFloat(float var, const char* name);
-  void putText(const std::string& str, const char* name);
+  void putString(const std::string& str, const char* name);
 };
 
 class Params
@@ -65,7 +61,6 @@ public:
   AppMode appMode;
   bool  doMovie;
   std::string filestem;
-  std::string observer;
   float ballRadius;
   float ballSigma2;
   float ballTwistAngle;  // = PI/16.0;
