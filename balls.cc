@@ -244,16 +244,17 @@ Balls::Balls(const Params& params) : itsParams(params) {}
 
 const int Balls::MAX_BALLS;
 
-void Balls::initialize(Graphics& gfx)
+void Balls::pickInitialPositions(Graphics& gfx)
 {
-DOTRACE("Balls::initialize");
+DOTRACE("Balls::pickInitialPositions");
 
   for (int i=0; i < itsParams.ballNumber; ++i)
     {
-      // Pick a random initial location that is not too close to the other balls
-      bool too_close;
+      bool too_close = true;
 
-      do
+      // Pick a random initial location that is not too close to the
+      // other balls
+      while (too_close)
         {
           too_close = false;
 
@@ -271,7 +272,7 @@ DOTRACE("Balls::initialize");
                   break;
                 }
             }
-        } while (too_close);
+        }
 
     itsBalls[i].randomVelocity(itsParams.ballVelocity);
   }
@@ -353,7 +354,7 @@ DOTRACE("Balls::runTrial");
 
   gfx.swapBuffers();
 
-  initialize(gfx);
+  pickInitialPositions(gfx);
 
   std::vector<ubyte> pixmap;
   std::vector<ubyte> hilitemap;

@@ -71,7 +71,7 @@ enum Buttons
 class Balls
 {
 private:
-  void initialize(Graphics& gfx);
+  void pickInitialPositions(Graphics& gfx);
 
   void nextBalls(Graphics& gfx);
   void copyBalls();
