@@ -70,13 +70,24 @@ struct BallsExpt::Impl
 
   void tallyReactionTime(ParamFile& f)
   {
-    int total_stims = 0;
+    // write reactions to the log file
+
+    char buf[512];
+
+    f.putLine("");
+    snprintf(buf, 512, " %-4s %15s   %20s",
+             "#", "reaction time", "reaction correct?");
+    f.putLine(buf);
+
     int number_correct = 0;
 
     // Compute the response time for each stimulus (or indicate a
     // non-response with -1.0)
     for (unsigned int i = 1;  i < this->stimuli.size(); ++i)
       {
+        bool reaction_correct = false;
+        double reaction_time = -1.0;
+
         unsigned int j;
 
         // Find the first response (j'th) that came after the i'th
@@ -91,51 +102,29 @@ struct BallsExpt::Impl
         // time...
         if (j < this->responses.size())
           {
-            this->stimuli[i].reaction_time =
+            double diff =
               this->responses[j].time - this->stimuli[i].msecFrom(this->stimTime0);
-            this->stimuli[i].reaction_correct =
-              (this->responses[j].val == this->stimuli[i].correct_val);
+
+            // Make sure the reaction time wasn't too large
+            if (diff <= params.remindSeconds*1000)
+              {
+                reaction_time = diff;
+                reaction_correct =
+                  (this->responses[j].val == this->stimuli[i].correct_val);
+              }
           }
 
-        // But if there was no corresponding response, indicate a
-        // non-response with -1.0
-        else
-          {
-            this->stimuli[i].reaction_time = -1.0;
-            this->stimuli[i].reaction_correct = false;
-          }
+        if (reaction_correct) ++number_correct;
 
-        // If the reaction time was too large, it doesn't count, so
-        // indicate a non-response with -1.0
-        if (this->stimuli[i].reaction_time >
-            params.remindSeconds*1000)
-          {
-            this->stimuli[i].reaction_time = -1.0;
-            this->stimuli[i].reaction_correct = false;
-          }
-
-        ++total_stims;
-        if (this->stimuli[i].reaction_correct) ++number_correct;
-      }
-
-    this->percentCorrect = (100.0 * number_correct) / total_stims;
-
-    // write reactions to the log file
-
-    char buf[512];
-
-    snprintf(buf, 512, " %-4s %15s   %20s",
-             "#", "reaction time", "reaction correct?");
-    f.putLine(buf);
-
-    for (unsigned int i = 1; i < this->stimuli.size(); ++i)
-      {
         snprintf(buf, 512, " %-4d %15.2f   %20d",
                  i,
-                 this->stimuli[i].reaction_time,
-                 this->stimuli[i].reaction_correct);
+                 reaction_time,
+                 int(reaction_correct));
         f.putLine(buf);
       }
+
+    this->percentCorrect = (100.0 * number_correct) / double(this->stimuli.size() - 1);
+
     f.putLine("");
     f.putLine("");
 
