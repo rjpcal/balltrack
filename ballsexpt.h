@@ -29,8 +29,6 @@ protected:
 
   void makeMenu();
 
-  virtual void fillMenu(char menu[][STRINGSIZE], int nitems);
-
 private:
   void runFixationCalibration();
   void runExperiment();

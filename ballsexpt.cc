@@ -137,44 +137,22 @@ void BallsExpt::makeMenu()
 {
 DOTRACE("BallsExpt::makeMenu");
 
-  const int nmenu = 8;
-  char menu[nmenu][STRINGSIZE];
+  const int nitems = 8;
+  char menu[nitems][STRINGSIZE];
 
-  fillMenu(menu, nmenu);
+  strncpy( menu[0], "r     run experiment", STRINGSIZE);
+  strncpy( menu[1], "x     set parameters 1", STRINGSIZE);
+  strncpy( menu[2], "y     set parameters 2", STRINGSIZE);
+  strncpy( menu[3], "z     set parameters 3", STRINGSIZE);
+  strncpy( menu[4], "p     show parameters", STRINGSIZE);
+  strncpy( menu[5], "q     quit program", STRINGSIZE);
+  strncpy( menu[6], "", STRINGSIZE);
+  snprintf( menu[7], STRINGSIZE, "recent percent correct: %d",
+           int(Timing::recentPercentCorrect()) );
 
-  graphics().clearFrontBuffer();
-
-  for (int ii = 0; ii < 2; ++ii)
-    {
-      graphics().clearBackBuffer();
-      graphics().swapBuffers();
-    }
-
-  graphics().showMenu(menu, nmenu);
+  graphics().showMenu(menu, nitems);
 
   graphics().swapBuffers();
-}
-
-void BallsExpt::fillMenu(char menu[][STRINGSIZE], int nitems)
-{
-DOTRACE("BallsExpt::fillMenu");
-
-  if (nitems < 8)
-    {
-      strcpy( menu[0], "insufficient space to create menu" );
-    }
-  else
-    {
-      strcpy( menu[0], "r     run experiment");
-      strcpy( menu[1], "x     set parameters 1");
-      strcpy( menu[2], "y     set parameters 2");
-      strcpy( menu[3], "z     set parameters 3");
-      strcpy( menu[4], "p     show parameters");
-      strcpy( menu[5], "q     quit program");
-      strcpy( menu[6], "");
-      sprintf( menu[7], "recent percent correct: %d",
-               int(Timing::recentPercentCorrect()) );
-    }
 }
 
 void BallsExpt::runFixationCalibration()
