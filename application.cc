@@ -14,7 +14,7 @@
 #include "application.h"
 
 #include "defs.h"
-#include "openglgfx.h"
+#include "graphics.h"
 #include "params.h"
 #include "timing.h"
 #include "xhints.h"
@@ -40,7 +40,7 @@ Application::Application(const XHints& hints) :
   itsArgv(hints.argv()),
   itsWidth(hints.width()),
   itsHeight(hints.height()),
-  itsGraphics(new OpenglGfx(hints, itsWidth, itsHeight))
+  itsGraphics(new Graphics(hints, itsWidth, itsHeight))
 {
 DOTRACE("Application::Application");
 

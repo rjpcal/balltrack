@@ -13,71 +13,85 @@
 
 #include "defs.h"
 
+#include <GL/gl.h>
+#include <GL/glx.h>
+
 class XStuff;
+class XHints;
+class SimpleMovie;
 
 class Graphics
 {
 public:
-  Graphics(int wid, int hgt);
+  Graphics(const XHints& hints, int wid, int hgt);
 
-  // Virtual destructor ensures proper destruction of base classes.
-  virtual ~Graphics();
+  ~Graphics();
 
-  virtual XStuff& xstuff() const = 0;
+  XStuff& xstuff() const { return *itsXStuff; }
 
-  virtual void initWindow() = 0;
+  void initWindow();
 
-  virtual void wrapGraphics() = 0;
-
-  int width() const { return itsWidth; }
-  int height() const { return itsHeight; }
-
-  virtual bool isRgba() = 0;
-  virtual bool isDoubleBuffered() = 0;
-
-  virtual void clearFrontBuffer() = 0;
-  virtual void clearBackBuffer() = 0;
-  virtual void clearUpperPlanes() = 0;
-
-  virtual void waitVerticalRetrace() = 0;
-  virtual void swapBuffers() = 0;
-
-  virtual void writeUpperPlanes() = 0;
-  virtual void writeLowerPlanes() = 0;
-  virtual void writeAllPlanes() = 0;
-
-  virtual void drawMessage(char word[]) = 0;
-  virtual void drawCross() = 0;
-  virtual void drawCross(int x, int y) = 0;
-
-  virtual void loadColormap(float colors[][3], int ncolors) = 0;
-
-  virtual void showMenu(char menu[][STRINGSIZE], int nmenu) = 0;
-  virtual void showParams(char params[][STRINGSIZE], int nparams) = 0;
-
-  virtual void writeBitmap(unsigned char* ptr, int x, int y, int size) = 0;
-  virtual void writeTrueColorMap(unsigned char* ptr, int x, int y, int size) = 0;
-  virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny) = 0;
-
-  // To control starting, stopping of movie recording
-  virtual void startRecording();
-  virtual void stopRecording();
+  void wrapGraphics();
 
   // This gives a hook to allow movie frames to be recorded during the delay
-  virtual void gfxWait(double delaySeconds);
+  void gfxWait(double delaySeconds);
 
   // Returns the number of milliseconds per graphics frame
   double frameTime();
 
-protected:
-  virtual void waitFrameCount(int number) = 0;
+  int width() const { return itsWidth; }
+  int height() const { return itsHeight; }
+
+  bool isRgba();
+  bool isDoubleBuffered();
+
+  void clearFrontBuffer();
+  void clearBackBuffer();
+  void clearUpperPlanes();
+
+  void waitVerticalRetrace();
+  void swapBuffers();
+
+  void writeUpperPlanes();
+  void writeLowerPlanes();
+  void writeAllPlanes();
+
+  void drawMessage(char word[]);
+  void drawCross();
+  void drawCross(int x, int y);
+
+  void loadColormap(float colors[][3], int ncolors);
+
+  void showMenu(char menu[][STRINGSIZE], int nmenu);
+  void showParams(char params[][STRINGSIZE], int nparams);
+
+  void writeBitmap(unsigned char* ptr, int x, int y, int size);
+  void writeTrueColorMap(unsigned char* ptr, int x, int y, int size);
+  void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
+
+  // To control starting, stopping of movie recording
+  void startRecording();
+  void stopRecording();
 
 private:
+  void waitFrameCount(int number);
   double computeFrameTime();
+  void clearBackBufferRegion(bool use_scissor);
 
   int itsWidth;
   int itsHeight;
   double itsFrameTime;
+
+  XStuff* itsXStuff;
+  GLXContext itsGLXContext;
+
+  int itsClearIndex;
+
+  SimpleMovie* itsMovie;
+  bool isItRecording;
+
+  bool* isItRgba;
+  bool* isItDoubleBuffered;
 };
 
 static const char vcid_graphics_h[] = "$Header$";
