@@ -25,67 +25,43 @@
 #include "trace.h"
 #include "debug.h"
 
-bool MAKING_MOVIE = false;
-AppMode APPLICATION_MODE = EYE_TRACKING;
-int FMRI_SESSION_NUMBER = 1;
-
-int   FUDGEFRAME = 10;
-
-int   DISPLAY_X;
-int   DISPLAY_Y;
-int   CYCLE_NUMBER;
-float WAIT_DURATION;
-float EPOCH_DURATION;
-float PAUSE_DURATION;
-float REMIND_DURATION;
-int   REMINDS_PER_EPOCH;
-int   BALL_NUMBER;
-int   BALL_TRACK_NUMBER;
-int   BALL_VELOCITY;
-int   BALL_ARRAY_SIZE;
-float BALL_RADIUS;
-float BALL_SIGMA2;
-int   BALL_MIN_DISTANCE;
-float BALL_TWIST_ANGLE;
-char  PROGRAM[STRINGSIZE] = { '\0' };
-char  FILENAME[STRINGSIZE] = { '\0' };
-char  OBSERVER[STRINGSIZE] = { '\0' };
-
-int   BORDER_X;
-int   BORDER_Y;
-int   FRAMES_PER_REMIND;
-
-/************************************************/
-
-
-FILE* ParamFile::openfile(char mode, char extension[])
+namespace
 {
-DOTRACE("ParamFile::openfile");
+  FILE* openfile(const char* filebase, char mode, char extension[])
+  {
+    DOTRACE("<params.cc>::openfile");
 
-  FILE* fp;
+    FILE* fp;
 
-  char fname[STRINGSIZE];
+    char fname[STRINGSIZE];
 
-  sprintf( fname, "%s.%s", FILENAME, extension );
+    sprintf( fname, "%s.%s", filebase, extension );
 
-  char mode_string[2] = { mode, '\0' };
+    char mode_string[2] = { mode, '\0' };
 
-  if( ( fp = fopen( fname, mode_string) ) == NULL )
-    {
-      printf( "cannot open %s in mode '%s'\n", fname, mode_string);
-      exit(0);
-    }
+    if (( fp = fopen( fname, mode_string) ) == NULL)
+      {
+        printf( "cannot open %s in mode '%s'\n", fname, mode_string);
+        exit(0);
+      }
 
-  return fp;
+    return fp;
+  }
 }
+
+//----------------------------------------------------------
+//
+// ParamFile class
+//
+//----------------------------------------------------------
 
 void ParamFile::fetchLine()
 {
   fgets(itsLine, 120, itsFile);
 }
 
-ParamFile::ParamFile(char mode, char extension[]) :
-  itsFile(openfile(mode, extension))
+ParamFile::ParamFile(const char* filebase, char mode, char extension[]) :
+  itsFile(openfile(filebase, mode, extension))
 {}
 
 ParamFile::~ParamFile()
@@ -137,11 +113,44 @@ void ParamFile::putText(const char* var, const char* name)
   fprintf(itsFile, "%-19s %+s\n", name, var);
 }
 
+//----------------------------------------------------------
+//
+// Params class
+//
+//----------------------------------------------------------
+
+Params::AppMode Params::APPLICATION_MODE = EYE_TRACKING;
+bool Params::MAKING_MOVIE = false;
+char  Params::FILENAME[STRINGSIZE] = { '\0' };
+char  Params::OBSERVER[STRINGSIZE] = { '\0' };
+char  Params::PROGRAM[STRINGSIZE] = { '\0' };
+float Params::BALL_RADIUS;
+float Params::BALL_SIGMA2;
+float Params::BALL_TWIST_ANGLE;
+float Params::EPOCH_DURATION;
+float Params::PAUSE_DURATION;
+float Params::REMIND_DURATION;
+float Params::WAIT_DURATION;
+int   Params::BALL_ARRAY_SIZE;
+int   Params::BALL_MIN_DISTANCE;
+int   Params::BALL_NUMBER;
+int   Params::BALL_TRACK_NUMBER;
+int   Params::BALL_VELOCITY;
+int   Params::BORDER_X;
+int   Params::BORDER_Y;
+int   Params::CYCLE_NUMBER;
+int   Params::DISPLAY_X;
+int   Params::DISPLAY_Y;
+int   Params::FRAMES_PER_REMIND;
+int   Params::FUDGEFRAME = 10;
+int   Params::REMINDS_PER_EPOCH;
+int   Params::FMRI_SESSION_NUMBER = 1;
+
 void Params::readParams(Graphics& gfx, char extension[])
 {
 DOTRACE("Params::readParams");
 
-  ParamFile pmfile('r', extension);
+  ParamFile pmfile(FILENAME, 'r', extension);
 
   pmfile.getInt(   DISPLAY_X  );
   pmfile.getInt(   DISPLAY_Y  );
@@ -177,7 +186,7 @@ void Params::writeParams(char extension[])
 {
 DOTRACE("Params::writeParams");
 
-  ParamFile pmfile('w', extension);
+  ParamFile pmfile(FILENAME, 'w', extension);
 
   appendParams(pmfile);
 }
@@ -244,12 +253,12 @@ DOTRACE("Params::displayParams");
 
   writeParams("sta");
 
-  ParamFile pmfile('r', "sta");
+  ParamFile pmfile(FILENAME, 'r', "sta");
 
   int curparam = MAXPARAMS - 1;
 
-  while( curparam >= 0 &&
-         fgets( params[curparam], STRINGSIZE, pmfile.fp()) !=  NULL )
+  while (curparam >= 0 &&
+         fgets( params[curparam], STRINGSIZE, pmfile.fp()) !=  NULL)
     {
       --curparam;
       ++nparams;

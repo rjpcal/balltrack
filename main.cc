@@ -21,9 +21,11 @@
 
 int main( int argc, char** argv )
 {
-  APPLICATION_MODE = TRAINING;
+  Params p;
 
-  strncpy(PROGRAM, argv[0], STRINGSIZE);
+  p.APPLICATION_MODE = Params::TRAINING;
+
+  strncpy(p.PROGRAM, argv[0], STRINGSIZE);
 
   bool got_filename = false;
 
@@ -31,28 +33,28 @@ int main( int argc, char** argv )
     {
       if (strcmp(argv[i], "--session") == 0)
         {
-          FMRI_SESSION_NUMBER = atoi(argv[++i]);
+          p.FMRI_SESSION_NUMBER = atoi(argv[++i]);
         }
       else if (strcmp(argv[i], "--fmri") == 0)
         {
-          APPLICATION_MODE = FMRI_SESSION;
+          p.APPLICATION_MODE = Params::FMRI_SESSION;
         }
       else if (strcmp(argv[i], "--train") == 0)
         {
-          APPLICATION_MODE = TRAINING;
+          p.APPLICATION_MODE = Params::TRAINING;
         }
       else if (strcmp(argv[i], "--itrk") == 0)
         {
-          APPLICATION_MODE = EYE_TRACKING;
+          p.APPLICATION_MODE = Params::EYE_TRACKING;
         }
       else if (strcmp(argv[i], "--makemovie") == 0)
         {
-          MAKING_MOVIE = true;
+          p.MAKING_MOVIE = true;
         }
       else if (!got_filename)
         {
-          strncpy(FILENAME, argv[i], STRINGSIZE);
-          strncpy(OBSERVER, argv[i], STRINGSIZE);
+          strncpy(p.FILENAME, argv[i], STRINGSIZE);
+          strncpy(p.OBSERVER, argv[i], STRINGSIZE);
           fprintf(stdout, " filename '%s'\n", argv[i]);
           got_filename = true;
         }
@@ -70,9 +72,9 @@ int main( int argc, char** argv )
       exit(1);
     }
 
-  if (FMRI_SESSION == APPLICATION_MODE)
+  if (Params::FMRI_SESSION == p.APPLICATION_MODE)
     {
-      if (FMRI_SESSION_NUMBER < 0 || FMRI_SESSION_NUMBER > 4)
+      if (p.FMRI_SESSION_NUMBER < 0 || p.FMRI_SESSION_NUMBER > 4)
         {
           fprintf(stderr, "session number must be 1, 2, 3, or 4\n");
           exit(1);
@@ -85,7 +87,7 @@ int main( int argc, char** argv )
                24    // window bit depth
                );
 
-  BallsExpt theApp(gfx);
+  BallsExpt theApp(gfx, p);
 
   theApp.run();
 

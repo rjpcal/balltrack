@@ -162,7 +162,7 @@ DOTRACE("XStuff::getKeypress");
       XEvent event;
       XNextEvent( itsDisplay, &event );
 
-      if( event.type != KeyPress || event.xkey.window != itsWindow )
+      if (event.type != KeyPress || event.xkey.window != itsWindow)
         continue;
 
       KeySym keysym;
@@ -198,7 +198,7 @@ DOTRACE("XStuff::getWord");
   int n = 0;
   char c;
 
-  while( ( c = this->getKeypress() ) != ' '  && n < sz )
+  while (( c = this->getKeypress() ) != ' '  && n < sz)
     {
       buf[n++] = c;
     }

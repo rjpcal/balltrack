@@ -58,13 +58,12 @@ public:
   void writeTrueColorMap(unsigned char* ptr, int x, int y, int size);
 
   // To control starting, stopping of movie recording
-  void startRecording();
+  void startRecording(int width, int height);
   void stopRecording();
 
 private:
   void waitFrameCount(int number);
   double computeFrameTime();
-  void clearBackBufferRegion(bool use_scissor);
 
   int itsWidth;
   int itsHeight;

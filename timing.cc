@@ -69,12 +69,12 @@ DOTRACE("Timer::wait");
   do
     {
       gettimeofday( &tp, &tzp );
-    } while( tp.tv_sec < sec_stop );
+    } while (tp.tv_sec < sec_stop);
 
   do
     {
       gettimeofday( &tp, &tzp );
-    } while( tp.tv_usec < usec_stop );
+    } while (tp.tv_usec < usec_stop);
 
   itsSec  = tp.tv_sec;
   itsUsec = tp.tv_usec;
@@ -174,12 +174,12 @@ namespace
   void log_reactions(FILE* f)
   {
     fprintf( f,  " reaction times:\n" );
-    for( int i=1; i<STIMULUSSTACKSIZE; ++i )
+    for (int i=1; i<STIMULUSSTACKSIZE; ++i)
       fprintf( f, " %d %.0lf\n", i, reaction_stack[ i ].time );
     fprintf( f, " \n\n" );
 
     fprintf( f,  " reaction correct?:\n" );
-    for( int j=1; j<STIMULUSSTACKSIZE; ++j )
+    for (int j=1; j<STIMULUSSTACKSIZE; ++j)
       fprintf( f, " %d %d\n", j, int(reaction_stack[ j ].correct) );
     fprintf( f, " \n" );
 
@@ -211,16 +211,16 @@ DOTRACE("Timing::addToResponseStack");
 
   double delta = xtime - response_time_stack_0;
 
-  if( delta >= 0.0 )
-         response_stack[ RESPONSESTACKSIZE ].time = delta;
+  if (delta >= 0.0)
+    response_stack[ RESPONSESTACKSIZE ].time = delta;
   else
-         response_stack[ RESPONSESTACKSIZE ].time = delta + 4294967295.0;
+    response_stack[ RESPONSESTACKSIZE ].time = delta + 4294967295.0;
 
   response_stack[ RESPONSESTACKSIZE ].val = nbutton;
 
   RESPONSESTACKSIZE++;
 
-  if( RESPONSESTACKSIZE >= MAXTIMESTACKSIZE )
+  if (RESPONSESTACKSIZE >= MAXTIMESTACKSIZE)
     {
       printf( " MAXTIMESTACKSIZE too small\n" );
       exit(0);
@@ -243,7 +243,7 @@ DOTRACE("Timing::addToResponseStack");
 
   RESPONSESTACKSIZE++;
 
-  if( RESPONSESTACKSIZE >= MAXTIMESTACKSIZE )
+  if (RESPONSESTACKSIZE >= MAXTIMESTACKSIZE)
     {
       printf( " MAXTIMESTACKSIZE too small\n" );
       exit(0);
@@ -268,14 +268,14 @@ DOTRACE("Timing::addToStimulusStack");
 
   STIMULUSSTACKSIZE++;
 
-  if( STIMULUSSTACKSIZE >= MAXTIMESTACKSIZE )
+  if (STIMULUSSTACKSIZE >= MAXTIMESTACKSIZE)
     {
       printf( " MAXTIMESTACKSIZE too small\n" );
       exit(0);
     }
 }
 
-void Timing::tallyReactionTime( FILE* fl )
+void Timing::tallyReactionTime(FILE* fl, float remind_duration)
 {
 DOTRACE("Timing::tallyReactionTime");
 
@@ -284,14 +284,14 @@ DOTRACE("Timing::tallyReactionTime");
 
   // Compute the response time for each stimulus (or indicate a
   // non-response with -1.0)
-  for( int i=1; i<STIMULUSSTACKSIZE; i++ )
+  for (int i=1; i<STIMULUSSTACKSIZE; ++i)
     {
       int j;
 
       // Find the first response (j'th) that came after the i'th stimulus
-      for( j=0; j<RESPONSESTACKSIZE; j++ )
+      for (j=0; j<RESPONSESTACKSIZE; ++j)
         {
-          if( response_stack[j].time > stimulus_stack[i].time )
+          if (response_stack[j].time > stimulus_stack[i].time)
             break;
         }
 
@@ -314,7 +314,7 @@ DOTRACE("Timing::tallyReactionTime");
 
       // If the reaction time was too large, it doesn't count, so
       // indicate a non-response with -1.0
-      if( reaction_stack[ i ].time > REMIND_DURATION*1000 )
+      if (reaction_stack[ i ].time > remind_duration*1000)
         {
           reaction_stack[ i ].time = -1.0;
           reaction_stack[i].correct = false;

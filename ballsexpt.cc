@@ -45,15 +45,22 @@ namespace
 
 struct BallsExpt::Impl
 {
+  Impl(Params& p) :
+    timepoints(),
+    timepointIdx(0),
+    ballset(p),
+    params(p)
+  {}
+
   /// XXX this needs to be at least as big as (CYCLE_NUMBER+1)*NUM_CONDITIONS
   timeval timepoints[128];
   int timepointIdx;
   Balls ballset;
-  Params params;
+  Params& params;
 
   void logTimePoints(FILE* fp)
   {
-    for( int i = 0; i < timepointIdx; ++i )
+    for (int i = 0; i < timepointIdx; ++i)
       {
         printf( " %d %lf\n", i,
                 Timing::elapsedMsec( &timepoints[0],
@@ -65,10 +72,9 @@ struct BallsExpt::Impl
   }
 };
 
-
-BallsExpt::BallsExpt(Graphics& gfx) :
+BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
   Application(gfx),
-  rep(new Impl)
+  rep(new Impl(p))
 {
 DOTRACE("BallsExpt::BallsExpt");
 
@@ -179,7 +185,7 @@ void BallsExpt::runExperiment()
 {
 DOTRACE("BallsExpt::runExperiment");
 
-  ParamFile tmefile('a', "tme");
+  ParamFile tmefile(rep->params.FILENAME, 'a', "tme");
 
   rep->params.logParams(tmefile);
 
@@ -194,15 +200,15 @@ DOTRACE("BallsExpt::runExperiment");
 
   Timing::mainTimer.set();
   Timing::getTime( &rep->timepoints[0] );
-  graphics().gfxWait( WAIT_DURATION );
+  graphics().gfxWait( rep->params.WAIT_DURATION );
 
   rep->timepointIdx = 1;
 
-  if (FMRI_SESSION == APPLICATION_MODE)
+  if (Params::FMRI_SESSION == rep->params.APPLICATION_MODE)
     runFmriExpt();
-  else if (EYE_TRACKING == APPLICATION_MODE)
+  else if (Params::EYE_TRACKING == rep->params.APPLICATION_MODE)
     runEyeTrackingExpt();
-  else if (TRAINING == APPLICATION_MODE)
+  else if (Params::TRAINING == rep->params.APPLICATION_MODE)
     runTrainingExpt();
 
   Timing::getTime( &rep->timepoints[rep->timepointIdx++] );
@@ -211,20 +217,22 @@ DOTRACE("BallsExpt::runExperiment");
 
   buttonPressLoop();
 
-  Timing::tallyReactionTime( tmefile.fp() );
+  Timing::tallyReactionTime(tmefile.fp(),
+                            rep->params.REMIND_DURATION);
 }
 
 void BallsExpt::runFmriExpt()
 {
 DOTRACE("BallsExpt::runFmriExpt");
 
-  if (MAKING_MOVIE)
-    graphics().startRecording();
+  if (rep->params.MAKING_MOVIE)
+    graphics().startRecording(rep->params.DISPLAY_X,
+                              rep->params.DISPLAY_Y);
 
   for (int trial = 0; trial < NUM_TRIALS; ++trial)
     {
       int track_number =
-        TRACK_NUMBERS[ FMRI_SESSION_NUMBER-1 ][ trial ];
+        TRACK_NUMBERS[ rep->params.FMRI_SESSION_NUMBER-1 ][ trial ];
 
       if (track_number < 0)
         {
@@ -240,7 +248,7 @@ DOTRACE("BallsExpt::runFmriExpt");
         }
       else
         {
-          BALL_TRACK_NUMBER = track_number;
+          rep->params.BALL_TRACK_NUMBER = track_number;
 
           // Run active tracking trial with objective check
           rep->ballset.runTrial
@@ -262,11 +270,11 @@ DOTRACE("BallsExpt::runFmriExpt");
 
           Timing::mainTimer.set();
           Timing::getTime( &rep->timepoints[rep->timepointIdx++] );
-          graphics().gfxWait( WAIT_DURATION );
+          graphics().gfxWait( rep->params.WAIT_DURATION );
         }
     }
 
-  if (MAKING_MOVIE)
+  if (rep->params.MAKING_MOVIE)
     graphics().stopRecording();
 }
 
@@ -274,7 +282,7 @@ void BallsExpt::runEyeTrackingExpt()
 {
 DOTRACE("BallsExpt::runEyeTrackingExpt");
 
-  for( int cycle=0; cycle<CYCLE_NUMBER; ++cycle )
+  for (int cycle=0; cycle < rep->params.CYCLE_NUMBER; ++cycle)
     {
       // Run active tracking trial
       runFixationCalibration();
@@ -300,7 +308,7 @@ void BallsExpt::runTrainingExpt()
 {
 DOTRACE("BallsExpt::runTrainingExpt");
 
-  for( int cycle=0; cycle<CYCLE_NUMBER; ++cycle )
+  for (int cycle=0; cycle < rep->params.CYCLE_NUMBER; ++cycle)
     {
       // Run active tracking trial
       rep->ballset.runTrial

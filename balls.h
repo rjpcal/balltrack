@@ -13,20 +13,25 @@
 #define BALLS_H_DEFINED
 
 class Graphics;
+class Params;
 
 struct timeval;
 
 class Ball
 {
 public:
-  void randomPosition(int width, int height);
-  bool isTooClose(const Ball& other) const;
-  void randomVelocity();
-  void nextPosition(int width, int height);
-  void collideIfNeeded(Ball& other);
-  void twist();
+  void randomPosition(int width, int height,
+                      int xborder, int yborder,
+                      int arraysize);
+  bool isTooClose(const Ball& other, int min_dist) const;
+  void randomVelocity(int vel);
+  void nextPosition(int width, int height,
+                    int xborder, int yborder,
+                    int arraysize);
+  void collideIfNeeded(Ball& other, int min_dist);
+  void twist(double angle);
   void copy();
-  void draw(Graphics& gfx, unsigned char* bitmap);
+  void draw(Graphics& gfx, unsigned char* bitmap, int size);
 
 private:
   void collide(Ball& other, int xij, int yij);
@@ -58,6 +63,8 @@ public:
 
   enum TrialType { PASSIVE, CHECK_ALL, CHECK_ONE };
 
+  Balls(const Params& params);
+
   void runTrial(Graphics& gfx, timeval* starttime, TrialType ttype);
 
   static const int COLOR_NUMBER = 256;
@@ -66,6 +73,7 @@ public:
 
 private:
   Ball itsBalls[MAX_BALLS];
+  const Params& itsParams;
 };
 
 static const char vcid_balls_h[] = "$Header$";

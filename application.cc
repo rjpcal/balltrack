@@ -64,7 +64,7 @@ DOTRACE("Application::run");
         {
         case Expose:
           if ( event.xexpose.count == 0 )
-            if( event.xexpose.window == itsGraphics.xstuff().window() )
+            if (event.xexpose.window == itsGraphics.xstuff().window())
               onExpose();
           break;
 
@@ -122,8 +122,8 @@ DOTRACE("Application::keyPressAction");
                              &keysym, &compose );
   buffer[ count ] = '\0';
 
-  if( count > 1 || keysym == XK_Return ||
-      keysym == XK_BackSpace || keysym == XK_Delete )
+  if (count > 1 || keysym == XK_Return ||
+      keysym == XK_BackSpace || keysym == XK_Delete)
     {
       return '\0';
     }
@@ -151,13 +151,13 @@ DOTRACE("Application::timeButtonEvent");
 
   if (event->type == ButtonPress)
     {
-      if( event->xbutton.button == Button1 )
+      if (event->xbutton.button == Button1)
         nbutton = LEFTBUTTON;
       else
-        if( event->xbutton.button == Button2 )
+        if (event->xbutton.button == Button2)
           nbutton = MIDDLEBUTTON;
         else
-          if( event->xbutton.button == Button3 )
+          if (event->xbutton.button == Button3)
             nbutton = RIGHTBUTTON;
           else
             nbutton = 0;

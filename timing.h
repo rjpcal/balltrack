@@ -45,10 +45,10 @@ public:
   static Timer mainTimer;
   static Timer logTimer;
 
-  static void getTime( timeval* tp );
-  static double elapsedMsec( timeval* tp0, timeval* tp1 );
-  static void initTimeStack( double xtime, timeval* tp );
-  static void tallyReactionTime( FILE* fl );
+  static void getTime(timeval* tp);
+  static double elapsedMsec(timeval* tp0, timeval* tp1);
+  static void initTimeStack(double xtime, timeval* tp);
+  static void tallyReactionTime(FILE* fl, float remind_duration);
 
   static double recentPercentCorrect();
 };

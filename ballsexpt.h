@@ -12,14 +12,14 @@
 #define BALLSEXPT_H_DEFINED
 
 #include "application.h"
-#include "defs.h"
 
 class Graphics;
+class Params;
 
 class BallsExpt : public Application
 {
 public:
-  BallsExpt(Graphics& gfx);
+  BallsExpt(Graphics& gfx, Params& p);
   virtual ~BallsExpt();
 
 protected:

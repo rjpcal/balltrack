@@ -13,36 +13,9 @@
 #define PARAMS_H_DEFINED
 
 #include <cstdio>
+#include <string>
 
 class Graphics;
-
-enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
-extern bool MAKING_MOVIE;
-extern AppMode APPLICATION_MODE;
-extern int FMRI_SESSION_NUMBER;
-
-extern int   DISPLAY_X;
-extern int   DISPLAY_Y;
-extern int   BORDER_X;                    // = ( width - 120 ) / 2;
-extern int   BORDER_Y;                    // = ( height - 120 ) / 2;
-extern int   CYCLE_NUMBER;
-extern float EPOCH_DURATION;
-extern float PAUSE_DURATION;
-extern float WAIT_DURATION;
-extern float REMIND_DURATION;
-extern int   FRAMES_PER_REMIND; // = 11;
-extern int   REMINDS_PER_EPOCH; // = 72;
-extern int   BALL_NUMBER;                 // = 8;
-extern int   BALL_TRACK_NUMBER; // = 2;
-extern int   BALL_VELOCITY;       // = 3;
-extern int   BALL_ARRAY_SIZE;     // = 16;
-extern float BALL_RADIUS;
-extern float BALL_SIGMA2;
-extern int   BALL_MIN_DISTANCE; // = 24;
-extern float BALL_TWIST_ANGLE;  // = PI/16.0;
-extern char  PROGRAM[];
-extern char  FILENAME[];
-extern char  OBSERVER[];
 
 #define      LEFTBUTTON            'l'
 #define      RIGHTBUTTON           'r'
@@ -55,12 +28,10 @@ private:
   char itsLine[120];
   char itsText[120];
 
-  static FILE* openfile(char mode, char extension[]);
-
   void fetchLine();
 
 public:
-  ParamFile(char mode, char extension[]);
+  ParamFile(const char* filebase, char mode, char extension[]);
   ~ParamFile();
 
   FILE* fp() { return itsFile; }
@@ -89,6 +60,34 @@ public:
   void setGroup1(Graphics& gfx);
   void setGroup2(Graphics& gfx);
   void setGroup3(Graphics& gfx);
+
+  enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
+  static AppMode APPLICATION_MODE;
+  static bool MAKING_MOVIE;
+  static char  FILENAME[];
+  static char  OBSERVER[];
+  static char  PROGRAM[];
+  static float BALL_RADIUS;
+  static float BALL_SIGMA2;
+  static float BALL_TWIST_ANGLE;  // = PI/16.0;
+  static float EPOCH_DURATION;
+  static float PAUSE_DURATION;
+  static float REMIND_DURATION;
+  static float WAIT_DURATION;
+  static int   BALL_ARRAY_SIZE;     // = 16;
+  static int   BALL_MIN_DISTANCE; // = 24;
+  static int   BALL_NUMBER;                 // = 8;
+  static int   BALL_TRACK_NUMBER; // = 2;
+  static int   BALL_VELOCITY;       // = 3;
+  static int   BORDER_X;                    // = ( width - 120 ) / 2;
+  static int   BORDER_Y;                    // = ( height - 120 ) / 2;
+  static int   CYCLE_NUMBER;
+  static int   DISPLAY_X;
+  static int   DISPLAY_Y;
+  static int   FRAMES_PER_REMIND; // = 11;
+  static int   FUDGEFRAME;
+  static int   REMINDS_PER_EPOCH; // = 72;
+  static int   FMRI_SESSION_NUMBER;
 
 private:
   void recompute(Graphics& gfx);

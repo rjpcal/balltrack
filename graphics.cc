@@ -131,9 +131,9 @@ DOTRACE("Graphics::initWindow");
   // forces the frame time to be computed and then cached in the base class
   frameTime();
 
-  clearBackBufferRegion(false);
+  clearBackBuffer();
   swapBuffers();
-  clearBackBufferRegion(false);
+  clearBackBuffer();
   swapBuffers();
 }
 
@@ -176,7 +176,8 @@ void Graphics::clearBackBuffer()
 {
 DOTRACE("Graphics::clearBackBuffer");
 
-  clearBackBufferRegion(true);
+  glDrawBuffer(GL_BACK);
+  glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Graphics::swapBuffers()
@@ -277,7 +278,7 @@ DOTRACE("Graphics::showMenu");
   int char_width = 16;
   int char_height = 25;
 
-  for( int i=0; i<nmenu; i++ )
+  for (int i=0; i<nmenu; ++i)
     drawGLText(menu[i], 2,
                100, height() - 200 - i * (char_height*2),
                char_width, char_height);
@@ -289,14 +290,14 @@ DOTRACE("Graphics::showParams");
   int col1 = (nparams < 23) ? nparams : 23;
   int col2 = (nparams < 23) ? 0       : nparams;
 
-  for( int i=0; i<col1; i++ )
+  for (int i=0; i<col1; ++i)
     drawGLText(params[i], 2,
                width()/2 - 500, height()/2 -  450 + i * 40,
                10, 15);
 
-  if( col1+1 < col2 )
+  if (col1+1 < col2)
     {
-      for( int i=col1+1; i<col2; i++ )
+      for (int i=col1+1; i<col2; ++i)
         drawGLText(params[i], 2,
                    width()/2 + 100, height()/2 - 1370 + i * 40,
                    10, 15);
@@ -313,13 +314,13 @@ DOTRACE("Graphics::writeTrueColorMap");
 
 }
 
-void Graphics::startRecording()
+void Graphics::startRecording(int width, int height)
 {
 DOTRACE("Graphics::startRecording");
 
-  if (MAKING_MOVIE && (itsMovie == 0))
+  if (itsMovie == 0)
     itsMovie = new SimpleMovie("ballmovie.mov", MV_FORMAT_QT,
-                               DISPLAY_X, DISPLAY_Y);
+                               width, height);
 
   isItRecording = true;
 }
@@ -337,7 +338,7 @@ DOTRACE("Graphics::stopRecording");
 void Graphics::waitFrameCount(int number)
 {
 DOTRACE("Graphics::waitFrameCount");
-  while( number-- )
+  while (number--)
     swapBuffers();
 }
 
@@ -360,26 +361,6 @@ DOTRACE("Graphics::computeFrameTime");
   double frametime = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
 
   return frametime;
-}
-
-void Graphics::clearBackBufferRegion(bool use_scissor)
-{
-DOTRACE("Graphics::clearBackBufferRegion");
-
-  if (false & use_scissor)
-    {
-      glEnable(GL_SCISSOR_TEST);
-      glScissor( (width() - DISPLAY_X)/2, (height() - DISPLAY_Y)/2,
-                 DISPLAY_X, DISPLAY_Y );
-    }
-
-  glDrawBuffer(GL_BACK);
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  if (use_scissor)
-    {
-      glDisable(GL_SCISSOR_TEST);
-    }
 }
 
 static const char vcid_graphics_cc[] = "$Header$";
