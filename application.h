@@ -40,9 +40,9 @@ public:
   Graphics& graphics() const { return itsGraphics; }
 
 protected:
-  virtual void wrap();
-  virtual void onExpose();
-  virtual void onMenuChoice(char c);
+  virtual void wrap() = 0;
+  virtual void onExpose() = 0;
+  virtual void onKey(char c) = 0;
 
 private:
   void keyPressAction( XEvent* event );

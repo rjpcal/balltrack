@@ -145,7 +145,7 @@ DOTRACE("Application::keyPressAction");
 
       Timing::initTimeStack( (double) event->xkey.time, &tp );
 
-      onMenuChoice( buffer[0] );
+      onKey( buffer[0] );
     }
 }
 
@@ -201,12 +201,13 @@ char Application::getKeystroke()
 {
 DOTRACE("Application::getKeystroke");
 
-  while( true )
+  while (true)
     {
       XEvent event;
       XNextEvent( itsGraphics.xstuff().display(), &event );
 
-      if( event.type != KeyPress || event.xkey.window != itsGraphics.xstuff().window() )
+      if( event.type != KeyPress ||
+          event.xkey.window != itsGraphics.xstuff().window() )
         continue;
 
       KeySym keysym;
@@ -240,21 +241,6 @@ void Application::ringBell(int duration)
 {
 DOTRACE("Application::ringBell");
   XBell( itsGraphics.xstuff().display(), duration );
-}
-
-void Application::wrap()
-{
-DOTRACE("Application::wrap");
-}
-
-void Application::onExpose()
-{
-DOTRACE("Application::onExpose");
-}
-
-void Application::onMenuChoice(char)
-{
-DOTRACE("Application::onMenuChoice");
 }
 
 static const char vcid_application_cc[] = "$Header$";

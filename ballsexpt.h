@@ -25,7 +25,7 @@ public:
 protected:
   virtual void wrap();
   virtual void onExpose();
-  virtual void onMenuChoice(char c);
+  virtual void onKey(char c);
 
   void makeMenu();
 

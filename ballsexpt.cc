@@ -97,9 +97,9 @@ DOTRACE("BallsExpt::onExpose");
   makeMenu();
 }
 
-void BallsExpt::onMenuChoice(char c)
+void BallsExpt::onKey(char c)
 {
-DOTRACE("BallsExpt::onMenuChoice");
+DOTRACE("BallsExpt::onKey");
   switch( c )
     {
     case 'q':
