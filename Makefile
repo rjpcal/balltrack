@@ -35,7 +35,7 @@ TARGET = $(ARCH)/test
 ALL   = $(ARCH)/test
 
 all:	$(ALL)
-	./$(ARCH)/test rjp
+	./$(ARCH)/test xxx
 
 clean:
 	rm -f core *.o *.a $(ALL)
