@@ -12,7 +12,7 @@
 #ifndef PARAMS_H_DEFINED
 #define PARAMS_H_DEFINED
 
-#include <cstdio>
+#include <iosfwd>
 #include <string>
 
 class Graphics;
@@ -24,7 +24,7 @@ class Graphics;
 class ParamFile
 {
 private:
-  FILE* itsFile;
+  std::fstream* itsFstream;
 
 public:
   ParamFile(const std::string& filebase, char mode,
@@ -38,7 +38,6 @@ public:
   bool getLine(std::string& str);
 
   void putInt(int var, const char* name);
-  void putChar(char var, const char* name);
   void putFloat(float var, const char* name);
   void putString(const std::string& str, const char* name);
 

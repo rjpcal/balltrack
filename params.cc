@@ -18,6 +18,9 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -32,90 +35,82 @@
 
 ParamFile::ParamFile(const std::string& filebase, char mode,
                      const char* extension) :
-  itsFile(0)
+  itsFstream(0)
 {
   DOTRACE("<params.cc>::openfile");
 
   std::string fname = filebase + "." + extension;
 
-  char mode_string[2] = { mode, '\0' };
-
-  itsFile = fopen(fname.c_str(), mode_string);
-
-  if (itsFile == NULL)
+  switch (mode)
     {
-      printf("cannot open %s in mode '%s'\n",
-             fname.c_str(), mode_string);
-      exit(0);
+    case 'r': itsFstream = new std::fstream(fname.c_str(), std::ios::in); break;
+    case 'w': itsFstream = new std::fstream(fname.c_str(), std::ios::out); break;
+    case 'a': itsFstream = new std::fstream(fname.c_str(), std::ios::out|std::ios::app); break;
+    default:
+      std::cerr << "unknown file mode '" << mode << "'\n";
+      exit(1);
+    }
+
+  if (!itsFstream->is_open() || itsFstream->fail())
+    {
+      std::cerr << "couldn't open " << fname << " in mode '"
+                << mode << "'\n";
+      exit(1);
     }
 }
 
 ParamFile::~ParamFile()
 {
-  fclose(itsFile);
+  delete itsFstream;
 }
 
 void ParamFile::getInt(int& var)
 {
-  char line[256];
-  char dummy[256];
-  fgets(line, 256, itsFile);
-  sscanf(line, "%s %d", dummy, &var);
+  std::string dummy;
+  *itsFstream >> dummy >> var;
 }
 
 void ParamFile::getFloat(float& var)
 {
-  char line[256];
-  char dummy[256];
-  fgets(line, 256, itsFile);
-  sscanf(line, "%s %f", dummy, &var);
+  std::string dummy;
+  *itsFstream >> dummy >> var;
 }
 
 std::string ParamFile::getString()
 {
-  // FIXME stdio
-  char line[256];
-  char dummy[256];
-  fgets(line, 256, itsFile);
-  char buf[256];
-  sscanf(line, "%s %s", dummy, buf);
-  return std::string(&buf[0]);
+  std::string dummy, result;
+  *itsFstream >> dummy >> result;
+  return result;
 }
 
 bool ParamFile::getLine(std::string& str)
 {
-  char buf[512];
-  if (fgets(buf, 512, itsFile) != NULL)
-    {
-      str = &buf[0];
-      return true;
-    }
-  return false;
+  std::getline(*itsFstream, str);
+  return *itsFstream;
 }
 
 void ParamFile::putInt(int var, const char* name)
 {
-  fprintf(itsFile, "%-19s %d\n", name, var);
-}
-
-void ParamFile::putChar(char var, const char* name)
-{
-  fprintf(itsFile, "%-19s %c\n", name, var);
+  *itsFstream << std::left << std::setw(19) << name << " "
+              << var << '\n';
 }
 
 void ParamFile::putFloat(float var, const char* name)
 {
-  fprintf(itsFile, "%-19s %.2f\n", name, var);
+  *itsFstream << std::left << std::setw(19) << name << " "
+              << std::showpoint << std::fixed << std::setprecision(2)
+              << var << '\n';
 }
 
 void ParamFile::putString(const std::string& str, const char* name)
 {
-  fprintf(itsFile, "%-19s %+s\n", name, str.c_str());
+  *itsFstream << std::left << std::setw(19) << name << " "
+              << str << '\n';
 }
 
 void ParamFile::putLine(const char* str)
 {
-  fprintf(itsFile, "%s\n", str);
+  *itsFstream << str << '\n';
 }
 
 //----------------------------------------------------------
