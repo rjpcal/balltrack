@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Feb 29 16:03:10 2000
+// written: Tue Feb 29 16:51:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,8 @@
 namespace {
   void drawGLText(const char* word, int stroke_width,
 						int x_pos, int y_pos,
-						int char_width, int char_height) {
+						int char_width, int char_height,
+						bool rgba) {
   DOTRACE("<openglgfx.cc>::drawGLText");
 
 	 unsigned int listbase = GLFont::getStrokeFontListBase();
@@ -38,13 +39,10 @@ namespace {
 	 double x_scale = char_width/4.0;
 	 double y_scale = char_height/6.0;
 
-#if defined(COLOR_INDEX)
-	 glIndexi(1);
-#elif defined(RGBA)
-	 glColor3d(1.0, 1.0, 1.0);
-#else
-#  error No color format macro.
-#endif
+	 if (rgba)
+		glColor3d(1.0, 1.0, 1.0);
+	 else
+		glIndexi(1);
 
 	 glMatrixMode(GL_MODELVIEW);
 	 glPushMatrix();
@@ -129,6 +127,13 @@ DOTRACE("OpenglGfx::wrapGraphics");
   glXDestroyContext(itsXStuff->display(), itsGLXContext);
 }
 
+bool OpenglGfx::isRgba() {
+DOTRACE("OpenglGfx::isRgba");
+  GLboolean is_rgba;
+  glGetBooleanv(GL_RGBA_MODE, &is_rgba);
+  return bool(is_rgba);
+}
+
 void OpenglGfx::writeUpperPlanes() {
 DOTRACE("OpenglGfx::writeUpperPlanes");
   glIndexMask(0xc0);
@@ -169,7 +174,8 @@ DOTRACE("OpenglGfx::drawMessage");
 
   drawGLText(word, 4,
 				 width()/2 - 500, height()/2-100,
-				 200, 250);
+				 200, 250,
+				 isRgba());
 
   writeLowerPlanes();
 }
@@ -179,13 +185,10 @@ DOTRACE("OpenglGfx::drawCross");
 
   writeUpperPlanes();
 
-#if defined(COLOR_INDEX)
-  glIndexi(192);
-#elif defined(RGBA)
-  glColor3d(1.0, 1.0, 1.0);
-#else
-#  error No color format macro.
-#endif
+  if (isRgba())
+	 glColor3d(1.0, 1.0, 1.0);
+  else
+	 glIndexi(192);
 
   glBegin(GL_LINES);
   glVertex2i(width()/2-50, height()/2);
@@ -247,7 +250,8 @@ DOTRACE("OpenglGfx::showMenu");
   for( int i=0; i<nmenu; i++ )
 	 drawGLText(menu[i], 2,
 					100, height() - 200 - i * (char_height*2),
-					char_width, char_height);
+					char_width, char_height,
+					isRgba());
 }
 
 void OpenglGfx::showParams(char params[][STRINGSIZE], int nparams) {
@@ -258,13 +262,15 @@ DOTRACE("OpenglGfx::showParams");
   for( int i=0; i<col1; i++ )
 	 drawGLText(params[i], 2,
 					width()/2 - 500, height()/2 -  450 + i * 40,
-					10, 15);
+					10, 15,
+					isRgba());
 
   if( col1+1 < col2 ) {
 	 for( int i=col1+1; i<col2; i++ ) 
 		drawGLText(params[i], 2,
-						 width()/2 + 100, height()/2 - 1370 + i * 40,
-						 10, 15);
+					  width()/2 + 100, height()/2 - 1370 + i * 40,
+					  10, 15,
+					  isRgba());
   }
 }
 
