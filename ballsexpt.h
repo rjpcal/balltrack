@@ -3,7 +3,7 @@
 // ballsexpt.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:20 2000
-// written: Tue Feb 29 16:12:38 2000
+// written: Thu Mar 30 16:43:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,8 @@ public:
   BallsExpt(const XHints& hints);
 
 protected:
+  virtual void runFixationCalibration();
+
   virtual void runExperiment();
 
   virtual void fillMenu(char menu[][STRINGSIZE], int nitems);
