@@ -269,8 +269,7 @@ DOTRACE("XStuff::getWord");
   return result;
 }
 
-bool XStuff::getButtonPress(double& xtime,
-                            int& button_number)
+bool XStuff::getButtonPress(double& xtime, int& button_number)
 {
 DOTRACE("XStuff::getButtonPress");
 
@@ -285,12 +284,13 @@ DOTRACE("XStuff::getButtonPress");
 
       button_number = 0;
 
-      if (event.xbutton.button == Button1)
-        button_number = 1;
-      else if (event.xbutton.button == Button2)
-        button_number = 2;
-      else if (event.xbutton.button == Button3)
-        button_number = 3;
+      switch (event.xbutton.button)
+        {
+        case Button1: button_number = 1; break;
+        case Button2: button_number = 2; break;
+        case Button3: button_number = 3; break;
+        default:      button_number = 0; break;
+        }
 
       xtime = double(event.xbutton.time);
       return true;
