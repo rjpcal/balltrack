@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Mon Feb 28 17:45:48 2000
+// written: Mon Feb 28 18:06:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,8 @@ public:
   // called from Ball::draw()
   virtual void writeBitmap(unsigned char* ptr, int x, int y, int size);
 
+  virtual void writeTrueColorMap(unsigned char* ptr, int x, int y, int size);
+
 private:
   int fildes() const { return itsFildes; }
 
@@ -77,7 +79,6 @@ private:
 
   int itsFildes;
 };
-
 
 static const char vcid_starbasegfx_h[] = "$Header$";
 #endif // !STARBASEGFX_H_DEFINED

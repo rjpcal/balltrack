@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Mon Feb 28 17:44:30 2000
+// written: Mon Feb 28 18:05:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,6 +68,8 @@ public:
 
   // called from Ball::draw()
   virtual void writeBitmap(unsigned char* ptr, int x, int y, int size) = 0;
+
+  virtual void writeTrueColorMap(unsigned char* ptr, int x, int y, int size) = 0;
 
 private:
   int itsHeight;
