@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Wed Feb 28 13:15:49 2001
+// written: Wed Feb 28 14:35:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,6 +61,9 @@ public:
   // To control starting, stopping of movie recording
   virtual void startRecording();
   virtual void stopRecording();
+
+  // This gives a hook to allow movie frames to be recorded during the delay
+  virtual void gfxWait(double delaySeconds);
 
 private:
   int itsHeight;
