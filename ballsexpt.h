@@ -11,9 +11,25 @@
 #ifndef BALLSEXPT_H_DEFINED
 #define BALLSEXPT_H_DEFINED
 
-#include "menuapp.h"
+#include "application.h"
+#include "defs.h"
 
 class Graphics;
+
+class MenuApplication : public Application
+{
+public:
+  MenuApplication(Graphics& gfx);
+  virtual ~MenuApplication();
+
+protected:
+  virtual void wrap();
+  virtual void onExpose();
+
+  void makeMenu();
+
+  virtual void fillMenu(char menu[][STRINGSIZE], int nitems) = 0;
+};
 
 class BallsExpt : public MenuApplication
 {
