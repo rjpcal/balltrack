@@ -3,7 +3,7 @@
 // openglgfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:03:44 2000
-// written: Tue Feb 29 17:20:51 2000
+// written: Tue Feb 29 17:51:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,6 +57,8 @@ public:
   virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
 
 private:
+  void clearBackBufferRegion(bool use_scissor);
+
   void waitFrameCount(int number);
 
   // called from initWindow()
