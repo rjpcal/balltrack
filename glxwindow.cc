@@ -248,18 +248,18 @@ DOTRACE("GlxWindow::getKeypress");
     }
 }
 
-void GlxWindow::getInt(int& i) const
+void GlxWindow::getIntFromKeyboard(int& i) const
 {
-DOTRACE("GlxWindow::getInt");
+DOTRACE("GlxWindow::getIntFromKeyboard");
 
   const std::string buf = this->getWord();
 
   sscanf(&buf[0], "%d", &i);
 }
 
-void GlxWindow::getDouble(double& d) const
+void GlxWindow::getDoubleFromKeyboard(double& d) const
 {
-DOTRACE("GlxWindow::getDouble");
+DOTRACE("GlxWindow::getDoubleFromKeyboard");
 
   const std::string buf = this->getWord();
 

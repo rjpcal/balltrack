@@ -409,49 +409,49 @@ DOTRACE("Params::setGroup1");
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getInt(this->ballNumber);
+  gfx.getIntFromKeyboard(this->ballNumber);
   snprintf(buf, bufsize, "       %-6d", this->ballNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getInt(this->ballTrackNumber);
+  gfx.getIntFromKeyboard(this->ballTrackNumber);
   snprintf(buf, bufsize, " %-6d", this->ballTrackNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getDouble(this->ballSpeed);
+  gfx.getDoubleFromKeyboard(this->ballSpeed);
   snprintf(buf, bufsize, " %-6.1f", this->ballSpeed);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getInt(this->ballPixmapSize);
+  gfx.getIntFromKeyboard(this->ballPixmapSize);
   snprintf(buf, bufsize, " %-6d", this->ballPixmapSize);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getInt(this->ballMinDistance);
+  gfx.getIntFromKeyboard(this->ballMinDistance);
   snprintf(buf, bufsize, " %-6d", this->ballMinDistance);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getDouble(this->ballRadius);
+  gfx.getDoubleFromKeyboard(this->ballRadius);
   snprintf(buf, bufsize, " %-6.1f", this->ballRadius);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getDouble(this->ballSigma2);
+  gfx.getDoubleFromKeyboard(this->ballSigma2);
   snprintf(buf, bufsize, " %-6.1f", this->ballSigma2);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getDouble(this->ballTwistAngle);
+  gfx.getDoubleFromKeyboard(this->ballTwistAngle);
   snprintf(buf, bufsize, " %-6.3f", this->ballTwistAngle);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
@@ -480,37 +480,37 @@ DOTRACE("Params::setGroup2");
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getInt(this->cycleNumber);
+  gfx.getIntFromKeyboard(this->cycleNumber);
   snprintf(buf, bufsize, "       %-8d", this->cycleNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getDouble(this->waitSeconds);
+  gfx.getDoubleFromKeyboard(this->waitSeconds);
   snprintf(buf, bufsize, " %-8.2f", this->waitSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getDouble(this->epochSeconds);
+  gfx.getDoubleFromKeyboard(this->epochSeconds);
   snprintf(buf, bufsize, " %-8.2f", this->epochSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getDouble(this->pauseSeconds);
+  gfx.getDoubleFromKeyboard(this->pauseSeconds);
   snprintf(buf, bufsize, " %-8.2f", this->pauseSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getInt(this->remindsPerEpoch);
+  gfx.getIntFromKeyboard(this->remindsPerEpoch);
   snprintf(buf, bufsize, " %-8d", this->remindsPerEpoch);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getDouble(this->remindSeconds);
+  gfx.getDoubleFromKeyboard(this->remindSeconds);
   snprintf(buf, bufsize, " %-8.2f", this->remindSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
@@ -537,7 +537,7 @@ DOTRACE("Params::setGroup2");
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);
   gfx.swapBuffers();
 
-  gfx.getInt(fmriSessionNumber);
+  gfx.getIntFromKeyboard(fmriSessionNumber);
   snprintf(buf, bufsize, "       %-8d", this->fmriSessionNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16, 2);

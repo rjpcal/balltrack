@@ -31,8 +31,8 @@ public:
 
   char getKeypress() const;
 
-  void getInt(int& i) const;
-  void getDouble(double& d) const;
+  void getIntFromKeyboard(int& i) const;
+  void getDoubleFromKeyboard(double& d) const;
 
   void eventLoop(void* cdata,
                  ExposeFunc* onExpose,
