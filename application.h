@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Wed Feb 23 16:44:28 2000
+// written: Thu Feb 24 11:31:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #ifndef _XLIB_H_
 typedef union _XEvent XEvent;
 #endif
+
+class Graphics;
 
 class Application {
 private:
@@ -35,6 +37,8 @@ public:
 
   int argc() const { return itsArgc; }
   char* argv(int argn) const { return itsArgv[argn]; }
+
+  Graphics* graphics() const { return itsGraphics; }
 
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
@@ -63,6 +67,8 @@ private:
 
   struct XStuff;
   XStuff* itsXStuff;
+
+  Graphics* itsGraphics;
 };
 
 static const char vcid_application_h[] = "$Header$";
