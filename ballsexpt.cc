@@ -216,17 +216,15 @@ DOTRACE("BallsExpt::runFixationCalibration");
       rep->gfx.clearFrontBuffer();
       rep->gfx.drawCross(x[seq[i]], y[seq[i]]);
       rep->gfx.swapBuffers();
-      rep->timing.mainTimer.set();
-      rep->gfx.gfxWait(rep->timing.mainTimer, 1.0);
+      Timer t;
+      t.reset();
+      rep->gfx.gfxWait(t, 1.0);
     }
 }
 
 void BallsExpt::runExperiment()
 {
 DOTRACE("BallsExpt::runExperiment");
-
-  rep->timing.logTimer.set();
-  rep->timing.mainTimer.set();
 
   ParamFile tmefile(rep->params.filestem, 'a', "tme");
 
@@ -255,9 +253,11 @@ DOTRACE("BallsExpt::runExperiment");
       rep->gfx.swapBuffers();
     }
 
-  rep->timing.mainTimer.set();
+  Timer timer;
+  timer.reset();
+
   Timing::getTime(&rep->timepoints[0]);
-  rep->gfx.gfxWait(rep->timing.mainTimer, rep->params.waitSeconds);
+  rep->gfx.gfxWait(timer, rep->params.waitSeconds);
 
   rep->timepointIdx = 1;
 
@@ -328,10 +328,10 @@ DOTRACE("BallsExpt::runFmriExpt");
               rep->gfx.swapBuffers();
             }
 
-          rep->timing.mainTimer.set();
+          Timer t;
+          t.reset();
           Timing::getTime(&rep->timepoints[rep->timepointIdx++]);
-          rep->gfx.gfxWait(rep->timing.mainTimer,
-                           rep->params.waitSeconds);
+          rep->gfx.gfxWait(t, rep->params.waitSeconds);
         }
     }
 

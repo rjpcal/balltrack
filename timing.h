@@ -25,7 +25,7 @@ class ParamFile;
 class Timer
 {
 public:
-  void set();
+  void reset();
   void wait(double delay_seconds);
 
 private:
@@ -66,10 +66,6 @@ public:
   void tallyReactionTime(ParamFile& f, float remind_duration);
 
   double recentPercentCorrect();
-
-
-  Timer mainTimer;
-  Timer logTimer;
 
 private:
   std::vector<Stimulus> stimulus_hist;

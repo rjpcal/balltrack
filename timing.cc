@@ -29,7 +29,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Timer::set()
+void Timer::reset()
 {
 DOTRACE("Timer::set");
   struct timeval  tp;
@@ -87,8 +87,6 @@ DOTRACE("Timer::wait");
 ///////////////////////////////////////////////////////////////////////
 
 Timing::Timing() :
-  mainTimer(),
-  logTimer(),
   stimulus_hist(),
   response_hist(),
   ss_0(),
