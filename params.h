@@ -45,8 +45,8 @@ class Params
 public:
   Params(int argc, char** argv);
 
-  void readFromFile(Graphics& gfx, char extension[]);
-  void writeToFile(char extension[]);
+  void readFromFile(Graphics& gfx, const char* extension);
+  void writeToFile(const char* extension);
   void appendToFile(ParamFile& pmfile);
   void showSettings(Graphics& gfx);
 
