@@ -82,7 +82,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-GlxWindow::GlxWindow(int width, int height) :
+GlxWindow::GlxWindow(const char* winname,
+                     int width, int height, int depth) :
   itsWidth(width),
   itsHeight(height),
   itsGLXContext(0),
@@ -103,21 +104,6 @@ DOTRACE("GlxWindow::GlxWindow");
                   << getenv("DISPLAY") << "\n";
       exit(1);
     }
-
-}
-
-GlxWindow::~GlxWindow()
-{
-DOTRACE("GlxWindow::~GlxWindow");
-  glXDestroyContext(itsDisplay, itsGLXContext);
-  XDestroyWindow(itsDisplay, itsWindow);
-  XCloseDisplay(itsDisplay);
-}
-
-void GlxWindow::openWindow(const char* winname,
-                           int depth)
-{
-DOTRACE("GlxWindow::openWindow");
 
   int attribList[] =
     {
@@ -214,6 +200,14 @@ DOTRACE("GlxWindow::openWindow");
       itsUsingVsync = true;
       std::cout << " got GLX_SGI_video_sync extension\n";
     }
+}
+
+GlxWindow::~GlxWindow()
+{
+DOTRACE("GlxWindow::~GlxWindow");
+  glXDestroyContext(itsDisplay, itsGLXContext);
+  XDestroyWindow(itsDisplay, itsWindow);
+  XCloseDisplay(itsDisplay);
 }
 
 void GlxWindow::swapBuffers()

@@ -23,10 +23,8 @@ typedef bool KeyFunc(void*, double xtime, char c);
 class GlxWindow
 {
 public:
-  GlxWindow(int width, int height);
+  GlxWindow(const char* winname, int width, int height, int depth);
   ~GlxWindow();
-
-  void openWindow(const char* winname, int depth);
 
   Display* display() { return itsDisplay; }
   Window window() const { return itsWindow; }

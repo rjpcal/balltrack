@@ -66,14 +66,12 @@ namespace
 
 Graphics::Graphics(const char* winname,
                    int w, int h, int depth) :
-  itsGlx(w, h),
+  itsGlx(winname, w, h, depth),
   isItRecording(false),
   itsFrameCounter(0),
   itsFrameTimer(Timepoint::now())
 {
 DOTRACE("Graphics::Graphics");
-
-  itsGlx.openWindow(winname, depth);
 
   this->clearBackBuffer();
   this->swapBuffers();
