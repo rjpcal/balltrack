@@ -146,7 +146,7 @@ DOTRACE("Graphics::gfxWait");
 
 double Graphics::frameTime()
 {
-#if 0
+#if 1
   if (itsFrameTime < 0)
     itsFrameTime = computeFrameTime();
 #else
@@ -163,12 +163,20 @@ DOTRACE("Graphics::clearBackBuffer");
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
+extern "C"
+{
+  extern int glXGetVideoSyncSGI (unsigned int *);
+  extern int glXWaitVideoSyncSGI (int, int, unsigned int *);
+}
+
 void Graphics::swapBuffers()
 {
 DOTRACE("Graphics::swapBuffers");
+  unsigned int counter = 0;
+  glXGetVideoSyncSGI(&counter);
+  std::cout << counter << '\n';
   glXSwapBuffers(itsXStuff.display(), itsXStuff.window());
-  glXWaitGL();
-  glXWaitX();
+  glXWaitVideoSyncSGI(counter + 1, 0, &counter);
 
   if (isItRecording)
     {
@@ -293,7 +301,7 @@ DOTRACE("Graphics::computeFrameTime");
 
   const timeval start = Timing::now();
 
-  for (int i = 0; i <= 99; ++i)
+  for (int i = 0; i <= 100; ++i)
     {
       clearBackBuffer();
       swapBuffers();
