@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:55:05 2000
-// written: Tue Feb 29 16:12:22 2000
+// written: Tue Jun 13 14:02:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,6 @@ protected:
 
 private:
   void makeMenu();
-  void onMenuChoice(char c);
 };
 
 static const char vcid_applic_h[] = "$Header$";

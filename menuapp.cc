@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:06:33 2000
-// written: Tue Feb 29 16:16:02 2000
+// written: Tue Jun 13 14:02:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ DOTRACE("MenuApplication::onExpose");
 void MenuApplication::makeMenu() {
 DOTRACE("MenuApplication::makeMenu");
 
-  const int nmenu = 7;
+  const int nmenu = 8;
   char menu[nmenu][STRINGSIZE];
 
   fillMenu(menu, nmenu);
@@ -64,36 +64,6 @@ DOTRACE("MenuApplication::makeMenu");
   graphics()->showMenu(menu, nmenu);
 
   graphics()->swapBuffers();
-}
-
-void MenuApplication::onMenuChoice(char c) {
-DOTRACE("MenuApplication::onMenuChoice");
-  switch( c ) {
-  case 'q':
-	 this->quit(0);
-	 break;
-
-  case 'r':
-	 runExperiment();
-	 makeMenu();
-	 break;
-
-  case 'x':
-	 SetParameters1(this);
-	 break;
-
-  case 'y':
-	 SetParameters2(this);
-	 break;
-
-  case 'p':
-	 ListParams(this);
-	 break;
-
-  default:
-	 makeMenu();
-	 break;
-  }
 }
 
 static const char vcid_applic_c[] = "$Header$";
