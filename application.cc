@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Wed Sep  3 16:06:45 2003
+// written: Wed Sep  3 16:24:26 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ DOTRACE("Application::run");
 
   XEvent event;
 
-  while( True )
+  while ( true )
     {
       XNextEvent( itsGraphics->xstuff().display(), &event );
 
@@ -159,13 +159,11 @@ DOTRACE("Application::buttonPressLoop");
 
   XEvent event;
 
-  while( XCheckMaskEvent( itsGraphics->xstuff().display(),
-                          ButtonPressMask | KeyPressMask,
-                          &event ) )
+  while ( XCheckMaskEvent( itsGraphics->xstuff().display(),
+                           ButtonPressMask | KeyPressMask,
+                           &event ) )
     {
-      if( ((event.type == ButtonPress) || (event.type == KeyPress))
-//           && event.xbutton.window == itsGraphics->xstuff().window()
-          )
+      if ( event.type == ButtonPress || event.type == KeyPress )
         {
           timeButtonEvent( &event );
         }
@@ -285,7 +283,6 @@ DOTRACE("Application::getKeystroke");
       if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
            keysym >= XK_space    && keysym <= XK_asciitilde )
         {
-
           DebugEvalNL(buffer[0]);
           return( buffer[0] );
         }

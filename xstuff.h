@@ -3,7 +3,7 @@
 // xstuff.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:27 2000
-// written: Wed Sep  3 14:01:48 2003
+// written: Wed Sep  3 16:12:22 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,6 @@ public:
 
   Display* display() { return itsDisplay; }
   Window window() const { return itsWindow; }
-  XVisualInfo& visInfo() { return itsVisInfo; }
   void storeColor(unsigned int index, double red, double green, double blue);
 
   void setPrefVisInfo(const XVisualInfo* vinfo);

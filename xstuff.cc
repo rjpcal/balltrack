@@ -3,7 +3,7 @@
 // xstuff.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:55 2000
-// written: Wed Sep  3 14:19:40 2003
+// written: Wed Sep  3 16:23:15 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,10 +118,10 @@ DOTRACE("XStuff::openDisplay");
 
   if ( itsDisplay == NULL )
     {
-      if ( ( char * ) getenv( "DISPLAY" ) == ( char * ) NULL )
-        fprintf( stdout,"You need to set the DISPLAY env var\n" );
+      if ( getenv( "DISPLAY" ) == 0 )
+        fprintf( stdout, "You need to set the DISPLAY env var\n" );
       else
-        fprintf( stdout,"Cannot open DISPLAY %s,\n",getenv( "DISPLAY" ) );
+        fprintf( stdout, "Cannot open DISPLAY %s,\n", getenv( "DISPLAY" ) );
       exit( -1 );
     }
 
@@ -132,7 +132,7 @@ void XStuff::createVisual(const XHints& hints)
 {
 DOTRACE("XStuff::createVisual");
 
-  if ( !itsHasPrefVisInfo )
+  if (!itsHasPrefVisInfo)
     {
       XVisualInfo vtemp;
       vtemp.screen = itsScreen;
@@ -146,7 +146,7 @@ DOTRACE("XStuff::createVisual");
 
       itsVisInfo = vlist[0];
 
-      for( int i=0; i<vnumber; i++ )
+      for (int i = 0; i < vnumber; ++i)
         {
           VisualClass vclass(vlist[i].c_class);
 
@@ -156,7 +156,7 @@ DOTRACE("XStuff::createVisual");
                    vlist[i].depth,
                    vlist[i].colormap_size );
 
-          if( vclass.matches(hints.visualClass()) )
+          if ( vclass.matches(hints.visualClass()) )
             {
               itsVisInfo = vlist[i];
               break;
@@ -217,16 +217,16 @@ DOTRACE("XStuff::createWindow");
                                CWEventMask ),
                              &winAttributes );
 
-  FILE* fp;
+  FILE* fp = fopen( "wdwptr", "w" );
 
-  if( ( fp = fopen( "wdwptr", "w" ) ) == NULL )
+  if ( fp == 0 )
     {
-      printf( " cannot open file\n" );
+      printf(" cannot open wdwptr file\n");
       exit(-1);
     }
 
   fprintf( fp, "%ld\n", itsWindow );
-  printf( " window written %ld\n", itsWindow );
+  printf(" window written %ld\n", itsWindow);
 
   fclose( fp );
 }
@@ -246,11 +246,11 @@ void XStuff::setWmProperty(char* name)
 {
 DOTRACE("XStuff::setWmProperty");
 
-  XClassHint* class_hint = XAllocClassHint(  );
+  XClassHint* class_hint = XAllocClassHint();
   class_hint->res_name  = "test";
   class_hint->res_class = "Test";
 
-  XSizeHints* size_hints = XAllocSizeHints(  );
+  XSizeHints* size_hints = XAllocSizeHints();
   size_hints->flags    = USSize|USPosition|PMinSize|PMaxSize;
   size_hints->x = 500;
   size_hints->y = 500;
@@ -267,7 +267,7 @@ DOTRACE("XStuff::setWmProperty");
   XTextProperty icon_name;
   XStringListToTextProperty( &name, 1, &icon_name );
 
-  XWMHints* wm_hints = XAllocWMHints(  );
+  XWMHints* wm_hints = XAllocWMHints();
   wm_hints->flags    = InputHint;
   wm_hints->input    = True;
 
