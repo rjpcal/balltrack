@@ -33,6 +33,25 @@
 //
 //----------------------------------------------------------
 
+class ParamFileIn
+{
+private:
+  std::ifstream itsFstream;
+
+public:
+  ParamFileIn(const std::string& filebase,
+              const char* extension);
+  ~ParamFileIn();
+
+  void getInt(int& var, const char* name);
+  void getDouble(double& var, const char* name);
+  std::string getString(const char* name);
+
+  bool getLine(std::string& str);
+
+  std::ifstream& stream() { return itsFstream; }
+};
+
 ParamFileIn::ParamFileIn(const std::string& filebase,
                          const char* extension) :
   itsFstream()
@@ -53,22 +72,43 @@ ParamFileIn::ParamFileIn(const std::string& filebase,
 ParamFileIn::~ParamFileIn()
 {}
 
-void ParamFileIn::getInt(int& var)
+void ParamFileIn::getInt(int& var, const char* name)
 {
-  std::string dummy;
-  itsFstream >> dummy >> var;
+  std::string actualname;
+  itsFstream >> actualname >> var;
+  if (actualname != name)
+    {
+      std::cerr << "param file lines out of order: "
+                << "expected '" << name << "', "
+                << "got '" << actualname << "'\n";
+      exit(1);
+    }
 }
 
-void ParamFileIn::getDouble(double& var)
+void ParamFileIn::getDouble(double& var, const char* name)
 {
-  std::string dummy;
-  itsFstream >> dummy >> var;
+  std::string actualname;
+  itsFstream >> actualname >> var;
+  if (actualname != name)
+    {
+      std::cerr << "param file lines out of order: "
+                << "expected '" << name << "', "
+                << "got '" << actualname << "'\n";
+      exit(1);
+    }
 }
 
-std::string ParamFileIn::getString()
+std::string ParamFileIn::getString(const char* name)
 {
-  std::string dummy, result;
-  itsFstream >> dummy >> result;
+  std::string actualname, result;
+  itsFstream >> actualname >> result;
+  if (actualname != name)
+    {
+      std::cerr << "param file lines out of order: "
+                << "expected '" << name << "', "
+                << "got '" << actualname << "'\n";
+      exit(1);
+    }
   return result;
 }
 
@@ -245,33 +285,30 @@ DOTRACE("Params::readFromFile");
 
   ParamFileIn pmfile(this->filestem, extension);
 
-  int dummy;
-
-  pmfile.getInt   (this->displayX);
-  pmfile.getInt   (this->displayY);
-  pmfile.getInt   (this->cycleNumber);
-  pmfile.getDouble(this->waitSeconds);
-  pmfile.getDouble(this->epochSeconds);
-  pmfile.getDouble(this->pauseSeconds);
-  pmfile.getDouble(this->remindSeconds);
-  pmfile.getInt   (this->remindsPerEpoch);
-  pmfile.getInt   (dummy); // FIXME used to be framesPerRemind
-  pmfile.getInt   (this->ballNumber);
-  pmfile.getInt   (this->ballTrackNumber);
-  pmfile.getDouble(this->ballSpeed);
-  pmfile.getInt   (this->ballPixmapSize);
-  pmfile.getInt   (this->ballMinDistance);
-  pmfile.getDouble(this->ballRadius);
-  pmfile.getDouble(this->ballSigma2);
-  pmfile.getDouble(this->ballTwistAngle);
-  this->filestem = pmfile.getString();
+  pmfile.getInt   (this->displayX,        "DISPLAY_X");
+  pmfile.getInt   (this->displayY,        "DISPLAY_Y");
+  pmfile.getInt   (this->cycleNumber,     "CYCLE_NUMBER");
+  pmfile.getDouble(this->waitSeconds,     "WAIT_DURATION");
+  pmfile.getDouble(this->epochSeconds,    "EPOCH_DURATION");
+  pmfile.getDouble(this->pauseSeconds,    "PAUSE_DURATION");
+  pmfile.getDouble(this->remindSeconds,   "REMIND_DURATION");
+  pmfile.getInt   (this->remindsPerEpoch, "REMINDS_PER_EPOCH");
+  pmfile.getInt   (this->ballNumber,      "BALL_NUMBER");
+  pmfile.getInt   (this->ballTrackNumber, "BALL_TRACK_NUMBER");
+  pmfile.getDouble(this->ballSpeed,       "BALL_SPEED");
+  pmfile.getInt   (this->ballPixmapSize,  "BALL_ARRAY_SIZE");
+  pmfile.getInt   (this->ballMinDistance, "BALL_MIN_DISTANCE");
+  pmfile.getDouble(this->ballRadius,      "BALL_RADIUS");
+  pmfile.getDouble(this->ballSigma2,      "BALL_SIGMA2");
+  pmfile.getDouble(this->ballTwistAngle,  "BALL_TWIST_ANGLE");
+  this->filestem = pmfile.getString("FILENAME");
 
   // this is a placeholder for the application mode, but we ignore the
   // value in the file since the actual application mode is set at
   // startup time
-  std::string appmode = pmfile.getString();
+  std::string appmode = pmfile.getString("APPLICATION_MODE");
 
-  pmfile.getInt(this->fmriSessionNumber);
+  pmfile.getInt(this->fmriSessionNumber, "FMRI_SESSION_NUMBER");
 }
 
 void Params::writeToFile(const char* extension)
@@ -295,7 +332,6 @@ DOTRACE("Params::appendToFile");
   pmfile.putDouble(this->pauseSeconds,      "PAUSE_DURATION");
   pmfile.putDouble(this->remindSeconds  ,   "REMIND_DURATION");
   pmfile.putInt   (this->remindsPerEpoch,   "REMINDS_PER_EPOCH");
-  pmfile.putInt   (0,                       "<defunct>");// FIXME
   pmfile.putInt   (this->ballNumber,        "BALL_NUMBER");
   pmfile.putInt   (this->ballTrackNumber,   "BALL_TRACK_NUMBER");
   pmfile.putDouble(this->ballSpeed,         "BALL_SPEED");

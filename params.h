@@ -17,25 +17,6 @@
 
 class Graphics;
 
-class ParamFileIn
-{
-private:
-  std::ifstream itsFstream;
-
-public:
-  ParamFileIn(const std::string& filebase,
-              const char* extension);
-  ~ParamFileIn();
-
-  void getInt(int& var);
-  void getDouble(double& var);
-  std::string getString();
-
-  bool getLine(std::string& str);
-
-  std::ifstream& stream() { return itsFstream; }
-};
-
 class ParamFileOut
 {
 private:
