@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Mon Feb 28 14:03:49 2000
+// written: Mon Feb 28 14:08:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,6 @@ public:
 
   virtual void waitVerticalRetrace();
   virtual void swapBuffers();
-
-  virtual void waitFrameCount(int number);
 
   virtual void drawMessage(char word[]);
   virtual void drawCross();
@@ -65,6 +63,8 @@ public:
 
 private:
   int fildes() const { return itsFildes; }
+
+  void waitFrameCount(int number);
 
   // called from initWindow()
   void checkFrameTime();
