@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:37:03 2000
-// written: Wed Feb 23 08:19:34 2000
+// written: Thu Feb 24 14:48:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,9 @@
 #define RAD2DEG  (360./TWOPI)
 
 #define STRINGSIZE      100
+
+const int BALL_COLOR_MIN = 8;
+const int BALL_COLOR_MAX = 63;
 
 static const char vcid_defs_h[] = "$Header$";
 #endif // !DEFS_H_DEFINED
