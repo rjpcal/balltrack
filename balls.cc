@@ -259,9 +259,13 @@ DOTRACE("Balls::pickInitialPositions");
 
   itsBalls.resize(itsParams.ballNumber);
 
+  const int maxtries = 1000;
+
   for (int i=0; i < itsParams.ballNumber; ++i)
     {
       bool too_close = true;
+
+      int c = 0;
 
       // Pick a random initial location that is not too close to the
       // other balls
@@ -282,6 +286,13 @@ DOTRACE("Balls::pickInitialPositions");
                   too_close = true;
                   break;
                 }
+            }
+
+          if (++c > maxtries)
+            {
+              std::cerr << "couldn't find a satisfactory initial ball configuration\n"
+                        << "(try increasing DISPLAY_X or DISPLAY_Y, or decreasing BALL_NUMBER)\n";
+              exit(1);
             }
         }
 
