@@ -24,11 +24,6 @@
 #include "trace.h"
 #include "debug.h"
 
-// #define      YES             	   'y'
-// #define      NO              	   'n'
-// #define      READY           	   ' '
-// #define      QUIT            	   'q'
-
 bool MAKING_MOVIE = false;
 AppMode APPLICATION_MODE = EYE_TRACKING;
 int FMRI_SESSION_NUMBER = 1;
@@ -140,11 +135,11 @@ DOTRACE("ReadParams");
 
   Closefile( fp );
 
-  CheckParams(app->graphics());
+  RecomputeParams(app->graphics());
 }
 
-void CheckParams(Graphics* gfx) {
-DOTRACE("CheckParams");
+void RecomputeParams(Graphics* gfx) {
+DOTRACE("RecomputeParams");
 
   float time_between_reminds;
 
@@ -361,7 +356,7 @@ DOTRACE("SetParameters1");
   gfx->showMenu(text, 4);
   gfx->swapBuffers();
 
-  CheckParams(gfx);
+  RecomputeParams(gfx);
 }
 
 void SetParameters2(Application* app) {
@@ -423,7 +418,7 @@ DOTRACE("SetParameters2");
   gfx->showMenu(text, 4);
   gfx->swapBuffers();
 
-  CheckParams(gfx);
+  RecomputeParams(gfx);
 }
 
 void SetParameters3(Application* app) {
@@ -454,7 +449,7 @@ DOTRACE("SetParameters2");
   gfx->showMenu(text, 4);
   gfx->swapBuffers();
 
-  CheckParams(gfx);
+  RecomputeParams(gfx);
 }
 
 void GetWord(Application* app, char* buf, int sz) {
