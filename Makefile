@@ -8,8 +8,7 @@
 #
 #########################################################################
 
-prefix := $(HOME)/local/$(ARCH)/bin/
-exec_prefix := $(prefix)
+prefix := ./
 
 ifeq ($(ARCH),hp9000s700)
 	CC  := aCC
@@ -50,10 +49,10 @@ OBJ   := \
 	$(ARCH)/xstuff.o \
 	$(GFXOBJ)
 
-TRAIN_TARGET := $(prefix)/balls3_train
-ITRK_TARGET := $(prefix)/balls3_itrk
-FMRI_TARGET := $(prefix)/balls3_fmri
-MOVIE_TARGET := $(prefix)/balls3_movie
+TRAIN_TARGET := $(prefix)/bin/balls3_train
+ITRK_TARGET := $(prefix)/bin/balls3_itrk
+FMRI_TARGET := $(prefix)/bin/balls3_fmri
+MOVIE_TARGET := $(prefix)/bin/balls3_movie
 
 ifeq ($(ARCH),hp9000s700)
 	ALL   := $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET) $(MOVIE_TARGET) serial
@@ -141,15 +140,22 @@ clean:
 	rm -f core *.o *.a $(ALL)
 
 $(ITRK_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_EYE_TRACKING main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB)
+	mkdir -p $(dir $@)
+	time $(CC) $(CFLAGS) -DMODE_EYE_TRACKING main.cc \
+		$(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 $(FMRI_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB)
+	mkdir -p $(dir $@)
+	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.cc \
+		$(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 $(TRAIN_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_TRAINING main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB)
+	mkdir -p $(dir $@)
+	time $(CC) $(CFLAGS) -DMODE_TRAINING main.cc \
+		$(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 $(MOVIE_TARGET): $(OBJ) $(MAIN_CC)
+	mkdir -p $(dir $@)
 	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION -DMAKE_MOVIE main.cc \
 		$(OBJ) -o $@ $(LFLAGS) $(LIB)
 
