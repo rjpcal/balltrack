@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Wed Feb 23 15:41:58 2000
+// written: Wed Feb 23 15:46:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,17 @@
 #define BALLSEXPT_CC_DEFINED
 
 #include "ballsexpt.h"
+
+#include <cstdio>
+#include <sys/time.h>
+
+#include "balls.h"
+#include "image.h"
+#include "params.h"
+#include "timing.h"
+
+#include "trace.h"
+#include "debug.h"
 
 void BallsExpt::runExperiment() {
 DOTRACE("BallsExpt::runExperiment");
