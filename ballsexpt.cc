@@ -20,6 +20,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <iostream>
 #include <string>
 #include <time.h>
 #include <vector>
@@ -61,19 +62,6 @@ struct BallsExpt::Impl
   Params& params;
   Graphics& gfx;
   Timing timing;
-
-  void logTimePoints(ParamFile& f)
-  {
-    for (unsigned int i = 0; i < timepoints.size(); ++i)
-      {
-        char buf[512];
-        snprintf(buf, 512, " %d %lf", i,
-                 Timing::elapsedMsec(timepoints[0], timepoints[i]));
-
-        printf("%s\n", buf);
-        f.putLine(buf);
-      }
-  }
 };
 
 BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
@@ -202,13 +190,13 @@ void BallsExpt::runFixationCalibration()
 {
 DOTRACE("BallsExpt::runFixationCalibration");
 
-  int w = rep->gfx.width();
-  int h = rep->gfx.height();
+  const int w = rep->gfx.width();
+  const int h = rep->gfx.height();
 
-  int x[] = { w/2, 50, w/2, w-50,  50, w/2, w-50,   50,  w/2, w-50, w/2 };
-  int y[] = { h/2, 50,  50,   50, h/2, h/2,  h/2, h-50, h-50, h-50, h/2 };
+  const int x[] = { w/2, 50, w/2, w-50,  50, w/2, w-50,   50,  w/2, w-50, w/2 };
+  const int y[] = { h/2, 50,  50,   50, h/2, h/2,  h/2, h-50, h-50, h-50, h/2 };
 
-  int seq[] = { 0, 2, 4, 6, 8, 1, 3, 5, 7, 9, 10 };
+  const int seq[] = { 0, 2, 4, 6, 8, 1, 3, 5, 7, 9, 10 };
 
   for (int i = 0; i < 11; ++i)
     {
@@ -255,22 +243,30 @@ DOTRACE("BallsExpt::runExperiment");
   Timer timer;
   timer.reset();
 
-  // FIXME use a vector here with push_back()
   rep->timepoints.clear();
 
   rep->timepoints.push_back(Timing::getTime());
   rep->gfx.gfxWait(timer, rep->params.waitSeconds);
 
-  if (Params::FMRI_SESSION == rep->params.appMode)
-    runFmriExpt();
-  else if (Params::EYE_TRACKING == rep->params.appMode)
-    runEyeTrackingExpt();
-  else if (Params::TRAINING == rep->params.appMode)
-    runTrainingExpt();
+  switch (rep->params.appMode)
+    {
+    case Params::FMRI_SESSION: runFmriExpt(); break;
+    case Params::EYE_TRACKING: runEyeTrackingExpt(); break;
+    case Params::TRAINING:     runTrainingExpt(); break;
+    }
 
   rep->timepoints.push_back(Timing::getTime());
 
-  rep->logTimePoints(tmefile);
+  for (unsigned int i = 0; i < rep->timepoints.size(); ++i)
+    {
+      char buf[512];
+      snprintf(buf, 512, " %d %lf", i,
+               Timing::elapsedMsec(rep->timepoints[0],
+                                   rep->timepoints[i]));
+
+      std::cout << buf << '\n';
+      tmefile.putLine(buf);
+    }
 
   rep->gfx.xstuff().buttonPressLoop(static_cast<void*>(this),
                                     &onButton);
