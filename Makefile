@@ -37,7 +37,8 @@ alldepends: cppdeps $(ALL_SRCS)
 		--output-link-deps \
 		--linkformat ":$(objdir)/*.o" \
 		--exeformat "main.cc:$(prefix)/bin/balltrack" \
-		--srcdir $(srcdir) | sort > $@
+		--srcdir $(srcdir) > $@.tmp
+	mv $@.tmp $@
 
 include alldepends
 
