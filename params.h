@@ -58,12 +58,12 @@ private:
   char itsLine[120];
   char itsText[120];
 
-  static FILE* openfile(Application* app, char mode, char extension[]);
+  static FILE* openfile(char mode, char extension[]);
 
   void fetchLine();
 
 public:
-  ParamFile(Application* app, char mode, char extension[]);
+  ParamFile(char mode, char extension[]);
   ~ParamFile();
 
   FILE* fp() { return itsFile; }
@@ -84,11 +84,11 @@ public:
 class Params
 {
 public:
-  static void readParams(Application* app, char extension[]);
-  static void writeParams(Application* app, char extension[]);
+  static void readParams(Graphics& gfx, char extension[]);
+  static void writeParams(char extension[]);
   static void appendParams(ParamFile& pmfile);
-  static void logParams(Application* app, ParamFile& logfile);
-  static void displayParams(Application* app);
+  static void logParams(ParamFile& logfile);
+  static void displayParams(Graphics& gfx);
 };
 
 void RecomputeParams(Graphics& gfx);

@@ -71,7 +71,7 @@ BallsExpt::BallsExpt(Graphics& gfx) :
 {
 DOTRACE("BallsExpt::BallsExpt");
 
-  Params::readParams(this, "sta");
+  Params::readParams(gfx, "sta");
 
   Balls::generateColors();
 }
@@ -80,7 +80,7 @@ BallsExpt::~BallsExpt()
 {
 DOTRACE("BallsExpt::~BallsExpt");
 
-  Params::writeParams(this, "sta");
+  Params::writeParams("sta");
 
   delete itsImpl;
 }
@@ -119,7 +119,7 @@ DOTRACE("BallsExpt::onKey");
       break;
 
     case 'p':
-      Params::displayParams(this);
+      Params::displayParams(this->graphics());
       break;
 
     default:
@@ -178,9 +178,9 @@ void BallsExpt::runExperiment()
 {
 DOTRACE("BallsExpt::runExperiment");
 
-  ParamFile tmefile(this, 'a', "tme");
+  ParamFile tmefile('a', "tme");
 
-  Params::logParams(this, tmefile);
+  Params::logParams(tmefile);
 
   graphics().clearFrontBuffer();
 

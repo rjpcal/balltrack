@@ -68,7 +68,7 @@ void process_id( char pid[] );
 /************************************************/
 
 
-FILE* ParamFile::openfile(Application* app, char mode, char extension[])
+FILE* ParamFile::openfile(char mode, char extension[])
 {
 DOTRACE("ParamFile::openfile");
 
@@ -94,8 +94,8 @@ void ParamFile::fetchLine()
   fgets(itsLine, 120, itsFile);
 }
 
-ParamFile::ParamFile(Application* app, char mode, char extension[]) :
-  itsFile(openfile(app, mode, extension))
+ParamFile::ParamFile(char mode, char extension[]) :
+  itsFile(openfile(mode, extension))
 {}
 
 ParamFile::~ParamFile()
@@ -153,11 +153,11 @@ void ParamFile::putText(const char* var, const char* name)
   fprintf(itsFile, "%-19s %+s\n", name, var);
 }
 
-void Params::readParams(Application* app, char extension[])
+void Params::readParams(Graphics& gfx, char extension[])
 {
 DOTRACE("Params::readParams");
 
-  ParamFile pmfile(app, 'r', extension);
+  ParamFile pmfile('r', extension);
 
   pmfile.getInt(   DISPLAY_X  );
   pmfile.getInt(   DISPLAY_Y  );
@@ -184,9 +184,9 @@ DOTRACE("Params::readParams");
   // startup time
   pmfile.ignoreText();
 
-  pmfile.getInt( (FMRI_SESSION_NUMBER) );
+  pmfile.getInt(FMRI_SESSION_NUMBER);
 
-  RecomputeParams(app->graphics());
+  RecomputeParams(gfx);
 }
 
 void RecomputeParams(Graphics& gfx)
@@ -215,11 +215,11 @@ DOTRACE("RecomputeParams");
   DebugEvalNL(FRAMES_PER_REMIND);
 }
 
-void Params::writeParams(Application* app, char extension[])
+void Params::writeParams(char extension[])
 {
 DOTRACE("Params::writeParams");
 
-  ParamFile pmfile(app, 'w', extension);
+  ParamFile pmfile('w', extension);
 
   appendParams(pmfile);
 }
@@ -260,11 +260,11 @@ DOTRACE("Params::appendParams");
   pmfile.putInt(    (FMRI_SESSION_NUMBER),("FMRI_SESSION_NUMBER") );
 }
 
-void Params::logParams(Application* app, ParamFile& logfile)
+void Params::logParams(ParamFile& logfile)
 {
 DOTRACE("Params::logParams");
 
-  writeParams(app, "cur");
+  writeParams("cur");
 
   char text[STRINGSIZE];
   date(text);
@@ -275,7 +275,7 @@ DOTRACE("Params::logParams");
   fprintf( logfile.fp(), "\n\n");
 }
 
-void Params::displayParams(Application* app)
+void Params::displayParams(Graphics& gfx)
 {
 DOTRACE("Params::displayParams");
 
@@ -284,9 +284,9 @@ DOTRACE("Params::displayParams");
   int nparams = 0;
   char params[MAXPARAMS][STRINGSIZE];
 
-  writeParams(app, "sta");
+  writeParams("sta");
 
-  ParamFile pmfile(app, 'r', "sta");
+  ParamFile pmfile('r', "sta");
 
   int curparam = MAXPARAMS - 1;
 
@@ -297,10 +297,10 @@ DOTRACE("Params::displayParams");
       ++nparams;
     }
 
-  app->graphics().clearFrontBuffer();
-  app->graphics().clearBackBuffer();
-  app->graphics().showParams(params+curparam+1, nparams);
-  app->graphics().swapBuffers();
+  gfx.clearFrontBuffer();
+  gfx.clearBackBuffer();
+  gfx.showParams(params+curparam+1, nparams);
+  gfx.swapBuffers();
 }
 
 void SetParameters1(Application* app)
