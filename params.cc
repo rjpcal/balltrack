@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Thu Mar 30 16:40:02 2000
+// written: Thu Mar 30 16:50:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -179,6 +179,15 @@ DOTRACE("WriteParams");
   PUTFLOAT( (BALL_TWIST_ANGLE), ("BALL_TWIST_ANGLE") );
   PUTTEXT(  (OBSERVER),         ("OBSERVER") );
   PUTTEXT(  (FILENAME),         ("FILENAME") );
+
+  const char* app_mode = "unknown";
+  switch (APPLICATION_MODE) {
+  case TRAINING:      app_mode = "TRAINING";     break;
+  case EYE_TRACKING:  app_mode = "EYE_TRACKING"; break;
+  case FMRI_SESSION:  app_mode = "FMRI_SESSION"; break;
+  }
+
+  PUTTEXT(   (app_mode),         ("APPLICATION_MODE") );
 
   Closefile( fp );
 }
