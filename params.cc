@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Mon Jun 12 16:28:12 2000
+// written: Wed Feb 28 12:33:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@
 // #define      READY           	   ' '
 // #define      QUIT            	   'q'
 
+bool MAKING_MOVIE = false;
 AppMode APPLICATION_MODE = EYE_TRACKING;
 int FMRI_SESSION_NUMBER = 1;
 
