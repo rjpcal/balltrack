@@ -318,8 +318,8 @@ DOTRACE("SetParameters1");
     }
 
   sprintf( text[0], " BALL  NUMBER TRACK  VELOC  SIZE   MINDIS RADIUS SIGMA2 TWIST" );
-  sprintf( text[1], "" );
-  sprintf( text[2], "" );
+  sprintf( text[1], "%s", "" );
+  sprintf( text[2], "%s", "" );
   sprintf( text[3], "       %-6d %-6d %-6d %-6d %-6d %-6.1f %-6.1f %-6.3f",
                           BALL_NUMBER, BALL_TRACK_NUMBER, BALL_VELOCITY,
                           BALL_ARRAY_SIZE, BALL_MIN_DISTANCE, BALL_RADIUS,
@@ -395,8 +395,8 @@ DOTRACE("SetParameters2");
     }
 
   sprintf( text[0], "       CYCL_NUM WAIT_DUR EPCH_DUR PAUS_DUR RMND_NUM RMND_DUR" );
-  sprintf( text[1], "" );
-  sprintf( text[2], "" );
+  sprintf( text[1], "%s", "");
+  sprintf( text[2], "%s", "");
   sprintf( text[3], "       %-8d %-8.2f %-8.2f %-8.2f %-8d %-8.2f",
                           CYCLE_NUMBER, WAIT_DURATION, EPOCH_DURATION,
                           PAUSE_DURATION, REMINDS_PER_EPOCH, REMIND_DURATION );
@@ -459,8 +459,8 @@ DOTRACE("SetParameters2");
     }
 
   sprintf( text[0], "       SESSION_NUMBER" );
-  sprintf( text[1], "" );
-  sprintf( text[2], "" );
+  sprintf( text[1], "%s", "");
+  sprintf( text[2], "%s", "");
   sprintf( text[3], "       %-8d",
                           FMRI_SESSION_NUMBER );
 
