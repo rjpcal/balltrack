@@ -70,6 +70,28 @@ struct BallsExpt::Impl
 
   void tallyReactionTime(ParamFile& f)
   {
+    double xtime;
+    int nbutton;
+
+    while (this->gfx.xstuff().getButtonPress(xtime, nbutton))
+      {
+        double delta = xtime - this->respTime0;
+
+        if (delta < 0.0)
+          delta = delta + 4294967295.0;
+
+        std::cout << " button " << nbutton
+                  << " at delta " << delta << " msec" << std::endl;
+
+        switch (nbutton)
+          {
+          case 1:  this->responses.push_back(Response(delta, BUTTON1)); break;
+          case 2:  this->responses.push_back(Response(delta, BUTTON2)); break;
+          case 3:  this->responses.push_back(Response(delta, BUTTON3)); break;
+          default: this->responses.push_back(Response(delta, 0)); break;
+          }
+      }
+
     // write reactions to the log file
 
     char buf[512];
@@ -219,27 +241,6 @@ DOTRACE("BallsExpt::onKey");
   return false;
 }
 
-void BallsExpt::onButton(double xtime, int button_number)
-{
-DOTRACE("BallsExpt::onButton");
-
-  double delta = xtime - this->rep->respTime0;
-
-  if (delta < 0.0)
-    delta = delta + 4294967295.0;
-
-  std::cout << " button " << button_number
-            << " at delta " << delta << " msec" << std::endl;
-
-  switch (button_number)
-    {
-    case 1:  this->rep->responses.push_back(Response(delta, BUTTON1)); break;
-    case 2:  this->rep->responses.push_back(Response(delta, BUTTON2)); break;
-    case 3:  this->rep->responses.push_back(Response(delta, BUTTON3)); break;
-    default: this->rep->responses.push_back(Response(delta, 0)); break;
-    }
-}
-
 void BallsExpt::makeMenu()
 {
 DOTRACE("BallsExpt::makeMenu");
@@ -356,15 +357,6 @@ DOTRACE("BallsExpt::runExperiment");
 
       std::cout << buf << '\n';
       tmefile.putLine(buf);
-    }
-
-
-  double xt;
-  int nbutton;
-
-  while (rep->gfx.xstuff().getButtonPress(xt, nbutton))
-    {
-      onButton(xt, nbutton);
     }
 
   rep->tallyReactionTime(tmefile);

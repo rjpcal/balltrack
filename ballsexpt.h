@@ -28,8 +28,6 @@ private:
   // Returns true if application should quit
   static bool onKey(void* cdata, double xtime, char c);
 
-  void onButton(double xtime, int button_number);
-
   void makeMenu();
 
   void runFixationCalibration();
