@@ -67,9 +67,9 @@ namespace
   }
 }
 
-Graphics::Graphics(const XHints& hints, int wid, int hgt) :
-  itsWidth(wid),
-  itsHeight(hgt),
+Graphics::Graphics(const XHints& hints) :
+  itsWidth(hints.width()),
+  itsHeight(hints.height()),
   itsFrameTime(-1.0),
   itsXStuff(hints),
   itsGLXContext(0),

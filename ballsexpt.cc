@@ -65,8 +65,8 @@ struct BallsExpt::Impl
 };
 
 
-BallsExpt::BallsExpt(const XHints& hints) :
-  MenuApplication(hints),
+BallsExpt::BallsExpt(Graphics& gfx) :
+  MenuApplication(gfx),
   itsImpl(new Impl)
 {
 DOTRACE("BallsExpt::BallsExpt");
@@ -142,8 +142,8 @@ void BallsExpt::runFixationCalibration()
 {
 DOTRACE("BallsExpt::runFixationCalibration");
 
-  int w = graphics()->width();
-  int h = graphics()->height();
+  int w = graphics().width();
+  int h = graphics().height();
 
   int x[] = { w/2, 50, w/2, w-50,  50, w/2, w-50,   50,  w/2, w-50, w/2 };
   int y[] = { h/2, 50,  50,   50, h/2, h/2,  h/2, h-50, h-50, h-50, h/2 };
@@ -152,13 +152,13 @@ DOTRACE("BallsExpt::runFixationCalibration");
 
   for (int i = 0; i < 11; ++i)
     {
-      graphics()->writeAllPlanes();
-      graphics()->waitVerticalRetrace();
-      graphics()->clearFrontBuffer();
-      graphics()->drawCross(x[seq[i]], y[seq[i]]);
-      graphics()->swapBuffers();
+      graphics().writeAllPlanes();
+      graphics().waitVerticalRetrace();
+      graphics().clearFrontBuffer();
+      graphics().drawCross(x[seq[i]], y[seq[i]]);
+      graphics().swapBuffers();
       Timing::mainTimer.set();
-      graphics()->gfxWait( 1.0 );
+      graphics().gfxWait( 1.0 );
     }
 }
 
@@ -170,20 +170,20 @@ DOTRACE("BallsExpt::runExperiment");
 
   Params::logParams(this, tmefile);
 
-  graphics()->writeAllPlanes();
+  graphics().writeAllPlanes();
 
-  graphics()->clearFrontBuffer();
+  graphics().clearFrontBuffer();
 
   for (int k = 0; k < 2; ++k)
     {
-      graphics()->clearBackBuffer();
-      graphics()->drawCross();
-      graphics()->swapBuffers();
+      graphics().clearBackBuffer();
+      graphics().drawCross();
+      graphics().swapBuffers();
     }
 
   Timing::mainTimer.set();
   Timing::getTime( &itsImpl->itsTimePoints[0] );
-  graphics()->gfxWait( WAIT_DURATION );
+  graphics().gfxWait( WAIT_DURATION );
 
   itsImpl->itsTpIndex = 1;
 
@@ -198,7 +198,7 @@ DOTRACE("BallsExpt::runExperiment");
 
   itsImpl->logTimePoints(tmefile.fp());
 
-  graphics()->writeAllPlanes();
+  graphics().writeAllPlanes();
 
   buttonPressLoop();
 
@@ -210,7 +210,7 @@ void BallsExpt::runFmriExpt()
 DOTRACE("BallsExpt::runFmriExpt");
 
   if (MAKING_MOVIE)
-    graphics()->startRecording();
+    graphics().startRecording();
 
   for (int trial = 0; trial < NUM_TRIALS; ++trial)
     {
@@ -242,24 +242,24 @@ DOTRACE("BallsExpt::runFmriExpt");
       // If there will be more trials, then do a fixation cross interval
       if ( trial < (NUM_TRIALS-1) )
         {
-          graphics()->writeAllPlanes();
-          graphics()->clearFrontBuffer();
+          graphics().writeAllPlanes();
+          graphics().clearFrontBuffer();
 
           for (int k = 0; k < 2; ++k)
             {
-              graphics()->clearBackBuffer();
-              graphics()->drawCross();
-              graphics()->swapBuffers();
+              graphics().clearBackBuffer();
+              graphics().drawCross();
+              graphics().swapBuffers();
             }
 
           Timing::mainTimer.set();
           Timing::getTime( &itsImpl->itsTimePoints[itsImpl->itsTpIndex++] );
-          graphics()->gfxWait( WAIT_DURATION );
+          graphics().gfxWait( WAIT_DURATION );
         }
     }
 
   if (MAKING_MOVIE)
-         graphics()->stopRecording();
+         graphics().stopRecording();
 }
 
 void BallsExpt::runEyeTrackingExpt()

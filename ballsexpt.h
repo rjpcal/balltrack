@@ -11,14 +11,14 @@
 #ifndef BALLSEXPT_H_DEFINED
 #define BALLSEXPT_H_DEFINED
 
-#ifndef MENUAPP_H_DEFINED
 #include "menuapp.h"
-#endif
+
+class Graphics;
 
 class BallsExpt : public MenuApplication
 {
 public:
-  BallsExpt(const XHints& hints);
+  BallsExpt(Graphics& gfx);
   virtual ~BallsExpt();
 
 protected:

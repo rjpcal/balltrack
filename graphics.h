@@ -24,7 +24,7 @@ class SimpleMovie;
 class Graphics
 {
 public:
-  Graphics(const XHints& hints, int wid, int hgt);
+  Graphics(const XHints& hints);
 
   ~Graphics();
 

@@ -15,17 +15,11 @@ class XHints
 {
 public:
   XHints() :
-         itsName("xstuff"),
-         itsWidth(1280),
-         itsHeight(1024),
-         itsDepth(8)
+    itsName("xstuff"),
+    itsWidth(1280),
+    itsHeight(1024),
+    itsDepth(8)
   {}
-
-  XHints& argc(int hint) { itsArgc = hint; return* this; }
-  int argc() const { return itsArgc; }
-
-  XHints& argv(char** hint) { itsArgv = hint; return* this; }
-  char** argv() const { return itsArgv; }
 
   XHints& name(const char* hint) { itsName = hint; return *this; }
   const char* name() const { return itsName; }

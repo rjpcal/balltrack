@@ -95,7 +95,7 @@ public:
   static void displayParams(Application* app);
 };
 
-void RecomputeParams(Graphics* gfx);
+void RecomputeParams(Graphics& gfx);
 
 void SetParameters1(Application* app);
 void SetParameters2(Application* app);

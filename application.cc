@@ -35,20 +35,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-Application::Application(const XHints& hints) :
-  itsArgc(hints.argc()),
-  itsArgv(hints.argv()),
-  itsWidth(hints.width()),
-  itsHeight(hints.height()),
-  itsGraphics(new Graphics(hints, itsWidth, itsHeight))
+Application::Application(Graphics& gfx) :
+  itsGraphics(gfx)
 {
 DOTRACE("Application::Application");
-
-  whoAreYou();
-
-  itsGraphics->xstuff().openWindow(hints);
-
-  itsGraphics->initWindow();
 
   // seed the random number generator based on the time
   struct timeval tp;
@@ -56,24 +46,9 @@ DOTRACE("Application::Application");
   srand48( tp.tv_sec );
 }
 
-void Application::whoAreYou()
-{
-DOTRACE("Application::whoAreYou");
-  if( argc() < 2 )
-    {
-      printf( " Who are you?\n" );
-      quit(0);
-    }
-
-  strcpy( PROGRAM,  argv(0) );
-  strcpy( OBSERVER, argv(1) );
-  strcpy( FILENAME, argv(1) );
-}
-
 Application::~Application()
 {
 DOTRACE("Application::~Application");
-  delete itsGraphics;
 }
 
 void Application::run()
@@ -84,30 +59,14 @@ DOTRACE("Application::run");
 
   while ( true )
     {
-      XNextEvent( itsGraphics->xstuff().display(), &event );
+      XNextEvent( itsGraphics.xstuff().display(), &event );
 
       switch( event.type )
         {
         case Expose:
           if ( event.xexpose.count == 0 )
-            if( event.xexpose.window == itsGraphics->xstuff().window() )
+            if( event.xexpose.window == itsGraphics.xstuff().window() )
               onExpose();
-          break;
-
-        case ClientMessage:
-
-          if ( ( Atom )event.xclient.data.l[0] ==
-               XInternAtom( itsGraphics->xstuff().display(), "WM_DELETE_WINDOW", False ) )
-            {
-              return;
-            }
-
-          else if ( ( Atom )event.xclient.data.l[0] ==
-                    XInternAtom( itsGraphics->xstuff().display(), "WM_SAVE_YOURSELF", False ) )
-            {
-              XSetCommand( itsGraphics->xstuff().display(), itsGraphics->xstuff().window(),
-                           itsArgv, itsArgc );
-            }
           break;
 
         case ButtonPress:
@@ -118,7 +77,7 @@ DOTRACE("Application::run");
           break;
 
         case KeyPress:
-          if ( event.xkey.window == itsGraphics->xstuff().window() )
+          if ( event.xkey.window == itsGraphics.xstuff().window() )
             {
               Timing::logTimer.set();
               Timing::mainTimer.set();
@@ -139,7 +98,7 @@ DOTRACE("Application::quit");
 
   wrap();
 
-  itsGraphics->xstuff().wrapX();
+  itsGraphics.xstuff().wrapX();
 
   exit(code);
 }
@@ -150,7 +109,7 @@ DOTRACE("Application::buttonPressLoop");
 
   XEvent event;
 
-  while ( XCheckMaskEvent( itsGraphics->xstuff().display(),
+  while ( XCheckMaskEvent( itsGraphics.xstuff().display(),
                            ButtonPressMask | KeyPressMask,
                            &event ) )
     {
@@ -248,9 +207,9 @@ DOTRACE("Application::getKeystroke");
   while( true )
     {
       XEvent event;
-      XNextEvent( itsGraphics->xstuff().display(), &event );
+      XNextEvent( itsGraphics.xstuff().display(), &event );
 
-      if( event.type != KeyPress || event.xkey.window != itsGraphics->xstuff().window() )
+      if( event.type != KeyPress || event.xkey.window != itsGraphics.xstuff().window() )
         continue;
 
       KeySym keysym;
@@ -283,7 +242,7 @@ DOTRACE("Application::getKeystroke");
 void Application::ringBell(int duration)
 {
 DOTRACE("Application::ringBell");
-  XBell( itsGraphics->xstuff().display(), duration );
+  XBell( itsGraphics.xstuff().display(), duration );
 }
 
 void Application::wrap()

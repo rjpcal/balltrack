@@ -21,8 +21,8 @@
 #include "trace.h"
 #include "debug.h"
 
-MenuApplication::MenuApplication(const XHints& hints) :
-  Application(hints)
+MenuApplication::MenuApplication(Graphics& gfx) :
+  Application(gfx)
 {
 DOTRACE("MenuApplication::MenuApplication");
 
@@ -39,7 +39,7 @@ void MenuApplication::wrap()
 DOTRACE("MenuApplication::wrap");
   Params::writeParams(this, "sta");
 
-  graphics()->wrapGraphics();
+  graphics().wrapGraphics();
 }
 
 void MenuApplication::onExpose()
@@ -58,17 +58,17 @@ DOTRACE("MenuApplication::makeMenu");
 
   fillMenu(menu, nmenu);
 
-  graphics()->clearFrontBuffer();
+  graphics().clearFrontBuffer();
 
   for (int ii = 0; ii < 2; ++ii)
     {
-      graphics()->clearBackBuffer();
-      graphics()->swapBuffers();
+      graphics().clearBackBuffer();
+      graphics().swapBuffers();
     }
 
-  graphics()->showMenu(menu, nmenu);
+  graphics().showMenu(menu, nmenu);
 
-  graphics()->swapBuffers();
+  graphics().swapBuffers();
 }
 
 static const char vcid_menuapp_cc[] = "$Header$";

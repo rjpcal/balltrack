@@ -12,18 +12,15 @@
 #ifndef MENUAPP_H_DEFINED
 #define MENUAPP_H_DEFINED
 
-#ifndef APPLICATION_H_DEFINED
 #include "application.h"
-#endif
-
-#ifndef DEFS_H_DEFINED
 #include "defs.h"
-#endif
+
+class Graphics;
 
 class MenuApplication : public Application
 {
 public:
-  MenuApplication(const XHints& hints);
+  MenuApplication(Graphics& gfx);
   virtual ~MenuApplication();
 
 protected:

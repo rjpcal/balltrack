@@ -46,9 +46,9 @@ float BALL_RADIUS;
 float BALL_SIGMA2;
 int   BALL_MIN_DISTANCE;
 float BALL_TWIST_ANGLE;
-char  PROGRAM[STRINGSIZE];
-char  FILENAME[STRINGSIZE];
-char  OBSERVER[STRINGSIZE];
+char  PROGRAM[STRINGSIZE] = { '\0' };
+char  FILENAME[STRINGSIZE] = { '\0' };
+char  OBSERVER[STRINGSIZE] = { '\0' };
 
 int   BORDER_X;
 int   BORDER_Y;
@@ -188,19 +188,19 @@ DOTRACE("Params::readParams");
   RecomputeParams(app->graphics());
 }
 
-void RecomputeParams(Graphics* gfx)
+void RecomputeParams(Graphics& gfx)
 {
 DOTRACE("RecomputeParams");
 
   float time_between_reminds;
 
-  BORDER_X    = ( gfx->width() - DISPLAY_X ) / 2;
-  BORDER_Y    = ( gfx->height() - DISPLAY_Y ) / 2;
+  BORDER_X    = ( gfx.width() - DISPLAY_X ) / 2;
+  BORDER_Y    = ( gfx.height() - DISPLAY_Y ) / 2;
 
   time_between_reminds = ( EPOCH_DURATION - PAUSE_DURATION - REMIND_DURATION )
          / REMINDS_PER_EPOCH;
 
-  double frametime = gfx->frameTime();
+  double frametime = gfx.frameTime();
 
   printf( " Video frame time %7.4lf ms\n", frametime );
 
@@ -296,10 +296,10 @@ DOTRACE("Params::displayParams");
       ++nparams;
     }
 
-  app->graphics()->clearFrontBuffer();
-  app->graphics()->clearBackBuffer();
-  app->graphics()->showParams(params+curparam+1, nparams);
-  app->graphics()->swapBuffers();
+  app->graphics().clearFrontBuffer();
+  app->graphics().clearBackBuffer();
+  app->graphics().showParams(params+curparam+1, nparams);
+  app->graphics().swapBuffers();
 }
 
 void SetParameters1(Application* app)
@@ -308,13 +308,13 @@ DOTRACE("SetParameters1");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
 
-  Graphics* gfx = app->graphics();
+  Graphics& gfx = app->graphics();
 
-  gfx->clearFrontBuffer();
+  gfx.clearFrontBuffer();
   for (int ii = 0; ii < 2; ++ii)
     {
-      gfx->clearBackBuffer();
-      gfx->swapBuffers();
+      gfx.clearBackBuffer();
+      gfx.swapBuffers();
     }
 
   sprintf( text[0], " BALL  NUMBER TRACK  VELOC  SIZE   MINDIS RADIUS SIGMA2 TWIST" );
@@ -325,56 +325,56 @@ DOTRACE("SetParameters1");
                           BALL_ARRAY_SIZE, BALL_MIN_DISTANCE, BALL_RADIUS,
                           BALL_SIGMA2, BALL_TWIST_ANGLE );
 
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterInt( app, &BALL_NUMBER );
   sprintf( word, "       %-6d", BALL_NUMBER );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterInt( app, &BALL_TRACK_NUMBER );
   sprintf( word, " %-6d", BALL_TRACK_NUMBER );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterInt( app, &BALL_VELOCITY );
   sprintf( word, " %-6d", BALL_VELOCITY );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterInt( app, &BALL_ARRAY_SIZE );
   sprintf( word, " %-6d", BALL_ARRAY_SIZE );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterInt( app, &BALL_MIN_DISTANCE );
   sprintf( word, " %-6d", BALL_MIN_DISTANCE );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterFloat( app, &BALL_RADIUS );
   sprintf( word, " %-6.1f", BALL_RADIUS );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterFloat( app, &BALL_SIGMA2 );
   sprintf( word, " %-6.1f", BALL_SIGMA2 );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterFloat( app, &BALL_TWIST_ANGLE );
   sprintf( word, " %-6.3f", BALL_TWIST_ANGLE );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   RecomputeParams(gfx);
 }
@@ -385,13 +385,13 @@ DOTRACE("SetParameters2");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
 
-  Graphics* gfx = app->graphics();
+  Graphics& gfx = app->graphics();
 
-  gfx->clearFrontBuffer();
+  gfx.clearFrontBuffer();
   for (int ii = 0; ii < 2; ++ii)
     {
-      gfx->clearBackBuffer();
-      gfx->swapBuffers();
+      gfx.clearBackBuffer();
+      gfx.swapBuffers();
     }
 
   sprintf( text[0], "       CYCL_NUM WAIT_DUR EPCH_DUR PAUS_DUR RMND_NUM RMND_DUR" );
@@ -401,44 +401,44 @@ DOTRACE("SetParameters2");
                           CYCLE_NUMBER, WAIT_DURATION, EPOCH_DURATION,
                           PAUSE_DURATION, REMINDS_PER_EPOCH, REMIND_DURATION );
 
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterInt( app, &CYCLE_NUMBER );
   sprintf( word, "       %-8d", CYCLE_NUMBER );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterFloat( app, &WAIT_DURATION );
   sprintf( word, " %-8.2f", WAIT_DURATION );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterFloat( app, &EPOCH_DURATION );
   sprintf( word, " %-8.2f", EPOCH_DURATION );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterFloat( app, &PAUSE_DURATION );
   sprintf( word, " %-8.2f", PAUSE_DURATION );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterInt( app, &REMINDS_PER_EPOCH );
   sprintf( word, " %-8d", REMINDS_PER_EPOCH );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterFloat( app, &REMIND_DURATION );
   sprintf( word, " %-8.2f", REMIND_DURATION );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   RecomputeParams(gfx);
 }
@@ -449,13 +449,13 @@ DOTRACE("SetParameters2");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
 
-  Graphics* gfx = app->graphics();
+  Graphics& gfx = app->graphics();
 
-  gfx->clearFrontBuffer();
+  gfx.clearFrontBuffer();
   for (int ii = 0; ii < 2; ++ii)
     {
-      gfx->clearBackBuffer();
-      gfx->swapBuffers();
+      gfx.clearBackBuffer();
+      gfx.swapBuffers();
     }
 
   sprintf( text[0], "       SESSION_NUMBER" );
@@ -464,14 +464,14 @@ DOTRACE("SetParameters2");
   sprintf( text[3], "       %-8d",
                           FMRI_SESSION_NUMBER );
 
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   EnterInt( app, &FMRI_SESSION_NUMBER );
   sprintf( word, "       %-8d", FMRI_SESSION_NUMBER );
   strcat( text[1], word );
-  gfx->showMenu(text, 4);
-  gfx->swapBuffers();
+  gfx.showMenu(text, 4);
+  gfx.swapBuffers();
 
   RecomputeParams(gfx);
 }

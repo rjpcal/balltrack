@@ -15,10 +15,7 @@
 typedef union _XEvent XEvent;
 #endif
 
-class XHints;
-
 class XStuff;
-
 class Graphics;
 
 class Application
@@ -28,7 +25,7 @@ private:
   Application& operator=(const Application&);
 
 public:
-  Application(const XHints& hints);
+  Application(Graphics& gfx);
   virtual ~Application();
 
   void run();
@@ -40,10 +37,7 @@ public:
 
   void ringBell(int duration);
 
-  int argc() const { return itsArgc; }
-  char* argv(int argn) const { return itsArgv[argn]; }
-
-  Graphics* graphics() const { return itsGraphics; }
+  Graphics& graphics() const { return itsGraphics; }
 
 protected:
   virtual void wrap();
@@ -51,19 +45,11 @@ protected:
   virtual void onMenuChoice(char c);
 
 private:
-  void whoAreYou();
-
   void keyPressAction( XEvent* event );
 
   void timeButtonEvent( XEvent* event );
 
-  int itsArgc;
-  char** itsArgv;
-
-  int itsWidth;
-  int itsHeight;
-
-  Graphics* itsGraphics;
+  Graphics& itsGraphics;
 };
 
 static const char vcid_application_h[] = "$Header$";
