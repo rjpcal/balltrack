@@ -3,7 +3,7 @@
 // openglgfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:03:44 2000
-// written: Wed Jun 27 15:30:57 2001
+// written: Wed Jun 27 15:34:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,10 +66,11 @@ public:
   // This gives a hook to allow movie frames to be recorded during the delay
   virtual void gfxWait(double delaySeconds);
 
+protected:
+  virtual void waitFrameCount(int number);
+
 private:
   void clearBackBufferRegion(bool use_scissor);
-
-  void waitFrameCount(int number);
 
   // called from initWindow()
   void sizeColormap();

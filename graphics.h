@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Wed Jun 27 15:30:19 2001
+// written: Wed Jun 27 15:33:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,6 +67,9 @@ public:
 
   // Returns the number of milliseconds per graphics frame
   double frameTime();
+
+protected:
+  virtual void waitFrameCount(int number) = 0;
 
 private:
   double computeFrameTime();

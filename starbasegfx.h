@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Wed Jun 27 15:31:09 2001
+// written: Wed Jun 27 15:34:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,13 +52,14 @@ public:
   virtual void writeTrueColorMap(unsigned char* ptr, int x, int y, int size);
   virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
 
+protected:
+  virtual void waitFrameCount(int number);
+
 private:
   int fildes() const { return itsFildes; }
 
   // called from showMenu(), showParams()
   void setText(int wd, int ht);
-
-  void waitFrameCount(int number);
 
   // called from initWindow()
   void sizeColormap();
