@@ -405,9 +405,28 @@ namespace
       return (*ivar != iorig);
     }
 
+    void putvar(std::ostream& s) const
+    {
+      if      (dvar != 0)  s << *dvar;
+      else if (ivar != 0)  s << *ivar;
+    }
+
+    void putorig(std::ostream& s) const
+    {
+      if      (dvar != 0)  s << dorig;
+      else if (ivar != 0)  s << iorig;
+    }
+
+    void getvalue(Graphics & gfx)
+    {
+      if      (dvar != 0) gfx.getValueFromKeyboard(*dvar);
+      else if (ivar != 0) gfx.getValueFromKeyboard(*ivar);
+    }
+
     std::string descr;
     std::string name;
 
+  private:
     double* dvar;
     int* ivar;
 
@@ -460,27 +479,15 @@ namespace
 
           oss << sep << std::setw(namewid+2) << ('(' + items[i].name + ')');
 
-          if (items[i].dvar != 0)
-            {
-              oss << sep << std::setw(6) << items[i].dorig;
-            }
-          else if (items[i].ivar != 0)
-            {
-              oss << sep << std::setw(6) << items[i].iorig;
-            }
+          oss << sep << std::setw(6);
+          items[i].putorig(oss);
 
           const char* marker = items[i].changed() ? "* " : "  ";
 
           if (i < nitems)
             {
-              if (items[i].dvar != 0)
-                {
-                  oss << sep << marker << std::setw(6) << *items[i].dvar;
-                }
-              else if (items[i].ivar != 0)
-                {
-                  oss << sep << marker << std::setw(6) << *items[i].ivar;
-                }
+              oss << sep << marker << std::setw(6);
+              items[i].putvar(oss);
             }
           else if (i == nitems)
             {
@@ -511,14 +518,7 @@ namespace
 
       for (unsigned int i = 0; i < items.size(); ++i)
         {
-          if (items[i].dvar != 0)
-            {
-              gfx.getValueFromKeyboard(*items[i].dvar);
-            }
-          else if (items[i].ivar != 0)
-            {
-              gfx.getValueFromKeyboard(*items[i].ivar);
-            }
+          items[i].getvalue(gfx);
 
           showVmenu(gfx, i+1);
         }
