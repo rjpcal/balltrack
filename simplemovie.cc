@@ -39,51 +39,51 @@ SimpleMovie::SimpleMovie(const char* filename, MVfileformat fileFormat,
   itsFrameRate(0.0)
 {
 #ifndef NO_MOVIE
-  if ( dmParamsCreate( &itsMovieParams ) != DM_SUCCESS )
+  if (dmParamsCreate(&itsMovieParams) != DM_SUCCESS)
     {
       handleError("couldn't create movie params");
     }
 
-  if ( mvSetMovieDefaults( itsMovieParams, fileFormat )
-       != DM_SUCCESS )
+  if (mvSetMovieDefaults(itsMovieParams, fileFormat)
+       != DM_SUCCESS)
     {
       handleError("couldn't set movie defaults");
     }
 
-  if ( mvCreateFile( filename, itsMovieParams, NULL, &itsMovie )
-       != DM_SUCCESS )
+  if (mvCreateFile(filename, itsMovieParams, NULL, &itsMovie)
+       != DM_SUCCESS)
     {
       handleError("couldn't create movie file");
     }
 
-  if ( dmParamsCreate( &itsImageParams ) != DM_SUCCESS )
+  if (dmParamsCreate(&itsImageParams) != DM_SUCCESS)
     {
       handleError("couldn't create image track params");
     }
 
-  if ( mvSetImageDefaults( itsImageParams, width, height, fileFormat )
-       != DM_SUCCESS )
+  if (mvSetImageDefaults(itsImageParams, width, height, fileFormat)
+       != DM_SUCCESS)
     {
       handleError("couldn't set image defaults");
     }
 
   dmParamsSetString(itsImageParams, DM_IMAGE_COMPRESSION, DM_IMAGE_QT_ANIM);
 
-  itsFrameSize = dmImageFrameSize( itsImageParams );
+  itsFrameSize = dmImageFrameSize(itsImageParams);
 
-  if ( mvAddTrack( itsMovie,
-                   DM_IMAGE,
-                   itsImageParams,
-                   NULL,
-                   &itsImageTrack ) != DM_SUCCESS )
+  if (mvAddTrack(itsMovie,
+                 DM_IMAGE,
+                 itsImageParams,
+                 NULL,
+                 &itsImageTrack) != DM_SUCCESS)
     {
       handleError("couldn't add track");
     }
 
-  if ( mvSetImageRate(itsImageTrack, 15.0) != DM_SUCCESS )
+  if (mvSetImageRate(itsImageTrack, 15.0) != DM_SUCCESS)
     handleError("couldn't set frame rate");
 
-  itsFrameRate = mvGetImageRate( itsImageTrack );
+  itsFrameRate = mvGetImageRate(itsImageTrack);
 #else
   itsFrameSize = 4*itsWidth*itsHeight;
   itsFrameRate = 15.0;
@@ -103,11 +103,11 @@ SimpleMovie::~SimpleMovie()
 void SimpleMovie::appendFrames(int frameCount, void* buffer)
 {
 #ifndef NO_MOVIE
-  if ( mvAppendFrames( itsImageTrack,
-                       frameCount,
-                       frameCount * itsFrameSize,
-                       buffer )
-       != DM_SUCCESS )
+  if (mvAppendFrames(itsImageTrack,
+                     frameCount,
+                     frameCount * itsFrameSize,
+                     buffer)
+       != DM_SUCCESS)
     handleError("couldn't append frames");
 #endif
 }

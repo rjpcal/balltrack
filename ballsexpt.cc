@@ -63,12 +63,10 @@ struct BallsExpt::Impl
   {
     for (int i = 0; i < timepointIdx; ++i)
       {
-        printf( " %d %lf\n", i,
-                Timing::elapsedMsec( &timepoints[0],
-                                     &timepoints[i] ) );
-        fprintf( fp, " %d %lf\n", i,
-                 Timing::elapsedMsec( &timepoints[0],
-                                      &timepoints[i] ) );
+        printf(" %d %lf\n", i,
+               Timing::elapsedMsec(&timepoints[0], &timepoints[i]));
+        fprintf(fp, " %d %lf\n", i,
+                Timing::elapsedMsec(&timepoints[0], &timepoints[i]));
       }
   }
 };
@@ -103,7 +101,7 @@ DOTRACE("BallsExpt::onExpose");
 bool BallsExpt::onKey(char c)
 {
 DOTRACE("BallsExpt::onKey");
-  switch( c )
+  switch (c)
     {
     case 'q':
       return true;
@@ -145,15 +143,15 @@ DOTRACE("BallsExpt::makeMenu");
   const int nitems = 8;
   char menu[nitems][STRINGSIZE];
 
-  strncpy( menu[0], "r     run experiment", STRINGSIZE);
-  strncpy( menu[1], "x     set parameters 1", STRINGSIZE);
-  strncpy( menu[2], "y     set parameters 2", STRINGSIZE);
-  strncpy( menu[3], "z     set parameters 3", STRINGSIZE);
-  strncpy( menu[4], "p     show parameters", STRINGSIZE);
-  strncpy( menu[5], "q     quit program", STRINGSIZE);
-  strncpy( menu[6], "", STRINGSIZE);
-  snprintf( menu[7], STRINGSIZE, "recent percent correct: %d",
-           int(Timing::recentPercentCorrect()) );
+  strncpy(menu[0], "r     run experiment", STRINGSIZE);
+  strncpy(menu[1], "x     set parameters 1", STRINGSIZE);
+  strncpy(menu[2], "y     set parameters 2", STRINGSIZE);
+  strncpy(menu[3], "z     set parameters 3", STRINGSIZE);
+  strncpy(menu[4], "p     show parameters", STRINGSIZE);
+  strncpy(menu[5], "q     quit program", STRINGSIZE);
+  strncpy(menu[6], "", STRINGSIZE);
+  snprintf(menu[7], STRINGSIZE, "recent percent correct: %d",
+           int(Timing::recentPercentCorrect()));
 
   graphics().showMenu(menu, nitems);
 
@@ -178,7 +176,7 @@ DOTRACE("BallsExpt::runFixationCalibration");
       graphics().drawCross(x[seq[i]], y[seq[i]]);
       graphics().swapBuffers();
       Timing::mainTimer.set();
-      graphics().gfxWait( 1.0 );
+      graphics().gfxWait(1.0);
     }
 }
 
@@ -192,11 +190,11 @@ DOTRACE("BallsExpt::runExperiment");
 
   time_t t = time(0);
   char* p = ctime(&t);
-  fprintf( tmefile.fp(), "\n\n%s\n\n", p);
+  fprintf(tmefile.fp(), "\n\n%s\n\n", p);
 
   rep->params.appendToFile(tmefile);
 
-  fprintf( tmefile.fp(), "\n\n");
+  fprintf(tmefile.fp(), "\n\n");
 
   graphics().clearFrontBuffer();
 
@@ -208,8 +206,8 @@ DOTRACE("BallsExpt::runExperiment");
     }
 
   Timing::mainTimer.set();
-  Timing::getTime( &rep->timepoints[0] );
-  graphics().gfxWait( rep->params.WAIT_DURATION );
+  Timing::getTime(&rep->timepoints[0]);
+  graphics().gfxWait(rep->params.WAIT_DURATION);
 
   rep->timepointIdx = 1;
 
@@ -220,7 +218,7 @@ DOTRACE("BallsExpt::runExperiment");
   else if (Params::TRAINING == rep->params.appMode)
     runTrainingExpt();
 
-  Timing::getTime( &rep->timepoints[rep->timepointIdx++] );
+  Timing::getTime(&rep->timepoints[rep->timepointIdx++]);
 
   rep->logTimePoints(tmefile.fp());
 
@@ -266,7 +264,7 @@ DOTRACE("BallsExpt::runFmriExpt");
         }
 
       // If there will be more trials, then do a fixation cross interval
-      if ( trial < (NUM_TRIALS-1) )
+      if (trial < (NUM_TRIALS-1))
         {
           graphics().clearFrontBuffer();
 
@@ -278,8 +276,8 @@ DOTRACE("BallsExpt::runFmriExpt");
             }
 
           Timing::mainTimer.set();
-          Timing::getTime( &rep->timepoints[rep->timepointIdx++] );
-          graphics().gfxWait( rep->params.WAIT_DURATION );
+          Timing::getTime(&rep->timepoints[rep->timepointIdx++]);
+          graphics().gfxWait(rep->params.WAIT_DURATION);
         }
     }
 

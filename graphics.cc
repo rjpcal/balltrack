@@ -53,7 +53,7 @@ namespace
         glTranslated(x_pos, y_pos, 0.0);
         glScaled(x_scale, y_scale, 1.0);
 
-        glListBase( listbase );
+        glListBase(listbase);
         glCallLists(strlen(word), GL_BYTE, word);
       }
       glPopAttrib();
@@ -90,10 +90,10 @@ DOTRACE("Graphics::Graphics");
 
   itsGLXContext = glXCreateContext(itsXStuff.display(), vi, 0, GL_TRUE);
 
-  if ( itsGLXContext == 0 )
+  if (itsGLXContext == 0)
     {
-      fprintf( stdout,"Couldn't get an OpenGL graphics context.\n" );
-      exit( -1 );
+      fprintf(stdout,"Couldn't get an OpenGL graphics context.\n");
+      exit(-1);
     }
 
   glPixelStorei(GL_PACK_ALIGNMENT, 4);
@@ -192,14 +192,14 @@ DOTRACE("Graphics::swapBuffers");
       static int f = 0;
       ++f;
 
-      glReadBuffer( GL_FRONT );
-      glReadPixels( (width()-itsMovie->width()) / 2,
-                    (height()-itsMovie->height()) / 2,
-                    itsMovie->width(),
-                    itsMovie->height(),
-                    GL_RGBA,
-                    GL_UNSIGNED_BYTE,
-                    itsMovie->tempFrameBuffer() );
+      glReadBuffer(GL_FRONT);
+      glReadPixels((width()-itsMovie->width()) / 2,
+                   (height()-itsMovie->height()) / 2,
+                   itsMovie->width(),
+                   itsMovie->height(),
+                   GL_RGBA,
+                   GL_UNSIGNED_BYTE,
+                   itsMovie->tempFrameBuffer());
 
       unsigned int* buf = (unsigned int*) itsMovie->tempFrameBuffer();
 
@@ -248,7 +248,7 @@ DOTRACE("Graphics::drawMessage");
 void Graphics::drawCross()
 {
 DOTRACE("Graphics::drawCross");
-  drawCross( width()/2, height()/2 );
+  drawCross(width()/2, height()/2);
 }
 
 void Graphics::drawCross(int x, int y)
@@ -350,15 +350,15 @@ DOTRACE("Graphics::computeFrameTime");
 
   clearFrontBuffer();
 
-  waitFrameCount( 1 );
+  waitFrameCount(1);
 
-  Timing::getTime( &tp[0] );
+  Timing::getTime(&tp[0]);
 
-  waitFrameCount( 99 );
+  waitFrameCount(99);
 
-  Timing::getTime( &tp[1] );
+  Timing::getTime(&tp[1]);
 
-  double frametime = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
+  double frametime = Timing::elapsedMsec(&tp[0], &tp[1]) / 100.0;
 
   return frametime;
 }

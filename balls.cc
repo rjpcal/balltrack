@@ -36,12 +36,12 @@ namespace
 
 namespace Local
 {
-  int roundVelocity( int x );
-  int fround( float x );
+  int roundVelocity(int x);
+  int fround(float x);
 
-  void makeBallMap( std::vector<unsigned char>& vec, int size,
-                    float radius, float sigma,
-                    unsigned char background );
+  void makeBallMap(std::vector<unsigned char>& vec, int size,
+                   float radius, float sigma,
+                   unsigned char background);
 
   bool colorsAlreadyGenerated = false;
 }
@@ -52,29 +52,29 @@ namespace Local
 //
 ///////////////////////////////////////////////////////////////////////
 
-int Local::roundVelocity( int x )
+int Local::roundVelocity(int x)
 {
 DOTRACE("Local::roundVelocity");
 
-  int ix = (x < 0) ? ( x - VELOSCALE/2 ) / VELOSCALE
-                   : ( x + VELOSCALE/2 ) / VELOSCALE;
+  int ix = (x < 0) ? (x - VELOSCALE/2) / VELOSCALE
+                   : (x + VELOSCALE/2) / VELOSCALE;
 
-  return( ix );
+  return ix;
 }
 
-int Local::fround( float x )
+int Local::fround(float x)
 {
 DOTRACE("Local::fround");
 
-  int ix = (x < 0) ? (int)( x - 0.5 )
-                   : (int)( x + 0.5 );
+  int ix = (x < 0) ? int(x - 0.5)
+                   : int(x + 0.5);
 
-  return( ix );
+  return ix;
 }
 
-void Local::makeBallMap( std::vector<unsigned char>& vec, int size,
-                         float radius, float sigma,
-                         unsigned char background )
+void Local::makeBallMap(std::vector<unsigned char>& vec, int size,
+                        float radius, float sigma,
+                        unsigned char background)
 {
 DOTRACE("Local::makeBallMap");
 
@@ -90,8 +90,8 @@ DOTRACE("Local::makeBallMap");
     {
       for (int j=0; j<size; ++j)
         {
-          const float x   = float( i - size/2 + 0.5 );
-          const float y   = float( j - size/2 + 0.5 );
+          const float x   = float(i - size/2 + 0.5);
+          const float y   = float(j - size/2 + 0.5);
 
           const float rsq = x*x + y*y;
 
@@ -101,12 +101,12 @@ DOTRACE("Local::makeBallMap");
             {
               index =
                 (unsigned char)
-                ( BALL_COLOR_MIN
-                  + ( BALL_COLOR_MAX - BALL_COLOR_MIN ) * exp(-rsq/sigma ));
+                (BALL_COLOR_MIN
+                  + (BALL_COLOR_MAX - BALL_COLOR_MIN) * exp(-rsq/sigma));
             }
           else
             {
-              index = (unsigned char)( background );
+              index = (unsigned char)(background);
             }
 
           const size_t base_loc = bytes_per_pixel*(i*size + j);
@@ -139,8 +139,8 @@ bool Ball::isTooClose(const Ball& other, int min_dist) const
 {
 DOTRACE("Ball::isTooClose");
 
-  return ( abs(itsXpos - other.itsXpos) < min_dist &&
-           abs(itsYpos - other.itsYpos) < min_dist );
+  return (abs(itsXpos - other.itsXpos) < min_dist &&
+          abs(itsYpos - other.itsYpos) < min_dist);
 }
 
 void Ball::randomVelocity(int vel)
@@ -160,19 +160,19 @@ void Ball::nextPosition(int width, int height,
 {
 DOTRACE("Ball::nextPosition");
 
-  itsNx = itsXpos + Local::roundVelocity( itsXvel );
-  itsNy = itsYpos + Local::roundVelocity( itsYvel );
+  itsNx = itsXpos + Local::roundVelocity(itsXvel);
+  itsNy = itsYpos + Local::roundVelocity(itsYvel);
 
   if (itsNx < xborder || itsNx > width - xborder - arraysize)
     {
       itsXvel = -itsXvel;
-      itsNx   = itsXpos + Local::roundVelocity( itsXvel );
+      itsNx   = itsXpos + Local::roundVelocity(itsXvel);
     }
 
   if (itsNy < yborder || itsNy > height - yborder - arraysize)
     {
       itsYvel = -itsYvel;
-      itsNy   = itsYpos + Local::roundVelocity( itsYvel );
+      itsNy   = itsYpos + Local::roundVelocity(itsYvel);
     }
 }
 
@@ -183,7 +183,7 @@ DOTRACE("Ball::collideIfNeeded");
   const int dx = itsNx - other.itsNx;
   const int dy = itsNy - other.itsNy;
 
-  if (abs( dx ) < min_dist && abs( dy ) < min_dist)
+  if (abs(dx) < min_dist && abs(dy) < min_dist)
     {
       collide(other, dx, dy);
     }
@@ -193,7 +193,7 @@ void Ball::collide(Ball& other, int xij, int yij)
 {
 DOTRACE("Ball::collide");
 
-  float d    =  sqrt( (double) xij*xij + yij*yij );
+  float d    =  sqrt((double) xij*xij + yij*yij);
   float xa   =  xij/d;
   float ya   =  yij/d;
   float xo   = -ya;
@@ -215,21 +215,21 @@ DOTRACE("Ball::collide");
 
       float vij2 = vai*vai - vaj*vaj;
 
-      float fi   = sqrt( 1. + vij2 / nvi2 );
-      float fj   = sqrt( 1. - vij2 / nvj2 );
+      float fi   = sqrt(1. + vij2 / nvi2);
+      float fj   = sqrt(1. - vij2 / nvj2);
 
-      itsXvel = Local::fround( fi * ( voi * xo + vaj * xa ) );
-      itsYvel = Local::fround( fi * ( voi * yo + vaj * ya ) );
+      itsXvel = Local::fround(fi * (voi * xo + vaj * xa));
+      itsYvel = Local::fround(fi * (voi * yo + vaj * ya));
 
-      other.itsXvel = Local::fround( fj * ( voj * xo + vai * xa ) );
-      other.itsYvel = Local::fround( fj * ( voj * yo + vai * ya ) );
+      other.itsXvel = Local::fround(fj * (voj * xo + vai * xa));
+      other.itsYvel = Local::fround(fj * (voj * yo + vai * ya));
     }
 
-  itsNx = itsXpos + Local::roundVelocity( itsXvel );
-  itsNy = itsYpos + Local::roundVelocity( itsYvel );
+  itsNx = itsXpos + Local::roundVelocity(itsXvel);
+  itsNy = itsYpos + Local::roundVelocity(itsYvel);
 
-  other.itsNx = other.itsXpos + Local::roundVelocity( other.itsXvel );
-  other.itsNy = other.itsYpos + Local::roundVelocity( other.itsYvel );
+  other.itsNx = other.itsXpos + Local::roundVelocity(other.itsXvel);
+  other.itsNy = other.itsYpos + Local::roundVelocity(other.itsYvel);
 
 }
 
@@ -247,13 +247,13 @@ DOTRACE("Ball::twist");
 
   if (drand48() < 0.5)
     {
-      itsXvel = Local::fround( a11*x + a12*y );
-      itsYvel = Local::fround( a21*x + a22*y );
+      itsXvel = Local::fround(a11*x + a12*y);
+      itsYvel = Local::fround(a21*x + a22*y);
     }
   else
     {
-      itsXvel = Local::fround( a11*x - a12*y );
-      itsYvel = Local::fround(-a21*x + a22*y );
+      itsXvel = Local::fround(a11*x - a12*y);
+      itsYvel = Local::fround(-a21*x + a22*y);
     }
 }
 
@@ -397,10 +397,10 @@ DOTRACE("Balls::prepare");
 
   initialize(gfx);
 
-  Local::makeBallMap( theirHimap, itsParams.BALL_ARRAY_SIZE,
-                      itsParams.BALL_RADIUS, itsParams.BALL_SIGMA2, 255 );
-  Local::makeBallMap( theirBallmap, itsParams.BALL_ARRAY_SIZE,
-                      itsParams.BALL_RADIUS, itsParams.BALL_SIGMA2, 0 );
+  Local::makeBallMap(theirHimap, itsParams.BALL_ARRAY_SIZE,
+                     itsParams.ballRadius, itsParams.ballSigma2, 255);
+  Local::makeBallMap(theirBallmap, itsParams.BALL_ARRAY_SIZE,
+                     itsParams.ballRadius, itsParams.ballSigma2, 0);
 }
 
 void Balls::generateColors()
@@ -421,8 +421,8 @@ DOTRACE("Balls::generateColors");
   for (n=BALL_COLOR_MIN; n<=BALL_COLOR_MAX; ++n)
     {
       ratio = lmin/lmax +
-        ( (lmax-lmin)*(n-BALL_COLOR_MIN)/
-          (lmax*(BALL_COLOR_MAX-BALL_COLOR_MIN)) );
+        ((lmax-lmin)*(n-BALL_COLOR_MIN)/
+         (lmax*(BALL_COLOR_MAX-BALL_COLOR_MIN)));
 
       theColors[n][0] = 1.0*ratio; DebugEval(theColors[n][0]);
       theColors[n][1] = 0.5*ratio; DebugEval(theColors[n][1]);
@@ -441,29 +441,29 @@ DOTRACE("Balls::runTrial");
 
   Timing::mainTimer.set();
 
-  Timing::getTime( starttime );
+  Timing::getTime(starttime);
 
   gfx.clearFrontBuffer();
   gfx.clearBackBuffer();
 
   if (ttype == Balls::PASSIVE)
     {
-      gfx.drawMessage( "PASSIVE" );
+      gfx.drawMessage("PASSIVE");
     }
   else if (ttype == Balls::CHECK_ALL)
     {
-      gfx.drawMessage( " ALL" );
+      gfx.drawMessage(" ALL");
     }
   else if (ttype == Balls::CHECK_ONE)
     {
-      gfx.drawMessage( "TRACK" );
+      gfx.drawMessage("TRACK");
     }
 
   gfx.swapBuffers();
 
   prepare(gfx);
 
-  gfx.gfxWait( itsParams.PAUSE_DURATION );
+  gfx.gfxWait(itsParams.PAUSE_DURATION);
 
   // Show the initial position of the balls
   Timing::mainTimer.set();
@@ -482,7 +482,7 @@ DOTRACE("Balls::runTrial");
 
   gfx.swapBuffers();
 
-  gfx.gfxWait( itsParams.REMIND_DURATION );
+  gfx.gfxWait(itsParams.REMIND_DURATION);
 
   if (ttype == Balls::CHECK_ALL ||
       ttype == Balls::CHECK_ONE)
@@ -516,20 +516,20 @@ DOTRACE("Balls::runTrial");
 
           Timing::addToStimulusStack(LEFTBUTTON);
 
-          gfx.gfxWait( itsParams.REMIND_DURATION );
+          gfx.gfxWait(itsParams.REMIND_DURATION);
         }
       else if (ttype == Balls::CHECK_ONE)
         {
           // Randomly choose whether the highlighted ball will be a
           // target or a non-target
-          bool pick_target = ( drand48() > 0.5 );
+          bool pick_target = (drand48() > 0.5);
 
           // Pick a random ball
           int random_ball;
           if (pick_target)
-            random_ball = int( itsParams.BALL_TRACK_NUMBER * drand48() );
+            random_ball = int(itsParams.BALL_TRACK_NUMBER * drand48());
           else
-            random_ball = int( (itsParams.BALL_NUMBER - itsParams.BALL_TRACK_NUMBER) * drand48() )
+            random_ball = int((itsParams.BALL_NUMBER - itsParams.BALL_TRACK_NUMBER) * drand48())
               + itsParams.BALL_TRACK_NUMBER;
 
           // Redraw the balls with the random ball highlighted
@@ -547,7 +547,7 @@ DOTRACE("Balls::runTrial");
           else
             Timing::addToStimulusStack(MIDDLEBUTTON);
 
-          gfx.gfxWait( itsParams.REMIND_DURATION / 2.0 );
+          gfx.gfxWait(itsParams.REMIND_DURATION / 2.0);
 
           Timing::mainTimer.set();
 
@@ -562,11 +562,11 @@ DOTRACE("Balls::runTrial");
 
           gfx.swapBuffers();
 
-          gfx.gfxWait( itsParams.REMIND_DURATION / 2.0 );
+          gfx.gfxWait(itsParams.REMIND_DURATION / 2.0);
       }
       else
         {
-          gfx.gfxWait( itsParams.REMIND_DURATION );
+          gfx.gfxWait(itsParams.REMIND_DURATION);
         }
 
       gfx.clearFrontBuffer();

@@ -69,8 +69,8 @@ public:
   bool  doMovie;
   char  filestem[STRINGSIZE];
   char  observer[STRINGSIZE];
-  float BALL_RADIUS;
-  float BALL_SIGMA2;
+  float ballRadius;
+  float ballSigma2;
   float BALL_TWIST_ANGLE;  // = PI/16.0;
   float EPOCH_DURATION;
   float PAUSE_DURATION;
@@ -81,8 +81,8 @@ public:
   int   BALL_NUMBER;                 // = 8;
   int   BALL_TRACK_NUMBER; // = 2;
   int   BALL_VELOCITY;       // = 3;
-  int   BORDER_X;                    // = ( width - 120 ) / 2;
-  int   BORDER_Y;                    // = ( height - 120 ) / 2;
+  int   BORDER_X;                    // = (width - 120) / 2;
+  int   BORDER_Y;                    // = (height - 120) / 2;
   int   CYCLE_NUMBER;
   int   DISPLAY_X;
   int   DISPLAY_Y;

@@ -62,10 +62,10 @@ DOTRACE("XStuff::XStuff");
 
   if (itsDisplay == 0)
     {
-      if ( getenv( "DISPLAY" ) == 0 )
-        fprintf( stdout, "You need to set the DISPLAY env var\n" );
+      if (getenv("DISPLAY") == 0)
+        fprintf(stdout, "You need to set the DISPLAY env var\n");
       else
-        fprintf( stdout, "Cannot open DISPLAY %s,\n", getenv( "DISPLAY" ) );
+        fprintf(stdout, "Cannot open DISPLAY %s,\n", getenv("DISPLAY"));
       exit(1);
     }
 
@@ -74,8 +74,8 @@ DOTRACE("XStuff::XStuff");
 XStuff::~XStuff()
 {
 DOTRACE("XStuff::~XStuff");
-  XDestroyWindow( itsDisplay, itsWindow );
-  XCloseDisplay( itsDisplay );
+  XDestroyWindow(itsDisplay, itsWindow);
+  XCloseDisplay(itsDisplay);
 }
 
 void XStuff::openWindow(const char* winname,
@@ -92,12 +92,12 @@ DOTRACE("XStuff::openWindow");
 
   itsVisInfo = *vinfo;
 
-  const int screen = DefaultScreen( itsDisplay );
+  const int screen = DefaultScreen(itsDisplay);
 
   Colormap cmap =
-    XCreateColormap( itsDisplay,
-                     RootWindow( itsDisplay, screen ),
-                     itsVisInfo.visual, AllocNone );
+    XCreateColormap(itsDisplay,
+                    RootWindow(itsDisplay, screen),
+                    itsVisInfo.visual, AllocNone);
 
   XColor mean_color;
   mean_color.flags = DoRed | DoGreen | DoBlue;
@@ -105,9 +105,9 @@ DOTRACE("XStuff::openWindow");
   const int MEANGREY = 127;
 
   mean_color.red = mean_color.green = mean_color.blue =
-    ( unsigned long )(257*MEANGREY);
+    (unsigned long)(257*MEANGREY);
 
-  XAllocColor( itsDisplay, cmap, &mean_color );
+  XAllocColor(itsDisplay, cmap, &mean_color);
 
 
   XSetWindowAttributes winAttributes;
@@ -117,40 +117,40 @@ DOTRACE("XStuff::openWindow");
   winAttributes.background_pixel = mean_color.pixel;
   winAttributes.border_pixel = mean_color.pixel;
 
-  itsWindow = XCreateWindow( itsDisplay,
-                             RootWindow(itsDisplay, screen),
-                             0, 0, itsWidth, itsHeight, 2,
-                             itsVisInfo.depth,
-                             InputOutput,
-                             itsVisInfo.visual,
-                             ( CWBackPixel | CWColormap
-                               | CWBorderPixel | CWEventMask ),
-                             &winAttributes );
+  itsWindow = XCreateWindow(itsDisplay,
+                            RootWindow(itsDisplay, screen),
+                            0, 0, itsWidth, itsHeight, 2,
+                            itsVisInfo.depth,
+                            InputOutput,
+                            itsVisInfo.visual,
+                            (CWBackPixel | CWColormap
+                             | CWBorderPixel | CWEventMask),
+                            &winAttributes);
 
-  XSelectInput( itsDisplay, itsWindow,
-                ExposureMask|StructureNotifyMask|
-                ButtonPressMask|KeyPressMask );
+  XSelectInput(itsDisplay, itsWindow,
+               ExposureMask|StructureNotifyMask|
+               ButtonPressMask|KeyPressMask);
 
-  XSync( itsDisplay, False );
+  XSync(itsDisplay, False);
 
 
-  fprintf( stdout, " window with %s visual %d of depth %d\n",
-           visual_class_name(itsVisInfo.c_class),
-           itsVisInfo.visualid,
-           itsVisInfo.depth );
+  fprintf(stdout, " window with %s visual %d of depth %d\n",
+          visual_class_name(itsVisInfo.c_class),
+          itsVisInfo.visualid,
+          itsVisInfo.depth);
 
-  fflush( stdout );
+  fflush(stdout);
 
   char temp_name[256];
   strncpy(temp_name, winname, 256);
   char* nameptr = &temp_name[0];
 
   XTextProperty window_name;
-  XStringListToTextProperty( &nameptr, 1, &window_name );
+  XStringListToTextProperty(&nameptr, 1, &window_name);
 
   XSetWMName(itsDisplay, itsWindow, &window_name);
 
-  XMapWindow( itsDisplay, itsWindow );
+  XMapWindow(itsDisplay, itsWindow);
 }
 
 char XStuff::getKeypress() const
@@ -160,7 +160,7 @@ DOTRACE("XStuff::getKeypress");
   while (true)
     {
       XEvent event;
-      XNextEvent( itsDisplay, &event );
+      XNextEvent(itsDisplay, &event);
 
       if (event.type != KeyPress || event.xkey.window != itsWindow)
         continue;
@@ -170,23 +170,23 @@ DOTRACE("XStuff::getKeypress");
 
       // For some reason, if we pass a non-null XComposeStatus* to this
       // function, the 'buffer' gets screwed up... very weird.
-      int count = XLookupString( (XKeyEvent *) &event, &buffer[0], 9,
-                                 &keysym, (XComposeStatus*) 0  );
+      int count = XLookupString((XKeyEvent *) &event, &buffer[0], 9,
+                                &keysym, (XComposeStatus*) 0);
 
       buffer[ count ] = '\0';
 
       DebugEvalNL(buffer);
-      if ( count > 1 || keysym == XK_Return ||
-           keysym == XK_BackSpace || keysym == XK_Delete )
+      if (count > 1 || keysym == XK_Return ||
+          keysym == XK_BackSpace || keysym == XK_Delete)
         {
           continue;
         }
 
-      if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
-           keysym >= XK_space    && keysym <= XK_asciitilde )
+      if (keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
+          keysym >= XK_space    && keysym <= XK_asciitilde)
         {
           DebugEvalNL(buffer[0]);
-          return( buffer[0] );
+          return buffer[0];
         }
     }
 }
@@ -198,7 +198,7 @@ DOTRACE("XStuff::getWord");
   int n = 0;
   char c;
 
-  while (( c = this->getKeypress() ) != ' '  && n < sz)
+  while ((c = this->getKeypress()) != ' '  && n < sz)
     {
       buf[n++] = c;
     }
@@ -213,7 +213,7 @@ DOTRACE("XStuff::getInt");
   char word[STRINGSIZE];
   this->getWord(word, STRINGSIZE);
 
-  sscanf( word, "%d", pi );
+  sscanf(word, "%d", pi);
 }
 
 void XStuff::getFloat(float* pf) const
@@ -223,7 +223,7 @@ DOTRACE("XStuff::getFloat");
   char word[STRINGSIZE];
   this->getWord(word, STRINGSIZE);
 
-  sscanf( word, "%f", pf );
+  sscanf(word, "%f", pf);
 }
 
 static const char vcid_xstuff_cc[] = "$Header$";

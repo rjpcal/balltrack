@@ -42,7 +42,7 @@ DOTRACE("Application::Application");
   // seed the random number generator based on the time
   struct timeval tp;
   Timing::getTime(&tp);
-  srand48( tp.tv_sec );
+  srand48(tp.tv_sec);
 }
 
 Application::~Application()
@@ -56,33 +56,33 @@ DOTRACE("Application::run");
 
   XEvent event;
 
-  while ( true )
+  while (true)
     {
-      XNextEvent( itsGraphics.xstuff().display(), &event );
+      XNextEvent(itsGraphics.xstuff().display(), &event);
 
-      switch( event.type )
+      switch (event.type)
         {
         case Expose:
-          if ( event.xexpose.count == 0 )
+          if (event.xexpose.count == 0)
             if (event.xexpose.window == itsGraphics.xstuff().window())
               onExpose();
           break;
 
         case ButtonPress:
-          if ( event.xbutton.button == Button3 )
+          if (event.xbutton.button == Button3)
             return;
           else
             onExpose();
           break;
 
         case KeyPress:
-          if ( event.xkey.window == itsGraphics.xstuff().window() )
+          if (event.xkey.window == itsGraphics.xstuff().window())
             {
               Timing::logTimer.set();
               Timing::mainTimer.set();
 
-              char key = keyPressAction( &event );
-              if ( onKey(key) == true )
+              char key = keyPressAction(&event);
+              if (onKey(key) == true)
                 return;
             }
           break;
@@ -99,18 +99,18 @@ DOTRACE("Application::buttonPressLoop");
 
   XEvent event;
 
-  while ( XCheckMaskEvent( itsGraphics.xstuff().display(),
-                           ButtonPressMask | KeyPressMask,
-                           &event ) )
+  while (XCheckMaskEvent(itsGraphics.xstuff().display(),
+                         ButtonPressMask | KeyPressMask,
+                         &event))
     {
-      if ( event.type == ButtonPress || event.type == KeyPress )
+      if (event.type == ButtonPress || event.type == KeyPress)
         {
-          timeButtonEvent( &event );
+          timeButtonEvent(&event);
         }
     }
 }
 
-char Application::keyPressAction( XEvent* event )
+char Application::keyPressAction(XEvent* event)
 {
 DOTRACE("Application::keyPressAction");
 
@@ -118,8 +118,8 @@ DOTRACE("Application::keyPressAction");
   KeySym keysym;
   XComposeStatus compose;
 
-  int count = XLookupString( (XKeyEvent*) event, buffer, 9,
-                             &keysym, &compose );
+  int count = XLookupString((XKeyEvent*) event, buffer, 9,
+                            &keysym, &compose);
   buffer[ count ] = '\0';
 
   if (count > 1 || keysym == XK_Return ||
@@ -128,14 +128,14 @@ DOTRACE("Application::keyPressAction");
       return '\0';
     }
 
-  if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
-       keysym >= XK_space    && keysym <= XK_asciitilde )
+  if (keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
+      keysym >= XK_space    && keysym <= XK_asciitilde)
     {
       struct timeval tp;
       struct timezone tzp;
-      gettimeofday( &tp, &tzp );
+      gettimeofday(&tp, &tzp);
 
-      Timing::initTimeStack( (double) event->xkey.time, &tp );
+      Timing::initTimeStack(double(event->xkey.time), &tp);
 
       return buffer[0];
     }
@@ -143,7 +143,7 @@ DOTRACE("Application::keyPressAction");
   return '\0';
 }
 
-void Application::timeButtonEvent( XEvent* event )
+void Application::timeButtonEvent(XEvent* event)
 {
 DOTRACE("Application::timeButtonEvent");
 
@@ -162,7 +162,7 @@ DOTRACE("Application::timeButtonEvent");
           else
             nbutton = 0;
 
-      Timing::addToResponseStack( (double) event->xbutton.time, nbutton );
+      Timing::addToResponseStack(double(event->xbutton.time), nbutton);
     }
   else if (event->type == KeyPress)
     {
@@ -185,9 +185,9 @@ DOTRACE("Application::timeButtonEvent");
           break;
         }
 
-      Timing::addToResponseStack( (long) event->xkey.subwindow /* sec */,
-                                  (long) event->xkey.time /* usec */,
-                                  nbutton );
+      Timing::addToResponseStack(long(event->xkey.subwindow) /* sec */,
+                                 long(event->xkey.time) /* usec */,
+                                 nbutton);
     }
 }
 
