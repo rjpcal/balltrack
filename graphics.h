@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Thu Feb 24 15:01:24 2000
+// written: Fri Feb 25 10:47:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,13 +19,15 @@ class XStuff;
 
 class Graphics {
 public:
+  Graphics(int wid, int hgt);
+
   // Virtual destructor ensures proper destruction of base classes.
   virtual ~Graphics();
 
   virtual void wrapGraphics() = 0;
 
-  virtual int width() const = 0;
-  virtual int height() const = 0;
+  int width() const { return itsWidth; }
+  int height() const { return itsHeight; }
 
   virtual void writeUpperPlanes() = 0;
   virtual void writeLowerPlanes() = 0;
@@ -65,6 +67,10 @@ public:
 
   // called from Ball::draw()
   virtual void writeBitmap(unsigned char* ptr, int x, int y, int size) = 0;
+
+private:
+  int itsHeight;
+  int itsWidth;
 };
 
 static const char vcid_graphics_h[] = "$Header$";
