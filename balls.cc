@@ -216,25 +216,31 @@ DOTRACE("Ball::collideIfNeeded");
       // line perpendicular to the one connecting them
       const double voi  = dot(this->vel, o); // [pix/sec]
       const double voj  = dot(other.vel, o); // [pix/sec]
-      /*
-        ovi2 = vai*vai + voi*voi;
-        ovj2 = vaj*vaj + voj*voj;
-      */
-      const double nvi2 = vaj*vaj + voi*voi; // [pix^2/sec^2] always positive
-      const double nvj2 = vai*vai + voj*voj; // [pix^2/sec^2] always positive
+
+      if (0)
+        {
+          // just to illustrate the geometry, we can retrieve the old
+          // directions for this as follows:
+          const vec ovi = vai*a + voi*o;
+          const vec ovj = vaj*a + voj*o;
+
+          Assert((ovi - this->vel).length() < 0.01);
+          Assert((ovj - other.vel).length() < 0.01);
+        }
+
+      // new directions for (this) and (other)
+      const vec nvi = (voi*o + vaj*a); // [pix/sec]
+      const vec nvj = (voj*o + vai*a); // [pix/sec]
 
       const double vij2 = vai*vai - vaj*vaj; // [pix^2/sec^2] always negative
 
       Assert(vij2 < 0.0);
 
-      const double fi   = sqrt(1. + vij2 / nvi2); // [unitless]
-      const double fj   = sqrt(1. - vij2 / nvj2); // [unitless]
+      const double fi = sqrt(1. + vij2 / nvi.lengthsq()); // [unitless]
+      const double fj = sqrt(1. - vij2 / nvj.lengthsq()); // [unitless]
 
-      this->vel = fi * (vec(voi * o.x, voi * o.y) +
-                        vec(vaj * a.x, vaj * a.y)); // [pix/sec]
-
-      other.vel = fj * (vec(voj * o.x, voj * o.y) +
-                        vec(vai * a.x, vai * a.y)); // [pix/sec]
+      this->vel = fi * nvi; // [pix/sec]
+      other.vel = fj * nvj; // [pix/sec]
 
       this->next = this->pos + (this->vel * lapsed_seconds);
       other.next = other.pos + (other.vel * lapsed_seconds);
