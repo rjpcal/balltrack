@@ -1,0 +1,5 @@
+#!/usr/bin/csh -f
+set pids=`ps | grep serial | sed -e 's/pts.*//'`
+foreach pid ($pids)
+	 kill $pid
+end
