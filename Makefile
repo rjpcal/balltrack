@@ -45,7 +45,7 @@ FMRI_TARGET = $(HOME)/bin/$(ARCH)/balls3_fmri
 ALL   = $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET)
 
 all:	$(ALL)
-	$(TRAIN_TARGET) xxx
+	$(FMRI_TARGET) xxx
 
 clean:
 	rm -f core *.o *.a $(ALL)
