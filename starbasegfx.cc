@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Mon Jun 12 14:22:21 2000
+// written: Tue Mar  6 17:04:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,8 @@ DOTRACE("StarbaseGfx::initWindow");
 
   intview_window( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
 
-  checkFrameTime();
+  // Forces the frame time to be computed and then cached in the base class
+  frameTime();
 
   clearFrontBuffer();
 }
@@ -264,26 +265,6 @@ DOTRACE("StarbaseGfx::writeTrueColorMap");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void StarbaseGfx::checkFrameTime() {
-DOTRACE("StarbaseGfx::checkFrameTime");
-
-  struct timeval tp[2];
-
-  clearFrontBuffer();
-
-  waitFrameCount( 1 );
-
-  Timing::getTime( &tp[0] );
-
-  waitFrameCount( 99 );
-
-  Timing::getTime( &tp[1] );
-
-  FRAMETIME = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
-
-  printf( " Video frame time %7.4lf ms\n", FRAMETIME );  
-}
-
 void StarbaseGfx::sizeColormap() {
 DOTRACE("StarbaseGfx::sizeColormap");
 
@@ -310,6 +291,26 @@ DOTRACE("StarbaseGfx::saveColormap");
 void StarbaseGfx::restoreColormap() {
 DOTRACE("StarbaseGfx::restoreColormap");
   define_color_table( fildes(), 0, COLOR_NUMBER, ORIGINAL_COLORS );
+}
+
+double StarbaseGfx::computeFrameTime() {
+DOTRACE("StarbaseGfx::computeFrameTime");
+
+  struct timeval tp[2];
+
+  clearFrontBuffer();
+
+  waitFrameCount( 1 );
+
+  Timing::getTime( &tp[0] );
+
+  waitFrameCount( 99 );
+
+  Timing::getTime( &tp[1] );
+
+  double frametime = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
+
+  return frametime;
 }
 
 static const char vcid_starbasegfx_cc[] = "$Header$";
