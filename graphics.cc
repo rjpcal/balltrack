@@ -15,7 +15,6 @@
 
 #include "glfont.h"
 #include "params.h"
-#include "simplemovie.h"
 #include "timing.h"
 #include "trace.h"
 #include "xstuff.h"
@@ -71,7 +70,6 @@ Graphics::Graphics(const char* winname,
   itsFrameTime(-1.0),
   itsXStuff(width, height),
   itsGLXContext(0),
-  itsMovie(0),
   isItRecording(false)
 {
 DOTRACE("Graphics::Graphics");
@@ -111,7 +109,6 @@ Graphics::~Graphics()
 {
 DOTRACE("Graphics::~Graphics");
   glXDestroyContext(itsXStuff.display(), itsGLXContext);
-  delete itsMovie;
 }
 
 void Graphics::initWindow()
@@ -142,13 +139,15 @@ DOTRACE("Graphics::initWindow");
 void Graphics::gfxWait(Timer& t, double delaySeconds)
 {
 DOTRACE("Graphics::gfxWait");
-  if (itsMovie && isItRecording)
+  if (isItRecording)
     {
+#if 0
       int nframes = int(delaySeconds * itsMovie->frameRate());
 
       // Repeat frames of whatever was most recently appended
       for (int i = 0; i < nframes; ++i)
         itsMovie->appendTempBuffer();
+#endif
     }
   else
     {
@@ -189,8 +188,9 @@ DOTRACE("Graphics::swapBuffers");
   glXWaitGL();
   glXWaitX();
 
-  if (itsMovie && isItRecording)
+  if (isItRecording)
     {
+#if 0
       static int f = 0;
       ++f;
 
@@ -217,6 +217,7 @@ DOTRACE("Graphics::swapBuffers");
         }
 
       itsMovie->appendTempBuffer();
+#endif
     }
 }
 
@@ -227,12 +228,7 @@ DOTRACE("Graphics::drawMessage");
   if (word.length() == 0)
     return;
 
-  int availWidth = int(0.8 * width());
-
-  if (itsMovie && isItRecording)
-    {
-      availWidth = itsMovie->width();
-    }
+  const int availWidth = int(0.8 * width());
 
   const double charWidth = availWidth / word.length();
   const double charHeight = charWidth * 1.5;
@@ -299,19 +295,12 @@ void Graphics::startRecording(int width, int height)
 {
 DOTRACE("Graphics::startRecording");
 
-  if (itsMovie == 0)
-    itsMovie = new SimpleMovie("ballmovie.mov", MV_FORMAT_QT,
-                               width, height);
-
   isItRecording = true;
 }
 
 void Graphics::stopRecording()
 {
 DOTRACE("Graphics::stopRecording");
-
-  if (itsMovie != 0)
-    itsMovie->flush();
 
   isItRecording = false;
 }

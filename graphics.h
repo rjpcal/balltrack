@@ -19,8 +19,6 @@
 #include <GL/glx.h>
 
 class XStuff;
-class XHints;
-class SimpleMovie;
 class Timer;
 
 class Graphics
@@ -77,7 +75,6 @@ private:
   XStuff itsXStuff;
   GLXContext itsGLXContext;
 
-  SimpleMovie* itsMovie;
   bool isItRecording;
 };
 
