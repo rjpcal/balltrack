@@ -168,8 +168,7 @@ Params::Params(int argc, char** argv) :
   remindsPerEpoch(),
   windowDepth(24),
   windowHeight(1024),
-  windowWidth(1280),
-  fudgeframes(10)
+  windowWidth(1280)
 {
   this->appMode = Params::TRAINING;
 
@@ -520,11 +519,15 @@ DOTRACE("Params::recompute");
 
   const double frametime = gfx.frameTime();
 
-  std::cout << " Video frame time " << frametime << "ms\n";
-
   this->framesPerRemind =
-    int(1000.0*(time_between_reminds-this->remindSeconds) / frametime)
-    - this->fudgeframes;
+    int(1000.0*(time_between_reminds-this->remindSeconds) / frametime);
+
+  std::cout << " epochSeconds " << epochSeconds << '\n';
+  std::cout << " pauseSeconds " << pauseSeconds << '\n';
+  std::cout << " remindSeconds " << remindSeconds << '\n';
+  std::cout << " time_between_reminds " << time_between_reminds << '\n';
+  std::cout << " video frame time " << frametime << " msec\n";
+  std::cout << " framesPerRemind " << framesPerRemind << " frames\n";
 }
 
 static const char vcid_params_cc[] = "$Header$";

@@ -96,8 +96,6 @@ public:
   int    windowDepth;
   int    windowHeight;
   int    windowWidth;
-private:
-  int    fudgeframes;
 
 private:
   void recompute(Graphics& gfx);
