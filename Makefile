@@ -44,7 +44,12 @@ ITRK_TARGET = $(HOME)/local/$(ARCH)/bin/balls3_itrk
 FMRI_TARGET = $(HOME)/local/$(ARCH)/bin/balls3_fmri
 MOVIE_TARGET = $(HOME)/local/$(ARCH)/bin/balls3_movie
 
-ALL   = $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET) $(MOVIE_TARGET) serial
+ifeq ($(ARCH),hp9000s700)
+	ALL   = $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET) $(MOVIE_TARGET) serial
+endif
+ifeq ($(ARCH),irix6)
+	ALL   = $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET) $(MOVIE_TARGET)
+endif
 
 # Level 0
 APPLICATION_H = application.h
@@ -153,3 +158,20 @@ $(ARCH)/xstuff.o: $(XSTUFF_CC)
 
 TAGS: *.h *.cc *.c
 	etags $+
+
+DISTFILES = \
+	$(wildcard *.h) \
+	$(wildcard *.c) \
+	$(wildcard *.cc) \
+	$(wildcard xxx.*) \
+	newpatient \
+	makefile
+
+dist:
+	rm -rf balls3_dist
+	rm -f balls3_dist.tar balls3_dist.tar.gz
+	mkdir balls3_dist
+	cp $(DISTFILES) balls3_dist
+	chmod +rw balls3_dist/*
+	tar cvf balls3_dist.tar balls3_dist
+	gzip balls3_dist.tar
