@@ -174,20 +174,20 @@ Params::Params(int argc, char** argv) :
       else if (!got_filename)
         {
           this->filestem = argv[i];
-          fprintf(stdout, " filename '%s'\n", argv[i]);
+          std::cout << " filename '" << argv[i] << "'\n";
           got_filename = true;
         }
       else
         {
-          fprintf(stderr, "unknown command-line argument '%s'\n",
-                  argv[i]);
+          std::cerr << "unknown command-line argument '"
+                    << argv[i] << "'\n";
           exit(1);
         }
     }
 
   if (!got_filename)
     {
-      fprintf(stderr, "need to specify a file basename\n");
+      std::cerr << "need to specify a file basename\n";
       exit(1);
     }
 
@@ -196,7 +196,7 @@ Params::Params(int argc, char** argv) :
       if (this->fmriSessionNumber < 0 ||
           this->fmriSessionNumber > 4)
         {
-          fprintf(stderr, "session number must be 1, 2, 3, or 4\n");
+          std::cerr << "session number must be 1, 2, 3, or 4\n";
           exit(1);
         }
     }
