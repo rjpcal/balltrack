@@ -42,9 +42,6 @@ alldepends: cppdeps $(ALL_SRCS)
 
 include alldepends
 
-mvtest: mvtest.cc
-	$(CXX) $(CXXFLAGS) -o mvtest simplemovie.cc mvtest.cc -lmoviefile -ldmedia
-
 $(prefix)/bin/%:
 	mkdir -p $(dir $@)
 	time $(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LIBS)
@@ -55,7 +52,7 @@ $(objdir)/%.o : %.cc
 		-c $< \
 		-o $@
 
-TAGS: *.h *.cc
+TAGS: $(ALL_SRCS)
 	etags $+
 
 DISTNAME := balltrack_$(shell date +%Y%m%d)
