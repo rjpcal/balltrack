@@ -194,12 +194,6 @@ void Ball::collideIfNeeded(Ball& other, int min_dist,
 {
 DOTRACE("Ball::collideIfNeeded");
 
-  const vec ij =
-    this->next - other.next; // vector from (this) to (other)
-
-  if (fabs(ij.x) >= min_dist || fabs(ij.y) >= min_dist)
-    return;
-
   /* The collision algorithm has two rules:
 
      (1) The colliding objects each maintain the same velocity
@@ -208,10 +202,81 @@ DOTRACE("Ball::collideIfNeeded");
      (2) The collision only affects the component of the objects'
          velocities that is parallel to the collision path (i.e. the
          vector connecting the two objects)
+
+     Prior to the collision -- positions and velocity vectors of
+     elements I (this) and J (other), and a vector (IJ) connecting
+     their positions:
+
+                             (I)
+                              :\
+                              : \ VEL(I)
+                              :  \
+                              :   v
+                              :
+                              :IJ
+                              :
+                          ^   :
+                           \  :
+                     VEL(J) \ :
+                             \:
+                             (J)
+
+  */
+
+  const vec ij =
+    this->next - other.next; // vector from (this) to (other)
+
+  if (fabs(ij.x) >= min_dist || fabs(ij.y) >= min_dist)
+    return;
+
+  /*
+     The elements are considered in a coordinate system with one axes
+     (A) along the collision path (IJ), and the other axes (O)
+     orthogonal to it:
+
+
+                             (I)
+                              :\
+                              : \ VEL(I)
+                              :  \
+                              :   v
+                              :
+                              :IJ
+                              :
+        ^                 ^   :
+      A |                  \  :
+        |            VEL(J) \ :
+        |                    \:
+        |                    (J)
+        +------->
+               O
   */
 
   const vec a = unit(ij); // unit vector along direction of ij
   const vec o = rot90(a); // unit vector normal to ij
+
+  /*
+     The velocity vectors are decomposed into components along the A
+     and O axes -- VAI and VOI for element I, and VAJ and VOJ for
+     element J:
+
+                                  VOI
+                             (I)-->
+                              |\
+                              | \ VEL(I)
+                           VAI|  \
+                              v   v
+
+
+
+        ^                 ^   ^
+      A |                  \  |
+        |            VEL(J) \ |VAJ
+        |                    \|
+        |                 <--(J)
+        +------->       VOJ
+               O
+  */
 
   // Velocity magnitudes of (this) and (other) along the vector
   // pointing from (this) to (other):
@@ -227,6 +292,34 @@ DOTRACE("Ball::collideIfNeeded");
   // perpendicular to the one connecting them:
   const double voi = dot(this->vel, o);
   const double voj = dot(other.vel, o);
+
+  /*
+     After the collision: new velocity vectors NVI and NVJ for
+     elements I and J:
+
+                                  ^
+                             NVI /
+                                /
+                               /  VOI
+                             (I)-->
+                              |
+                              |
+                           VAI|
+                              v
+
+
+
+        ^                     ^
+      A |                     |
+        |                     |VAJ
+        |                     |
+        |                 <--(J)
+        +------->       VOJ  /
+               O            /
+                           /
+                          v NVJ
+
+  */
 
   // New directions for (this) and (other); the objects keep maintain
   // the component of their velocity that is perpendicular to the
