@@ -391,12 +391,12 @@ namespace
 {
   struct ParamInfo
   {
-    ParamInfo(const std::string& d, const std::string& n, int& v) :
-      descr(d), name(n), immutable(false), dvar(0), ivar(&v), dorig(0.0), iorig(v)
+    ParamInfo(const std::string& d, const std::string& n, int& v, bool imm = false) :
+      descr(d), name(n), immutable(imm), dvar(0), ivar(&v), dorig(0.0), iorig(v)
     {}
 
-    ParamInfo(const std::string& d, const std::string& n, double& v) :
-      descr(d), name(n), immutable(false), dvar(&v), ivar(0), dorig(v), iorig(0)
+    ParamInfo(const std::string& d, const std::string& n, double& v, bool imm = false) :
+      descr(d), name(n), immutable(imm), dvar(&v), ivar(0), dorig(v), iorig(0)
     {}
 
     bool changed() const
@@ -407,7 +407,9 @@ namespace
 
     void putvar(std::ostream& s) const
     {
-      if      (dvar != 0)  s << *dvar;
+      if (immutable)       s << "<immutable>";
+
+      else if (dvar != 0)  s << *dvar;
       else if (ivar != 0)  s << *ivar;
     }
 
@@ -419,7 +421,8 @@ namespace
 
     void getvalue(Graphics & gfx)
     {
-      if      (dvar != 0) gfx.getValueFromKeyboard(*dvar);
+      if (immutable) { /* do nothing */ }
+      else if (dvar != 0) gfx.getValueFromKeyboard(*dvar);
       else if (ivar != 0) gfx.getValueFromKeyboard(*ivar);
     }
 
@@ -511,7 +514,6 @@ namespace
     for (unsigned int i = 0; i < items.size(); ++i)
       {
         items[i].getvalue(gfx);
-
         showVmenu(gfx, items, i+1);
       }
   }
@@ -523,6 +525,9 @@ DOTRACE("Params::setParams");
 
   std::vector<ParamInfo> items;
 
+  items.push_back(ParamInfo("window depth",                     "", this->windowDepth, true));
+  items.push_back(ParamInfo("window width",                     "", this->windowWidth, true));
+  items.push_back(ParamInfo("window height",                    "", this->windowHeight, true));
   items.push_back(ParamInfo("arena width",                      "DISPLAY_X", this->displayX));
   items.push_back(ParamInfo("arena height",                     "DISPLAY_Y", this->displayY));
 
