@@ -18,7 +18,9 @@
 
 struct XStuff
 {
-public:
+private:
+  friend class Graphics;
+
   XStuff(int width, int height);
   ~XStuff();
 
@@ -34,7 +36,6 @@ public:
   void getInt(int* pi) const;
   void getFloat(float* pf) const;
 
-private:
   std::string getWord() const;
 
   int itsWidth;

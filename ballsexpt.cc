@@ -76,7 +76,7 @@ struct BallsExpt::Impl
 };
 
 BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
-  Application(gfx.xstuff()),
+  Application(gfx),
   rep(new Impl(p, gfx))
 {
 DOTRACE("BallsExpt::BallsExpt");

@@ -15,7 +15,7 @@
 typedef union _XEvent XEvent;
 #endif
 
-class XStuff;
+class Graphics;
 
 class Application
 {
@@ -24,7 +24,7 @@ private:
   Application& operator=(const Application&);
 
 public:
-  Application(XStuff& x);
+  Application(Graphics& x);
   virtual ~Application();
 
   void run();
@@ -43,7 +43,7 @@ private:
   static char keyPressAction(XEvent* event);
   static void timeButtonEvent(XEvent* event);
 
-  XStuff& itsXStuff;
+  Graphics& itsGraphics;
 };
 
 static const char vcid_application_h[] = "$Header$";

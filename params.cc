@@ -332,49 +332,49 @@ DOTRACE("Params::setGroup1");
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getInt(&ballNumber);
+  gfx.getInt(&ballNumber);
   snprintf(buf, bufsize, "       %-6d", ballNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getInt(&ballTrackNumber);
+  gfx.getInt(&ballTrackNumber);
   snprintf(buf, bufsize, " %-6d", ballTrackNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getInt(&ballVelocity);
+  gfx.getInt(&ballVelocity);
   snprintf(buf, bufsize, " %-6d", ballVelocity);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getInt(&ballPixmapSize);
+  gfx.getInt(&ballPixmapSize);
   snprintf(buf, bufsize, " %-6d", ballPixmapSize);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getInt(&ballMinDistance);
+  gfx.getInt(&ballMinDistance);
   snprintf(buf, bufsize, " %-6d", ballMinDistance);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getFloat(&ballRadius);
+  gfx.getFloat(&ballRadius);
   snprintf(buf, bufsize, " %-6.1f", ballRadius);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getFloat(&ballSigma2);
+  gfx.getFloat(&ballSigma2);
   snprintf(buf, bufsize, " %-6.1f", ballSigma2);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getFloat(&ballTwistAngle);
+  gfx.getFloat(&ballTwistAngle);
   snprintf(buf, bufsize, " %-6.3f", ballTwistAngle);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
@@ -410,37 +410,37 @@ DOTRACE("Params::setGroup2");
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getInt(&cycleNumber);
+  gfx.getInt(&cycleNumber);
   snprintf(buf, bufsize, "       %-8d", cycleNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getFloat(&waitSeconds);
+  gfx.getFloat(&waitSeconds);
   snprintf(buf, bufsize, " %-8.2f", waitSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getFloat(&epochSeconds);
+  gfx.getFloat(&epochSeconds);
   snprintf(buf, bufsize, " %-8.2f", epochSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getFloat(&pauseSeconds);
+  gfx.getFloat(&pauseSeconds);
   snprintf(buf, bufsize, " %-8.2f", pauseSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getInt(&remindsPerEpoch);
+  gfx.getInt(&remindsPerEpoch);
   snprintf(buf, bufsize, " %-8d", remindsPerEpoch);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getFloat(&remindSeconds);
+  gfx.getFloat(&remindSeconds);
   snprintf(buf, bufsize, " %-8.2f", remindSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
@@ -474,7 +474,7 @@ DOTRACE("Params::setGroup2");
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.xstuff().getInt(&fmriSessionNumber);
+  gfx.getInt(&fmriSessionNumber);
   snprintf(buf, bufsize, "       %-8d", fmriSessionNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);

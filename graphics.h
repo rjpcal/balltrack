@@ -30,7 +30,15 @@ public:
 
   ~Graphics();
 
-  XStuff& xstuff() { return itsXStuff; }
+//   XStuff& xstuff() { return itsXStuff; }
+
+  Display* display() { return itsXStuff.display(); }
+  Window window() const { return itsXStuff.window(); }
+
+  char getKeypress() const { return itsXStuff.getKeypress(); }
+
+  void getInt(int* pi) const { itsXStuff.getInt(pi); }
+  void getFloat(float* pf) const { itsXStuff.getFloat(pf); }
 
   void initWindow();
 
