@@ -26,11 +26,6 @@ public:
   GlxWindow(const char* winname, int width, int height, int depth);
   ~GlxWindow();
 
-  Display* display() { return itsDisplay; }
-  Window window() const { return itsWindow; }
-
-  GLXContext context() const { return itsGLXContext; }
-
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
 
