@@ -176,19 +176,13 @@ $(ARCH)/xstuff.o: $(XSTUFF_CC)
 TAGS: *.h *.cc *.c
 	etags $+
 
-DISTFILES := \
-	$(wildcard *.h) \
-	$(wildcard *.c) \
-	$(wildcard *.cc) \
-	$(wildcard xxx.*) \
-	newpatient \
-	makefile
+DISTNAME := balltrack_$(shell date +%Y%m%d)
+CVS_ROOT := $(shell test -e ./CVS/Root && cat ./CVS/Root)
+CVS_REPO := $(shell test -e ./CVS/Root && cat ./CVS/Repository)
 
-dist:
-	rm -rf balls3
-	rm -f balls3.tar balls3.tar.gz
-	mkdir balls3
-	cp $(DISTFILES) balls3
-	chmod +rw balls3/*
-	tar cvf balls3.tar balls3
-	gzip balls3.tar
+export:
+	echo $(DISTNAME)
+	mkdir -p snapshots
+	cd snapshots && \
+	  cvs -z3 -d $(CVS_ROOT) export -r HEAD -d $(DISTNAME) $(CVS_REPO) \
+	  && tar cvfz $(DISTNAME).tar.gz $(DISTNAME)
