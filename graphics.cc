@@ -204,7 +204,7 @@ DOTRACE("Graphics::swapBuffers");
       return 33.0;
     }
 
-  return 1000.0*itsFrameTimer.elapsedSecAndReset();
+  return itsFrameTimer.elapsedSecAndReset();
 }
 
 void Graphics::drawMessage(const std::string& word)

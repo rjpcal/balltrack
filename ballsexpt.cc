@@ -96,14 +96,12 @@ struct BallsExpt::Impl
 
         unsigned int j;
 
-        // FIXME switch to do the getButtonPress() loop here rather
-        // than above
-
         // Find the first response (j'th) that came after the i'th
         // stimulus
         for (j = 0; j < responses.size(); ++j)
           {
-            if (responses[j].time > this->stimuli[i].msecFrom(this->stimTime0))
+            if (responses[j].time/1000.0 >
+                this->stimuli[i].elapsedSec(this->stimTime0))
               break;
           }
 
@@ -111,13 +109,14 @@ struct BallsExpt::Impl
         // time...
         if (j < responses.size())
           {
-            double diff =
-              responses[j].time - this->stimuli[i].msecFrom(this->stimTime0);
+            double diff_secs =
+              responses[j].time/1000.0 -
+              this->stimuli[i].elapsedSec(this->stimTime0);
 
             // Make sure the reaction time wasn't too large
-            if (diff <= params.remindSeconds*1000)
+            if (diff_secs <= params.remindSeconds)
               {
-                reaction_time = diff;
+                reaction_time = diff_secs*1000.0;
                 reaction_correct =
                   (responses[j].val == this->stimuli[i].correct_val);
               }

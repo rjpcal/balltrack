@@ -416,7 +416,7 @@ DOTRACE("Balls::runTrial");
                      itsParams.showPhysics);
           gfx.drawCross();
 
-          const double lapsed_sec = gfx.swapBuffers() / 1000.0;
+          const double lapsed_sec = gfx.swapBuffers();
 
           pickNextPositions(gfx, lapsed_sec);
 
@@ -426,12 +426,12 @@ DOTRACE("Balls::runTrial");
             break;
         }
 
-      const double lapse = 1000.0*tstart.elapsedSec();
+      const double lapse_secs = tstart.elapsedSec();
 
       std::cout << " " << nframes << " frames in "
-                << lapse << " msec ("
-                << lapse/nframes << " msec/frame, "
-                << nframes/(lapse/1000.0) << " frames/sec)\n";
+                << 1000.0*lapse_secs << " msec ("
+                << (1000.0*lapse_secs)/nframes << " msec/frame, "
+                << nframes/lapse_secs << " frames/sec)\n";
 
       timer.reset();
 
