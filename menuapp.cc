@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:06:33 2000
-// written: Tue Feb 22 17:18:44 2000
+// written: Wed Feb 23 15:54:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,85 +14,46 @@
 
 #include "applic.h"
 
-#include <cstdlib>
 #include <cstring>
-#include <sys/time.h>
 
 #include "balls.h"
-#include "image.h"
 #include "defs.h"
-#include "main.h"
+#include "image.h"
 #include "params.h"
 
-char  PROGRAM[STRINGSIZE];
+#include "trace.h"
+#include "debug.h"
 
-void WhoAreYou( Application* app )
+MenuApplication::MenuApplication(int argc, char** argv) :
+  Application(argc, argv)
 {
-  if( app->argc() < 2 )
-    {
-		printf( " Who are you?\n" );
-		app->quit(0);
-    }
+DOTRACE("MenuApplication::MenuApplication");
 
-  strcpy( PROGRAM,  app->argv(0) );
-  strcpy( OBSERVER, app->argv(1) );
-  strcpy( FILENAME, app->argv(1) );
+  InitWindow(this);
+
+  ReadParams(this, "sta");
 }
 
-void InitApplication()
-{
-  int stimT;
-
-  struct timeval tp;
-  struct timezone tzp;
-
-  gettimeofday( &tp, &tzp );
-
-  srand48( tp.tv_sec );
-
-  ReadParams( "sta" );
+MenuApplication::~MenuApplication() {
+DOTRACE("MenuApplication::~MenuApplication");
 }
 
-void WrapApplication()
-{
-  WriteParams( "sta" );
+void MenuApplication::wrap() {
+DOTRACE("MenuApplication::wrap");
+  WriteParams(this, "sta");
 
-  RestoreColormap();
+  RestoreColormap(this->fildes());
 }
 
-void SwitchApplication( char c )
-{
-  switch( c )
-    {
-	 case 'q':
-		Exit(0);
-		break;
+void MenuApplication::onExpose() {
+DOTRACE("MenuApplication::onExpose");
 
-	 case 'r':
-		RunApplication();
-		MakeMenu();
-		break;
-
-	 case 'x':
-		SetParameters1();
-		break;
-
-	 case 'y':
-		SetParameters2();
-		break;
-
-	 case 'p':
-		ListParams();
-		break;
-
-	 default:
-		MakeMenu();
-		break;
-    }
+  makeMenu();
 }
 
-void MakeMenu()
-{
+void MenuApplication::makeMenu() {
+DOTRACE("MenuApplication::makeMenu");
+
   int nmenu;
   char menu[10][STRINGSIZE];
 
@@ -104,9 +65,39 @@ void MakeMenu()
 
   nmenu = 5;
 
-  ClearWindow();
+  ClearWindow(this->fildes());
 
-  ShowMenu( menu, nmenu );
+  ShowMenu(this, menu, nmenu);
+}
+
+void MenuApplication::onMenuChoice(char c) {
+DOTRACE("MenuApplication::onMenuChoice");
+  switch( c ) {
+  case 'q':
+	 this->quit(0);
+	 break;
+
+  case 'r':
+	 runExperiment();
+	 makeMenu();
+	 break;
+
+  case 'x':
+	 SetParameters1(this);
+	 break;
+
+  case 'y':
+	 SetParameters2(this);
+	 break;
+
+  case 'p':
+	 ListParams(this);
+	 break;
+
+  default:
+	 makeMenu();
+	 break;
+  }
 }
 
 static const char vcid_applic_c[] = "$Header$";
