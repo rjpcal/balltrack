@@ -16,6 +16,7 @@
 
 #include "graphics.h"
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
@@ -187,26 +188,30 @@ Params::Params(int argc, char** argv) :
   doMovie(false),
   showPhysics(false),
   filestem(""),
-  ballRadius(),
-  ballSigma2(),
-  ballSpeed(1.0),
-  ballTwistAngle(),
-  epochSeconds(),
-  pauseSeconds(),
-  remindSeconds(),
-  waitSeconds(),
-  ballMinDistance(),
-  ballNumber(),
-  ballPixmapSize(),
-  ballTrackNumber(),
-  cycleNumber(),
-  displayX(),
-  displayY(),
-  fmriSessionNumber(1),
-  remindsPerEpoch(),
   windowDepth(24),
   windowHeight(1024),
-  windowWidth(1280)
+  windowWidth(1280),
+
+  displayX(),
+  displayY(),
+
+  ballNumber(),
+  ballTrackNumber(),
+  ballSpeed(1.0),
+  ballPixmapSize(),
+  ballMinDistance(),
+  ballRadius(),
+  ballSigma2(),
+  ballTwistAngle(M_PI/16.0),
+
+  cycleNumber(),
+  waitSeconds(),
+  epochSeconds(),
+  pauseSeconds(),
+  remindsPerEpoch(),
+  remindSeconds(),
+
+  fmriSessionNumber(1)
 {
   this->appMode = Params::TRAINING;
 

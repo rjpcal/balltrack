@@ -51,30 +51,39 @@ public:
   void setGroup3(Graphics& gfx);
 
   enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
+
+  // command-line args
   AppMode appMode;
   bool doMovie;
   bool showPhysics;
   std::string filestem;
-  double ballRadius;
-  double ballSigma2;
-  double ballSpeed;
-  double ballTwistAngle;        // = PI/16.0;
-  double epochSeconds;
-  double pauseSeconds;
-  double remindSeconds;
-  double waitSeconds;
-  int    ballMinDistance;
-  int    ballNumber;
-  int    ballPixmapSize;
-  int    ballTrackNumber;
-  int    cycleNumber;
-  int    displayX;
-  int    displayY;
-  int    fmriSessionNumber;
-  int    remindsPerEpoch;       // = 72;
   int    windowDepth;
   int    windowHeight;
   int    windowWidth;
+
+  int    displayX;
+  int    displayY;
+
+  // group 1
+  int    ballNumber;
+  int    ballTrackNumber;
+  double ballSpeed;
+  int    ballPixmapSize;
+  int    ballMinDistance;
+  double ballRadius;
+  double ballSigma2;
+  double ballTwistAngle;
+
+  // group 2
+  int    cycleNumber;
+  double waitSeconds;
+  double epochSeconds;
+  double pauseSeconds;
+  int    remindsPerEpoch;
+  double remindSeconds;
+
+  // group 3
+  int    fmriSessionNumber;
 
   double ballMotionSeconds() const
   {
