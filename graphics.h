@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Tue Feb 29 10:16:04 2000
+// written: Tue Feb 29 10:43:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,6 @@ public:
   virtual void drawCross() = 0;
   virtual void clearUpperPlanes() = 0;
 
-  virtual void setOpaque() = 0;
   virtual void setTransparent() = 0;
 
   // called from Application::Application()
@@ -58,9 +57,6 @@ public:
 
   // called from <params.c>::ListParams()
   virtual void showParams(char params[][STRINGSIZE], int nparams) = 0;
-
-  // called from BallsExpt:runApplication()
-  virtual void setMessage() = 0;
 
   // called from Ball::move()
   virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny) = 0;
