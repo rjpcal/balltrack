@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Tue Feb 29 16:51:56 2000
+// written: Tue Feb 29 17:21:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,6 +84,11 @@ DOTRACE("StarbaseGfx::wrapGraphics");
 
 bool StarbaseGfx::isRgba() {
 DOTRACE("StarbaseGfx::isRgba");
+  return false;
+}
+
+bool StarbaseGfx::isDoubleBuffered() {
+DOTRACE("StarbaseGfx::isDoubleBuffered");
   return false;
 }
 

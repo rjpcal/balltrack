@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Feb 29 16:51:09 2000
+// written: Tue Feb 29 17:22:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,6 +132,13 @@ DOTRACE("OpenglGfx::isRgba");
   GLboolean is_rgba;
   glGetBooleanv(GL_RGBA_MODE, &is_rgba);
   return bool(is_rgba);
+}
+
+bool OpenglGfx::isDoubleBuffered() {
+DOTRACE("OpenglGfx::isDoubleBuffered");
+  GLboolean is_db;
+  glGetBooleanv(GL_DOUBLEBUFFER, &is_db);
+  return bool(is_db);
 }
 
 void OpenglGfx::writeUpperPlanes() {
