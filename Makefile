@@ -22,7 +22,7 @@ ifeq ($(ARCH),irix6)
 	CFLAGS=  -I/usr/include/X11R6 -I/cit/rjpeters/include \
 		-I/cit/rjpeters/include/cppheaders -DIRIX6
 	LFLAGS= 
-	LIB   = -lGLU -lGL -lX11 -lm
+	LIB   = -lmoviefile -ldmedia -lGLU -lGL -lX11 -lm
 	GFXOBJ = $(ARCH)/glfont.o $(ARCH)/openglgfx.o
 endif
 
@@ -33,6 +33,7 @@ OBJ   = \
 	$(ARCH)/ballsexpt.o \
 	$(ARCH)/graphics.o \
 	$(ARCH)/params.o \
+	$(ARCH)/simplemovie.o \
 	$(ARCH)/timing.o \
 	$(ARCH)/trace.o \
 	$(ARCH)/xstuff.o \
@@ -52,6 +53,7 @@ DEBUG_H = debug.h
 DEFS_H = defs.h
 GLFONT_H = glfont.h
 PARAMS_H = params.h
+SIMPLEMOVIE_H = simplemovie.h
 TIMING_H = timing.h
 TRACE_H = trace.h
 XHINTS_H = xhints.h
@@ -81,15 +83,18 @@ BALLSEXPT_CC = $(BALLSEXPT_H) $(BALLS_H) $(GRAPHICS_H) $(PARAMS_H) \
 
 GLFONT_CC = $(GLFONT_H) $(TRACE_H) $(DEBUG_H) glfont.cc
 
-GRAPHICS_CC = $(GRAPHICS_H) $(TRACE_H) graphics.cc
+GRAPHICS_CC = $(GRAPHICS_H) $(TIMING_H) $(TRACE_H) $(TIMING_H) graphics.cc
 
 MAIN_CC = $(BALLSEXPT_H) $(PARAMS_H) $(XHINTS_H) main.c
 
 OPENGLGFX_CC = $(OPENGLGFX_H) $(GLFONT_H) $(PARAMS_H) \
-	$(TIMING_H) $(XHINTS_H) $(XSTUFF_H) $(TRACE_H) $(DEBUG_H) openglgfx.cc
+	$(SIMPLEMOVIE_H) $(TIMING_H) $(XHINTS_H) $(XSTUFF_H) \
+	$(TRACE_H) $(DEBUG_H) openglgfx.cc
 
 PARAMS_CC = $(PARAMS_H) $(APPLICATION_H) $(DEFS_H) $(GRAPHICS_H) \
 	$(TRACE_H) $(DEBUG_H) params.c
+
+SIMPLEMOVIE_CC = $(SIMPLEMOVIE_H) simplemovie.cc
 
 STARBASEGFX_CC = $(STARBASEGFX_H) $(PARAMS_H) $(TIMING_H) \
 	$(XSTUFF_H) $(TRACE_H) $(DEBUG_H) starbasegfx.cc
@@ -104,6 +109,10 @@ XSTUFF_CC = $(XSTUFF_H) $(DEFS_H) $(XHINTS_H) $(TRACE_H) $(DEBUG_H) xstuff.cc
 #
 # Targets
 #
+
+$(MOVIE_TARGET): $(OBJ) $(MAIN_CC)
+	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION -DMAKE_MOVIE main.c \
+		$(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 all:	$(ALL)
 
@@ -122,10 +131,6 @@ $(ITRK_TARGET): $(OBJ) $(MAIN_CC)
 $(FMRI_TARGET): $(OBJ) $(MAIN_CC)
 	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
 
-$(MOVIE_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION -DMAKE_MOVIE main.c \
-		$(OBJ) -o $@ $(LFLAGS) $(LIB) 
-
 serial: serial.c eventnames.h
 	cc -o $@ $< -L/usr/lib/X11R6 -lXwindow -lsb -lXhp11 -lX11 -lm -ldld
 
@@ -143,6 +148,7 @@ $(ARCH)/glfont.o: $(GLFONT_CC)
 $(ARCH)/graphics.o: $(GRAPHICS_CC)
 $(ARCH)/openglgfx.o: $(OPENGLGFX_CC)
 $(ARCH)/params.o: $(PARAMS_CC)
+$(ARCH)/simplemovie.o: $(SIMPLEMOVIE_CC)
 $(ARCH)/starbasegfx.o: $(STARBASEGFX_CC)
 $(ARCH)/timing.o: $(TIMING_CC)
 $(ARCH)/trace.o: $(TRACE_CC)
