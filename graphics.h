@@ -33,8 +33,8 @@ public:
 
   XStuff& xstuff() { return itsXStuff; }
 
-  void getInt(int* pi) const { itsXStuff.getInt(pi); }
-  void getFloat(float* pf) const { itsXStuff.getFloat(pf); }
+  void getInt(int& i) const { itsXStuff.getInt(i); }
+  void getDouble(double& d) const { itsXStuff.getDouble(d); }
 
   void initWindow();
 

@@ -212,22 +212,22 @@ DOTRACE("XStuff::getKeypress");
     }
 }
 
-void XStuff::getInt(int* pi) const
+void XStuff::getInt(int& i) const
 {
 DOTRACE("XStuff::getInt");
 
   const std::string buf = this->getWord();
 
-  sscanf(&buf[0], "%d", pi);
+  sscanf(&buf[0], "%d", &i);
 }
 
-void XStuff::getFloat(float* pf) const
+void XStuff::getDouble(double& d) const
 {
-DOTRACE("XStuff::getFloat");
+DOTRACE("XStuff::getDouble");
 
   const std::string buf = this->getWord();
 
-  sscanf(&buf[0], "%f", pf);
+  sscanf(&buf[0], "%lf", &d);
 }
 
 void XStuff::eventLoop(void* cdata,

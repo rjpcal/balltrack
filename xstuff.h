@@ -35,8 +35,8 @@ public:
 
   char getKeypress() const;
 
-  void getInt(int* pi) const;
-  void getFloat(float* pf) const;
+  void getInt(int& i) const;
+  void getDouble(double& d) const;
 
   void eventLoop(void* cdata,
                  ExposeFunc* onExpose,

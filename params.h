@@ -28,13 +28,13 @@ public:
   ~ParamFile();
 
   void getInt(int& var);
-  void getFloat(float& var);
+  void getDouble(double& var);
   std::string getString();
 
   bool getLine(std::string& str);
 
   void putInt(int var, const char* name);
-  void putFloat(float var, const char* name);
+  void putDouble(double var, const char* name);
   void putString(const std::string& str, const char* name);
 
   void putLine(const char* str);
@@ -58,29 +58,29 @@ public:
   AppMode appMode;
   bool  doMovie;
   std::string filestem;
-  float ballRadius;
-  float ballSigma2;
-  float ballTwistAngle;  // = PI/16.0;
-  float epochSeconds;
-  float pauseSeconds;
-  float remindSeconds;
-  float waitSeconds;
-  int   ballPixmapSize;     // = 16;
-  int   ballMinDistance; // = 24;
-  int   ballNumber;                 // = 8;
-  int   ballTrackNumber; // = 2;
-  int   ballVelocity;       // = 3;
-  int   borderX;                    // = (width - 120) / 2;
-  int   borderY;                    // = (height - 120) / 2;
-  int   cycleNumber;
-  int   displayX;
-  int   displayY;
-  int   framesPerRemind; // = 11;
+  double ballRadius;
+  double ballSigma2;
+  double ballTwistAngle;  // = PI/16.0;
+  double epochSeconds;
+  double pauseSeconds;
+  double remindSeconds;
+  double waitSeconds;
+  int    ballPixmapSize;     // = 16;
+  int    ballMinDistance; // = 24;
+  int    ballNumber;                 // = 8;
+  int    ballTrackNumber; // = 2;
+  int    ballVelocity;       // = 3;
+  int    borderX;                    // = (width - 120) / 2;
+  int    borderY;                    // = (height - 120) / 2;
+  int    cycleNumber;
+  int    displayX;
+  int    displayY;
+  int    framesPerRemind; // = 11;
 private:
-  int   fudgeframes;
+  int    fudgeframes;
 public:
-  int   remindsPerEpoch; // = 72;
-  int   fmriSessionNumber;
+  int    remindsPerEpoch; // = 72;
+  int    fmriSessionNumber;
 
 private:
   void recompute(Graphics& gfx);

@@ -164,19 +164,19 @@ DOTRACE("Ball::collide");
 
   if (vai - vaj < 0.0)
     {
-      const float voi  = this->xvel*xo + this->yvel*yo;
-      const float voj  = other.xvel*xo + other.yvel*yo;
+      const double voi  = this->xvel*xo + this->yvel*yo;
+      const double voj  = other.xvel*xo + other.yvel*yo;
       /*
         ovi2 = vai*vai + voi*voi;
         ovj2 = vaj*vaj + voj*voj;
       */
-      const float nvi2 = vaj*vaj + voi*voi;
-      const float nvj2 = vai*vai + voj*voj;
+      const double nvi2 = vaj*vaj + voi*voi;
+      const double nvj2 = vai*vai + voj*voj;
 
-      const float vij2 = vai*vai - vaj*vaj;
+      const double vij2 = vai*vai - vaj*vaj;
 
-      const float fi   = sqrt(1. + vij2 / nvi2);
-      const float fj   = sqrt(1. - vij2 / nvj2);
+      const double fi   = sqrt(1. + vij2 / nvi2);
+      const double fj   = sqrt(1. - vij2 / nvj2);
 
       this->xvel = fi * (voi * xo + vaj * xa);
       this->yvel = fi * (voi * yo + vaj * ya);

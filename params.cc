@@ -70,7 +70,7 @@ void ParamFile::getInt(int& var)
   *itsFstream >> dummy >> var;
 }
 
-void ParamFile::getFloat(float& var)
+void ParamFile::getDouble(double& var)
 {
   std::string dummy;
   *itsFstream >> dummy >> var;
@@ -95,7 +95,7 @@ void ParamFile::putInt(int var, const char* name)
               << var << '\n';
 }
 
-void ParamFile::putFloat(float var, const char* name)
+void ParamFile::putDouble(double var, const char* name)
 {
   *itsFstream << std::left << std::setw(19) << name << " "
               << std::showpoint << std::fixed << std::setprecision(2)
@@ -211,10 +211,10 @@ DOTRACE("Params::readFromFile");
   pmfile.getInt   (displayX);
   pmfile.getInt   (displayY);
   pmfile.getInt   (cycleNumber);
-  pmfile.getFloat (waitSeconds);
-  pmfile.getFloat (epochSeconds);
-  pmfile.getFloat (pauseSeconds);
-  pmfile.getFloat (remindSeconds);
+  pmfile.getDouble(waitSeconds);
+  pmfile.getDouble(epochSeconds);
+  pmfile.getDouble(pauseSeconds);
+  pmfile.getDouble(remindSeconds);
   pmfile.getInt   (remindsPerEpoch);
   pmfile.getInt   (framesPerRemind);
   pmfile.getInt   (ballNumber);
@@ -222,9 +222,9 @@ DOTRACE("Params::readFromFile");
   pmfile.getInt   (ballVelocity);
   pmfile.getInt   (ballPixmapSize);
   pmfile.getInt   (ballMinDistance);
-  pmfile.getFloat (ballRadius);
-  pmfile.getFloat (ballSigma2);
-  pmfile.getFloat (ballTwistAngle);
+  pmfile.getDouble(ballRadius);
+  pmfile.getDouble(ballSigma2);
+  pmfile.getDouble(ballTwistAngle);
   filestem = pmfile.getString();
 
   // this is a placeholder for the application mode, but we ignore the
@@ -253,10 +253,10 @@ DOTRACE("Params::appendToFile");
   pmfile.putInt   (displayX,          "DISPLAY_X");
   pmfile.putInt   (displayY,          "DISPLAY_Y");
   pmfile.putInt   (cycleNumber,       "CYCLE_NUMBER");
-  pmfile.putFloat (waitSeconds,       "WAIT_DURATION");
-  pmfile.putFloat (epochSeconds,      "EPOCH_DURATION");
-  pmfile.putFloat (pauseSeconds,      "PAUSE_DURATION");
-  pmfile.putFloat (remindSeconds  ,   "REMIND_DURATION");
+  pmfile.putDouble(waitSeconds,       "WAIT_DURATION");
+  pmfile.putDouble(epochSeconds,      "EPOCH_DURATION");
+  pmfile.putDouble(pauseSeconds,      "PAUSE_DURATION");
+  pmfile.putDouble(remindSeconds  ,   "REMIND_DURATION");
   pmfile.putInt   (remindsPerEpoch,   "REMINDS_PER_EPOCH");
   pmfile.putInt   (framesPerRemind,   "FRAMES_PER_REMIND");
   pmfile.putInt   (ballNumber,        "BALL_NUMBER");
@@ -264,9 +264,9 @@ DOTRACE("Params::appendToFile");
   pmfile.putInt   (ballVelocity,      "BALL_VELOCITY");
   pmfile.putInt   (ballPixmapSize,    "BALL_ARRAY_SIZE");
   pmfile.putInt   (ballMinDistance,   "BALL_MIN_DISTANCE");
-  pmfile.putFloat (ballRadius,        "BALL_RADIUS");
-  pmfile.putFloat (ballSigma2,        "BALL_SIGMA2");
-  pmfile.putFloat (ballTwistAngle,    "BALL_TWIST_ANGLE");
+  pmfile.putDouble(ballRadius,        "BALL_RADIUS");
+  pmfile.putDouble(ballSigma2,        "BALL_SIGMA2");
+  pmfile.putDouble(ballTwistAngle,    "BALL_TWIST_ANGLE");
   pmfile.putString(filestem,          "FILENAME");
 
   const char* app_mode = "unknown";
@@ -332,49 +332,49 @@ DOTRACE("Params::setGroup1");
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getInt(&ballNumber);
+  gfx.getInt(ballNumber);
   snprintf(buf, bufsize, "       %-6d", ballNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getInt(&ballTrackNumber);
+  gfx.getInt(ballTrackNumber);
   snprintf(buf, bufsize, " %-6d", ballTrackNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getInt(&ballVelocity);
+  gfx.getInt(ballVelocity);
   snprintf(buf, bufsize, " %-6d", ballVelocity);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getInt(&ballPixmapSize);
+  gfx.getInt(ballPixmapSize);
   snprintf(buf, bufsize, " %-6d", ballPixmapSize);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getInt(&ballMinDistance);
+  gfx.getInt(ballMinDistance);
   snprintf(buf, bufsize, " %-6d", ballMinDistance);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getFloat(&ballRadius);
+  gfx.getDouble(ballRadius);
   snprintf(buf, bufsize, " %-6.1f", ballRadius);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getFloat(&ballSigma2);
+  gfx.getDouble(ballSigma2);
   snprintf(buf, bufsize, " %-6.1f", ballSigma2);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getFloat(&ballTwistAngle);
+  gfx.getDouble(ballTwistAngle);
   snprintf(buf, bufsize, " %-6.3f", ballTwistAngle);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
@@ -410,37 +410,37 @@ DOTRACE("Params::setGroup2");
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getInt(&cycleNumber);
+  gfx.getInt(cycleNumber);
   snprintf(buf, bufsize, "       %-8d", cycleNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getFloat(&waitSeconds);
+  gfx.getDouble(waitSeconds);
   snprintf(buf, bufsize, " %-8.2f", waitSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getFloat(&epochSeconds);
+  gfx.getDouble(epochSeconds);
   snprintf(buf, bufsize, " %-8.2f", epochSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getFloat(&pauseSeconds);
+  gfx.getDouble(pauseSeconds);
   snprintf(buf, bufsize, " %-8.2f", pauseSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getInt(&remindsPerEpoch);
+  gfx.getInt(remindsPerEpoch);
   snprintf(buf, bufsize, " %-8d", remindsPerEpoch);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getFloat(&remindSeconds);
+  gfx.getDouble(remindSeconds);
   snprintf(buf, bufsize, " %-8.2f", remindSeconds);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
@@ -474,7 +474,7 @@ DOTRACE("Params::setGroup2");
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
-  gfx.getInt(&fmriSessionNumber);
+  gfx.getInt(fmriSessionNumber);
   snprintf(buf, bufsize, "       %-8d", fmriSessionNumber);
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
@@ -487,15 +487,13 @@ void Params::recompute(Graphics& gfx)
 {
 DOTRACE("Params::recompute");
 
-  float time_between_reminds;
-
   borderX = (gfx.width() - displayX) / 2;
   borderY = (gfx.height() - displayY) / 2;
 
-  time_between_reminds = (epochSeconds - pauseSeconds - remindSeconds)
-         / remindsPerEpoch;
+  const double time_between_reminds =
+    (epochSeconds - pauseSeconds - remindSeconds) / remindsPerEpoch;
 
-  double frametime = gfx.frameTime();
+  const double frametime = gfx.frameTime();
 
   printf(" Video frame time %7.4lf ms\n", frametime);
 
