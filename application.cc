@@ -81,7 +81,9 @@ DOTRACE("Application::run");
               Timing::logTimer.set();
               Timing::mainTimer.set();
 
-              keyPressAction( &event );
+              char key = keyPressAction( &event );
+              if ( onKey(key) == true )
+                return;
             }
           break;
 
@@ -89,15 +91,6 @@ DOTRACE("Application::run");
           break;
         }
     }
-}
-
-void Application::quit(int code)
-{
-DOTRACE("Application::quit");
-
-  wrap();
-
-  exit(code);
 }
 
 void Application::buttonPressLoop()
@@ -117,7 +110,7 @@ DOTRACE("Application::buttonPressLoop");
     }
 }
 
-void Application::keyPressAction( XEvent* event )
+char Application::keyPressAction( XEvent* event )
 {
 DOTRACE("Application::keyPressAction");
 
@@ -132,7 +125,7 @@ DOTRACE("Application::keyPressAction");
   if( count > 1 || keysym == XK_Return ||
       keysym == XK_BackSpace || keysym == XK_Delete )
     {
-      return;
+      return '\0';
     }
 
   if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
@@ -144,8 +137,10 @@ DOTRACE("Application::keyPressAction");
 
       Timing::initTimeStack( (double) event->xkey.time, &tp );
 
-      onKey( buffer[0] );
+      return buffer[0];
     }
+
+  return '\0';
 }
 
 void Application::timeButtonEvent( XEvent* event )

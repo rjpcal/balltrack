@@ -14,12 +14,13 @@
 
 #include "params.h"
 
-#include <cstring>
-#include <cstdio>
-
 #include "application.h"
 #include "defs.h"
 #include "graphics.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "trace.h"
 #include "debug.h"
@@ -82,7 +83,7 @@ DOTRACE("ParamFile::openfile");
   if( ( fp = fopen( fname, mode_string) ) == NULL )
     {
       printf( "cannot open %s in mode '%s'\n", fname, mode_string);
-      app->quit(0);
+      exit(0);
     }
 
   return fp;

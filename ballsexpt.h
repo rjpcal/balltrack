@@ -23,9 +23,10 @@ public:
   virtual ~BallsExpt();
 
 protected:
-  virtual void wrap();
   virtual void onExpose();
-  virtual void onKey(char c);
+
+  // Returns true if application should quit
+  virtual bool onKey(char c);
 
   void makeMenu();
 

@@ -79,15 +79,10 @@ DOTRACE("BallsExpt::BallsExpt");
 BallsExpt::~BallsExpt()
 {
 DOTRACE("BallsExpt::~BallsExpt");
-  delete itsImpl;
-}
 
-void BallsExpt::wrap()
-{
-DOTRACE("BallsExpt::wrap");
   Params::writeParams(this, "sta");
 
-  graphics().wrapGraphics();
+  delete itsImpl;
 }
 
 void BallsExpt::onExpose()
@@ -97,13 +92,13 @@ DOTRACE("BallsExpt::onExpose");
   makeMenu();
 }
 
-void BallsExpt::onKey(char c)
+bool BallsExpt::onKey(char c)
 {
 DOTRACE("BallsExpt::onKey");
   switch( c )
     {
     case 'q':
-      this->quit(0);
+      return true;
       break;
 
     case 'r':
@@ -131,6 +126,8 @@ DOTRACE("BallsExpt::onKey");
       makeMenu();
       break;
     }
+
+  return false;
 }
 
 void BallsExpt::makeMenu()

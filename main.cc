@@ -89,7 +89,9 @@ int main( int argc, char** argv )
 
   theApp.run();
 
-  theApp.quit(0);
+  fprintf(stderr, "done\n");
+
+  return 0;
 }
 
 static const char vcid_main_c[] = "$Header$";

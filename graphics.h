@@ -33,8 +33,6 @@ public:
 
   void initWindow();
 
-  void wrapGraphics();
-
   // This gives a hook to allow movie frames to be recorded during the
   // delay
   void gfxWait(double delaySeconds);

@@ -109,6 +109,7 @@ DOTRACE("Graphics::Graphics");
 Graphics::~Graphics()
 {
 DOTRACE("Graphics::~Graphics");
+  glXDestroyContext(itsXStuff.display(), itsGLXContext);
   delete itsMovie;
 }
 
@@ -134,13 +135,6 @@ DOTRACE("Graphics::initWindow");
   swapBuffers();
   clearBackBufferRegion(false);
   swapBuffers();
-}
-
-void Graphics::wrapGraphics()
-{
-DOTRACE("Graphics::wrapGraphics");
-  glXDestroyContext(itsXStuff.display(), itsGLXContext);
-  itsXStuff.wrapX();
 }
 
 void Graphics::gfxWait(double delaySeconds)

@@ -15,10 +15,9 @@
 
 #include "defs.h"
 
-#include <cstring>              // for strcpy
+#include <cstring>              // for strncpy
 #include <cstdlib>              // for getenv
 #include <cstdio>
-#include <X11/Xutil.h>
 
 #include "trace.h"
 #include "debug.h"
@@ -69,6 +68,13 @@ DOTRACE("XStuff::XStuff");
       exit(1);
     }
 
+}
+
+XStuff::~XStuff()
+{
+DOTRACE("XStuff::~XStuff");
+  XDestroyWindow( itsDisplay, itsWindow );
+  XCloseDisplay( itsDisplay );
 }
 
 void XStuff::openWindow(const char* winname,
@@ -144,14 +150,6 @@ DOTRACE("XStuff::openWindow");
   XSetWMName(itsDisplay, itsWindow, &window_name);
 
   XMapWindow( itsDisplay, itsWindow );
-}
-
-void XStuff::wrapX()
-{
-DOTRACE("XStuff::wrapX");
-
-  XDestroyWindow( itsDisplay, itsWindow );
-  XCloseDisplay( itsDisplay );
 }
 
 static const char vcid_xstuff_cc[] = "$Header$";

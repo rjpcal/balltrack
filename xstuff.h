@@ -18,11 +18,11 @@ struct XStuff
 {
 public:
   XStuff(int width, int height);
+  ~XStuff();
 
   void openWindow(const char* winname,
                   const XVisualInfo* vinfo,
                   int width, int height, int depth);
-  void wrapX();
 
   Display* display() { return itsDisplay; }
   Window window() const { return itsWindow; }
