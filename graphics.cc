@@ -173,10 +173,10 @@ void Graphics::swapBuffers()
 {
 DOTRACE("Graphics::swapBuffers");
   unsigned int counter = 0;
-  glXGetVideoSyncSGI(&counter);
-  std::cout << counter << '\n';
+  int r1 = glXGetVideoSyncSGI(&counter);
   glXSwapBuffers(itsXStuff.display(), itsXStuff.window());
-  glXWaitVideoSyncSGI(counter + 1, 0, &counter);
+  int r2 = glXWaitVideoSyncSGI(counter + 1, 0, &counter);
+  std::cout << counter << ' ' << r1 << ' ' << r2 << '\n';
 
   if (isItRecording)
     {
