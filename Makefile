@@ -63,5 +63,5 @@ export:
 	echo $(DISTNAME)
 	mkdir -p snapshots
 	cd snapshots && \
-	  cvs -z3 -d $(CVS_ROOT) export -r HEAD -d $(DISTNAME) $(CVS_REPO) \
+	  svn export file:///home/rjpeters/svnrepo/code/trunk/balltrack $(DISTNAME) \
 	  && tar cvfz $(DISTNAME).tar.gz $(DISTNAME)
