@@ -152,8 +152,8 @@ struct Stimulus
   int correct_val;
 };
 
-Stimulus stimulus_stack[ MAXTIMESTACKSIZE ];
-Response response_stack[ MAXTIMESTACKSIZE ];
+Stimulus stimulus_stack[MAXTIMESTACKSIZE];
+Response response_stack[MAXTIMESTACKSIZE];
 
 struct Reaction
 {
@@ -161,7 +161,7 @@ struct Reaction
   bool correct;
 };
 
-Reaction reaction_stack[ MAXTIMESTACKSIZE ];
+Reaction reaction_stack[MAXTIMESTACKSIZE];
 
 struct timeval ss_0;
 double response_time_stack_0;
@@ -175,12 +175,12 @@ namespace
   {
     fprintf(f,  " reaction times:\n");
     for (int i=1; i<STIMULUSSTACKSIZE; ++i)
-      fprintf(f, " %d %.0lf\n", i, reaction_stack[ i ].time);
+      fprintf(f, " %d %.0lf\n", i, reaction_stack[i].time);
     fprintf(f, " \n\n");
 
     fprintf(f,  " reaction correct?:\n");
     for (int j=1; j<STIMULUSSTACKSIZE; ++j)
-      fprintf(f, " %d %d\n", j, int(reaction_stack[ j ].correct));
+      fprintf(f, " %d %d\n", j, int(reaction_stack[j].correct));
     fprintf(f, " \n");
 
     fprintf(f, " percent correct: %d\n\n", int(percent_correct));
@@ -212,11 +212,11 @@ DOTRACE("Timing::addToResponseStack");
   double delta = xtime - response_time_stack_0;
 
   if (delta >= 0.0)
-    response_stack[ RESPONSESTACKSIZE ].time = delta;
+    response_stack[RESPONSESTACKSIZE].time = delta;
   else
-    response_stack[ RESPONSESTACKSIZE ].time = delta + 4294967295.0;
+    response_stack[RESPONSESTACKSIZE].time = delta + 4294967295.0;
 
-  response_stack[ RESPONSESTACKSIZE ].val = nbutton;
+  response_stack[RESPONSESTACKSIZE].val = nbutton;
 
   ++RESPONSESTACKSIZE;
 
@@ -237,9 +237,9 @@ DOTRACE("Timing::addToResponseStack");
 
   double delta = elapsedMsec(&response_timeval_0, &tp);
 
-  response_stack[ RESPONSESTACKSIZE ].time = delta;
+  response_stack[RESPONSESTACKSIZE].time = delta;
 
-  response_stack[ RESPONSESTACKSIZE ].val = nbutton;
+  response_stack[RESPONSESTACKSIZE].val = nbutton;
 
   RESPONSESTACKSIZE++;
 
@@ -297,7 +297,7 @@ DOTRACE("Timing::tallyReactionTime");
          // If we found a corresponding response, compute the response time...
       if (j < RESPONSESTACKSIZE)
         {
-          reaction_stack[ i ].time =
+          reaction_stack[i].time =
             response_stack[j].time - stimulus_stack[i].time;
           reaction_stack[i].correct =
             (response_stack[j].val == stimulus_stack[i].correct_val);
@@ -307,15 +307,15 @@ DOTRACE("Timing::tallyReactionTime");
       // non-response with -1.0
       else
         {
-          reaction_stack[ i ].time = -1.0;
+          reaction_stack[i].time = -1.0;
           reaction_stack[i].correct = false;
         }
 
       // If the reaction time was too large, it doesn't count, so
       // indicate a non-response with -1.0
-      if (reaction_stack[ i ].time > remind_duration*1000)
+      if (reaction_stack[i].time > remind_duration*1000)
         {
-          reaction_stack[ i ].time = -1.0;
+          reaction_stack[i].time = -1.0;
           reaction_stack[i].correct = false;
         }
 
