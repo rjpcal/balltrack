@@ -41,9 +41,9 @@ namespace
     exit(1);
   }
 
-  char keyPressAction(XEvent* event)
+  char extractKey(XEvent* event)
   {
-    DOTRACE("<xstuff.cc>::keyPressAction");
+    DOTRACE("<xstuff.cc>::extractKey");
 
     char buffer[10];
     KeySym keysym;
@@ -260,7 +260,7 @@ DOTRACE("XStuff::eventLoop");
         case KeyPress:
           if (event.xkey.window == itsWindow)
             {
-              char key = keyPressAction(&event);
+              char key = extractKey(&event);
               if ((*onKey)(cdata, double(event.xkey.time), key)
                   == true)
                 return;
