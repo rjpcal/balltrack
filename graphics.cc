@@ -278,7 +278,8 @@ DOTRACE("Graphics::drawCross");
 }
 
 void Graphics::drawStrings(const std::string* strings, int nstrings,
-                           double xpos, double ypos, double char_width)
+                           double xpos, double ypos, double char_width,
+                           int stroke_width)
 {
 DOTRACE("Graphics::drawStrings");
 
@@ -291,7 +292,7 @@ DOTRACE("Graphics::drawStrings");
     ypos = height() + ypos;
 
   for (int i = 0; i < nstrings; ++i)
-    drawGLText(strings[i], 2,
+    drawGLText(strings[i], stroke_width,
                xpos, ypos - (2*i*char_height),
                char_width, char_height);
 }

@@ -249,7 +249,7 @@ DOTRACE("BallsExpt::makeMenu");
   menu[7] = std::string("recent percent correct: ") + buf;
 
   rep->gfx.clearBackBuffer();
-  rep->gfx.drawStrings(menu, nitems, 100, -200, 20);
+  rep->gfx.drawStrings(menu, nitems, 100, -200, 20, 2);
   rep->gfx.swapBuffers();
 }
 

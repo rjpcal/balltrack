@@ -52,7 +52,8 @@ public:
   void drawLine(double x1, double y1, double x2, double y2);
 
   void drawStrings(const std::string* strings, int nstrings,
-                   double xpos, double ypos, double char_width);
+                   double xpos, double ypos, double char_width,
+                   int stroke_width);
 
   void writePixmap(int x, int y, unsigned char* ptr, int size);
 
