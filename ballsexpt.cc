@@ -53,7 +53,7 @@ struct BallsExpt::Impl
     ballset(p),
     params(p),
     gfx(g),
-    timing()
+    rdata()
   {}
 
   /// XXX this needs to be at least as big as (cycleNumber+1)*NUM_CONDITIONS
@@ -61,7 +61,7 @@ struct BallsExpt::Impl
   Balls ballset;
   Params& params;
   Graphics& gfx;
-  Timing timing;
+  ResponseData rdata;
 };
 
 BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
@@ -110,7 +110,7 @@ DOTRACE("BallsExpt::onKey");
     case 'r':
       struct timeval tp;
       gettimeofday(&tp, (struct timezone*)0);
-      p->rep->timing.initTimeStack(xtime, &tp);
+      p->rep->rdata.initTimeStack(xtime, &tp);
 
       p->runExperiment();
       p->makeMenu();
@@ -146,10 +146,10 @@ DOTRACE("BallsExpt::onButton");
   BallsExpt* p = static_cast<BallsExpt*>(cdata);
   switch (button_number)
     {
-    case 1:  p->rep->timing.addToResponseStack(xtime, BUTTON1); break;
-    case 2:  p->rep->timing.addToResponseStack(xtime, BUTTON2); break;
-    case 3:  p->rep->timing.addToResponseStack(xtime, BUTTON3); break;
-    default: p->rep->timing.addToResponseStack(xtime, 0); break;
+    case 1:  p->rep->rdata.addToResponseStack(xtime, BUTTON1); break;
+    case 2:  p->rep->rdata.addToResponseStack(xtime, BUTTON2); break;
+    case 3:  p->rep->rdata.addToResponseStack(xtime, BUTTON3); break;
+    default: p->rep->rdata.addToResponseStack(xtime, 0); break;
     }
 }
 
@@ -179,7 +179,7 @@ DOTRACE("BallsExpt::makeMenu");
   menu[5] = "q     quit program";
   menu[6] = "";
   menu[7] = "recent percent correct: "
-    + makestring(int(rep->timing.recentPercentCorrect()));
+    + makestring(int(rep->rdata.recentPercentCorrect()));
 
   rep->gfx.drawStrings(menu, nitems, 100, -200, 20);
 
@@ -245,7 +245,7 @@ DOTRACE("BallsExpt::runExperiment");
 
   rep->timepoints.clear();
 
-  rep->timepoints.push_back(Timing::getTime());
+  rep->timepoints.push_back(Timing::now());
   rep->gfx.gfxWait(timer, rep->params.waitSeconds);
 
   switch (rep->params.appMode)
@@ -255,7 +255,7 @@ DOTRACE("BallsExpt::runExperiment");
     case Params::TRAINING:     runTrainingExpt(); break;
     }
 
-  rep->timepoints.push_back(Timing::getTime());
+  rep->timepoints.push_back(Timing::now());
 
   for (unsigned int i = 0; i < rep->timepoints.size(); ++i)
     {
@@ -271,8 +271,8 @@ DOTRACE("BallsExpt::runExperiment");
   rep->gfx.xstuff().buttonPressLoop(static_cast<void*>(this),
                                     &onButton);
 
-  rep->timing.tallyReactionTime(tmefile,
-                                rep->params.remindSeconds);
+  rep->rdata.tallyReactionTime(tmefile,
+                               rep->params.remindSeconds);
 }
 
 void BallsExpt::runFmriExpt()
@@ -296,18 +296,18 @@ DOTRACE("BallsExpt::runFmriExpt");
       else if (track_number == 0)
         {
           // Run passive trial
-          rep->timepoints.push_back(Timing::getTime());
+          rep->timepoints.push_back(Timing::now());
           rep->ballset.runTrial
-            (rep->gfx, rep->timing, Balls::PASSIVE);
+            (rep->gfx, rep->rdata, Balls::PASSIVE);
         }
       else
         {
           rep->params.ballTrackNumber = track_number;
 
           // Run active tracking trial with objective check
-          rep->timepoints.push_back(Timing::getTime());
+          rep->timepoints.push_back(Timing::now());
           rep->ballset.runTrial
-            (rep->gfx, rep->timing, Balls::CHECK_ONE);
+            (rep->gfx, rep->rdata, Balls::CHECK_ONE);
         }
 
       // If there will be more trials, then do a fixation cross interval
@@ -324,7 +324,7 @@ DOTRACE("BallsExpt::runFmriExpt");
 
           Timer t;
           t.reset();
-          rep->timepoints.push_back(Timing::getTime());
+          rep->timepoints.push_back(Timing::now());
           rep->gfx.gfxWait(t, rep->params.waitSeconds);
         }
     }
@@ -341,21 +341,21 @@ DOTRACE("BallsExpt::runEyeTrackingExpt");
     {
       // Run active tracking trial
       runFixationCalibration();
-      rep->timepoints.push_back(Timing::getTime());
+      rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->timing, Balls::CHECK_ALL);
+        (rep->gfx, rep->rdata, Balls::CHECK_ALL);
 
       // Run active tracking trial with objective check
       runFixationCalibration();
-      rep->timepoints.push_back(Timing::getTime());
+      rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->timing, Balls::CHECK_ONE);
+        (rep->gfx, rep->rdata, Balls::CHECK_ONE);
 
       // Run passive trial
       runFixationCalibration();
-      rep->timepoints.push_back(Timing::getTime());
+      rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->timing, Balls::PASSIVE);
+        (rep->gfx, rep->rdata, Balls::PASSIVE);
     }
 }
 
@@ -366,13 +366,13 @@ DOTRACE("BallsExpt::runTrainingExpt");
   for (int cycle=0; cycle < rep->params.cycleNumber; ++cycle)
     {
       // Run active tracking trial
-      rep->timepoints.push_back(Timing::getTime());
+      rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->timing, Balls::CHECK_ALL);
+        (rep->gfx, rep->rdata, Balls::CHECK_ALL);
       // Run active tracking trial with objective check
-      rep->timepoints.push_back(Timing::getTime());
+      rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->timing, Balls::CHECK_ONE);
+        (rep->gfx, rep->rdata, Balls::CHECK_ONE);
     }
 }
 

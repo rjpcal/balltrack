@@ -53,18 +53,23 @@ struct Response
   int val;
 };
 
-class Timing
+namespace Timing
+{
+  timeval now();
+  double elapsedMsec(const timeval& tp0, const timeval& tp1);
+}
+
+class ResponseData
 {
 public:
-  Timing();
+  ResponseData();
 
   // Used in Balls::runTrial
   void addToStimulusStack(int correct_nbutton);
 
+  // Used in BallsExpt::onButton;
   void addToResponseStack(double xtime, int nbutton);
 
-  static timeval getTime();
-  static double elapsedMsec(const timeval& tp0, const timeval& tp1);
   void initTimeStack(double xtime, timeval* tp);
   void tallyReactionTime(ParamFile& f, float remind_duration);
 

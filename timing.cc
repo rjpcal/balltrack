@@ -80,23 +80,9 @@ DOTRACE("Timer::wait");
   itsUsec = tp.tv_usec;
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// Timing member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-Timing::Timing() :
-  itsStimuli(),
-  itsResponses(),
-  itsStimulusTime0(),
-  itsResponseTime0(),
-  itsPercentCorrect(0.0)
-{}
-
-timeval Timing::getTime()
+timeval Timing::now()
 {
-DOTRACE("Timing::getTime");
+DOTRACE("Timing::now");
 
   struct timeval tp;
   struct timezone tzp;
@@ -114,10 +100,24 @@ DOTRACE("Timing::elapsedMsec");
   return sec_lapsed * 1000. + msec_lapsed;
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// ResponseData member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
-void Timing::initTimeStack(double xtime, timeval* tp)
+ResponseData::ResponseData() :
+  itsStimuli(),
+  itsResponses(),
+  itsStimulusTime0(),
+  itsResponseTime0(),
+  itsPercentCorrect(0.0)
+{}
+
+
+void ResponseData::initTimeStack(double xtime, timeval* tp)
 {
-DOTRACE("Timing::initTimeStack");
+DOTRACE("ResponseData::initTimeStack");
 
   itsResponseTime0 = xtime;
 
@@ -128,21 +128,21 @@ DOTRACE("Timing::initTimeStack");
   itsStimulusTime0 = *tp;
 }
 
-void Timing::addToStimulusStack(int correct_nbutton)
+void ResponseData::addToStimulusStack(int correct_nbutton)
 {
-DOTRACE("Timing::addToStimulusStack");
+DOTRACE("ResponseData::addToStimulusStack");
 
-  const timeval tp = Timing::getTime();
+  const timeval tp = Timing::now();
 
   // (1) Compute the trial onset time relative to the first time
   // (2) Note the correct response value
-  itsStimuli.push_back(Stimulus(elapsedMsec(itsStimulusTime0, tp),
-                                   correct_nbutton));
+  itsStimuli.push_back(Stimulus(Timing::elapsedMsec(itsStimulusTime0, tp),
+                                correct_nbutton));
 }
 
-void Timing::addToResponseStack(double xtime, int nbutton)
+void ResponseData::addToResponseStack(double xtime, int nbutton)
 {
-DOTRACE("Timing::addToResponseStack");
+DOTRACE("ResponseData::addToResponseStack");
 
   double delta = xtime - itsResponseTime0;
 
@@ -152,9 +152,9 @@ DOTRACE("Timing::addToResponseStack");
   itsResponses.push_back(Response(delta, nbutton));
 }
 
-void Timing::tallyReactionTime(ParamFile& f, float remind_duration)
+void ResponseData::tallyReactionTime(ParamFile& f, float remind_duration)
 {
-DOTRACE("Timing::tallyReactionTime");
+DOTRACE("ResponseData::tallyReactionTime");
 
   int total_stims = 0;
   int number_correct = 0;
@@ -231,9 +231,9 @@ DOTRACE("Timing::tallyReactionTime");
   f.putLine("");
 }
 
-double Timing::recentPercentCorrect()
+double ResponseData::recentPercentCorrect()
 {
-DOTRACE("Timing::recentPercentCorrect");
+DOTRACE("ResponseData::recentPercentCorrect");
   return itsPercentCorrect;
 }
 
