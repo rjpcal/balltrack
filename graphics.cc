@@ -3,7 +3,7 @@
 // graphics.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:01:32 2000
-// written: Thu Feb 24 15:01:51 2000
+// written: Fri Feb 25 10:47:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,13 @@
 #include "graphics.h"
 
 #include "trace.h"
+
+Graphics::Graphics(int wid, int hgt) :
+  itsWidth(wid),
+  itsHeight(hgt)
+{
+DOTRACE("Graphics::Graphics");
+}
 
 Graphics::~Graphics()
 {
