@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Tue Feb 29 14:50:36 2000
+// written: Tue Feb 29 16:05:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,15 +18,13 @@
 #include <X11/keysym.h>
 #include <X11/Xutil.h>
 
-#include "applic.h"
-#include "starbasegfx.h"
+#include "defs.h"
 #include "openglgfx.h"
 #include "params.h"
+#include "starbasegfx.h"
 #include "timing.h"
 #include "xhints.h"
 #include "xstuff.h"
-
-#include "defs.h"
 
 #include "trace.h"
 #include "debug.h"

@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Tue Feb 29 15:28:16 2000
+// written: Tue Feb 29 16:01:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,11 +14,8 @@
 #include "starbasegfx.h"
 
 #include <starbase.c.h>
-#include <cmath>
 #include <cstdlib>				  // for exit()
-#include <X11/keysym.h>
 
-#include "applic.h"
 #include "params.h"
 #include "timing.h"
 #include "xstuff.h"

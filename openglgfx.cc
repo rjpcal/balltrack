@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Feb 29 15:30:02 2000
+// written: Tue Feb 29 16:03:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,14 +15,9 @@
 
 #include <GL/glu.h>
 
-#include <cmath>
 #include <cstdlib>
-#include <X11/keysym.h>
 #include <vector>
 
-#include "application.h"
-#include "applic.h"
-#include "balls.h"
 #include "glfont.h"
 #include "params.h"
 #include "timing.h"
