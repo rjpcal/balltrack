@@ -533,27 +533,11 @@ void Params::setGroup3(Graphics& gfx)
 {
 DOTRACE("Params::setGroup2");
 
-  const int bufsize = 256;
-  char buf[bufsize];
+  ParamMenu pm;
 
-  std::string menu[4];
+  pm.addItem("SESSION_NUMBER", this->fmriSessionNumber);
 
-  gfx.clearBackBuffer();
-
-  menu[0] = "       SESSION_NUMBER";
-  menu[1] = "";
-  menu[2] = "";
-  snprintf(buf, bufsize, "       %-8d", this->fmriSessionNumber);
-  menu[3] = buf;
-
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
-  gfx.swapBuffers();
-
-  gfx.getIntFromKeyboard(fmriSessionNumber);
-  snprintf(buf, bufsize, "       %-8d", this->fmriSessionNumber);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
-  gfx.swapBuffers();
+  pm.go(gfx);
 }
 
 static const char vcid_params_cc[] = "$Header$";
