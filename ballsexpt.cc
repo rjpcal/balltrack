@@ -78,8 +78,6 @@ BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
 DOTRACE("BallsExpt::BallsExpt");
 
   rep->params.readFromFile(gfx, "sta");
-
-  Balls::generateColors();
 }
 
 BallsExpt::~BallsExpt()

@@ -30,68 +30,78 @@ namespace
 {
   std::vector<unsigned char> theirBallmap;
   std::vector<unsigned char> theirHimap;
-}
 
-namespace Local
-{
-  void makeBallMap(std::vector<unsigned char>& vec, int size,
-                   float radius, float sigma,
-                   unsigned char background);
+  void makeBallPixmap(std::vector<unsigned char>& vec, int size,
+                      float radius, float sigma,
+                      unsigned char background)
+  {
+    DOTRACE("<balls.cc>::makeBallPixmap");
 
-  bool colorsAlreadyGenerated = false;
-}
+    const double tint_r = 1.0;
+    const double tint_g = 0.5;
+    const double tint_b = 0.0;
 
-///////////////////////////////////////////////////////////////////////
-//
-// Local function definitions
-//
-///////////////////////////////////////////////////////////////////////
+    const int numColors = 256;
+    double theColors[numColors][3];
 
-void Local::makeBallMap(std::vector<unsigned char>& vec, int size,
-                        float radius, float sigma,
-                        unsigned char background)
-{
-DOTRACE("Local::makeBallMap");
+    const double lmin =   0.0;
+    const double lmax = 196.0;
 
-  Balls::generateColors();
+    for (int n=0; n<BALL_COLOR_MIN; ++n)
+      theColors[n][0] = theColors[n][1] = theColors[n][2] = 0.0;
 
-  const int bytes_per_pixel = 4;
+    for (int n=BALL_COLOR_MIN; n<=BALL_COLOR_MAX; ++n)
+      {
+        const double ratio = lmin/lmax +
+          ((lmax-lmin)*(n-BALL_COLOR_MIN)/
+           (lmax*(BALL_COLOR_MAX-BALL_COLOR_MIN)));
 
-  const int num_bytes = size*size*bytes_per_pixel;
+        theColors[n][0] = tint_r*ratio;
+        theColors[n][1] = tint_g*ratio;
+        theColors[n][2] = tint_b*ratio;
+      }
 
-  vec.resize(num_bytes);
+    for (int n=BALL_COLOR_MAX+1; n<numColors; ++n)
+      theColors[n][0] = theColors[n][1] = theColors[n][2] = 1.0;
 
-  for (int i=0; i<size; ++i)
-    {
-      for (int j=0; j<size; ++j)
-        {
-          const float x   = float(i - size/2 + 0.5);
-          const float y   = float(j - size/2 + 0.5);
+    const int bytes_per_pixel = 4;
 
-          const float rsq = x*x + y*y;
+    const int num_bytes = size*size*bytes_per_pixel;
 
-          unsigned char index;
+    vec.resize(num_bytes);
 
-          if (x*x+y*y < radius*radius)
-            {
-              index =
-                (unsigned char)
-                (BALL_COLOR_MIN
-                  + (BALL_COLOR_MAX - BALL_COLOR_MIN) * exp(-rsq/sigma));
-            }
-          else
-            {
-              index = (unsigned char)(background);
-            }
+    for (int i=0; i<size; ++i)
+      {
+        for (int j=0; j<size; ++j)
+          {
+            const float x   = float(i - size/2 + 0.5);
+            const float y   = float(j - size/2 + 0.5);
 
-          const size_t base_loc = bytes_per_pixel*(i*size + j);
+            const float rsq = x*x + y*y;
 
-          vec[base_loc + 0] = (unsigned char)(0xff * Balls::theColors[index][0]);
-          vec[base_loc + 1] = (unsigned char)(0xff * Balls::theColors[index][1]);
-          vec[base_loc + 2] = (unsigned char)(0xff * Balls::theColors[index][2]);
-          vec[base_loc + 3] = (unsigned char)(0xff);
-        }
-    }
+            unsigned char index;
+
+            if (x*x+y*y < radius*radius)
+              {
+                index =
+                  (unsigned char)
+                  (BALL_COLOR_MIN
+                   + (BALL_COLOR_MAX - BALL_COLOR_MIN) * exp(-rsq/sigma));
+              }
+            else
+              {
+                index = (unsigned char)(background);
+              }
+
+            const size_t base_loc = bytes_per_pixel*(i*size + j);
+
+            vec[base_loc + 0] = (unsigned char)(0xff * theColors[index][0]);
+            vec[base_loc + 1] = (unsigned char)(0xff * theColors[index][1]);
+            vec[base_loc + 2] = (unsigned char)(0xff * theColors[index][2]);
+            vec[base_loc + 3] = (unsigned char)(0xff);
+          }
+      }
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -258,8 +268,6 @@ DOTRACE("Ball::draw");
 Balls::Balls(const Params& params) : itsParams(params) {}
 
 const int Balls::MAX_BALLS;
-const int Balls::COLOR_NUMBER;
-float Balls::theColors[Balls::COLOR_NUMBER][3];
 
 void Balls::initialize(Graphics& gfx)
 {
@@ -374,42 +382,10 @@ DOTRACE("Balls::prepare");
 
   initialize(gfx);
 
-  Local::makeBallMap(theirHimap, itsParams.ballPixmapSize,
-                     itsParams.ballRadius, itsParams.ballSigma2, 255);
-  Local::makeBallMap(theirBallmap, itsParams.ballPixmapSize,
-                     itsParams.ballRadius, itsParams.ballSigma2, 0);
-}
-
-void Balls::generateColors()
-{
-DOTRACE("Balls::generateColors");
-
-  if (Local::colorsAlreadyGenerated) return;
-
-  float lmin =   0.;
-  float lmax = 196.;
-
-  int n;
-  float ratio;
-
-  for (n=0; n<BALL_COLOR_MIN; ++n)
-    theColors[n][0] = theColors[n][1] = theColors[n][2] = 0.;
-
-  for (n=BALL_COLOR_MIN; n<=BALL_COLOR_MAX; ++n)
-    {
-      ratio = lmin/lmax +
-        ((lmax-lmin)*(n-BALL_COLOR_MIN)/
-         (lmax*(BALL_COLOR_MAX-BALL_COLOR_MIN)));
-
-      theColors[n][0] = 1.0*ratio; DebugEval(theColors[n][0]);
-      theColors[n][1] = 0.5*ratio; DebugEval(theColors[n][1]);
-      theColors[n][2] = 0.0*ratio; DebugEvalNL(theColors[n][2]);
-    }
-
-  for (n=BALL_COLOR_MAX+1; n<COLOR_NUMBER; ++n)
-    theColors[n][0] = theColors[n][1] = theColors[n][2] = 1.;
-
-  Local::colorsAlreadyGenerated = true;
+  makeBallPixmap(theirHimap, itsParams.ballPixmapSize,
+                 itsParams.ballRadius, itsParams.ballSigma2, 255);
+  makeBallPixmap(theirBallmap, itsParams.ballPixmapSize,
+                 itsParams.ballRadius, itsParams.ballSigma2, 0);
 }
 
 void Balls::runTrial(Graphics& gfx, timeval* starttime, TrialType ttype)

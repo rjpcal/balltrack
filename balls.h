@@ -67,10 +67,6 @@ public:
 
   void runTrial(Graphics& gfx, timeval* starttime, TrialType ttype);
 
-  static const int COLOR_NUMBER = 256;
-  static float theColors[COLOR_NUMBER][3];
-  static void generateColors();
-
 private:
   Ball itsBalls[MAX_BALLS];
   const Params& itsParams;
