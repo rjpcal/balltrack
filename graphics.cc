@@ -3,7 +3,7 @@
 // graphics.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:01:32 2000
-// written: Wed Feb 28 14:36:58 2001
+// written: Tue Mar  6 16:55:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,8 @@
 
 Graphics::Graphics(int wid, int hgt) :
   itsWidth(wid),
-  itsHeight(hgt)
+  itsHeight(hgt),
+  itsFrameTime(-1.0)
 {
 DOTRACE("Graphics::Graphics");
 }
@@ -35,6 +36,12 @@ void Graphics::stopRecording() {}
 void Graphics::gfxWait(double delaySeconds)
 {
   Timing::mainTimer.wait(delaySeconds);
+}
+
+double Graphics::frameTime() {
+  if (itsFrameTime < 0)
+	 itsFrameTime = computeFrameTime();
+  return itsFrameTime;
 }
 
 static const char vcid_graphics_cc[] = "$Header$";
