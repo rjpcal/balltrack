@@ -22,6 +22,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -71,7 +72,8 @@ Graphics::Graphics(const char* winname,
   itsXStuff(w, h),
   itsGLXContext(0),
   itsUsingVsync(false),
-  isItRecording(false)
+  isItRecording(false),
+  itsFrameCounter(0)
 {
 DOTRACE("Graphics::Graphics");
 
@@ -148,9 +150,18 @@ DOTRACE("Graphics::~Graphics");
 void Graphics::gfxWait(const Timepoint& t, double delaySeconds)
 {
 DOTRACE("Graphics::gfxWait");
-  while (t.elapsedMsec() < 1000*delaySeconds)
+
+  if (isItRecording)
     {
-      usleep(1000);
+      const int nframes = int(delaySeconds/30.0);
+      dumpFrames(nframes);
+    }
+  else
+    {
+      while (t.elapsedMsec() < 1000*delaySeconds)
+        {
+          usleep(1000);
+        }
     }
 }
 
@@ -188,34 +199,7 @@ DOTRACE("Graphics::swapBuffers");
 
   if (isItRecording)
     {
-#if 0
-      static int f = 0;
-      ++f;
-
-      glReadBuffer(GL_FRONT);
-      glReadPixels((width()-itsMovie->width()) / 2,
-                   (height()-itsMovie->height()) / 2,
-                   itsMovie->width(),
-                   itsMovie->height(),
-                   GL_RGBA,
-                   GL_UNSIGNED_BYTE,
-                   itsMovie->tempFrameBuffer());
-
-      unsigned int* buf = (unsigned int*) itsMovie->tempFrameBuffer();
-
-      for (unsigned int i = 0; i < itsMovie->frameSize()/4; ++i)
-        {
-          unsigned int reformat = 0;
-
-          reformat |= (buf[i] & 0xff000000) >> 24;
-          reformat |= (buf[i] & 0x00ff0000) >> 8;
-          reformat |= (buf[i] & 0x0000ff00) << 8;
-
-          buf[i] = reformat;
-        }
-
-      itsMovie->appendTempBuffer();
-#endif
+      dumpFrames(1);
     }
 }
 
@@ -298,11 +282,12 @@ DOTRACE("Graphics::writePixmap");
 
 }
 
-void Graphics::startRecording(int width, int height)
+void Graphics::startRecording()
 {
 DOTRACE("Graphics::startRecording");
 
   isItRecording = true;
+  std::cout << "starting dumping frames\n";
 }
 
 void Graphics::stopRecording()
@@ -310,6 +295,40 @@ void Graphics::stopRecording()
 DOTRACE("Graphics::stopRecording");
 
   isItRecording = false;
+  std::cout << "stopping dumping frames\n";
+}
+
+void Graphics::dumpFrames(int count)
+{
+DOTRACE("Graphics::dumpFrame");
+
+  glReadBuffer(GL_FRONT);
+
+  const int bufsiz = this->width() * this->height() * 3;
+  unsigned char buf[bufsiz];
+
+  glReadPixels(0, 0,
+               this->width(),
+               this->height(),
+               GL_RGB,
+               GL_UNSIGNED_BYTE,
+               static_cast<void*>(&buf[0]));
+
+  while (count-- > 0)
+    {
+      char framename[128];
+      snprintf(framename, 128, "frame_%06d.ppm", itsFrameCounter++);
+
+      std::ofstream ofs(framename);
+
+      ofs << "P6\n"
+          << this->width() << " " << this->height() << '\n'
+          << "255\n";
+
+      ofs.write(reinterpret_cast<const char*>(&buf[0]), bufsiz);
+
+      ofs.close();
+    }
 }
 
 static const char vcid_graphics_cc[] = "$Header$";

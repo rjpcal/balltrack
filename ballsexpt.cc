@@ -308,12 +308,18 @@ DOTRACE("BallsExpt::runExperiment");
 
   rep->gfx.gfxWait(rep->timepoints.back(), rep->params.waitSeconds);
 
+  if (rep->params.doMovie)
+    rep->gfx.startRecording();
+
   switch (rep->params.appMode)
     {
     case Params::FMRI_SESSION: runFmriExpt(); break;
     case Params::EYE_TRACKING: runEyeTrackingExpt(); break;
     case Params::TRAINING:     runTrainingExpt(); break;
     }
+
+  if (rep->params.doMovie)
+    rep->gfx.stopRecording();
 
   rep->timepoints.push_back(Timepoint::now());
 
@@ -333,10 +339,6 @@ DOTRACE("BallsExpt::runExperiment");
 void BallsExpt::runFmriExpt()
 {
 DOTRACE("BallsExpt::runFmriExpt");
-
-  if (rep->params.doMovie)
-    rep->gfx.startRecording(rep->params.displayX,
-                            rep->params.displayY);
 
   const int NUM_TRIALS = 8;
 
@@ -392,9 +394,6 @@ DOTRACE("BallsExpt::runFmriExpt");
                            rep->params.waitSeconds);
         }
     }
-
-  if (rep->params.doMovie)
-    rep->gfx.stopRecording();
 }
 
 void BallsExpt::runEyeTrackingExpt()

@@ -58,10 +58,12 @@ public:
   void writePixmap(int x, int y, unsigned char* ptr, int size);
 
   // To control starting, stopping of movie recording
-  void startRecording(int width, int height);
+  void startRecording();
   void stopRecording();
 
 private:
+  void dumpFrames(int count);
+
   const int itsWidth;
   const int itsHeight;
 
@@ -69,8 +71,8 @@ private:
   GLXContext itsGLXContext;
 
   bool itsUsingVsync;
-
   bool isItRecording;
+  int itsFrameCounter;
 };
 
 static const char vcid_graphics_h[] = "$Header$";
