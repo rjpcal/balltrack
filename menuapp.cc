@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:06:33 2000
-// written: Wed Feb 23 15:54:26 2000
+// written: Tue Feb 29 12:12:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,18 +18,19 @@
 
 #include "balls.h"
 #include "defs.h"
-#include "image.h"
+#include "graphics.h"
 #include "params.h"
+#include "timing.h"
 
 #include "trace.h"
 #include "debug.h"
 
-MenuApplication::MenuApplication(int argc, char** argv) :
-  Application(argc, argv)
+MenuApplication::MenuApplication(const XHints& hints) :
+  Application(hints)
 {
 DOTRACE("MenuApplication::MenuApplication");
 
-  InitWindow(this);
+  graphics()->initWindow();
 
   ReadParams(this, "sta");
 }
@@ -42,7 +43,7 @@ void MenuApplication::wrap() {
 DOTRACE("MenuApplication::wrap");
   WriteParams(this, "sta");
 
-  RestoreColormap(this->fildes());
+  graphics()->wrapGraphics();
 }
 
 void MenuApplication::onExpose() {
@@ -62,12 +63,22 @@ DOTRACE("MenuApplication::makeMenu");
   strcpy( menu[2], "y     set parameters 2");
   strcpy( menu[3], "p     show parameters");
   strcpy( menu[4], "q     quit program");
+  strcpy( menu[5], "");
+  sprintf( menu[6], "recent percent correct: %d",
+			  int(Timing::recentPercentCorrect()) );
 
-  nmenu = 5;
+  nmenu = 7;
 
-  ClearWindow(this->fildes());
+  graphics()->clearWindow();
 
-  ShowMenu(this, menu, nmenu);
+  for (int ii = 0; ii < 2; ++ii) {
+	 graphics()->clearBackBuffer();
+	 graphics()->swapBuffers();
+  }
+
+  graphics()->showMenu(menu, nmenu);
+
+  graphics()->swapBuffers();
 }
 
 void MenuApplication::onMenuChoice(char c) {

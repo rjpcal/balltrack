@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:52:28 2000
-// written: Wed Feb 23 15:21:35 2000
+// written: Mon Feb 28 11:51:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include <sys/time.h>
 
 class Application;
+
+class Graphics;
 
 class Timer {
 public:
@@ -45,14 +47,11 @@ private:
 
 class Timing {
 public:
-  // Used in Balls::runTrial and Balls::runDummy
-  static void addToStimulusStack(Application* app);
+  // Used in Balls::runTrial
+  static void addToStimulusStack(int correct_nbutton);
 
   // Used in Application::timeButtonEvent
-  static void addToResponseStack(Application* app, double xtime, int nbutton);
-
-  // Used in Image::initWindow
-  static void checkFrameTime(Application* app);
+  static void addToResponseStack(double xtime, int nbutton);
 
   static Timer mainTimer;
   static Timer logTimer;
@@ -61,6 +60,8 @@ public:
   static double elapsedMsec( timeval* tp0, timeval* tp1 );
   static void initTimeStack( double xtime, timeval* tp );
   static void tallyReactionTime( FILE* fl );
+
+  static double recentPercentCorrect();
 };
 
 

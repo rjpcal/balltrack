@@ -3,7 +3,7 @@
 // timing.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb  1 16:42:55 2000
-// written: Wed Feb 23 15:00:10 2000
+// written: Mon Feb 28 16:54:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,10 @@
 #include "timing.h"
 
 #include <cmath>
+#include <cstdlib>
 
 #include "application.h"
 #include "defs.h"
-#include "image.h"
 #include "params.h"
 
 #include "debug.h"
@@ -49,8 +49,8 @@ DOTRACE("Timer::wait");
   long aim_for_secs  = (long)             floor( requested_delay );
   long aim_for_usecs = (long)( 1000000. *  fmod( requested_delay, 1.0 ) );
 
-  long sec_stop  = aim_for_secs  + itsSec;
-  long usec_stop = aim_for_usecs + itsUsec;
+  long sec_stop  = aim_for_secs  + long(itsSec);
+  long usec_stop = aim_for_usecs + long(itsUsec);
 
   while ( usec_stop > 1000000L ) {
 	 sec_stop  += 1L;
@@ -103,26 +103,6 @@ DOTRACE("Timer::logToFile");
 Timer Timing::mainTimer;
 Timer Timing::logTimer;
 
-void Timing::checkFrameTime(Application* app) {
-DOTRACE("Timing::checkFrameTime");
-
-  struct timeval tp[2];
-
-  ClearWindow(app->fildes());
-
-  Graphics::waitFrameCount( app->fildes(), 1 );
-
-  Timing::getTime( &tp[0] );
-
-  Graphics::waitFrameCount( app->fildes(), 99 );
-
-  Timing::getTime( &tp[1] );
-
-  FRAMETIME = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
-
-  printf( " Video frame time %7.4lf ms\n", FRAMETIME );  
-}
-
 /*************************************************/
 
 void Timing::getTime( timeval* tp ) {
@@ -136,7 +116,6 @@ double Timing::elapsedMsec( timeval* tp0, timeval* tp1 ) {
 DOTRACE("Timing::elapsedMsec");
 
   double sec_lapsed  = (double)( tp1->tv_sec  - tp0->tv_sec );
-
   double msec_lapsed = (double)( tp1->tv_usec - tp0->tv_usec ) / 1000.;
 
   double delta       = sec_lapsed * 1000. + msec_lapsed;
@@ -152,109 +131,159 @@ DOTRACE("Timing::elapsedMsec");
 
 int RESPONSESTACKSIZE;
 int STIMULUSSTACKSIZE;
-double responsestack[ MAXTIMESTACKSIZE ];
-double stimulusstack[ MAXTIMESTACKSIZE ];
-double reactiontime[ MAXTIMESTACKSIZE ];
-struct timeval ss[ MAXTIMESTACKSIZE ];
+int RESPONSE_VAL_STACK_SIZE;
+
+struct Response {
+  double time;
+  int val;
+};
+
+struct Stimulus {
+  double time;
+  int correct_val;
+};
+
+Stimulus stimulus_stack[ MAXTIMESTACKSIZE ];
+Response response_stack[ MAXTIMESTACKSIZE ];
+
+struct Reaction {
+  double time;
+  bool correct;
+};
+
+Reaction reaction_stack[ MAXTIMESTACKSIZE ];
+
+struct timeval ss_0;
+double response_time_stack_0;
+
+double percent_correct = 0.0;
+
+namespace {
+  void log_reactions(FILE* f) {
+	 fprintf( f,  " reaction times:\n" );
+	 for( int i=1; i<STIMULUSSTACKSIZE; ++i )
+		fprintf( f, " %d %.0lf\n", i, reaction_stack[ i ].time );
+	 fprintf( f, " \n\n" );
+
+	 fprintf( f,  " reaction correct?:\n" );
+	 for( int j=1; j<STIMULUSSTACKSIZE; ++j )
+		fprintf( f, " %d %d\n", j, int(reaction_stack[ j ].correct) );
+	 fprintf( f, " \n\n" );
+  }
+}
 
 void Timing::initTimeStack( double xtime, timeval* tp ) {
 DOTRACE("Timing::initTimeStack");
 
-  responsestack[0] = xtime;
-  ss[0] = *tp;
+  response_time_stack_0 = xtime;
+  response_stack[0].time = 0.0;
+  stimulus_stack[0].time = 0.0;
+  ss_0 = *tp;
 
   RESPONSESTACKSIZE = 1;
   STIMULUSSTACKSIZE = 1;
+  RESPONSE_VAL_STACK_SIZE = 1;
 }
 
 
-void Timing::addToResponseStack(Application* app, double xtime, int nbutton ) {
+void Timing::addToResponseStack(double xtime, int nbutton ) {
 DOTRACE("Timing::addToResponseStack");
 
-  responsestack[ RESPONSESTACKSIZE ] = xtime;
+  double delta = xtime - response_time_stack_0;
+
+  if( delta >= 0.0 )
+	 response_stack[ RESPONSESTACKSIZE ].time = delta;
+  else
+	 response_stack[ RESPONSESTACKSIZE ].time = delta + 4294967295.0;
+
+  response_stack[ RESPONSESTACKSIZE ].val = nbutton;
+
   RESPONSESTACKSIZE++;
 
   if( RESPONSESTACKSIZE >= MAXTIMESTACKSIZE )
     {
 		printf( " MAXTIMESTACKSIZE too small\n" );
-		app->quit(0);
+		exit(0);
     }
 }
 
-void Timing::addToStimulusStack(Application* app) {
+void Timing::addToStimulusStack(int correct_nbutton) {
 DOTRACE("Timing::addToStimulusStack");
 
   struct timeval tp;
 
   Timing::getTime( &tp );
 
-  ss[ STIMULUSSTACKSIZE ] = tp;
+  // Compute the trial onset time relative to the first time
+  stimulus_stack[STIMULUSSTACKSIZE].time =
+	 elapsedMsec( &ss_0, &tp );
+
+  // Note the correct response value
+  stimulus_stack[STIMULUSSTACKSIZE].correct_val = correct_nbutton;
+
   STIMULUSSTACKSIZE++;
 
   if( STIMULUSSTACKSIZE >= MAXTIMESTACKSIZE )
     {
 		printf( " MAXTIMESTACKSIZE too small\n" );
-		app->quit(0);
+		exit(0);
     }
 }
 
 void Timing::tallyReactionTime( FILE* fl ) {
 DOTRACE("Timing::tallyReactionTime");
 
-  int i, j;
-  double delta;
+  int total_stims = 0;
+  int number_correct = 0;
 
-  for( i=0; i<STIMULUSSTACKSIZE; i++ )
-    {
-		delta = Timing::elapsedMsec( &ss[0], &ss[i] );
+  // Compute the response time for each stimulus (or indicate a
+  // non-response with -1.0)
+  for( int i=1; i<STIMULUSSTACKSIZE; i++ ) {
 
-		stimulusstack[i] = delta;
+	 int j;
 
-    }
+	 // Find the first response (j'th) that came after the i'th stimulus
+	 for( j=0; j<RESPONSESTACKSIZE; j++ ) {
+		if( response_stack[j].time > stimulus_stack[i].time ) {
+		  break;
+		}
+	 }
 
-  for( i=1; i<RESPONSESTACKSIZE; i++ )
-    {
-		delta = responsestack[ i ] - responsestack[ 0 ];
+	 // If we found a corresponding response, compute the response time...
+	 if( j<RESPONSESTACKSIZE ) {
+		reaction_stack[ i ].time =
+		  response_stack[j].time - stimulus_stack[i].time;
+		reaction_stack[i].correct = 
+		  ( response_stack[j].val == stimulus_stack[i].correct_val );
+	 }
+	 // But if there was no corresponding response, indicate a
+	 // non-response with -1.0
+	 else {
+		reaction_stack[ i ].time = -1.0;
+		reaction_stack[i].correct = false;
+	 }
 
-		if( delta >= 0.0 )
-		  responsestack[ i ] = delta;
-		else
-		  responsestack[ i ] = delta + 4294967295.0;
-    }
-  responsestack[ 0 ] = 0.0;
+	 // If the reaction time was too large, it doesn't count, so
+	 // indicate a non-response with -1.0
+	 if( reaction_stack[ i ].time > REMIND_DURATION*1000 ) {
+		reaction_stack[ i ].time = -1.0;
+		reaction_stack[i].correct = false;
+	 }
 
-  for( i=1; i<STIMULUSSTACKSIZE; i++ )
-    {
-		for( j=0; j<RESPONSESTACKSIZE; j++ )
-		  {
-			 if( responsestack[j] > stimulusstack[i] )
-				{
-				  break;
-				}
-		  }
-	
-		if( j<RESPONSESTACKSIZE )
-		  reactiontime[ i ] = responsestack[j] - stimulusstack[i];
-		else
-		  reactiontime[ i ] = -1.0;
+	++total_stims;
+	if (reaction_stack[i].correct) ++number_correct;
+  }
 
-		if( reactiontime[ i ] > 1000.0 )
-		  reactiontime[ i ] = -1.0;
+  log_reactions(stdout);
+  log_reactions(fl);
 
-    }
-	    
-  printf( " reaction times:\n" );
-  for( i=1; i<STIMULUSSTACKSIZE; i++ )
-	 printf( " %d %.0lf\n", i, reactiontime[ i ] );
-  printf( " \n\n" );
-
-  fprintf( fl,  " reaction times:\n" );
-  for( i=1; i<STIMULUSSTACKSIZE; i++ )
-	 fprintf( fl, " %d %.0lf\n", i, reactiontime[ i ] );
-  fprintf( fl, " \n\n" );
-
+  percent_correct = (100.0 * number_correct) / total_stims;
 }
 
+double Timing::recentPercentCorrect() {
+DOTRACE("Timing::recentPercentCorrect");
+  return percent_correct;
+}
 
 static const char vcid_timing_c[] = "$Header$";
 #endif // !TIMING_C_DEFINED

@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:55:05 2000
-// written: Wed Feb 23 15:54:26 2000
+// written: Fri Feb 25 13:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 
 class MenuApplication : public Application {
 public:
-  MenuApplication(int argc, char** argv);
+  MenuApplication(const XHints& hints);
   virtual ~MenuApplication();
 
 protected:

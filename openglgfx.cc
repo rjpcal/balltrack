@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Feb 29 10:44:02 2000
+// written: Tue Feb 29 12:24:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,6 @@
 #include "xstuff.h"
 
 #include "trace.h"
-#define LOCAL_DEBUG
 #include "debug.h"
 
 #define CMAP_NUMBER  3
@@ -63,8 +62,6 @@ namespace {
 	 {
 		glPushAttrib(GL_LIST_BIT|GL_LINE_BIT);
 		{
-		  DebugEval(x_pos); DebugEvalNL(y_pos);
-
 		  glLineWidth(stroke_width);
 		  glTranslated(x_pos, y_pos, 0.0);
 		  glScaled(x_scale, y_scale, 1.0);
@@ -121,11 +118,7 @@ DOTRACE("OpenglGfx::OpenglGfx");
 
 void OpenglGfx::makeCurrent() {
 DOTRACE("OpenglGfx::makeCurrent");
-  DebugPrintNL("before make current");
-
   glXMakeCurrent(itsXStuff->display(), itsXStuff->window(), itsGLXContext);
-
-  DebugPrintNL("after make current");
 
   glViewport(0, 0, width(), height());
 
@@ -182,8 +175,8 @@ DOTRACE("OpenglGfx::drawMessage");
 
   writeUpperPlanes();
 
-  drawGLText(word, 4, 
-				 width()/2 - 500, height()/2+100,
+  drawGLText(word, 4,
+				 width()/2 - 500, height()/2-100,
 				 200, 250);
 
   writeLowerPlanes();
@@ -245,12 +238,6 @@ DOTRACE("OpenglGfx::initWindow");
 
   newColormap();
 
-//   intvdc_extent( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
-
-//   intview_port( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
-
-//   intview_window( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
-
   setTransparent();
 
   checkFrameTime();
@@ -266,8 +253,6 @@ DOTRACE("OpenglGfx::clearWindow");
 
   glClearIndex(itsClearIndex);
   glClear(GL_COLOR_BUFFER_BIT); 
-//   background_color_index( fildes(), 0 );
-//   clear_view_surface( fildes() );
 }
 
 void OpenglGfx::clearBackBuffer() {
@@ -284,21 +269,14 @@ DOTRACE("OpenglGfx::showMenu");
 	 
   glFlush();
   glXSwapBuffers(itsXStuff->display(), itsXStuff->window());
-//   int i;
 
-//   setText(10, 15);
+  int char_width = 13;
+  int char_height = 25;
 
   for( int i=0; i<nmenu; i++ )
-	 {
-		drawGLText(menu[i], 2,
-					  width()/2 - 400, height()/2 - 200 - i * 40,
-					  10, 15);
-					  
-// 		dctext( fildes(),
-// 				  width()/2 - 400,
-// 				  height()/2 - 200 + i * 40,
-// 				  menu[i] );
-	 }
+	 drawGLText(menu[i], 2,
+					100, height() - 200 - i * (char_height*2),
+					char_width, char_height);
 }
 
 void OpenglGfx::showParams(char params[][STRINGSIZE], int nparams) {
@@ -306,37 +284,21 @@ DOTRACE("OpenglGfx::showParams");
   int col1 = (nparams < 23) ? nparams : 23;
   int col2 = (nparams < 23) ? 0       : nparams;
 
-//   setText(10, 15);
-
   for( int i=0; i<col1; i++ )
-	 {
-		drawGLText(params[i], 2,
-					  width()/2 - 500, height()/2 -  450 + i * 40,
-					  10, 15);
-					  
-// 		dctext( fildes(),
-// 				  width()/2 - 500,
-// 				  height()/2 -  450 + i * 40,
-// 				  params[i] );
-	 }
+	 drawGLText(params[i], 2,
+					width()/2 - 500, height()/2 -  450 + i * 40,
+					10, 15);
 
   if( col1+1 < col2 ) {
-	 for( int i=col1+1; i<col2; i++ )
- 		{
+	 for( int i=col1+1; i<col2; i++ ) 
 		drawGLText(params[i], 2,
-					  width()/2 + 100, height()/2 - 1370 + i * 40,
-					  10, 15);
-//         dctext( fildes(),
-// 					 width()/2 + 100,
-// 					 height()/2 - 1370 + i * 40,
-// 					 params[i] );
- 		}
+						 width()/2 + 100, height()/2 - 1370 + i * 40,
+						 10, 15);
   }
 }
 
 void OpenglGfx::moveBlock(int x, int y, int xsz, int ysz, int nx, int ny) {
-// DOTRACE("OpenglGfx::moveBlock");
-//   dcblock_move(fildes(), x, y, xsz, ysz, nx, ny);
+DOTRACE("OpenglGfx::moveBlock");
   glRasterPos2i(nx, ny);
   glReadBuffer(GL_FRONT);
   glDrawBuffer(GL_BACK);

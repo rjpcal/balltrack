@@ -3,7 +3,7 @@
 // xstuff.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:55 2000
-// written: Fri Feb 25 14:12:36 2000
+// written: Mon Feb 28 17:49:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,10 +45,23 @@ XStuff::XStuff(const XHints& hints) :
   itsArgc(hints.argc()),
   itsArgv(hints.argv()),
   itsWidth(hints.width()),
-  itsHeight(hints.height())
+  itsHeight(hints.height()),
+  itsHasPrefVisInfo(false)
 {
 DOTRACE("XStuff::XStuff");
   openDisplay();
+}
+
+void XStuff::setPrefVisInfo(const XVisualInfo* vinfo) {
+DOTRACE("XStuff::setPrefVisInfo");
+  if (vinfo != 0) {
+	 itsPrefVisInfo = *vinfo;
+	 itsHasPrefVisInfo = true;
+  }
+}
+
+void XStuff::openWindow(const XHints& hints) {
+DOTRACE("XStuff::openWindow");
   createVisual(hints);
   createColormap(hints);
   createWindow(hints.name());
@@ -75,18 +88,20 @@ DOTRACE("XStuff::openDisplay");
 void XStuff::createVisual(const XHints& hints) {
 DOTRACE("XStuff::createVisual");
 
-  XVisualInfo vtemp;
-  vtemp.screen = itsScreen;
-  vtemp.depth	 = hints.depth();
-    
-  int vnumber;
+  if ( !itsHasPrefVisInfo ) {
+	 XVisualInfo vtemp;
+	 vtemp.screen = itsScreen;
+	 vtemp.depth	 = hints.depth();
 
-  XVisualInfo* vlist = XGetVisualInfo( itsDisplay,
-													VisualScreenMask|VisualDepthMask,
-													&vtemp, &vnumber );
+	 int vnumber;
+
+	 XVisualInfo* vlist = XGetVisualInfo( itsDisplay,
+													  VisualScreenMask|VisualDepthMask,
+													  &vtemp, &vnumber );
     
-  for( int i=0; i<vnumber; i++ )
-    {
+	 itsVisInfo = vlist[0];
+
+	 for( int i=0; i<vnumber; i++ ) {
 
 		fprintf( stdout, " %s visual %d of depth %d mapsize %d\n", 
 					visual_class[vlist[i].c_class], 
@@ -94,21 +109,18 @@ DOTRACE("XStuff::createVisual");
 					vlist[i].depth, 
 					vlist[i].colormap_size );
 
-		if( !strcmp( visual_class[vlist[i].c_class], hints.visualClass() ) )
-		  {
-			 itsVisual = vlist[i].visual;
-			 itsDepth  = vlist[i].depth;
+		if( !strcmp( visual_class[vlist[i].c_class], hints.visualClass() ) ) {
+		  itsVisInfo = vlist[i];
+		  break;
+		}
+	 }
+  }
+  else {
+	 itsVisInfo = itsPrefVisInfo;
+  }
 
-			 itsVisInfo = vlist[i];
-
-			 return;
-		  }
-    }
-
-  itsVisual = vlist[0].visual;
-  itsDepth  = vlist[0].depth;
-
-  itsVisInfo = vlist[0];
+  itsVisual = itsVisInfo.visual;
+  itsDepth  = itsVisInfo.depth;
 }
 
 void XStuff::createColormap(const XHints& hints) {

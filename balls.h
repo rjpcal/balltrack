@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:58:20 2000
-// written: Wed Feb 23 15:49:30 2000
+// written: Mon Feb 28 13:59:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,9 @@
 #ifndef BALLS_H_DEFINED
 #define BALLS_H_DEFINED
 
-class Application;
+class Graphics;
+
+struct timeval;
 
 class Ball {
 public:
@@ -22,9 +24,9 @@ public:
   void nextPosition(int width, int height);
   void collideIfNeeded(Ball& other);
   void twist();
-  void move(int fildes);
+  void move(Graphics* gfx);
   void copy();
-  void draw(int fildes, unsigned char* bitmap);
+  void draw(Graphics* gfx, unsigned char* bitmap);
 
 private:
   void collide(Ball& other, int xij, int yij);
@@ -39,21 +41,23 @@ private:
 
 class Balls {
 private:
-  void initialize(Application* app);
+  void prepare(Graphics* gfx);
 
-  void nextBalls(Application* app);
-  void moveBalls(Application* app);
+  void initialize(Graphics* gfx);
+
+  void nextBalls(Graphics* gfx);
+  void moveBalls(Graphics* gfx);
   void copyBalls();
 
-  void drawNBalls(int n, int fildes, unsigned char* bitmap);
-  void drawNHiBalls(int n, int fildes, unsigned char* bitmap);
+  void drawNBalls(Graphics* gfx, int first, int last, unsigned char* bitmap);
+  void drawNHiBalls(Graphics* gfx, int first, int last, unsigned char* bitmap);
 
 public:
   static const int MAX_BALLS = 25;
 
-  void prepare(Application* app);
+  enum TrialType { PASSIVE, CHECK_ALL, CHECK_ONE };
 
-  void runTrial(Application* app, bool cue_track_balls = true);
+  void runTrial(Graphics* gfx, timeval* starttime, TrialType ttype);
 
 private:
   Ball itsBalls[MAX_BALLS];

@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Wed Feb 23 15:04:35 2000
+// written: Tue Feb 29 12:13:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include <cstdio>
 
 #include "application.h"
-#include "image.h"
+#include "graphics.h"
 #include "defs.h"
 
 #include "trace.h"
@@ -141,16 +141,16 @@ DOTRACE("ReadParams");
 
   Closefile( fp );
 
-  CheckParams(app);
+  CheckParams(app->graphics());
 }
 
-void CheckParams(Application* app) {
+void CheckParams(Graphics* gfx) {
 DOTRACE("CheckParams");
 
   float time_between_reminds;
 
-  BORDER_X    = ( app->width() - DISPLAY_X ) / 2; 
-  BORDER_Y    = ( app->height() - DISPLAY_Y ) / 2;
+  BORDER_X    = ( gfx->width() - DISPLAY_X ) / 2; 
+  BORDER_Y    = ( gfx->height() - DISPLAY_Y ) / 2;
 
   time_between_reminds = ( EPOCH_DURATION - PAUSE_DURATION - REMIND_DURATION )
 	 / REMINDS_PER_EPOCH;
@@ -238,9 +238,10 @@ DOTRACE("ListParams");
 
   Closefile( fp );
 
-  ClearWindow(app->fildes());
-
-  ShowParams( app, params, nparams );
+  app->graphics()->clearWindow();
+  app->graphics()->clearBackBuffer();
+  app->graphics()->showParams(params, nparams);
+  app->graphics()->swapBuffers();
 }
 
 void Openfile(Application* app, FILE** fp, char mode, char extension[]) {
@@ -304,7 +305,13 @@ DOTRACE("SetParameters1");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
 
-  ClearWindow(app->fildes());
+  Graphics* gfx = app->graphics();
+
+  gfx->clearWindow();
+  for (int ii = 0; ii < 2; ++ii) {
+	 gfx->clearBackBuffer();
+	 gfx->swapBuffers();
+  }
 
   sprintf( text[0], " BALL  NUMBER TRACK  VELOC  SIZE   MINDIS RADIUS SIGMA2 TWIST" );
   sprintf( text[1], "" );
@@ -313,50 +320,59 @@ DOTRACE("SetParameters1");
 			  BALL_NUMBER, BALL_TRACK_NUMBER, BALL_VELOCITY,
 			  BALL_ARRAY_SIZE, BALL_MIN_DISTANCE, BALL_RADIUS,
 			  BALL_SIGMA2, BALL_TWIST_ANGLE );
-
-  ShowMenu( app, text, 4);
+  
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterInt( app, &BALL_NUMBER );
   sprintf( word, "       %-6d", BALL_NUMBER );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterInt( app, &BALL_TRACK_NUMBER );
   sprintf( word, " %-6d", BALL_TRACK_NUMBER );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterInt( app, &BALL_VELOCITY );
   sprintf( word, " %-6d", BALL_VELOCITY );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterInt( app, &BALL_ARRAY_SIZE );
   sprintf( word, " %-6d", BALL_ARRAY_SIZE );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterInt( app, &BALL_MIN_DISTANCE );
   sprintf( word, " %-6d", BALL_MIN_DISTANCE );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterFloat( app, &BALL_RADIUS );
   sprintf( word, " %-6.1f", BALL_RADIUS );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterFloat( app, &BALL_SIGMA2 );
   sprintf( word, " %-6.1f", BALL_SIGMA2 );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterFloat( app, &BALL_TWIST_ANGLE );
   sprintf( word, " %-6.3f", BALL_TWIST_ANGLE );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
-  CheckParams(app);
+  CheckParams(gfx);
 }
 
 void SetParameters2(Application* app) {
@@ -364,7 +380,13 @@ DOTRACE("SetParameters2");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
 
-  ClearWindow(app->fildes());
+  Graphics* gfx = app->graphics();
+
+  gfx->clearWindow();
+  for (int ii = 0; ii < 2; ++ii) {
+	 gfx->clearBackBuffer();
+	 gfx->swapBuffers();
+  }
 
   sprintf( text[0], "       CYCL_NUM WAIT_DUR EPCH_DUR PAUS_DUR RMND_NUM RMND_DUR" );
   sprintf( text[1], "" );
@@ -373,39 +395,46 @@ DOTRACE("SetParameters2");
 			  CYCLE_NUMBER, WAIT_DURATION, EPOCH_DURATION,
 			  PAUSE_DURATION, REMINDS_PER_EPOCH, REMIND_DURATION );
 
-  ShowMenu( app, text, 4);
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterInt( app, &CYCLE_NUMBER );
   sprintf( word, "       %-8d", CYCLE_NUMBER );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterFloat( app, &WAIT_DURATION );
   sprintf( word, " %-8.2f", WAIT_DURATION );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterFloat( app, &EPOCH_DURATION );
   sprintf( word, " %-8.2f", EPOCH_DURATION );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterFloat( app, &PAUSE_DURATION );
   sprintf( word, " %-8.2f", PAUSE_DURATION );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterInt( app, &REMINDS_PER_EPOCH );
   sprintf( word, " %-8d", REMINDS_PER_EPOCH );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
   EnterFloat( app, &REMIND_DURATION );
   sprintf( word, " %-8.2f", REMIND_DURATION );
   strcat( text[1], word );
-  ShowMenu( app, text, 4 );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
 
-  CheckParams(app);
+  CheckParams(gfx);
 }
 
 void GetWord(Application* app, char* buf, int sz) {

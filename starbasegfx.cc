@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Thu Feb 24 15:42:09 2000
+// written: Tue Feb 29 10:44:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include <cstdlib>				  // for exit()
 #include <X11/keysym.h>
 
-#include "application.h"
 #include "applic.h"
 #include "params.h"
 #include "timing.h"
@@ -38,13 +37,17 @@ float Color[CMAP_NUMBER][COLOR_NUMBER][3];
 ///////////////////////////////////////////////////////////////////////
 
 StarbaseGfx::StarbaseGfx(XStuff* xinfo, int aWidth, int aHeight) :
-  itsFildes(-1),
-  itsWidth(aWidth),
-  itsHeight(aHeight)
+  Graphics(aWidth, aHeight),
+  itsXStuff(xinfo),
+  itsFildes(-1)
 {
 DOTRACE("StarbaseGfx::StarbaseGfx");
-  char* device = ( char * ) make_X11_gopen_string( xinfo->display(),
-																	xinfo->window() );
+}
+
+void StarbaseGfx::makeCurrent() {
+DOTRACE("StarbaseGfx::makeCurrent");
+  char* device = ( char * ) make_X11_gopen_string( itsXStuff->display(),
+																	itsXStuff->window() );
   itsFildes = gopen( device, OUTDEV, NULL, INT_XFORM|CMAP_FULL );
 
   gescape_arg arg1, arg2;
@@ -64,16 +67,6 @@ DOTRACE("StarbaseGfx::wrapGraphics");
   restoreColormap();
 
   gclose( itsFildes );
-}
-
-int StarbaseGfx::width() const {
-DOTRACE("StarbaseGfx::width");
-  return itsWidth;
-}
-
-int StarbaseGfx::height() const {
-DOTRACE("StarbaseGfx::height");
-  return itsHeight;
 }
 
 void StarbaseGfx::writeUpperPlanes() {
@@ -96,6 +89,11 @@ DOTRACE("StarbaseGfx::waitVerticalRetrace");
   await_retrace( fildes() );
 }
 
+void StarbaseGfx::swapBuffers() {
+DOTRACE("StarbaseGfx::swapBuffers");
+  /* do nothing */;
+}
+
 void StarbaseGfx::waitFrameCount(int number) {
 DOTRACE("StarbaseGfx::waitFrameCount");
   while( number-- )
@@ -107,7 +105,9 @@ DOTRACE("StarbaseGfx::drawMessage");
 
   writeUpperPlanes();
 
-  dctext( fildes(), itsWidth/2 - 500, itsHeight/2+100, word );
+  setText(200, 250);
+
+  dctext( fildes(), width()/2 - 500, height()/2+100, word );
 
   writeLowerPlanes();
 }
@@ -118,10 +118,10 @@ DOTRACE("StarbaseGfx::drawCross");
   writeUpperPlanes();
 
   line_color_index( fildes(), 192 );
-  dcmove( fildes(), itsWidth/2-50, itsHeight/2 );
-  dcdraw( fildes(), itsWidth/2+50, itsHeight/2 );
-  dcmove( fildes(), itsWidth/2, itsHeight/2-50 );
-  dcdraw( fildes(), itsWidth/2, itsHeight/2+50 );
+  dcmove( fildes(), width()/2-50, height()/2 );
+  dcdraw( fildes(), width()/2+50, height()/2 );
+  dcmove( fildes(), width()/2, height()/2-50 );
+  dcdraw( fildes(), width()/2, height()/2+50 );
 
   writeLowerPlanes();
 }
@@ -159,11 +159,11 @@ DOTRACE("StarbaseGfx::initWindow");
 
   newColormap();
 
-  intvdc_extent( fildes(), 0, 0, 100*(itsWidth-1), 100*(itsHeight-1) );
+  intvdc_extent( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
 
-  intview_port( fildes(), 0, 0, 100*(itsWidth-1), 100*(itsHeight-1) );
+  intview_port( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
 
-  intview_window( fildes(), 0, 0, 100*(itsWidth-1), 100*(itsHeight-1) );
+  intview_window( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
 
   setTransparent();
 
@@ -179,6 +179,11 @@ DOTRACE("StarbaseGfx::clearWindow");
   clear_view_surface( fildes() );
 }
 
+void StarbaseGfx::clearBackBuffer() {
+DOTRACE("StarbaseGfx::clearBackBuffer");
+  /* do nothing */;
+}
+
 void StarbaseGfx::showMenu(char menu[][STRINGSIZE], int nmenu) {
 DOTRACE("StarbaseGfx::showMenu");
   int i;
@@ -188,8 +193,8 @@ DOTRACE("StarbaseGfx::showMenu");
   for( i=0; i<nmenu; i++ )
     {
 		dctext( fildes(),
-				  itsWidth/2 - 400,
-				  itsHeight/2 - 200 + i * 40,
+				  width()/2 - 400,
+				  height()/2 - 200 + i * 40,
 				  menu[i] );
     }
 }
@@ -205,8 +210,8 @@ DOTRACE("StarbaseGfx::showParams");
   for( int i=0; i<col1; i++ )
     {
 		dctext( fildes(),
-				  itsWidth/2 - 500,
-				  itsHeight/2 -  450 + i * 40,
+				  width()/2 - 500,
+				  height()/2 -  450 + i * 40,
 				  params[i] );
     }
 
@@ -214,8 +219,8 @@ DOTRACE("StarbaseGfx::showParams");
     for( int i=col1+1; i<col2; i++ )
 		{
         dctext( fildes(),
-					 itsWidth/2 + 100,
-					 itsHeight/2 - 1370 + i * 40,
+					 width()/2 + 100,
+					 height()/2 - 1370 + i * 40,
 					 params[i] );
 		}
   }
@@ -231,11 +236,6 @@ DOTRACE("StarbaseGfx::setText");
   dccharacter_width( fildes(), wd );
 }
 
-void StarbaseGfx::setMessage() {
-DOTRACE("StarbaseGfx::setMessage");
-  setText(200, 250);
-}
-
 void StarbaseGfx::moveBlock(int x, int y, int xsz, int ysz, int nx, int ny) {
 DOTRACE("StarbaseGfx::moveBlock");
   dcblock_move(fildes(), x, y, xsz, ysz, nx, ny);
@@ -244,6 +244,10 @@ DOTRACE("StarbaseGfx::moveBlock");
 void StarbaseGfx::writeBitmap(unsigned char* ptr, int x, int y, int size) {
 DOTRACE("StarbaseGfx::writeBitmap");
   dcblock_write(fildes(), x, y, size, size, ptr, FALSE);
+}
+
+void StarbaseGfx::writeTrueColorMap(unsigned char* ptr, int x, int y, int size) {
+DOTRACE("StarbaseGfx::writeTrueColorMap");
 }
 
 

@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Thu Feb 24 14:34:42 2000
+// written: Fri Feb 25 13:29:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 typedef union _XEvent XEvent;
 #endif
 
+class XHints;
+
 class XStuff;
 
 class Graphics;
@@ -25,7 +27,7 @@ private:
   Application& operator=(const Application&);
 
 public:
-  Application(int argc, char** argv);
+  Application(const XHints& hints);
   virtual ~Application();
 
   void run();

@@ -3,7 +3,7 @@
 // xstuff.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:27 2000
-// written: Fri Feb 25 13:47:23 2000
+// written: Mon Feb 28 17:38:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@ struct XStuff {
 public:
   XStuff(const XHints& hints);
 
+  void openWindow(const XHints& hints);
   void mapWindow(const char* name);
   void printWindowInfo();
   void wrapX();
@@ -28,6 +29,8 @@ public:
   Window window() const { return itsWindow; }
   XVisualInfo& visInfo() { return itsVisInfo; }
   void storeColor(unsigned int index, double red, double green, double blue);
+
+  void setPrefVisInfo(const XVisualInfo* vinfo);
 
 private:
   void openDisplay();
@@ -53,6 +56,8 @@ private:
   Colormap itsColormap;
   XColor itsMeanColor;
   XVisualInfo itsVisInfo;
+  XVisualInfo itsPrefVisInfo;
+  bool itsHasPrefVisInfo;
 };
 
 static const char vcid_xstuff_h[] = "$Header$";

@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:05:04 2000
-// written: Wed Feb 23 14:13:40 2000
+// written: Mon Feb 28 10:48:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 #include <cstdio>
 
 class Application;
+
+class Graphics;
 
 extern int   DISPLAY_X;
 extern int   DISPLAY_Y;
@@ -40,6 +42,7 @@ extern char  FILENAME[];
 extern char  OBSERVER[];
 extern double FRAMETIME;
 
+#define      NOBUTTON            'n'
 #define      LEFTBUTTON      	   'l'
 #define      RIGHTBUTTON     	   'r'
 #define      MIDDLEBUTTON    	   'm'
@@ -51,10 +54,15 @@ extern double FRAMETIME;
 
 void WhoAreYou(Application* app);
 void ReadParams(Application* app, char extension[]);
-void CheckParams(Application* app);
+void CheckParams(Graphics* gfx);
 void WriteParams(Application* app, char extension[]);
+
+// Called from BallsExpt::runExperiment
 void LogParams(Application* app, FILE* fl);
 void ListParams(Application* app);
+
+// Called from BallsExpt::runExperiment, ReadParams, WriteParams,
+// LogParams, ListParams
 void Openfile(Application* app, FILE** fp, char mode, char extension[] );
 void Closefile( FILE* fp );
 void PrintParams();

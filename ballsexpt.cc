@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Wed Feb 23 15:46:35 2000
+// written: Tue Feb 29 10:44:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include <sys/time.h>
 
 #include "balls.h"
-#include "image.h"
+#include "graphics.h"
 #include "params.h"
 #include "timing.h"
 
@@ -38,56 +38,32 @@ DOTRACE("BallsExpt::runExperiment");
 
   LogParams(this, fl);
 
-  Graphics::writeAllPlanes(this->fildes());
-  ClearWindow(this->fildes());
-  DrawCross(this);
-  SetTransparent(this->fildes());
+  graphics()->writeAllPlanes();
+
+  for (int k = 0; k < 2; ++k) {
+	 graphics()->clearWindow();
+	 graphics()->drawCross();
+	 graphics()->setTransparent();
+	 graphics()->swapBuffers();
+  }
 
   Timing::mainTimer.set();
 
   Timing::getTime( &tp[0] );
 
-  SetMessage(this->fildes());
-
   Timing::mainTimer.wait( WAIT_DURATION );
 
-  for( int cycle=0; cycle<CYCLE_NUMBER; cycle++ ) {
-
-	 // Pause and display text cue
-	 Timing::mainTimer.set();
-
-	 Timing::getTime( &tp[2*cycle+1] );
-
-	 ClearUpperPlanes(this->fildes());
-	 DrawMessage( this, "KCART" );
-
-	 theBalls.prepare(this);
-
-	 Timing::mainTimer.wait( PAUSE_DURATION );
-
-	 ClearUpperPlanes(this->fildes());
-	 DrawCross(this);
+  int cycle;
+  for( cycle=0; cycle<CYCLE_NUMBER; cycle++ ) {
 
 	 // Run active tracking trial
-	 theBalls.runTrial(this, true);
+	 theBalls.runTrial(graphics(), &tp[2*cycle+1], Balls::CHECK_ALL);
 
-	 // Pause and display text cue
-	 Timing::mainTimer.set();
+	 // Run active tracking trial with objective check
+	 theBalls.runTrial(graphics(), &tp[2*cycle+1], Balls::CHECK_ONE);
 
-	 Timing::getTime( &tp[2*cycle+2] );
-
-	 ClearUpperPlanes(this->fildes());
-	 DrawMessage( this, " POTS " );
-
-	 theBalls.prepare(this);
-
-	 Timing::mainTimer.wait( PAUSE_DURATION );
-
-	 ClearUpperPlanes(this->fildes());
-	 DrawCross(this);
-
-	 // Run passive trial
-	 theBalls.runTrial(this, false);
+// 	 // Run passive trial
+// 	 theBalls.runTrial(graphics(), &tp[2*cycle+2], Balls::PASSIVE);
   }
 
   Timing::mainTimer.set();
@@ -104,9 +80,9 @@ DOTRACE("BallsExpt::runExperiment");
 		fprintf( fl, " %d %lf\n", i, Timing::elapsedMsec( &tp[0], &tp[i] ) );
     }
 
-  Graphics::writeAllPlanes(this->fildes());
+  graphics()->writeAllPlanes();
 
-  this->buttonPressLoop();
+  buttonPressLoop();
 
   Timing::tallyReactionTime( fl );
 
