@@ -24,6 +24,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #define LOCAL_PROF
 #include "trace.h"
@@ -115,7 +116,16 @@ DOTRACE("Graphics::Graphics");
     glXQueryExtensionsString(itsXStuff.display(),
                              DefaultScreen(itsXStuff.display()));
 
-  std::cout << " glx extensions: " << extensions << '\n';
+  std::istringstream s(extensions);
+
+  std::string ext;
+
+  std::cout << " glx extensions: \n";
+
+  while (s >> ext)
+    {
+      std::cout << " \t" << ext << '\n';
+    }
 
   if (extensions.find("GLX_SGI_video_sync") != std::string::npos)
     {
