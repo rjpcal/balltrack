@@ -18,7 +18,7 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
+#include <string>
 
 #include "trace.h"
 #include "debug.h"
@@ -318,7 +318,10 @@ void Params::setGroup1(Graphics& gfx)
 {
 DOTRACE("Params::setGroup1");
 
-  char word[STRINGSIZE], text[4][STRINGSIZE];
+  const int bufsize = 256;
+  char buf[bufsize];
+
+  std::string menu[4];
 
   gfx.clearFrontBuffer();
   for (int ii = 0; ii < 2; ++ii)
@@ -327,63 +330,64 @@ DOTRACE("Params::setGroup1");
       gfx.swapBuffers();
     }
 
-  sprintf(text[0], " BALL  NUMBER TRACK  VELOC  SIZE   MINDIS RADIUS SIGMA2 TWIST");
-  sprintf(text[1], "%s", "");
-  sprintf(text[2], "%s", "");
-  sprintf(text[3], "       %-6d %-6d %-6d %-6d %-6d %-6.1f %-6.1f %-6.3f",
-          ballNumber, ballTrackNumber, ballVelocity,
-          ballPixmapSize, ballMinDistance, ballRadius,
-          ballSigma2, ballTwistAngle);
+  menu[0] = " BALL  NUMBER TRACK  VELOC  SIZE   MINDIS RADIUS SIGMA2 TWIST";
+  menu[1] = "";
+  menu[2] = "";
+  snprintf(buf, bufsize, "       %-6d %-6d %-6d %-6d %-6d %-6.1f %-6.1f %-6.3f",
+           ballNumber, ballTrackNumber, ballVelocity,
+           ballPixmapSize, ballMinDistance, ballRadius,
+           ballSigma2, ballTwistAngle);
+  menu[3] = buf;
 
-  gfx.showMenu(text, 4);
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&ballNumber);
-  sprintf(word, "       %-6d", ballNumber);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, "       %-6d", ballNumber);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&ballTrackNumber);
-  sprintf(word, " %-6d", ballTrackNumber);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-6d", ballTrackNumber);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&ballVelocity);
-  sprintf(word, " %-6d", ballVelocity);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-6d", ballVelocity);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&ballPixmapSize);
-  sprintf(word, " %-6d", ballPixmapSize);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-6d", ballPixmapSize);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&ballMinDistance);
-  sprintf(word, " %-6d", ballMinDistance);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-6d", ballMinDistance);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&ballRadius);
-  sprintf(word, " %-6.1f", ballRadius);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-6.1f", ballRadius);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&ballSigma2);
-  sprintf(word, " %-6.1f", ballSigma2);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-6.1f", ballSigma2);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&ballTwistAngle);
-  sprintf(word, " %-6.3f", ballTwistAngle);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-6.3f", ballTwistAngle);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   this->recompute(gfx);
@@ -393,7 +397,10 @@ void Params::setGroup2(Graphics& gfx)
 {
 DOTRACE("Params::setGroup2");
 
-  char word[STRINGSIZE], text[4][STRINGSIZE];
+  const int bufsize = 256;
+  char buf[bufsize];
+
+  std::string menu[4];
 
   gfx.clearFrontBuffer();
   for (int ii = 0; ii < 2; ++ii)
@@ -402,50 +409,51 @@ DOTRACE("Params::setGroup2");
       gfx.swapBuffers();
     }
 
-  sprintf(text[0], "       CYCL_NUM WAIT_DUR EPCH_DUR PAUS_DUR RMND_NUM RMND_DUR");
-  sprintf(text[1], "%s", "");
-  sprintf(text[2], "%s", "");
-  sprintf(text[3], "       %-8d %-8.2f %-8.2f %-8.2f %-8d %-8.2f",
+  menu[0] = "       CYCL_NUM WAIT_DUR EPCH_DUR PAUS_DUR RMND_NUM RMND_DUR";
+  menu[1] = "";
+  menu[2] = "";
+  snprintf(buf, bufsize, "       %-8d %-8.2f %-8.2f %-8.2f %-8d %-8.2f",
           cycleNumber, waitSeconds, epochSeconds,
           pauseSeconds, remindsPerEpoch, remindSeconds);
+  menu[3] = buf;
 
-  gfx.showMenu(text, 4);
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&cycleNumber);
-  sprintf(word, "       %-8d", cycleNumber);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, "       %-8d", cycleNumber);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&waitSeconds);
-  sprintf(word, " %-8.2f", waitSeconds);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-8.2f", waitSeconds);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&epochSeconds);
-  sprintf(word, " %-8.2f", epochSeconds);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-8.2f", epochSeconds);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&pauseSeconds);
-  sprintf(word, " %-8.2f", pauseSeconds);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-8.2f", pauseSeconds);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&remindsPerEpoch);
-  sprintf(word, " %-8d", remindsPerEpoch);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-8d", remindsPerEpoch);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&remindSeconds);
-  sprintf(word, " %-8.2f", remindSeconds);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, " %-8.2f", remindSeconds);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   this->recompute(gfx);
@@ -455,7 +463,10 @@ void Params::setGroup3(Graphics& gfx)
 {
 DOTRACE("Params::setGroup2");
 
-  char word[STRINGSIZE], text[4][STRINGSIZE];
+  const int bufsize = 256;
+  char buf[bufsize];
+
+  std::string menu[4];
 
   gfx.clearFrontBuffer();
   for (int ii = 0; ii < 2; ++ii)
@@ -464,18 +475,19 @@ DOTRACE("Params::setGroup2");
       gfx.swapBuffers();
     }
 
-  sprintf(text[0], "       SESSION_NUMBER");
-  sprintf(text[1], "%s", "");
-  sprintf(text[2], "%s", "");
-  sprintf(text[3], "       %-8d", fmriSessionNumber);
+  menu[0] = "       SESSION_NUMBER";
+  menu[1] = "";
+  menu[2] = "";
+  snprintf(buf, bufsize, "       %-8d", fmriSessionNumber);
+  menu[3] = buf;
 
-  gfx.showMenu(text, 4);
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&fmriSessionNumber);
-  sprintf(word, "       %-8d", fmriSessionNumber);
-  strcat(text[1], word);
-  gfx.showMenu(text, 4);
+  snprintf(buf, bufsize, "       %-8d", fmriSessionNumber);
+  menu[1] += buf;
+  gfx.showMenu(menu, 4);
   gfx.swapBuffers();
 
   this->recompute(gfx);

@@ -261,7 +261,7 @@ DOTRACE("Graphics::drawCross");
   glEnd();
 }
 
-void Graphics::showMenu(char menu[][STRINGSIZE], int nmenu)
+void Graphics::showMenu(const std::string* strings, int nstrings)
 {
 DOTRACE("Graphics::showMenu");
   clearFrontBuffer();
@@ -274,8 +274,8 @@ DOTRACE("Graphics::showMenu");
   int char_width = 16;
   int char_height = 25;
 
-  for (int i=0; i<nmenu; ++i)
-    drawGLText(menu[i], 2,
+  for (int i = 0; i < nstrings; ++i)
+    drawGLText(strings[i], 2,
                100, height() - 200 - i * (char_height*2),
                char_width, char_height);
 }

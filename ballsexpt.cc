@@ -20,6 +20,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <string>
 #include <time.h>
 
 #include "trace.h"
@@ -133,22 +134,33 @@ DOTRACE("BallsExpt::onKey");
   return false;
 }
 
+namespace
+{
+  std::string makestring(int i)
+  {
+    char buf[64];
+    snprintf(buf, 64, "%d", i);
+    return std::string(&buf[0]);
+  }
+}
+
 void BallsExpt::makeMenu()
 {
 DOTRACE("BallsExpt::makeMenu");
 
   const int nitems = 8;
-  char menu[nitems][STRINGSIZE];
 
-  strncpy(menu[0], "r     run experiment", STRINGSIZE);
-  strncpy(menu[1], "x     set parameters 1", STRINGSIZE);
-  strncpy(menu[2], "y     set parameters 2", STRINGSIZE);
-  strncpy(menu[3], "z     set parameters 3", STRINGSIZE);
-  strncpy(menu[4], "p     show parameters", STRINGSIZE);
-  strncpy(menu[5], "q     quit program", STRINGSIZE);
-  strncpy(menu[6], "", STRINGSIZE);
-  snprintf(menu[7], STRINGSIZE, "recent percent correct: %d",
-           int(Timing::recentPercentCorrect()));
+  std::string menu[nitems];
+
+  menu[0] = "r     run experiment";
+  menu[1] = "x     set parameters 1";
+  menu[2] = "y     set parameters 2";
+  menu[3] = "z     set parameters 3";
+  menu[4] = "p     show parameters";
+  menu[5] = "q     quit program";
+  menu[6] = "";
+  menu[7] = "recent percent correct: "
+    + makestring(int(Timing::recentPercentCorrect()));
 
   graphics().showMenu(menu, nitems);
 
