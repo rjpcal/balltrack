@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Tue Feb 29 18:24:58 2000
+// written: Wed Mar  1 11:16:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,10 +112,10 @@ DOTRACE("Local::makeBallMap");
 		size_t base_loc = bytes_per_pixel*(i*size + j);
 
 		if (rgba) {
-		  vec[base_loc + 0] = (unsigned char)(255 * Balls::theColors[index][0]);
-		  vec[base_loc + 1] = (unsigned char)(255 * Balls::theColors[index][1]);
-		  vec[base_loc + 2] = (unsigned char)(255 * Balls::theColors[index][2]);
-		  vec[base_loc + 3] = (unsigned char)(255);
+		  vec[base_loc + 0] = (unsigned char)(0xff * Balls::theColors[index][0]);
+		  vec[base_loc + 1] = (unsigned char)(0xff * Balls::theColors[index][1]);
+		  vec[base_loc + 2] = (unsigned char)(0xff * Balls::theColors[index][2]);
+		  vec[base_loc + 3] = (unsigned char)(0xff);
 		}
 		else {
 		  vec[base_loc] = index;
@@ -415,9 +415,9 @@ DOTRACE("Balls::generateColors");
 		  ( (lmax-lmin)*(n-BALL_COLOR_MIN)/
 			 (lmax*(BALL_COLOR_MAX-BALL_COLOR_MIN)) );
 
-		theColors[n][0] = 1.0*ratio;
-		theColors[n][1] = 0.5*ratio;
-		theColors[n][2] = 0.0*ratio;
+		theColors[n][0] = 1.0*ratio; DebugEval(theColors[n][0]);
+		theColors[n][1] = 0.5*ratio; DebugEval(theColors[n][1]);
+		theColors[n][2] = 0.0*ratio; DebugEvalNL(theColors[n][2]);
     }
 
   for( n=BALL_COLOR_MAX+1; n<COLOR_NUMBER; n++ )
