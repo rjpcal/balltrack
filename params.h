@@ -93,9 +93,9 @@ public:
 
 void RecomputeParams(Graphics& gfx);
 
-void SetParameters1(Application* app);
-void SetParameters2(Application* app);
-void SetParameters3(Application* app);
+void SetParameters1(Graphics& gfx);
+void SetParameters2(Graphics& gfx);
+void SetParameters3(Graphics& gfx);
 
 static const char vcid_params_h[] = "$Header$";
 #endif // !PARAMS_H_DEFINED
