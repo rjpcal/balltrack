@@ -392,11 +392,11 @@ namespace
   struct ParamInfo
   {
     ParamInfo(const std::string& d, const std::string& n, int& v) :
-      descr(d), name(n), dvar(0), ivar(&v), dorig(0.0), iorig(v)
+      descr(d), name(n), immutable(false), dvar(0), ivar(&v), dorig(0.0), iorig(v)
     {}
 
     ParamInfo(const std::string& d, const std::string& n, double& v) :
-      descr(d), name(n), dvar(&v), ivar(0), dorig(v), iorig(0)
+      descr(d), name(n), immutable(false), dvar(&v), ivar(0), dorig(v), iorig(0)
     {}
 
     bool changed() const
@@ -426,6 +426,8 @@ namespace
     std::string descr;
     std::string name;
 
+    bool immutable;
+
   private:
     double* dvar;
     int* ivar;
@@ -434,129 +436,115 @@ namespace
     int iorig;
   };
 
-  class ParamMenu
+  void showVmenu(Graphics& gfx, std::vector<ParamInfo>& items,
+                 unsigned int nitems)
   {
-  public:
-    ParamMenu() {}
+    std::vector<TextLine> vmenu;
 
-    template <class T>
-    void addItem(const std::string& d, const std::string& n, T& v)
-    {
-      items.push_back(ParamInfo(d, n, v));
-    }
+    unsigned int descrwid = 0;
+    unsigned int namewid = 0;
 
-    void showVmenu(Graphics& gfx, unsigned int nitems)
-    {
-      std::vector<TextLine> vmenu;
+    for (unsigned int i = 0; i < items.size(); ++i)
+      {
+        if (items[i].descr.length() > descrwid)
+          descrwid = items[i].descr.length();
 
-      unsigned int descrwid = 0;
-      unsigned int namewid = 0;
+        if (items[i].name.length() > namewid)
+          namewid = items[i].name.length();
+      }
 
-      for (unsigned int i = 0; i < items.size(); ++i)
-        {
-          if (items[i].descr.length() > descrwid)
-            descrwid = items[i].descr.length();
+    descrwid += 1;
+    namewid += 1;
 
-          if (items[i].name.length() > namewid)
-            namewid = items[i].name.length();
-        }
+    std::ostringstream oss;
 
-      descrwid += 1;
-      namewid += 1;
+    oss.setf(std::ios::fixed);
+    oss.precision(2);
 
-      std::ostringstream oss;
+    const char* sep = "  ";
 
-      oss.setf(std::ios::fixed);
-      oss.precision(2);
+    for (unsigned int i = 0; i < items.size(); ++i)
+      {
+        oss.str("");
+        oss.setf(std::ios::right);
+        oss << std::setw(descrwid) << items[i].descr;
 
-      const char* sep = "  ";
+        oss << sep << std::setw(namewid+2)
+            << ('(' + items[i].name + ')');
 
-      for (unsigned int i = 0; i < items.size(); ++i)
-        {
-          oss.str("");
-          oss.setf(std::ios::right);
-          oss << std::setw(descrwid) << items[i].descr;
+        oss << sep << std::setw(6);
+        items[i].putorig(oss);
 
-          oss << sep << std::setw(namewid+2)
-              << ('(' + items[i].name + ')');
+        const char* marker = items[i].changed() ? "* " : "  ";
 
-          oss << sep << std::setw(6);
-          items[i].putorig(oss);
+        if (i < nitems)
+          {
+            oss << sep << marker << std::setw(6);
+            items[i].putvar(oss);
 
-          const char* marker = items[i].changed() ? "* " : "  ";
+            if (items[i].changed())
+              vmenu.push_back(TextLine(oss.str(), 0.7, 0.7, 0.5, 2));
+            else
+              vmenu.push_back(TextLine(oss.str(), 0.5, 0.5, 0.3, 1));
+          }
+        else if (i == nitems)
+          {
+            oss << sep << marker << std::setw(6) << "???";
 
-          if (i < nitems)
-            {
-              oss << sep << marker << std::setw(6);
-              items[i].putvar(oss);
+            vmenu.push_back(TextLine(oss.str(), 0.2, 1.0, 0.2, 2));
+          }
+        else
+          {
+            vmenu.push_back(TextLine(oss.str(), 0.5, 0.6, 0.5, 1));
+          }
+      }
 
-              if (items[i].changed())
-                vmenu.push_back(TextLine(oss.str(), 0.7, 0.7, 0.5, 2));
-              else
-                vmenu.push_back(TextLine(oss.str(), 0.5, 0.5, 0.3, 1));
-            }
-          else if (i == nitems)
-            {
-              oss << sep << marker << std::setw(6) << "???";
+    gfx.clearBackBuffer();
+    gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 14);
+    gfx.swapBuffers();
+  }
 
-              vmenu.push_back(TextLine(oss.str(), 0.2, 1.0, 0.2, 2));
-            }
-          else
-            {
-              vmenu.push_back(TextLine(oss.str(), 0.5, 0.6, 0.5, 1));
-            }
-        }
+  void doVmenu(Graphics& gfx, std::vector<ParamInfo>& items)
+  {
+    showVmenu(gfx, items, 0);
 
-      gfx.clearBackBuffer();
-      gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 14);
-      gfx.swapBuffers();
-    }
+    for (unsigned int i = 0; i < items.size(); ++i)
+      {
+        items[i].getvalue(gfx);
 
-    void goVert(Graphics& gfx)
-    {
-      showVmenu(gfx, 0);
-
-      for (unsigned int i = 0; i < items.size(); ++i)
-        {
-          items[i].getvalue(gfx);
-
-          showVmenu(gfx, i+1);
-        }
-    }
-
-  private:
-    std::vector<ParamInfo> items;
-  };
+        showVmenu(gfx, items, i+1);
+      }
+  }
 }
 
 void Params::setParams(Graphics& gfx)
 {
 DOTRACE("Params::setParams");
 
-  ParamMenu pm;
+  std::vector<ParamInfo> items;
 
-  pm.addItem("arena width",                      "DISPLAY_X", this->displayX);
-  pm.addItem("arena height",                     "DISPLAY_Y", this->displayY);
+  items.push_back(ParamInfo("arena width",                      "DISPLAY_X", this->displayX));
+  items.push_back(ParamInfo("arena height",                     "DISPLAY_Y", this->displayY));
 
-  pm.addItem("# of cycles",                      "CYCLE_NUMBER", this->cycleNumber);
-  pm.addItem("wait duration (seconds)",          "WAIT_DURATION", this->waitSeconds);
-  pm.addItem("epoch duration (seconds)",         "EPOCH_DURATION", this->epochSeconds);
-  pm.addItem("pause duration (seconds)",         "PAUSE_DURATION", this->pauseSeconds);
-  pm.addItem("remind duration (seconds)",        "REMIND_DURATION", this->remindSeconds);
-  pm.addItem("# of reminds per epoch",           "REMINDS_PER_EPOCH", this->remindsPerEpoch);
+  items.push_back(ParamInfo("# of cycles",                      "CYCLE_NUMBER", this->cycleNumber));
+  items.push_back(ParamInfo("wait duration (seconds)",          "WAIT_DURATION", this->waitSeconds));
+  items.push_back(ParamInfo("epoch duration (seconds)",         "EPOCH_DURATION", this->epochSeconds));
+  items.push_back(ParamInfo("pause duration (seconds)",         "PAUSE_DURATION", this->pauseSeconds));
+  items.push_back(ParamInfo("remind duration (seconds)",        "REMIND_DURATION", this->remindSeconds));
+  items.push_back(ParamInfo("# of reminds per epoch",           "REMINDS_PER_EPOCH", this->remindsPerEpoch));
 
-  pm.addItem("number of balls  (total)",         "BALL_NUMBER", this->ballNumber);
-  pm.addItem("number of balls to track",         "BALL_TRACK_NUMBER", this->ballTrackNumber);
-  pm.addItem("ball speed (ball widths/second)",  "BALL_SPEED", this->ballSpeed);
-  pm.addItem("ball pixmap size (#pixels)",       "BALL_ARRAY_SIZE", this->ballPixmapSize);
-  pm.addItem("collision radius (#pixels)",       "BALL_MIN_DISTANCE", this->ballMinDistance);
-  pm.addItem("ball radius (#pixels)",            "BALL_RADIUS", this->ballRadius);
-  pm.addItem("ball sigma^2 (#pixels)",           "BALL_SIGMA2", this->ballSigma2);
-  pm.addItem("ball twist angle (radians)",       "BALL_TWIST_ANGLE", this->ballTwistAngle);
+  items.push_back(ParamInfo("number of balls  (total)",         "BALL_NUMBER", this->ballNumber));
+  items.push_back(ParamInfo("number of balls to track",         "BALL_TRACK_NUMBER", this->ballTrackNumber));
+  items.push_back(ParamInfo("ball speed (ball widths/second)",  "BALL_SPEED", this->ballSpeed));
+  items.push_back(ParamInfo("ball pixmap size (#pixels)",       "BALL_ARRAY_SIZE", this->ballPixmapSize));
+  items.push_back(ParamInfo("collision radius (#pixels)",       "BALL_MIN_DISTANCE", this->ballMinDistance));
+  items.push_back(ParamInfo("ball radius (#pixels)",            "BALL_RADIUS", this->ballRadius));
+  items.push_back(ParamInfo("ball sigma^2 (#pixels)",           "BALL_SIGMA2", this->ballSigma2));
+  items.push_back(ParamInfo("ball twist angle (radians)",       "BALL_TWIST_ANGLE", this->ballTwistAngle));
 
-  pm.addItem("fMRI session #",                   "FMRI_SESSION_NUMBER", this->fmriSessionNumber);
+  items.push_back(ParamInfo("fMRI session #",                   "FMRI_SESSION_NUMBER", this->fmriSessionNumber));
 
-  pm.goVert(gfx);
+  doVmenu(gfx, items);
 }
 
 static const char vcid_params_cc[] = "$Header$";
