@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:05:04 2000
-// written: Wed Feb 28 12:44:13 2001
+// written: Mon Mar  5 10:07:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,6 @@ void ListParams(Application* app);
 // LogParams, ListParams
 void Openfile(Application* app, FILE** fp, char mode, char extension[] );
 void Closefile( FILE* fp );
-void PrintParams();
 
 void SetParameters1(Application* app);
 void SetParameters2(Application* app);
