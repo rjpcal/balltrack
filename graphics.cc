@@ -195,6 +195,7 @@ extern "C"
 void Graphics::swapBuffers()
 {
 DOTRACE("Graphics::swapBuffers");
+  glFlush();
   unsigned int counter = 0;
   if (itsUsingVsync)
     glXGetVideoSyncSGI(&counter);
@@ -269,7 +270,7 @@ void Graphics::drawCross(int x, int y)
 {
 DOTRACE("Graphics::drawCross");
 
-  glColor3d(1.0, 1.0, 1.0);
+  glColor4d(1.0, 1.0, 1.0, 1.0);
 
   glBegin(GL_LINES);
   glVertex2i(x-50, y);
