@@ -3,7 +3,7 @@
 // xstuff.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:55 2000
-// written: Wed Mar  1 11:34:23 2000
+// written: Wed Mar  1 15:42:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,44 @@
 #include "trace.h"
 #include "debug.h"
 
-static char *visual_class[]= {
+class VisualClass {
+public:
+  VisualClass(int class_id) : itsId(class_id), itsName("")
+	 {
+		for (int i = 0; i < 6; ++i)
+		  if ( ids[i] == itsId ) {
+			 itsName = names[i];
+			 break;
+		  }
+	 }
+
+  bool matches(int class_id)
+	 { return (itsId == class_id); }
+
+  bool matches(const char* class_name)
+	 { return (strcmp(itsName, class_name) == 0); }
+
+  const char* name() { return itsName; }
+  int id() { return itsId; }
+
+private:
+  int itsId;
+  const char* itsName;
+
+  static const int ids[];
+  static const char* const names[];
+};
+
+const int VisualClass::ids[] = {
+  StaticGray,
+  GrayScale,
+  StaticColor,
+  PseudoColor,
+  TrueColor,
+  DirectColor,
+};
+
+const char* const VisualClass::names[] = {
   "StaticGray",
   "GrayScale",
   "StaticColor",
@@ -32,8 +69,6 @@ static char *visual_class[]= {
   "TrueColor",
   "DirectColor"
 };
-
-const int MEANGREY = 127;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -103,13 +138,15 @@ DOTRACE("XStuff::createVisual");
 
 	 for( int i=0; i<vnumber; i++ ) {
 
+		VisualClass vclass(vlist[i].c_class);
+
 		fprintf( stdout, " %s visual %d of depth %d mapsize %d\n", 
-					visual_class[vlist[i].c_class], 
+					vclass.name(),
 					vlist[i].visualid, 
 					vlist[i].depth, 
 					vlist[i].colormap_size );
 
-		if( !strcmp( visual_class[vlist[i].c_class], hints.visualClass() ) ) {
+		if( vclass.matches(hints.visualClass()) ) {
 		  itsVisInfo = vlist[i];
 		  break;
 		}
@@ -138,6 +175,8 @@ DOTRACE("XStuff::createColormap");
 							itsVisual, alloc );
 
   itsMeanColor.flags = DoRed | DoGreen | DoBlue;
+
+  const int MEANGREY = 127;
 
   itsMeanColor.red = itsMeanColor.green = itsMeanColor.blue =
 	 ( unsigned long )(257*MEANGREY);
@@ -248,7 +287,7 @@ DOTRACE("XStuff::printWindowInfo");
   info.visualid = itsVisual->visualid;
   info = *XGetVisualInfo( itsDisplay, VisualIDMask, &info, &items );
   fprintf( stdout, " Window %d with %s visual %d of depth %d\n", 
-			  0, visual_class[info.c_class], info.visualid, info.depth );
+			  0, VisualClass(info.c_class).name(), info.visualid, info.depth );
   fflush( stdout );
 }
 
