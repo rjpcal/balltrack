@@ -97,8 +97,6 @@ DOTRACE("Application::quit");
 
   wrap();
 
-  itsGraphics.xstuff().wrapX();
-
   exit(code);
 }
 

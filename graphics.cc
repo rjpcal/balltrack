@@ -155,6 +155,7 @@ void Graphics::wrapGraphics()
 {
 DOTRACE("Graphics::wrapGraphics");
   glXDestroyContext(itsXStuff.display(), itsGLXContext);
+  itsXStuff.wrapX();
 }
 
 void Graphics::gfxWait(double delaySeconds)
@@ -176,7 +177,7 @@ DOTRACE("Graphics::gfxWait");
 
 double Graphics::frameTime()
 {
-#ifndef I686
+#if 0
   if (itsFrameTime < 0)
     itsFrameTime = computeFrameTime();
 #else
