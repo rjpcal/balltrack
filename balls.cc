@@ -451,8 +451,7 @@ DOTRACE("Balls::runTrial");
 
   Timing::getTime( starttime );
 
-  gfx.clearUpperPlanes();
-
+  gfx.clearFrontBuffer();
   gfx.clearBackBuffer();
 
   if (ttype == Balls::PASSIVE)
@@ -477,7 +476,7 @@ DOTRACE("Balls::runTrial");
   // Show the initial position of the balls
   Timing::mainTimer.set();
 
-  gfx.clearUpperPlanes();
+  gfx.clearFrontBuffer();
   gfx.drawCross();
 
   drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);
@@ -496,7 +495,7 @@ DOTRACE("Balls::runTrial");
   if (ttype == Balls::CHECK_ALL ||
       ttype == Balls::CHECK_ONE)
     {
-      gfx.clearUpperPlanes();
+      gfx.clearFrontBuffer();
       gfx.drawCross();
       drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);
       gfx.swapBuffers();
@@ -581,7 +580,7 @@ DOTRACE("Balls::runTrial");
           gfx.gfxWait( REMIND_DURATION );
         }
 
-      gfx.clearUpperPlanes();
+      gfx.clearFrontBuffer();
       gfx.drawCross();
 
       drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);

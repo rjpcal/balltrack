@@ -46,7 +46,6 @@ public:
 
   void clearFrontBuffer();
   void clearBackBuffer();
-  void clearUpperPlanes();
 
   void waitVerticalRetrace();
   void swapBuffers();

@@ -185,13 +185,6 @@ DOTRACE("Graphics::clearBackBuffer");
   clearBackBufferRegion(true);
 }
 
-void Graphics::clearUpperPlanes()
-{
-DOTRACE("Graphics::clearUpperPlanes");
-
-  clearFrontBuffer();
-}
-
 void Graphics::waitVerticalRetrace()
 {
 DOTRACE("Graphics::waitVerticalRetrace");
