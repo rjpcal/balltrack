@@ -38,8 +38,8 @@ private:
 
 struct Stimulus
 {
-  Stimulus(double t, int v) : time(t), correct_val(v) {}
-  double time;
+  Stimulus(double t, int v) : msec_from_time0(t), correct_val(v) {}
+  double msec_from_time0;
   int correct_val;
 
   double reaction_time;
@@ -67,10 +67,13 @@ public:
   // Used in Balls::runTrial
   void addToStimulusStack(int correct_nbutton);
 
-  // Used in BallsExpt::onButton;
+  // Used in BallsExpt::onButton
   void addToResponseStack(double xtime, int nbutton);
 
+  // From BallsExpt::onKey
   void initTimeStack(double xtime, timeval* tp);
+
+  // From BallsExpt::runExperiment
   void tallyReactionTime(ParamFile& f, float remind_duration);
 
   double recentPercentCorrect();

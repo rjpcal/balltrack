@@ -168,7 +168,7 @@ DOTRACE("ResponseData::tallyReactionTime");
       // Find the first response (j'th) that came after the i'th stimulus
       for (j = 0; j < itsResponses.size(); ++j)
         {
-          if (itsResponses[j].time > itsStimuli[i].time)
+          if (itsResponses[j].time > itsStimuli[i].msec_from_time0)
             break;
         }
 
@@ -176,7 +176,7 @@ DOTRACE("ResponseData::tallyReactionTime");
       if (j < itsResponses.size())
         {
           itsStimuli[i].reaction_time =
-            itsResponses[j].time - itsStimuli[i].time;
+            itsResponses[j].time - itsStimuli[i].msec_from_time0;
           itsStimuli[i].reaction_correct =
             (itsResponses[j].val == itsStimuli[i].correct_val);
         }
