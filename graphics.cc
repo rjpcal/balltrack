@@ -304,9 +304,9 @@ DOTRACE("Graphics::showParams");
     }
 }
 
-void Graphics::writeTrueColorMap(unsigned char* ptr, int x, int y, int size)
+void Graphics::writePixmap(int x, int y, unsigned char* ptr, int size)
 {
-DOTRACE("Graphics::writeTrueColorMap");
+DOTRACE("Graphics::writePixmap");
 
   glRasterPos2i(x,y);
 

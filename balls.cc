@@ -37,7 +37,6 @@ namespace
 namespace Local
 {
   int roundVelocity(int x);
-  int fround(float x);
 
   void makeBallMap(std::vector<unsigned char>& vec, int size,
                    float radius, float sigma,
@@ -58,16 +57,6 @@ DOTRACE("Local::roundVelocity");
 
   int ix = (x < 0) ? (x - VELOSCALE/2) / VELOSCALE
                    : (x + VELOSCALE/2) / VELOSCALE;
-
-  return ix;
-}
-
-int Local::fround(float x)
-{
-DOTRACE("Local::fround");
-
-  int ix = (x < 0) ? int(x - 0.5)
-                   : int(x + 0.5);
 
   return ix;
 }
@@ -193,36 +182,36 @@ void Ball::collide(Ball& other, int xij, int yij)
 {
 DOTRACE("Ball::collide");
 
-  float d    =  sqrt((double) xij*xij + yij*yij);
+  float d    =  sqrt(double(xij*xij + yij*yij));
   float xa   =  xij/d;
   float ya   =  yij/d;
   float xo   = -ya;
   float yo   =  xa;
 
-  float vai  = (itsXvel)*(xa) + (itsYvel)*(ya);
-  float vaj  = (other.itsXvel)*(xa) + (other.itsYvel)*(ya);
+  float vai  = itsXvel*xa + itsYvel*ya;
+  float vaj  = other.itsXvel*xa + other.itsYvel*ya;
 
   if (vai - vaj < 0.0)
     {
-      float voi  = (itsXvel)*(xo) + (itsYvel)*(yo);
-      float voj  = (other.itsXvel)*(xo) + (other.itsYvel)*(yo);
+      const float voi  = itsXvel*xo + itsYvel*yo;
+      const float voj  = other.itsXvel*xo + other.itsYvel*yo;
       /*
         ovi2 = vai*vai + voi*voi;
         ovj2 = vaj*vaj + voj*voj;
       */
-      float nvi2 = vaj*vaj + voi*voi;
-      float nvj2 = vai*vai + voj*voj;
+      const float nvi2 = vaj*vaj + voi*voi;
+      const float nvj2 = vai*vai + voj*voj;
 
-      float vij2 = vai*vai - vaj*vaj;
+      const float vij2 = vai*vai - vaj*vaj;
 
-      float fi   = sqrt(1. + vij2 / nvi2);
-      float fj   = sqrt(1. - vij2 / nvj2);
+      const float fi   = sqrt(1. + vij2 / nvi2);
+      const float fj   = sqrt(1. - vij2 / nvj2);
 
-      itsXvel = Local::fround(fi * (voi * xo + vaj * xa));
-      itsYvel = Local::fround(fi * (voi * yo + vaj * ya));
+      itsXvel = int(round(fi * (voi * xo + vaj * xa)));
+      itsYvel = int(round(fi * (voi * yo + vaj * ya)));
 
-      other.itsXvel = Local::fround(fj * (voj * xo + vai * xa));
-      other.itsYvel = Local::fround(fj * (voj * yo + vai * ya));
+      other.itsXvel = int(round(fj * (voj * xo + vai * xa)));
+      other.itsYvel = int(round(fj * (voj * yo + vai * ya)));
     }
 
   itsNx = itsXpos + Local::roundVelocity(itsXvel);
@@ -247,13 +236,13 @@ DOTRACE("Ball::twist");
 
   if (drand48() < 0.5)
     {
-      itsXvel = Local::fround(a11*x + a12*y);
-      itsYvel = Local::fround(a21*x + a22*y);
+      itsXvel = int(round(a11*x + a12*y));
+      itsYvel = int(round(a21*x + a22*y));
     }
   else
     {
-      itsXvel = Local::fround(a11*x - a12*y);
-      itsYvel = Local::fround(-a21*x + a22*y);
+      itsXvel = int(round(a11*x - a12*y));
+      itsYvel = int(round(-a21*x + a22*y));
     }
 }
 
@@ -269,7 +258,7 @@ void Ball::draw(Graphics& gfx, unsigned char* bitmap, int size)
 {
 DOTRACE("Ball::draw");
 
-  gfx.writeTrueColorMap(bitmap, itsXpos, itsYpos, size);
+  gfx.writePixmap(itsXpos, itsYpos, bitmap, size);
 }
 
 ///////////////////////////////////////////////////////////////////////

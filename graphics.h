@@ -55,7 +55,7 @@ public:
   void showMenu(char menu[][STRINGSIZE], int nmenu);
   void showParams(char params[][STRINGSIZE], int nparams);
 
-  void writeTrueColorMap(unsigned char* ptr, int x, int y, int size);
+  void writePixmap(int x, int y, unsigned char* ptr, int size);
 
   // To control starting, stopping of movie recording
   void startRecording(int width, int height);
