@@ -3,7 +3,7 @@
 // glfont.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 29 09:53:18 2000
-// written: Tue Feb 29 10:33:32 2000
+// written: Tue Feb 29 12:19:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include <GL/gl.h>
 
 #include "trace.h"
-#define LOCAL_DEBUG
 #include "debug.h"
 
 namespace {
