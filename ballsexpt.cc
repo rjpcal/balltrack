@@ -256,7 +256,8 @@ DOTRACE("BallsExpt::runExperiment");
   Timer timer;
   timer.reset();
 
-  Timing::getTime(&rep->timepoints[0]);
+  // FIXME use a vector here with push_back()
+  rep->timepoints[0] = Timing::getTime();
   rep->gfx.gfxWait(timer, rep->params.waitSeconds);
 
   rep->timepointIdx = 1;
@@ -268,7 +269,7 @@ DOTRACE("BallsExpt::runExperiment");
   else if (Params::TRAINING == rep->params.appMode)
     runTrainingExpt();
 
-  Timing::getTime(&rep->timepoints[rep->timepointIdx++]);
+  rep->timepoints[rep->timepointIdx++] = Timing::getTime();
 
   rep->logTimePoints(tmefile);
 
@@ -330,7 +331,7 @@ DOTRACE("BallsExpt::runFmriExpt");
 
           Timer t;
           t.reset();
-          Timing::getTime(&rep->timepoints[rep->timepointIdx++]);
+          rep->timepoints[rep->timepointIdx++] = Timing::getTime();
           rep->gfx.gfxWait(t, rep->params.waitSeconds);
         }
     }

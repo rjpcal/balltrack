@@ -94,22 +94,24 @@ Timing::Timing() :
   itsPercentCorrect(0.0)
 {}
 
-void Timing::getTime(timeval* tp)
+timeval Timing::getTime()
 {
 DOTRACE("Timing::getTime");
 
+  struct timeval tp;
   struct timezone tzp;
-  gettimeofday(tp, &tzp);
+  gettimeofday(&tp, &tzp);
+  return tp;
 }
 
-double Timing::elapsedMsec(timeval* tp0, timeval* tp1)
+double Timing::elapsedMsec(const timeval* tp0, const timeval* tp1)
 {
 DOTRACE("Timing::elapsedMsec");
 
-  double sec_lapsed  = double(tp1->tv_sec  - tp0->tv_sec);
-  double msec_lapsed = double(tp1->tv_usec - tp0->tv_usec) / 1000.0;
+  const double sec_lapsed  = double(tp1->tv_sec  - tp0->tv_sec);
+  const double msec_lapsed = double(tp1->tv_usec - tp0->tv_usec) / 1000.0;
 
-  double delta       = sec_lapsed * 1000. + msec_lapsed;
+  const double delta       = sec_lapsed * 1000. + msec_lapsed;
 
   return delta;
 }
@@ -132,9 +134,7 @@ void Timing::addToStimulusStack(int correct_nbutton)
 {
 DOTRACE("Timing::addToStimulusStack");
 
-  struct timeval tp;
-
-  Timing::getTime(&tp);
+  const timeval tp = Timing::getTime();
 
   // (1) Compute the trial onset time relative to the first time
   // (2) Note the correct response value

@@ -19,8 +19,7 @@
 int main(int argc, char** argv)
 {
   // seed the random number generator based on the time
-  struct timeval tp;
-  Timing::getTime(&tp);
+  const timeval tp = Timing::getTime();
   srand48(tp.tv_sec);
 
   Params p(argc, argv);

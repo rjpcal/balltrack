@@ -342,7 +342,8 @@ DOTRACE("Balls::runTrial");
 
   timer.reset();
 
-  Timing::getTime(starttime);
+  // FIXME what happens to starttime?
+  *starttime = Timing::getTime();
 
   gfx.clearFrontBuffer();
   gfx.clearBackBuffer();
