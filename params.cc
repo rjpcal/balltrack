@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Thu Feb  3 15:04:29 2000
+// written: Wed Feb 23 15:04:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,18 @@
 #include <cstring>
 #include <cstdio>
 
+#include "application.h"
 #include "image.h"
 #include "defs.h"
-#include "main.h"
+
+#include "trace.h"
+#include "debug.h"
+
+// #define      YES             	   'y'
+// #define      NO              	   'n'
+// #define      READY           	   ' '
+// #define      QUIT            	   'q'
+
 
 int   FUDGEFRAME = 7;
 
@@ -39,31 +48,52 @@ float BALL_RADIUS;
 float BALL_SIGMA2;
 int   BALL_MIN_DISTANCE;
 float BALL_TWIST_ANGLE;
-char  OBSERVER[STRINGSIZE];
+char  PROGRAM[STRINGSIZE];
 char  FILENAME[STRINGSIZE];
-
-char line[STRINGSIZE], text[STRINGSIZE];
+char  OBSERVER[STRINGSIZE];
+double FRAMETIME;
 
 int   BORDER_X;
 int   BORDER_Y;
 int   FRAMES_PER_REMIND;
 
 // Prototypes
-void EnterInt( int* pi );
-void EnterFloat( float* pf );
-void EnterText( char* ps );
+void GetWord(Application* app, char* buf, int sz);
+
+void EnterInt( Application* app, int* pi );
+void EnterFloat( Application* app, float* pf );
+void EnterText( Application* app, char* ps );
 void date( char* p);
 void process_id( char pid[] );
 
 
 /************************************************/
 
-#define GETINT(name) {fgets(line,120,fp);sscanf(line,"%s %d",text,&(name));}
-#define GETCHAR(name) {fgets(line,120,fp);sscanf(line,"%s %c",text,&(name));}
-#define GETFLOAT(name) {fgets(line,120,fp);sscanf(line,"%s %f",text,&(name));}
-#define GETTEXT(name) {fgets(line,120,fp);sscanf(line,"%s %s",text,(name));}
-#define GETINTL(name) {fgets(line,120,fp);sscanf(line,"%s %d %d %d %d",text,&(name)[0],&(name)[1],&(name)[2],&(name)[3]);}
-#define GETTEXTL(name) {fgets(line,120,fp);sscanf(line,"%s %s %s %s %s",text,(name)[0],(name)[1],(name)[2],(name)[3]);}
+
+void WhoAreYou( Application* app )
+{
+  if( app->argc() < 2 )
+    {
+		printf( " Who are you?\n" );
+		app->quit(0);
+    }
+
+  strcpy( PROGRAM,  app->argv(0) );
+  strcpy( OBSERVER, app->argv(1) );
+  strcpy( FILENAME, app->argv(1) );
+}
+
+namespace {
+  char LINE[STRINGSIZE];
+  char TEXT[STRINGSIZE];
+}
+
+#define GETINT(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %d",TEXT,&(name));}
+#define GETCHAR(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %c",TEXT,&(name));}
+#define GETFLOAT(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %f",TEXT,&(name));}
+#define GETTEXT(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %s",TEXT,(name));}
+#define GETINTL(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %d %d %d %d",TEXT,&(name)[0],&(name)[1],&(name)[2],&(name)[3]);}
+#define GETTEXTL(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %s %s %s %s",TEXT,(name)[0],(name)[1],(name)[2],(name)[3]);}
 
 #define PUTINT(name,text) {fprintf(fp,"%-19s %d\n",(text),(name));}
 #define PUTCHAR(name,text) {fprintf(fp,"%-19s %c\n",(text),(name));}
@@ -79,13 +109,12 @@ void process_id( char pid[] );
 #define PRINTINTL(name,text) {printf( "%-19s %d %d %d %d\n",(text),(name)[0],(name)[1],(name)[2],(name)[3]);}
 #define PRINTTEXTL(name,text) {printf( "%-19s %+s %+s %+s %+s\n",(text),(name)[0],(name)[1],(name)[2],(name)[3]);}
 
-void ReadParams( char extension[] )
-{
-  FILE *fp;
-  float fdummy;
-  int   idummy;
+void ReadParams(Application* app, char extension[]) {
+DOTRACE("ReadParams");
 
-  Openfile( &fp, OPTIONAL, extension );
+  FILE *fp;
+
+  Openfile(app, &fp, OPTIONAL, extension );
 
   if( fp == NULL )
 	 return;
@@ -112,28 +141,36 @@ void ReadParams( char extension[] )
 
   Closefile( fp );
 
-  CheckParams();
+  CheckParams(app);
 }
 
-void CheckParams()
-{
+void CheckParams(Application* app) {
+DOTRACE("CheckParams");
+
   float time_between_reminds;
 
-  BORDER_X    = ( width - DISPLAY_X ) / 2; 
-  BORDER_Y    = ( height - DISPLAY_Y ) / 2;
+  BORDER_X    = ( app->width() - DISPLAY_X ) / 2; 
+  BORDER_Y    = ( app->height() - DISPLAY_Y ) / 2;
 
   time_between_reminds = ( EPOCH_DURATION - PAUSE_DURATION - REMIND_DURATION )
 	 / REMINDS_PER_EPOCH;
 
   FRAMES_PER_REMIND    = (int)( 1000.0*(time_between_reminds-REMIND_DURATION)
 										  / FRAMETIME ) - FUDGEFRAME;
+
+  DebugEval(time_between_reminds);
+  DebugEval(FRAMETIME);
+  DebugEvalNL(FUDGEFRAME);
+
+  DebugEvalNL(FRAMES_PER_REMIND);
 }
 
-void WriteParams( char extension[] )
-{
+void WriteParams(Application* app, char extension[]) {
+DOTRACE("WriteParams");
+
   FILE *fp;
 
-  Openfile( &fp, WRITE, extension );
+  Openfile(app, &fp, WRITE, extension );
 
   PUTINT(   (DISPLAY_X),        ("DISPLAY_X") );         
   PUTINT(   (DISPLAY_Y),        ("DISPLAY_Y") );         
@@ -158,16 +195,18 @@ void WriteParams( char extension[] )
   Closefile( fp );
 }
 
-void LogParams( FILE* fl )
-{
+void LogParams(Application* app, FILE* fl) {
+DOTRACE("LogParams");
+
   FILE *fp;
   char line[480], Cname[ 120 ];
 
-  WriteParams( "cur" );
+  WriteParams(app, "cur");
 
-  Openfile( &fp, READ, "cur" );
+  Openfile(app, &fp, READ, "cur" );
 
-  date( text);
+  char text[STRINGSIZE];
+  date(text);
   fprintf( fl, "\n\n%s\n\n", text);
 
   while( fgets( line, 120, fp) !=  NULL)
@@ -177,18 +216,19 @@ void LogParams( FILE* fl )
 
   Closefile( fp );
 
-  fprintf( fl, "\n\n", text);
+  fprintf( fl, "\n\n");
 }
 
-void ListParams()
-{
+void ListParams(Application* app) {
+DOTRACE("ListParams");
+
   FILE *fp;
   int nparams = 0;
   char params[60][STRINGSIZE];
 
-  WriteParams( "sta" );
+  WriteParams(app, "sta");
 
-  Openfile( &fp, READ,   "sta" );
+  Openfile(app, &fp, READ, "sta");
 
   while( fgets( params[nparams], STRINGSIZE, fp) !=  NULL && nparams < 60 )
     {    
@@ -198,62 +238,46 @@ void ListParams()
 
   Closefile( fp );
 
-  ClearWindow();
+  ClearWindow(app->fildes());
 
-  ShowParams( params, nparams );
+  ShowParams( app, params, nparams );
 }
 
-void Openfile( FILE** fp, char mode, char extension[] )
-{
+void Openfile(Application* app, FILE** fp, char mode, char extension[]) {
+DOTRACE("Openfile");
+
   char fname[STRINGSIZE];
 
   sprintf( fname, "%s.%s", FILENAME, extension );
 
-  if( mode==WRITE )
-    {
-		if( ( *fp = fopen( fname, "w") ) == NULL )
-        {
-			 printf( "cannot write %s\n", fname);
-			 Exit(0);
-        }
-    }
-  else
-    if( mode==APPEND )
+  if (mode == OPTIONAL) {
+	 if( ( *fp = fopen( fname, "r") ) == NULL )
 		{
-        if( ( *fp = fopen( fname, "a") ) == NULL )
-			 {
-            printf( "cannot append to %s\n", fname);
-				Exit(0);
-			 }
+		  printf( "cannot read from %s, will create it\n", fname );
+		  *fp = NULL;
 		}
-    else
-		if( mode==READ )
-		  {
-			 if( ( *fp = fopen( fname, "r") ) == NULL )
-				{
-				  printf( "cannot read from %s\n", fname );
-				  Exit(0);
-				}
-		  }
-		else
-		  if( mode==OPTIONAL )
-			 {
-				if( ( *fp = fopen( fname, "r") ) == NULL )
-				  {
-					 printf( "cannot read from %s, will create it\n", fname );
-					 *fp = NULL;
-				  }
-			 }
+  }
+  else {
+	 char mode_string[2] = { mode, '\0' };
+
+	 if( ( *fp = fopen( fname, mode_string) ) == NULL )
+		{
+		  printf( "cannot open %s in mode '%s'\n", fname, mode_string);
+		  app->quit(0);
+		}
+  }
 }
 
-void Closefile( FILE* fp )
-{
-  if( fp != NULL)
-	 fclose( fp);
+void Closefile( FILE* fp ) {
+DOTRACE("Closefile");
+
+  if(fp != NULL)
+	 fclose(fp);
 }
 
-void PrintParams()
-{
+void PrintParams() {
+DOTRACE("PrintParams");
+
   PRINTINT(   (DISPLAY_X),        ("DISPLAY_X") );         
   PRINTINT(   (DISPLAY_Y),        ("DISPLAY_Y") );         
   PRINTINT(   (CYCLE_NUMBER),     ("CYCLE_NUMBER") );
@@ -275,11 +299,12 @@ void PrintParams()
   PRINTTEXT(  (FILENAME),         ("FILENAME") );
 }
 
-void SetParameters1()
-{
+void SetParameters1(Application* app) {
+DOTRACE("SetParameters1");
+
   char word[STRINGSIZE], text[4][STRINGSIZE];
 
-  ClearWindow();
+  ClearWindow(app->fildes());
 
   sprintf( text[0], " BALL  NUMBER TRACK  VELOC  SIZE   MINDIS RADIUS SIGMA2 TWIST" );
   sprintf( text[1], "" );
@@ -289,57 +314,57 @@ void SetParameters1()
 			  BALL_ARRAY_SIZE, BALL_MIN_DISTANCE, BALL_RADIUS,
 			  BALL_SIGMA2, BALL_TWIST_ANGLE );
 
-  ShowMenu( text, 4);
+  ShowMenu( app, text, 4);
 
-  EnterInt( &BALL_NUMBER );
+  EnterInt( app, &BALL_NUMBER );
   sprintf( word, "       %-6d", BALL_NUMBER );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterInt( &BALL_TRACK_NUMBER );
+  EnterInt( app, &BALL_TRACK_NUMBER );
   sprintf( word, " %-6d", BALL_TRACK_NUMBER );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterInt( &BALL_VELOCITY );
+  EnterInt( app, &BALL_VELOCITY );
   sprintf( word, " %-6d", BALL_VELOCITY );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterInt( &BALL_ARRAY_SIZE );
+  EnterInt( app, &BALL_ARRAY_SIZE );
   sprintf( word, " %-6d", BALL_ARRAY_SIZE );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterInt( &BALL_MIN_DISTANCE );
+  EnterInt( app, &BALL_MIN_DISTANCE );
   sprintf( word, " %-6d", BALL_MIN_DISTANCE );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterFloat( &BALL_RADIUS );
+  EnterFloat( app, &BALL_RADIUS );
   sprintf( word, " %-6.1f", BALL_RADIUS );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterFloat( &BALL_SIGMA2 );
+  EnterFloat( app, &BALL_SIGMA2 );
   sprintf( word, " %-6.1f", BALL_SIGMA2 );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterFloat( &BALL_TWIST_ANGLE );
+  EnterFloat( app, &BALL_TWIST_ANGLE );
   sprintf( word, " %-6.3f", BALL_TWIST_ANGLE );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  CheckParams();
-
+  CheckParams(app);
 }
 
-void SetParameters2()
-{
+void SetParameters2(Application* app) {
+DOTRACE("SetParameters2");
+
   char word[STRINGSIZE], text[4][STRINGSIZE];
 
-  ClearWindow();
+  ClearWindow(app->fildes());
 
   sprintf( text[0], "       CYCL_NUM WAIT_DUR EPCH_DUR PAUS_DUR RMND_NUM RMND_DUR" );
   sprintf( text[1], "" );
@@ -348,97 +373,84 @@ void SetParameters2()
 			  CYCLE_NUMBER, WAIT_DURATION, EPOCH_DURATION,
 			  PAUSE_DURATION, REMINDS_PER_EPOCH, REMIND_DURATION );
 
-  ShowMenu( text, 4);
+  ShowMenu( app, text, 4);
 
-  EnterInt( &CYCLE_NUMBER );
+  EnterInt( app, &CYCLE_NUMBER );
   sprintf( word, "       %-8d", CYCLE_NUMBER );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterFloat( &WAIT_DURATION );
+  EnterFloat( app, &WAIT_DURATION );
   sprintf( word, " %-8.2f", WAIT_DURATION );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterFloat( &EPOCH_DURATION );
+  EnterFloat( app, &EPOCH_DURATION );
   sprintf( word, " %-8.2f", EPOCH_DURATION );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterFloat( &PAUSE_DURATION );
+  EnterFloat( app, &PAUSE_DURATION );
   sprintf( word, " %-8.2f", PAUSE_DURATION );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterInt( &REMINDS_PER_EPOCH );
+  EnterInt( app, &REMINDS_PER_EPOCH );
   sprintf( word, " %-8d", REMINDS_PER_EPOCH );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  EnterFloat( &REMIND_DURATION );
+  EnterFloat( app, &REMIND_DURATION );
   sprintf( word, " %-8.2f", REMIND_DURATION );
   strcat( text[1], word );
-  ShowMenu( text, 4 );
+  ShowMenu( app, text, 4 );
 
-  CheckParams();
+  CheckParams(app);
 }
 
-void EnterInt( int* pi )
-{
-  int n;
-  char c, word[STRINGSIZE];
+void GetWord(Application* app, char* buf, int sz) {
+DOTRACE("GetWord");
 
-  n = 0;
+  int n = 0;
+  char c;
 
-  while( ( c = GetKeystroke() ) != ' '  && 
-			n                     < STRINGSIZE )
-    {
-		word[n++] = c;        
-    }
+  while( ( c = app->getKeystroke() ) != ' '  && n < sz ) {
+	 buf[n++] = c;        
+  }
     
-  word[n] = '\0';
+  buf[n] = '\0';
+}
+
+void EnterInt( Application* app, int* pi ) {
+DOTRACE("EnterInt");
+
+  char word[STRINGSIZE];
+  GetWord(app, word, STRINGSIZE);
 
   sscanf( word, "%d", pi );
 }
 
-void EnterFloat( float* pf )
-{
-  int n;
-  char c, word[STRINGSIZE];
+void EnterFloat( Application* app, float* pf ) {
+DOTRACE("EnterFloat");
 
-  n = 0;
-
-  while( ( c = GetKeystroke() ) != ' '  && 
-			n                     < STRINGSIZE )
-    {
-		word[n++] = c;        
-    }
-    
-  word[n] = '\0';
+  char word[STRINGSIZE];
+  GetWord(app, word, STRINGSIZE);
 
   sscanf( word, "%f", pf );
 }
 
-void EnterText( char* ps )
-{
-  int n;
-  char c, word[STRINGSIZE];
+void EnterText( Application* app, char* ps ) {
+DOTRACE("EnterText");
 
-  n = 0;
-
-  while( ( c = GetKeystroke() ) != ' '  && 
-			n                     < STRINGSIZE )
-    {
-		word[n++] = c;        
-    }
-    
-  word[n] = '\0';
+  char word[STRINGSIZE];
+  GetWord(app, word, STRINGSIZE);
 
   sscanf( word, "%s", ps );
 }
 
-void date( char* p)
-{
+void date( char* p ) {
+DOTRACE("date");
+
   FILE *fp;
 
   if( ( fp =	popen( "date", "r")) ==	 NULL) 
@@ -454,8 +466,9 @@ void date( char* p)
   pclose(fp);
 }
 
-void process_id( char pid[] )
-{
+void process_id( char pid[] ) {
+DOTRACE("process_id");
+
   FILE *fp;
   char line[ STRINGSIZE ];
 
