@@ -85,8 +85,6 @@ public:
   int    ballNumber;
   int    ballPixmapSize;
   int    ballTrackNumber;
-  int    borderX;               // = (width - 120) / 2;
-  int    borderY;               // = (height - 120) / 2;
   int    cycleNumber;
   int    displayX;
   int    displayY;
@@ -102,9 +100,6 @@ public:
       ((epochSeconds - pauseSeconds - remindSeconds)
        / remindsPerEpoch) - remindSeconds;
   }
-
-private:
-  void recompute(Graphics& gfx);
 };
 
 static const char vcid_params_h[] = "$Header$";

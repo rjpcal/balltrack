@@ -25,12 +25,12 @@ class Ball
 {
 public:
   void randomPosition(int width, int height,
-                      int xborder, int yborder,
+                      int xdisplay, int ydisplay,
                       int arraysize);
   bool isTooClose(const Ball& other, int min_dist) const;
   void randomSpeed(double vel);
   void nextPosition(int width, int height,
-                    int xborder, int yborder,
+                    int xdisplay, int ydisplay,
                     int arraysize, double lapsed_seconds);
   void collideIfNeeded(Ball& other, int min_dist,
                        double lapsed_seconds);

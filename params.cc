@@ -158,8 +158,6 @@ Params::Params(int argc, char** argv) :
   ballNumber(),
   ballPixmapSize(),
   ballTrackNumber(),
-  borderX(),
-  borderY(),
   cycleNumber(),
   displayX(),
   displayY(),
@@ -274,8 +272,6 @@ DOTRACE("Params::readFromFile");
   std::string appmode = pmfile.getString();
 
   pmfile.getInt(this->fmriSessionNumber);
-
-  this->recompute(gfx);
 }
 
 void Params::writeToFile(const char* extension)
@@ -414,8 +410,6 @@ DOTRACE("Params::setGroup1");
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
-
-  this->recompute(gfx);
 }
 
 void Params::setGroup2(Graphics& gfx)
@@ -475,8 +469,6 @@ DOTRACE("Params::setGroup2");
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
-
-  this->recompute(gfx);
 }
 
 void Params::setGroup3(Graphics& gfx)
@@ -504,16 +496,6 @@ DOTRACE("Params::setGroup2");
   menu[1] += buf;
   gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
-
-  this->recompute(gfx);
-}
-
-void Params::recompute(Graphics& gfx)
-{
-DOTRACE("Params::recompute");
-
-  this->borderX = (gfx.width() - displayX) / 2;
-  this->borderY = (gfx.height() - displayY) / 2;
 }
 
 static const char vcid_params_cc[] = "$Header$";

@@ -86,10 +86,13 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 void Ball::randomPosition(int width, int height,
-                          int xborder, int yborder,
+                          int xdisplay, int ydisplay,
                           int arraysize)
 {
 DOTRACE("Ball::randomPosition");
+
+  const int xborder = (width-xdisplay)/2;
+  const int yborder = (height-ydisplay)/2;
 
   this->xpos = xborder + (width - arraysize - 2*xborder) * drand48();
   this->ypos = yborder + (height - arraysize - 2*yborder) * drand48();
@@ -115,10 +118,13 @@ DOTRACE("Ball::randomVelocity");
 }
 
 void Ball::nextPosition(int width, int height,
-                        int xborder, int yborder,
+                        int xdisplay, int ydisplay,
                         int arraysize, double lapsed_seconds)
 {
 DOTRACE("Ball::nextPosition");
+
+  const int xborder = (width-xdisplay)/2;
+  const int yborder = (height-ydisplay)/2;
 
   this->xnext = this->xpos + (lapsed_seconds * this->velx);
   this->ynext = this->ypos + (lapsed_seconds * this->vely);
@@ -257,8 +263,8 @@ DOTRACE("Balls::pickInitialPositions");
           too_close = false;
 
           itsBalls[i].randomPosition(gfx.width(), gfx.height(),
-                                     itsParams.borderX,
-                                     itsParams.borderY,
+                                     itsParams.displayX,
+                                     itsParams.displayY,
                                      itsParams.ballPixmapSize);
 
           for (int j=0; j<i; ++j)
@@ -284,7 +290,8 @@ DOTRACE("Balls::pickNextPositions");
   for (int i=0; i<itsParams.ballNumber; ++i)
     {
       itsBalls[i].nextPosition(gfx.width(), gfx.height(),
-                               itsParams.borderX, itsParams.borderY,
+                               itsParams.displayX,
+                               itsParams.displayY,
                                itsParams.ballPixmapSize,
                                lapsed_seconds);
     }
