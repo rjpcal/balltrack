@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Tue Feb 29 16:45:00 2000
+// written: Tue Feb 29 17:14:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "graphics.h"
 #include "params.h"
 #include "timing.h"
+#include "xhints.h"
 
 #include "trace.h"
 #include "debug.h"
