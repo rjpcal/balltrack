@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Tue Feb 29 17:14:47 2000
+// written: Fri Mar  3 11:30:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,21 +57,21 @@ DOTRACE("BallsExpt::fillMenu");
 void BallsExpt::runExperiment() {
 DOTRACE("BallsExpt::runExperiment");
 
-  FILE *fl;
-
   /// XXX this needs to be at least as big as (CYCLE_NUMBER+1)*2
   struct timeval tp[10];
 
   Balls theBalls;
 
+  FILE *fl;
   Openfile(this, &fl, APPEND, "tme");
-
   LogParams(this, fl);
 
   graphics()->writeAllPlanes();
 
+  graphics()->clearFrontBuffer();
+
   for (int k = 0; k < 2; ++k) {
-	 graphics()->clearFrontBuffer();
+	 graphics()->clearBackBuffer();
 	 graphics()->drawCross();
 	 graphics()->swapBuffers();
   }
@@ -83,13 +83,13 @@ DOTRACE("BallsExpt::runExperiment");
   Timing::mainTimer.wait( WAIT_DURATION );
 
   int cycle;
-  for( cycle=0; cycle<CYCLE_NUMBER; cycle++ ) {
+  for( cycle=0; cycle<CYCLE_NUMBER; ++cycle ) {
 
 	 // Run active tracking trial
 	 theBalls.runTrial(graphics(), &tp[2*cycle+1], Balls::CHECK_ALL);
 
 	 // Run active tracking trial with objective check
-	 theBalls.runTrial(graphics(), &tp[2*cycle+1], Balls::CHECK_ONE);
+	 theBalls.runTrial(graphics(), &tp[2*cycle+2], Balls::CHECK_ONE);
 
 // 	 // Run passive trial
 // 	 theBalls.runTrial(graphics(), &tp[2*cycle+2], Balls::PASSIVE);
