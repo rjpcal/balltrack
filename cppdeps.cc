@@ -1893,5 +1893,5 @@ int main(int argc, char** argv)
   exit(0);
 }
 
-static const char vcid_cppdeps_cc[] = "$Header$";
+static const char vcid_cppdeps_cc[] = "$Id$ $HeadURL$";
 #endif // !CPPDEPS_CC_DEFINED

@@ -92,5 +92,5 @@ public:
   }
 };
 
-static const char vcid_params_h[] = "$Header$";
+static const char vcid_params_h[] = "$Id$ $HeadURL$";
 #endif // !PARAMS_H_DEFINED

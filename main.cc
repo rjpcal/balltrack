@@ -35,5 +35,5 @@ int main(int argc, char** argv)
   return 0;
 }
 
-static const char vcid_main_c[] = "$Header$";
+static const char vcid_main_c[] = "$Id$ $HeadURL$";
 #endif // !MAIN_C_DEFINED

@@ -57,5 +57,5 @@ private:
   bool itsUsingVsync;
 };
 
-static const char vcid_glxwindow_h[] = "$Header$";
+static const char vcid_glxwindow_h[] = "$Id$ $HeadURL$";
 #endif // !XSTUFF_H_DEFINED

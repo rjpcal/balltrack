@@ -674,5 +674,5 @@ DOTRACE("Params::setParams");
   doVmenu(gfx, items);
 }
 
-static const char vcid_params_cc[] = "$Header$";
+static const char vcid_params_cc[] = "$Id$ $HeadURL$";
 #endif // !PARAMS_CC_DEFINED

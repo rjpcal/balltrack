@@ -84,5 +84,5 @@ private:
   Timepoint itsFrameTimer;
 };
 
-static const char vcid_graphics_h[] = "$Header$";
+static const char vcid_graphics_h[] = "$Id$ $HeadURL$";
 #endif // !GRAPHICS_H_DEFINED

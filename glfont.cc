@@ -643,5 +643,5 @@ DOTRACE("GLFont::getStrokeFontListBase");
   return listBase;
 }
 
-static const char vcid_glfont_cc[] = "$Header$";
+static const char vcid_glfont_cc[] = "$Id$ $HeadURL$";
 #endif // !GLFONT_CC_DEFINED

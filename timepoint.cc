@@ -50,5 +50,5 @@ DOTRACE("Timepoint::elapsedSecAndReset");
   return sec;
 }
 
-static const char vcid_timing_cc[] = "$Header$";
+static const char vcid_timing_cc[] = "$Id$ $HeadURL$";
 #endif // !TIMING_CC_DEFINED

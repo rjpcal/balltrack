@@ -722,5 +722,5 @@ DOTRACE("Balls::runTrial");
   gfx.swapBuffers();
 }
 
-static const char vcid_balls_cc[] = "$Header$";
+static const char vcid_balls_cc[] = "$Id$ $HeadURL$";
 #endif // !BALLS_CC_DEFINED

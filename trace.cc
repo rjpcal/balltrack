@@ -26,5 +26,5 @@ Util::Prof::~Prof()
                  << " " << funcName << endl;
 }
 
-static const char vcid_trace_cc[] = "$Header$";
+static const char vcid_trace_cc[] = "$Id$ $HeadURL$";
 #endif // TRACE_CC_DEFINED

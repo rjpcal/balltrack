@@ -428,5 +428,5 @@ DOTRACE("BallsExpt::runTrainingExpt");
     }
 }
 
-static const char vcid_ballsexpt_cc[] = "$Header$";
+static const char vcid_ballsexpt_cc[] = "$Id$ $HeadURL$";
 #endif // !BALLSEXPT_CC_DEFINED

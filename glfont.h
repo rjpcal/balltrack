@@ -16,5 +16,5 @@ namespace GLFont
   unsigned int getStrokeFontListBase();
 }
 
-static const char vcid_glfont_h[] = "$Header$";
+static const char vcid_glfont_h[] = "$Id$ $HeadURL$";
 #endif // !GLFONT_H_DEFINED

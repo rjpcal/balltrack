@@ -33,5 +33,5 @@ private:
   timeval m_tv;
 };
 
-static const char vcid_timing_h[] = "$Header$";
+static const char vcid_timing_h[] = "$Id$ $HeadURL$";
 #endif // !TIMING_H_DEFINED

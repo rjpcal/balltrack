@@ -363,5 +363,5 @@ DOTRACE("GlxWindow::getButtonPress");
   return false;
 }
 
-static const char vcid_glxwindow_cc[] = "$Header$";
+static const char vcid_glxwindow_cc[] = "$Id$ $HeadURL$";
 #endif // !XSTUFF_CC_DEFINED

@@ -276,5 +276,5 @@ DOTRACE("Graphics::dumpFrame");
     }
 }
 
-static const char vcid_graphics_cc[] = "$Header$";
+static const char vcid_graphics_cc[] = "$Id$ $HeadURL$";
 #endif // !GRAPHICS_CC_DEFINED

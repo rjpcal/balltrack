@@ -159,5 +159,5 @@ private:
   std::vector<Ball> itsBalls;
 };
 
-static const char vcid_balls_h[] = "$Header$";
+static const char vcid_balls_h[] = "$Id$ $HeadURL$";
 #endif // !BALLS_H_DEFINED

@@ -41,5 +41,5 @@ private:
   Impl* rep;
 };
 
-static const char vcid_ballsexpt_h[] = "$Header$";
+static const char vcid_ballsexpt_h[] = "$Id$ $HeadURL$";
 #endif // !BALLSEXPT_H_DEFINED

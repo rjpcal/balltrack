@@ -160,5 +160,5 @@ private:
 
 #endif // !defined(LOCAL_PROF)
 
-static const char vcid_trace_h[] = "$Header$";
+static const char vcid_trace_h[] = "$Id$ $HeadURL$";
 #endif // !TRACE_H_DEFINED

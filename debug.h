@@ -82,5 +82,5 @@
 #  define Postcondition(x) {}
 #endif
 
-static const char vcid_debug_h[] = "$Id$";
+static const char vcid_debug_h[] = "$Id$ $HeadURL$";
 #endif // !DEBUG_H_DEFINED
