@@ -517,59 +517,16 @@ void Params::setGroup2(Graphics& gfx)
 {
 DOTRACE("Params::setGroup2");
 
-  const int bufsize = 256;
-  char buf[bufsize];
+  ParamMenu pm;
 
-  std::string menu[4];
+  pm.addItem("CYCL_NUM", this->cycleNumber);
+  pm.addItem("WAIT_DUR", this->waitSeconds);
+  pm.addItem("EPCH_DUR", this->epochSeconds);
+  pm.addItem("PAUS_DUR", this->pauseSeconds);
+  pm.addItem("RMND_NUM", this->remindsPerEpoch);
+  pm.addItem("RMDN_DUR", this->remindSeconds);
 
-  gfx.clearBackBuffer();
-
-  menu[0] = "       CYCL_NUM WAIT_DUR EPCH_DUR PAUS_DUR RMND_NUM RMND_DUR";
-  menu[1] = "";
-  menu[2] = "";
-  snprintf(buf, bufsize, "       %-8d %-8.2f %-8.2f %-8.2f %-8d %-8.2f",
-          this->cycleNumber, this->waitSeconds, this->epochSeconds,
-          this->pauseSeconds, this->remindsPerEpoch, this->remindSeconds);
-  menu[3] = buf;
-
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
-  gfx.swapBuffers();
-
-  gfx.getIntFromKeyboard(this->cycleNumber);
-  snprintf(buf, bufsize, "       %-8d", this->cycleNumber);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
-  gfx.swapBuffers();
-
-  gfx.getDoubleFromKeyboard(this->waitSeconds);
-  snprintf(buf, bufsize, " %-8.2f", this->waitSeconds);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
-  gfx.swapBuffers();
-
-  gfx.getDoubleFromKeyboard(this->epochSeconds);
-  snprintf(buf, bufsize, " %-8.2f", this->epochSeconds);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
-  gfx.swapBuffers();
-
-  gfx.getDoubleFromKeyboard(this->pauseSeconds);
-  snprintf(buf, bufsize, " %-8.2f", this->pauseSeconds);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
-  gfx.swapBuffers();
-
-  gfx.getIntFromKeyboard(this->remindsPerEpoch);
-  snprintf(buf, bufsize, " %-8d", this->remindsPerEpoch);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
-  gfx.swapBuffers();
-
-  gfx.getDoubleFromKeyboard(this->remindSeconds);
-  snprintf(buf, bufsize, " %-8.2f", this->remindSeconds);
-  menu[1] += buf;
-  gfx.drawStrings(menu, 4, 100, -200, 16, 2);
-  gfx.swapBuffers();
+  pm.go(gfx);
 }
 
 void Params::setGroup3(Graphics& gfx)
