@@ -414,6 +414,32 @@ namespace
     std::string menu[4];
     std::ostringstream oss;
   };
+
+  class MenuItem
+  {
+  public:
+    MenuItem(int& v)    : dvar(0), ivar(&v) {}
+    MenuItem(double& v) : dvar(&v), ivar(0) {}
+
+    void doit(ParamMenu& pm, Graphics& gfx)
+    {
+      if (dvar != 0)
+        {
+          gfx.getValueFromKeyboard(*dvar);
+          pm.putValue(*dvar);
+          pm.redraw(gfx);
+        }
+      else if (ivar != 0)
+        {
+          gfx.getValueFromKeyboard(*ivar);
+          pm.putValue(*ivar);
+          pm.redraw(gfx);
+        }
+    }
+
+    double* dvar;
+    int* ivar;
+  };
 }
 
 void Params::setGroup1(Graphics& gfx)
@@ -438,37 +464,21 @@ DOTRACE("Params::setGroup1");
 
   pm.redraw(gfx);
 
-  gfx.getIntFromKeyboard(this->ballNumber);
-  pm.putValue(this->ballNumber);
-  pm.redraw(gfx);
+  { MenuItem i(this->ballNumber); i.doit(pm, gfx); }
 
-  gfx.getIntFromKeyboard(this->ballTrackNumber);
-  pm.putValue(this->ballTrackNumber);
-  pm.redraw(gfx);
+  { MenuItem i(this->ballTrackNumber); i.doit(pm, gfx); }
 
-  gfx.getDoubleFromKeyboard(this->ballSpeed);
-  pm.putValue(this->ballSpeed);
-  pm.redraw(gfx);
+  { MenuItem i(this->ballSpeed); i.doit(pm, gfx); }
 
-  gfx.getIntFromKeyboard(this->ballPixmapSize);
-  pm.putValue(this->ballPixmapSize);
-  pm.redraw(gfx);
+  { MenuItem i(this->ballPixmapSize); i.doit(pm, gfx); }
 
-  gfx.getIntFromKeyboard(this->ballMinDistance);
-  pm.putValue(this->ballMinDistance);
-  pm.redraw(gfx);
+  { MenuItem i(this->ballMinDistance); i.doit(pm, gfx); }
 
-  gfx.getDoubleFromKeyboard(this->ballRadius);
-  pm.putValue(this->ballRadius);
-  pm.redraw(gfx);
+  { MenuItem i(this->ballRadius); i.doit(pm, gfx); }
 
-  gfx.getDoubleFromKeyboard(this->ballSigma2);
-  pm.putValue(this->ballSigma2);
-  pm.redraw(gfx);
+  { MenuItem i(this->ballSigma2); i.doit(pm, gfx); }
 
-  gfx.getDoubleFromKeyboard(this->ballTwistAngle);
-  pm.putValue(this->ballTwistAngle);
-  pm.redraw(gfx);
+  { MenuItem i(this->ballTwistAngle); i.doit(pm, gfx); }
 }
 
 void Params::setGroup2(Graphics& gfx)
