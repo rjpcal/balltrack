@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Tue Feb 29 15:52:29 2000
+// written: Tue Feb 29 16:16:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "ballsexpt.h"
 
 #include <cstdio>
-#include <sys/time.h>
+#include <cstring>
 
 #include "balls.h"
 #include "graphics.h"
@@ -32,6 +32,24 @@ DOTRACE("BallsExpt::BallsExpt");
 #ifdef COLOR_INDEX
   graphics()->loadColormap(Balls::theColors, Balls::COLOR_NUMBER);
 #endif
+}
+
+void BallsExpt::fillMenu(char menu[][STRINGSIZE], int nitems) {
+DOTRACE("BallsExpt::fillMenu");
+
+  if (nitems < 7) {
+	 strcpy( menu[0], "insufficient space to create menu" );
+  } 
+  else {
+	 strcpy( menu[0], "r     run experiment");
+	 strcpy( menu[1], "x     set parameters 1");
+	 strcpy( menu[2], "y     set parameters 2");
+	 strcpy( menu[3], "p     show parameters");
+	 strcpy( menu[4], "q     quit program");
+	 strcpy( menu[5], "");
+	 sprintf( menu[6], "recent percent correct: %d",
+				 int(Timing::recentPercentCorrect()) );
+  }
 }
 
 void BallsExpt::runExperiment() {
