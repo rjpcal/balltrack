@@ -1,8 +1,17 @@
+#########################################################################
+#
+# Makefile for Balls3 psychophysics experiment
+#
+# Rob Peters rjpeters@klab.caltech.edu
+# created: Feb 2000
+# $Id$
+#
+#########################################################################
 
 ifeq ($(ARCH),hp9000s700)
 	CC  = aCC
 	CFLAGS= +W302,495,829,749,740 -I/usr/include/X11R6 -I/usr/include \
-		-I/cit/rjpeters/include -DHP9000S700 -DCOLOR_INDEX
+		-I/cit/rjpeters/include -DHP9000S700
 	LFLAGS= -L/usr/lib/X11R6 -L/opt/graphics/common/lib -L/opt/graphics/OpenGL/lib
 	LIB   = -lGLU -lGL -lXwindow -lsb -lXhp11 -lX11 -lm -ldld
 	GFXOBJ = $(ARCH)/starbasegfx.o
@@ -11,7 +20,7 @@ endif
 ifeq ($(ARCH),irix6)
 	CC  = g++
 	CFLAGS=  -I/usr/include/X11R6 -I/cit/rjpeters/include \
-		-I/cit/rjpeters/gcc/include/g++-3 -DIRIX6 -DRGBA
+		-I/cit/rjpeters/gcc/include/g++-3 -DIRIX6
 	LFLAGS= 
 	LIB   = -lGLU -lGL -lX11 -lm
 	GFXOBJ = $(ARCH)/glfont.o $(ARCH)/openglgfx.o
@@ -30,12 +39,12 @@ OBJ   = \
 	$(ARCH)/xstuff.o \
 	$(GFXOBJ)
 
-TARGET = $(ARCH)/test
+TARGET = $(HOME)/bin/$(ARCH)/balls3
 
-ALL   = $(ARCH)/test
+ALL   = $(TARGET)
 
 all:	$(ALL)
-	./$(ARCH)/test xxx
+	$(TARGET) xxx
 
 clean:
 	rm -f core *.o *.a $(ALL)
@@ -70,18 +79,18 @@ BALLSEXPT_H = $(APPLIC_H) ballsexpt.h
 OPENGLGFX_H = $(GRAPHICS_H) openglgfx.h
 STARBASEGFX_H = $(GRAPHICS_H) starbasegfx.h
 
-APPLIC_CC = $(APPLIC_H) $(BALLS_H) $(DEFS_H) $(GRAPHICS_H) \
-	$(PARAMS_H) $(TIMING_H) $(TRACE_H) $(DEBUG_H) applic.c
+APPLIC_CC = $(APPLIC_H) $(DEFS_H) $(GRAPHICS_H) \
+	$(PARAMS_H) $(TRACE_H) $(DEBUG_H) applic.c
 
-APPLICATION_CC = $(APPLICATION_H) $(APPLIC_H) $(OPENGLGFX_H) \
-	$(STARBASEGFX_H) $(PARAMS_H) $(TIMING_H) $(XHINTS_H) \
-	$(XSTUFF_H) $(DEFS_H) $(TRACE_H) $(DEBUG_H) application.cc
+APPLICATION_CC = $(APPLICATION_H) $(DEFS_H) $(OPENGLGFX_H) \
+	$(PARAMS_H) $(STARBASEGFX_H) $(TIMING_H) $(XHINTS_H) \
+	$(XSTUFF_H) $(TRACE_H) $(DEBUG_H) application.cc
 
 BALLS_CC = $(BALLS_H) $(DEFS_H) $(GRAPHICS_H) $(PARAMS_H) $(TIMING_H) \
 	$(TRACE_H) $(DEBUG_H) balls.c
 
 BALLSEXPT_CC = $(BALLSEXPT_H) $(BALLS_H) $(GRAPHICS_H) $(PARAMS_H) \
-	$(TIMING_H) $(TRACE_H) $(DEBUG_H) ballsexpt.cc
+	$(TIMING_H) $(XHINTS_H) $(TRACE_H) $(DEBUG_H) ballsexpt.cc
 
 GLFONT_CC = $(GLFONT_H) $(TRACE_H) $(DEBUG_H) glfont.cc
 
@@ -89,15 +98,14 @@ GRAPHICS_CC = $(GRAPHICS_H) $(TRACE_H) graphics.cc
 
 MAIN_CC = $(BALLSEXPT_H) $(XHINTS_H) main.c
 
-OPENGLGFX_CC = $(OPENGLGFX_H) $(APPLICATION_H) $(APPLIC_H) $(BALLS_H) \
-	$(GLFONT_H) $(PARAMS_H) $(TIMING_H) $(XHINTS_H) $(XSTUFF_H) \
-	$(TRACE_H) $(DEBUG_H) openglgfx.cc
+OPENGLGFX_CC = $(OPENGLGFX_H) $(GLFONT_H) $(PARAMS_H) \
+	$(TIMING_H) $(XHINTS_H) $(XSTUFF_H) $(TRACE_H) $(DEBUG_H) openglgfx.cc
 
-PARAMS_CC = $(PARAMS_H) $(APPLICATION_H) $(GRAPHICS_H) $(DEFS_H) \
+PARAMS_CC = $(PARAMS_H) $(APPLICATION_H) $(DEFS_H) $(GRAPHICS_H) \
 	$(TRACE_H) $(DEBUG_H) params.c
 
-STARBASEGFX_CC = $(STARBASEGFX_H) $(APPLICATION_H) $(APPLIC_H) \
-	$(PARAMS_H) $(TIMING_H) $(XSTUFF_H) $(TRACE_H) $(DEBUG_H) starbasegfx.cc
+STARBASEGFX_CC = $(STARBASEGFX_H) $(PARAMS_H) $(TIMING_H) \
+	$(XSTUFF_H) $(TRACE_H) $(DEBUG_H) starbasegfx.cc
 
 TIMING_CC = $(TIMING_H) $(APPLICATION_H) $(DEFS_H) $(PARAMS_H) \
 	$(DEBUG_H) $(TRACE_H) timing.c
