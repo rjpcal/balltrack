@@ -71,6 +71,8 @@ private:
   XStuff itsXStuff;
   GLXContext itsGLXContext;
 
+  bool itsUsingVsync;
+
   bool isItRecording;
 };
 

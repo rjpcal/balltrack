@@ -69,6 +69,7 @@ Graphics::Graphics(const char* winname,
   itsFrameTime(-1.0),
   itsXStuff(w, h),
   itsGLXContext(0),
+  itsUsingVsync(false),
   isItRecording(false)
 {
 DOTRACE("Graphics::Graphics");
@@ -109,6 +110,18 @@ DOTRACE("Graphics::Graphics");
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(0, width(), 0, height(), -1.0, 1.0);
+
+  const std::string extensions =
+    glXQueryExtensionsString(itsXStuff.display(),
+                             DefaultScreen(itsXStuff.display()));
+
+  std::cout << " glx extensions: " << extensions << '\n';
+
+  if (extensions.find("GLX_SGI_video_sync") != std::string::npos)
+    {
+      itsUsingVsync = true;
+      std::cout << " got GLX_SGI_video_sync extension\n";
+    }
 
   // forces the frame time to be computed and then cached
   frameTime();
@@ -173,10 +186,18 @@ void Graphics::swapBuffers()
 {
 DOTRACE("Graphics::swapBuffers");
   unsigned int counter = 0;
-  int r1 = glXGetVideoSyncSGI(&counter);
+  if (itsUsingVsync)
+    glXGetVideoSyncSGI(&counter);
+
   glXSwapBuffers(itsXStuff.display(), itsXStuff.window());
-  int r2 = glXWaitVideoSyncSGI(counter + 1, 0, &counter);
-  std::cout << counter << ' ' << r1 << ' ' << r2 << '\n';
+
+  if (itsUsingVsync)
+    glXWaitVideoSyncSGI(counter + 1, 0, &counter);
+  else
+    {
+      glXWaitX();
+      glXWaitGL();
+    }
 
   if (isItRecording)
     {
