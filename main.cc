@@ -15,10 +15,6 @@
 #include "graphics.h"
 #include "params.h"
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-
 int main(int argc, char** argv)
 {
   Params p(argc, argv);
@@ -31,8 +27,6 @@ int main(int argc, char** argv)
   BallsExpt theApp(gfx, p);
 
   theApp.run();
-
-  fprintf(stderr, "done\n");
 
   return 0;
 }

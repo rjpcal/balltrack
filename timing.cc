@@ -80,25 +80,6 @@ DOTRACE("Timer::wait");
   itsUsec = tp.tv_usec;
 }
 
-void Timer::logToFile(FILE* fl) const
-{
-DOTRACE("Timer::logToFile");
-
-  struct timeval  tp;
-  struct timezone tzp;
-
-  gettimeofday(&tp, &tzp);
-
-  long sec_stop    = tp.tv_sec;
-  long usec_stop  = tp.tv_usec;
-
-  double time_elapsed =
-         sec_stop - itsSec + (usec_stop - itsUsec)/1000000.0;
-
-  fprintf(fl, " %7.4lf\n", time_elapsed);
-  fflush(stdout);
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Timing member definitions
@@ -168,50 +149,6 @@ double response_time_stack_0;
 struct timeval response_timeval_0;
 
 double percent_correct = 0.0;
-
-namespace
-{
-  void log_reactions(FILE* f)
-  {
-    fprintf(f,  " reaction times:\n");
-    for (int i=1; i<STIMULUSSTACKSIZE; ++i)
-      fprintf(f, " %d %.0lf\n", i, reaction_stack[i].time);
-    fprintf(f, " \n\n");
-
-    fprintf(f,  " reaction correct?:\n");
-    for (int j=1; j<STIMULUSSTACKSIZE; ++j)
-      fprintf(f, " %d %d\n", j, int(reaction_stack[j].correct));
-    fprintf(f, " \n");
-
-    fprintf(f, " percent correct: %d\n\n", int(percent_correct));
-  }
-
-  void log_reactions(ParamFile& f)
-  {
-    char buf[512];
-
-    f.putLine(" reaction times:");
-    for (int i=1; i<STIMULUSSTACKSIZE; ++i)
-      {
-        snprintf(buf, 512, " %d %.0lf", i, reaction_stack[i].time);
-        f.putLine(buf);
-      }
-    f.putLine("");
-    f.putLine("");
-
-    f.putLine(" reaction correct?:");
-    for (int j=1; j<STIMULUSSTACKSIZE; ++j)
-      {
-        snprintf(buf, 512, " %d %d", j, int(reaction_stack[j].correct));
-        f.putLine(buf);
-      }
-    f.putLine("");
-
-    snprintf(buf, 512, " percent correct: %d", int(percent_correct));
-    f.putLine(buf);
-    f.putLine("");
-  }
-}
 
 void Timing::initTimeStack(double xtime, timeval* tp)
 {
@@ -351,8 +288,30 @@ DOTRACE("Timing::tallyReactionTime");
 
   percent_correct = (100.0 * number_correct) / total_stims;
 
-  log_reactions(stdout);
-  log_reactions(f);
+  // write reactions to the log file
+
+  char buf[512];
+
+  f.putLine(" reaction times:");
+  for (int i=1; i<STIMULUSSTACKSIZE; ++i)
+    {
+      snprintf(buf, 512, " %d %.0lf", i, reaction_stack[i].time);
+      f.putLine(buf);
+    }
+  f.putLine("");
+  f.putLine("");
+
+  f.putLine(" reaction correct?:");
+  for (int j=1; j<STIMULUSSTACKSIZE; ++j)
+    {
+      snprintf(buf, 512, " %d %d", j, int(reaction_stack[j].correct));
+      f.putLine(buf);
+    }
+  f.putLine("");
+
+  snprintf(buf, 512, " percent correct: %d", int(percent_correct));
+  f.putLine(buf);
+  f.putLine("");
 }
 
 double Timing::recentPercentCorrect()

@@ -22,7 +22,6 @@ class Timer
 public:
   void set();
   void wait(double delay_seconds);
-  void logToFile(FILE* fl) const;
 
 private:
   double itsSec;

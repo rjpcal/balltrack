@@ -24,6 +24,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 #include <string>
 
 #define LOCAL_PROF
@@ -93,8 +94,8 @@ DOTRACE("Graphics::Graphics");
 
   if (itsGLXContext == 0)
     {
-      fprintf(stdout,"Couldn't get an OpenGL graphics context.\n");
-      exit(-1);
+      std::cout << "Couldn't get an OpenGL graphics context.\n";
+      exit(1);
     }
 
   glPixelStorei(GL_PACK_ALIGNMENT, 4);

@@ -16,6 +16,7 @@
 #include <cstring>              // for strncpy
 #include <cstdlib>              // for getenv
 #include <cstdio>
+#include <iostream>
 #include <X11/keysym.h>
 
 #include "trace.h"
@@ -36,7 +37,7 @@ namespace
         ONE_CASE(DirectColor);
 #undef ONE_CASE
       }
-    fprintf(stderr, "unknown visual class %d\n", c_class);
+    std::cerr << "unknown visual class " << c_class << "\n";
     exit(1);
   }
 }
@@ -61,9 +62,10 @@ DOTRACE("XStuff::XStuff");
   if (itsDisplay == 0)
     {
       if (getenv("DISPLAY") == 0)
-        fprintf(stdout, "You need to set the DISPLAY env var\n");
+        std::cerr << "You need to set the DISPLAY env var\n";
       else
-        fprintf(stdout, "Cannot open DISPLAY %s,\n", getenv("DISPLAY"));
+        std::cerr << "Cannot open DISPLAY "
+                  << getenv("DISPLAY") << "\n";
       exit(1);
     }
 
@@ -84,7 +86,7 @@ DOTRACE("XStuff::openWindow");
 
   if (vinfo == 0)
     {
-      fprintf(stderr, "XVisualInfo* was null in openWindow()!\n");
+      std::cerr << "XVisualInfo* was null in openWindow()!\n";
       exit(1);
     }
 
@@ -132,12 +134,9 @@ DOTRACE("XStuff::openWindow");
   XSync(itsDisplay, False);
 
 
-  fprintf(stdout, " window with %s visual %d of depth %d\n",
-          visual_class_name(itsVisInfo.c_class),
-          itsVisInfo.visualid,
-          itsVisInfo.depth);
-
-  fflush(stdout);
+  std::cout << " window with " << visual_class_name(itsVisInfo.c_class)
+            << " visual " << itsVisInfo.visualid
+            << " of depth " << itsVisInfo.depth << std::endl;
 
   char temp_name[256];
   strncpy(temp_name, winname, 256);
