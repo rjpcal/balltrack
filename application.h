@@ -24,7 +24,12 @@ private:
   Application& operator=(const Application&);
 
 public:
-  Application(Graphics& x);
+
+  typedef void ExposeFunc(void*);
+  typedef bool KeyFunc(void*, char c);
+
+  Application(Graphics& x, void* cdata,
+              ExposeFunc* e, KeyFunc* k);
   virtual ~Application();
 
   void run();
@@ -33,17 +38,14 @@ public:
 
   char getKeystroke();
 
-protected:
-  virtual void onExpose() = 0;
-
-  // Return true if application should quit.
-  virtual bool onKey(char c) = 0;
-
 private:
   static char keyPressAction(XEvent* event);
   static void timeButtonEvent(XEvent* event);
 
   Graphics& itsGraphics;
+  void* itsCdata;
+  ExposeFunc* itsOnExpose;
+  KeyFunc* itsOnKey;
 };
 
 static const char vcid_application_h[] = "$Header$";

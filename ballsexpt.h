@@ -23,10 +23,10 @@ public:
   virtual ~BallsExpt();
 
 protected:
-  virtual void onExpose();
+  static void onExpose(void* cdata);
 
   // Returns true if application should quit
-  virtual bool onKey(char c);
+  static bool onKey(void* cdata, char c);
 
   void makeMenu();
 

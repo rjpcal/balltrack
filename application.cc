@@ -30,8 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-Application::Application(Graphics& x) :
-  itsGraphics(x)
+Application::Application(Graphics& x, void* cdata,
+                         ExposeFunc* e, KeyFunc* k) :
+  itsGraphics(x),
+  itsCdata(cdata),
+  itsOnExpose(e),
+  itsOnKey(k)
 {
 DOTRACE("Application::Application");
 
@@ -61,14 +65,14 @@ DOTRACE("Application::run");
         case Expose:
           if (event.xexpose.count == 0)
             if (event.xexpose.window == itsGraphics.window())
-              onExpose();
+              (*itsOnExpose)(itsCdata);
           break;
 
         case ButtonPress:
           if (event.xbutton.button == Button3)
             return;
           else
-            onExpose();
+            (*itsOnExpose)(itsCdata);
           break;
 
         case KeyPress:
@@ -78,7 +82,7 @@ DOTRACE("Application::run");
               Timing::mainTimer.set();
 
               char key = keyPressAction(&event);
-              if (onKey(key) == true)
+              if ((*itsOnKey)(itsCdata, key) == true)
                 return;
             }
           break;
@@ -105,6 +109,27 @@ DOTRACE("Application::buttonPressLoop");
         }
     }
 }
+
+char Application::getKeystroke()
+{
+DOTRACE("Application::getKeystroke");
+
+  return itsGraphics.getKeypress();
+}
+
+// void Application::exposeCallback(void* cdata)
+// {
+// DOTRACE("Application::exposeCallback");
+//   Application* p = static_cast<Application*>(cdata);
+//   p->onExpose();
+// }
+
+// bool Application::keyCallback(void* cdata, char c)
+// {
+// DOTRACE("Application::keyCallback");
+//   Application* p = static_cast<Application*>(cdata);
+//   return p->onKey(c);
+// }
 
 char Application::keyPressAction(XEvent* event)
 {
@@ -185,13 +210,6 @@ DOTRACE("Application::timeButtonEvent");
                                  long(event->xkey.time) /* usec */,
                                  nbutton);
     }
-}
-
-char Application::getKeystroke()
-{
-DOTRACE("Application::getKeystroke");
-
-  return itsGraphics.getKeypress();
 }
 
 static const char vcid_application_cc[] = "$Header$";

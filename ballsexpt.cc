@@ -76,7 +76,7 @@ struct BallsExpt::Impl
 };
 
 BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
-  Application(gfx),
+  Application(gfx, static_cast<void*>(this), &onExpose, &onKey),
   rep(new Impl(p, gfx))
 {
 DOTRACE("BallsExpt::BallsExpt");
@@ -93,16 +93,18 @@ DOTRACE("BallsExpt::~BallsExpt");
   delete rep;
 }
 
-void BallsExpt::onExpose()
+void BallsExpt::onExpose(void* cdata)
 {
 DOTRACE("BallsExpt::onExpose");
 
-  makeMenu();
+  BallsExpt* p = static_cast<BallsExpt*>(cdata);
+  p->makeMenu();
 }
 
-bool BallsExpt::onKey(char c)
+bool BallsExpt::onKey(void* cdata, char c)
 {
 DOTRACE("BallsExpt::onKey");
+  BallsExpt* p = static_cast<BallsExpt*>(cdata);
   switch (c)
     {
     case 'q':
@@ -110,28 +112,28 @@ DOTRACE("BallsExpt::onKey");
       break;
 
     case 'r':
-      runExperiment();
-      makeMenu();
+      p->runExperiment();
+      p->makeMenu();
       break;
 
     case 'x':
-      rep->params.setGroup1(rep->gfx);
+      p->rep->params.setGroup1(p->rep->gfx);
       break;
 
     case 'y':
-      rep->params.setGroup2(rep->gfx);
+      p->rep->params.setGroup2(p->rep->gfx);
       break;
 
     case 'z':
-      rep->params.setGroup3(rep->gfx);
+      p->rep->params.setGroup3(p->rep->gfx);
       break;
 
     case 'p':
-      rep->params.showSettings(rep->gfx);
+      p->rep->params.showSettings(p->rep->gfx);
       break;
 
     default:
-      makeMenu();
+      p->makeMenu();
       break;
     }
 
