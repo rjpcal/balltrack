@@ -20,6 +20,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <time.h>
@@ -67,7 +68,7 @@ struct BallsExpt::Impl
     percentCorrect(0.0)
   {}
 
-  void tallyReactionTime(ParamFile& f)
+  void tallyReactionTime(ParamFileOut& f)
   {
     double xtime;
     int nbutton;
@@ -304,16 +305,14 @@ DOTRACE("BallsExpt::runExperiment");
   rep->stimuli.clear();
   rep->stimuli.push_back(Stimulus(rep->stimTime0, 0));
 
-  ParamFile tmefile(rep->params.filestem, 'a', "tme");
+  ParamFileOut tmefile(rep->params.filestem, 'a', "tme");
 
   time_t t = time(0);
   char* p = ctime(&t);
 
-  tmefile.putLine("");
-  tmefile.putLine("");
+  tmefile.stream() << "\n\n";
   tmefile.putLine(p);
-  tmefile.putLine("");
-  tmefile.putLine("");
+  tmefile.stream() << "\n\n";
 
   rep->params.appendToFile(tmefile);
 

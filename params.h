@@ -17,15 +17,15 @@
 
 class Graphics;
 
-class ParamFile
+class ParamFileIn
 {
 private:
-  std::fstream* itsFstream;
+  std::ifstream* itsFstream;
 
 public:
-  ParamFile(const std::string& filebase, char mode,
-            const char* extension);
-  ~ParamFile();
+  ParamFileIn(const std::string& filebase, char mode,
+              const char* extension);
+  ~ParamFileIn();
 
   void getInt(int& var);
   void getDouble(double& var);
@@ -33,11 +33,26 @@ public:
 
   bool getLine(std::string& str);
 
+  std::ifstream& stream() { return *itsFstream; }
+};
+
+class ParamFileOut
+{
+private:
+  std::ofstream* itsFstream;
+
+public:
+  ParamFileOut(const std::string& filebase, char mode,
+               const char* extension);
+  ~ParamFileOut();
+
   void putInt(int var, const char* name);
   void putDouble(double var, const char* name);
   void putString(const std::string& str, const char* name);
 
   void putLine(const char* str);
+
+  std::ofstream& stream() { return *itsFstream; }
 };
 
 class Params
@@ -47,7 +62,7 @@ public:
 
   void readFromFile(Graphics& gfx, const char* extension);
   void writeToFile(const char* extension);
-  void appendToFile(ParamFile& pmfile);
+  void appendToFile(ParamFileOut& pmfile);
   void showSettings(Graphics& gfx);
 
   void setGroup1(Graphics& gfx);
