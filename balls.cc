@@ -28,8 +28,6 @@
 
 namespace
 {
-  const int VELOSCALE = 1000;
-
   std::vector<unsigned char> theirBallmap;
   std::vector<unsigned char> theirHimap;
 }
@@ -127,8 +125,8 @@ DOTRACE("Ball::randomVelocity");
   // Pick a random direction for the velocity
   float angle = TWOPI * drand48();
 
-  this->xvel = VELOSCALE * vel * cos(angle);
-  this->yvel = VELOSCALE * vel * sin(angle);
+  this->xvel = vel * cos(angle);
+  this->yvel = vel * sin(angle);
 }
 
 void Ball::nextPosition(int width, int height,
@@ -137,19 +135,19 @@ void Ball::nextPosition(int width, int height,
 {
 DOTRACE("Ball::nextPosition");
 
-  this->xnext = this->xpos + (this->xvel / VELOSCALE);
-  this->ynext = this->ypos + (this->yvel / VELOSCALE);
+  this->xnext = this->xpos + this->xvel;
+  this->ynext = this->ypos + this->yvel;
 
   if (this->xnext < xborder || this->xnext > width - xborder - arraysize)
     {
       this->xvel  = -this->xvel;
-      this->xnext = this->xpos + (this->xvel / VELOSCALE);
+      this->xnext = this->xpos + this->xvel;
     }
 
   if (this->ynext < yborder || this->ynext > height - yborder - arraysize)
     {
       this->yvel  = -this->yvel;
-      this->ynext = this->ypos + (this->yvel / VELOSCALE);
+      this->ynext = this->ypos + this->yvel;
     }
 }
 
@@ -202,11 +200,11 @@ DOTRACE("Ball::collide");
       other.yvel = fj * (voj * yo + vai * ya);
     }
 
-  this->xnext = this->xpos + (this->xvel / VELOSCALE);
-  this->ynext = this->ypos + (this->yvel / VELOSCALE);
+  this->xnext = this->xpos + this->xvel;
+  this->ynext = this->ypos + this->yvel;
 
-  other.xnext = other.xpos + (other.xvel / VELOSCALE);
-  other.ynext = other.ypos + (other.yvel / VELOSCALE);
+  other.xnext = other.xpos + other.xvel;
+  other.ynext = other.ypos + other.yvel;
 
 }
 
