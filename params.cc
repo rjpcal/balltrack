@@ -513,7 +513,7 @@ DOTRACE("Params::recompute");
 
   const double frametime = gfx.frameTime();
 
-  printf(" Video frame time %7.4lf ms\n", frametime);
+  std::cout << " Video frame time " << frametime << "ms\n";
 
   framesPerRemind = int(1000.0*(time_between_reminds-remindSeconds)
                         / frametime) - fudgeframes;
