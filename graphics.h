@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Wed Sep  3 14:00:59 2003
+// written: Wed Sep  3 16:07:58 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,8 @@
 
 #include "defs.h"
 
+class XStuff;
+
 class Graphics
 {
 public:
@@ -20,6 +22,8 @@ public:
 
   // Virtual destructor ensures proper destruction of base classes.
   virtual ~Graphics();
+
+  virtual XStuff& xstuff() const = 0;
 
   virtual void initWindow() = 0;
 

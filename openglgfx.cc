@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Wed Sep  3 14:19:41 2003
+// written: Wed Sep  3 14:47:57 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,10 +72,10 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-OpenglGfx::OpenglGfx(XStuff* xinfo, const XHints& hints,
+OpenglGfx::OpenglGfx(const XHints& hints,
                      int aWidth, int aHeight) :
   Graphics(aWidth, aHeight),
-  itsXStuff(xinfo),
+  itsXStuff(new XStuff(hints)),
   itsGLXContext(0),
   itsClearIndex(0),
   itsMovie(0),

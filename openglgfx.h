@@ -3,7 +3,7 @@
 // openglgfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:03:44 2000
-// written: Wed Sep  3 14:19:42 2003
+// written: Wed Sep  3 16:07:33 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,10 @@ class SimpleMovie;
 class OpenglGfx : public Graphics
 {
 public:
-  OpenglGfx(XStuff* xinfo, const XHints& hints, int aWidth, int aHeight);
+  OpenglGfx(const XHints& hints, int aWidth, int aHeight);
   virtual ~OpenglGfx();
+
+  virtual XStuff& xstuff() const { return *itsXStuff; }
 
   virtual void initWindow();
 

@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Wed Sep  3 14:19:40 2003
+// written: Wed Sep  3 14:48:37 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,9 +35,9 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-StarbaseGfx::StarbaseGfx(XStuff* xinfo, int aWidth, int aHeight) :
+StarbaseGfx::StarbaseGfx(const XHints& hints, int aWidth, int aHeight) :
   Graphics(aWidth, aHeight),
-  itsXStuff(xinfo),
+  itsXStuff(new XStuff(hints)),
   itsFildes(-1)
 {
 DOTRACE("StarbaseGfx::StarbaseGfx");

@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Wed Sep  3 14:19:41 2003
+// written: Wed Sep  3 16:07:41 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,15 @@
 
 class Application;
 
+class XHints;
 class XStuff;
 
 class StarbaseGfx : public Graphics
 {
 public:
-  StarbaseGfx(XStuff* xinfo, int aWidth, int aHeight);
+  StarbaseGfx(const XHints& hints, int aWidth, int aHeight);
+
+  virtual XStuff& xstuff() const { return *itsXStuff; }
 
   virtual void initWindow();
 

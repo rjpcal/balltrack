@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Wed Sep  3 14:19:40 2003
+// written: Wed Sep  3 16:06:45 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,11 +41,10 @@ Application::Application(const XHints& hints) :
   itsArgv(hints.argv()),
   itsWidth(hints.width()),
   itsHeight(hints.height()),
-  itsXStuff(new XStuff(hints)),
 #if defined(HP9000S700)
-  itsGraphics(new StarbaseGfx(itsXStuff, itsWidth, itsHeight))
+  itsGraphics(new StarbaseGfx(hints, itsWidth, itsHeight))
 #elif defined(IRIX6) || defined(I686)
-  itsGraphics(new OpenglGfx(itsXStuff, hints, itsWidth, itsHeight))
+  itsGraphics(new OpenglGfx(hints, itsWidth, itsHeight))
 #else
 #  error No architecture macro.
 #endif
@@ -54,9 +53,9 @@ DOTRACE("Application::Application");
 
   whoAreYou();
 
-  itsXStuff->openWindow(hints);
-  itsXStuff->mapWindow(hints.name());
-  itsXStuff->printWindowInfo();
+  itsGraphics->xstuff().openWindow(hints);
+  itsGraphics->xstuff().mapWindow(hints.name());
+  itsGraphics->xstuff().printWindowInfo();
 
   itsGraphics->initWindow();
 
@@ -83,7 +82,6 @@ DOTRACE("Application::whoAreYou");
 Application::~Application()
 {
 DOTRACE("Application::~Application");
-  delete itsXStuff;
   delete itsGraphics;
 }
 
@@ -95,28 +93,28 @@ DOTRACE("Application::run");
 
   while( True )
     {
-      XNextEvent( itsXStuff->display(), &event );
+      XNextEvent( itsGraphics->xstuff().display(), &event );
 
       switch( event.type )
         {
         case Expose:
           if ( event.xexpose.count == 0 )
-            if( event.xexpose.window == itsXStuff->window() )
+            if( event.xexpose.window == itsGraphics->xstuff().window() )
               onExpose();
           break;
 
         case ClientMessage:
 
           if ( ( Atom )event.xclient.data.l[0] ==
-               XInternAtom( itsXStuff->display(), "WM_DELETE_WINDOW", False ) )
+               XInternAtom( itsGraphics->xstuff().display(), "WM_DELETE_WINDOW", False ) )
             {
               return;
             }
 
           else if ( ( Atom )event.xclient.data.l[0] ==
-                    XInternAtom( itsXStuff->display(), "WM_SAVE_YOURSELF", False ) )
+                    XInternAtom( itsGraphics->xstuff().display(), "WM_SAVE_YOURSELF", False ) )
             {
-              XSetCommand( itsXStuff->display(), itsXStuff->window(),
+              XSetCommand( itsGraphics->xstuff().display(), itsGraphics->xstuff().window(),
                            itsArgv, itsArgc );
             }
           break;
@@ -129,7 +127,7 @@ DOTRACE("Application::run");
           break;
 
         case KeyPress:
-          if ( event.xkey.window == itsXStuff->window() )
+          if ( event.xkey.window == itsGraphics->xstuff().window() )
             {
               Timing::logTimer.set();
               Timing::mainTimer.set();
@@ -150,7 +148,7 @@ DOTRACE("Application::quit");
 
   wrap();
 
-  itsXStuff->wrapX();
+  itsGraphics->xstuff().wrapX();
 
   exit(code);
 }
@@ -161,12 +159,12 @@ DOTRACE("Application::buttonPressLoop");
 
   XEvent event;
 
-  while( XCheckMaskEvent( itsXStuff->display(),
+  while( XCheckMaskEvent( itsGraphics->xstuff().display(),
                           ButtonPressMask | KeyPressMask,
                           &event ) )
     {
       if( ((event.type == ButtonPress) || (event.type == KeyPress))
-//           && event.xbutton.window == itsXStuff->window()
+//           && event.xbutton.window == itsGraphics->xstuff().window()
           )
         {
           timeButtonEvent( &event );
@@ -261,9 +259,9 @@ DOTRACE("Application::getKeystroke");
   while( true )
     {
       XEvent event;
-      XNextEvent( itsXStuff->display(), &event );
+      XNextEvent( itsGraphics->xstuff().display(), &event );
 
-      if( event.type != KeyPress || event.xkey.window != itsXStuff->window() )
+      if( event.type != KeyPress || event.xkey.window != itsGraphics->xstuff().window() )
         continue;
 
       KeySym keysym;
@@ -297,7 +295,7 @@ DOTRACE("Application::getKeystroke");
 void Application::ringBell(int duration)
 {
 DOTRACE("Application::ringBell");
-  XBell( itsXStuff->display(), duration );
+  XBell( itsGraphics->xstuff().display(), duration );
 }
 
 void Application::wrap()
