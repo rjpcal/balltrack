@@ -342,7 +342,7 @@ void Balls::runTrial(Graphics& gfx, std::vector<Stimulus>& stimuli,
 {
 DOTRACE("Balls::runTrial");
 
-  Timer timer;
+  CountdownTimer timer;
 
   timer.reset();
 
@@ -402,9 +402,9 @@ DOTRACE("Balls::runTrial");
 
   for (int i=0; i<itsParams.remindsPerEpoch; ++i)
     {
-      const timeval tstart = Timing::now();
+      CountdownTimer tstart;
 
-      timeval t0 = tstart;
+      CountdownTimer t0 = tstart;
 
       // Here's the main loop where the balls are moving randomly
       int nframes = 0;
@@ -417,26 +417,17 @@ DOTRACE("Balls::runTrial");
           gfx.drawCross();
           gfx.swapBuffers();
 
-          timeval t1 = Timing::now();
-
-          // amount of time lapsed in the previous frame
-          const double lapsed_sec = Timing::elapsedMsec(t0, t1)/1000.0;
+          const double lapsed_sec = t0.elapsedMsecAndReset()/1000.0;
 
           pickNextPositions(gfx, lapsed_sec);
 
           // amount of time lapsed in the entire motion sequence so far
-          const double total_lapsed_sec =
-            Timing::elapsedMsec(tstart, t1)/1000.0;
 
-          if (total_lapsed_sec >= itsParams.ballMotionSeconds())
+          if (tstart.elapsedMsec()/1000.0 >= itsParams.ballMotionSeconds())
             break;
-
-          t0 = t1;
         }
 
-      const timeval tstop = Timing::now();
-
-      const double lapse = Timing::elapsedMsec(tstart, tstop);
+      const double lapse = tstart.elapsedMsec();
 
       std::cout << " " << nframes << " frames in "
                 << lapse << " msec ("

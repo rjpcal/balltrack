@@ -19,7 +19,7 @@
 #include <GL/glx.h>
 
 class XStuff;
-class Timer;
+class CountdownTimer;
 
 class Graphics
 {
@@ -36,7 +36,7 @@ public:
 
   // This gives a hook to allow movie frames to be recorded during the
   // delay
-  void gfxWait(Timer& t, double delaySeconds);
+  void gfxWait(CountdownTimer& t, double delaySeconds);
 
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }

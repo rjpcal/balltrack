@@ -14,22 +14,26 @@
 
 #include <sys/time.h>
 
-class Timer
-{
-public:
-  void reset();
-  void wait(double delay_seconds);
-
-private:
-  double itsSec;
-  double itsUsec;
-};
-
 namespace Timing
 {
   timeval now();
   double elapsedMsec(const timeval& tp0, const timeval& tp1);
 }
+
+class CountdownTimer
+{
+public:
+  CountdownTimer() { reset(); }
+
+  void reset();
+
+  double elapsedMsec() const;
+
+  double elapsedMsecAndReset();
+
+private:
+  timeval itsStartTime;
+};
 
 static const char vcid_timing_h[] = "$Header$";
 #endif // !TIMING_H_DEFINED

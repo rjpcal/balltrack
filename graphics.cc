@@ -25,6 +25,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <unistd.h>
 
 #define LOCAL_PROF
 #include "trace.h"
@@ -144,22 +145,12 @@ DOTRACE("Graphics::~Graphics");
   glXDestroyContext(itsXStuff.display(), itsGLXContext);
 }
 
-void Graphics::gfxWait(Timer& t, double delaySeconds)
+void Graphics::gfxWait(CountdownTimer& t, double delaySeconds)
 {
 DOTRACE("Graphics::gfxWait");
-  if (isItRecording)
+  while (t.elapsedMsec() < 1000*delaySeconds)
     {
-#if 0
-      int nframes = int(delaySeconds * itsMovie->frameRate());
-
-      // Repeat frames of whatever was most recently appended
-      for (int i = 0; i < nframes; ++i)
-        itsMovie->appendTempBuffer();
-#endif
-    }
-  else
-    {
-      t.wait(delaySeconds);
+      usleep(1000);
     }
 }
 
