@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Tue Jun 13 14:58:54 2000
+// written: Wed Feb 28 14:38:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ DOTRACE("BallsExpt::runFixationCalibration");
 		graphics()->drawCross(x[seq[i]], y[seq[i]]);
 		graphics()->swapBuffers();
 		Timing::mainTimer.set();
-		Timing::mainTimer.wait( 1.0 );
+		graphics()->gfxWait( 1.0 );
 	 }
 }
 
@@ -174,7 +174,7 @@ DOTRACE("BallsExpt::runExperiment");
 
   Timing::mainTimer.set();
   Timing::getTime( &itsImpl->itsTimePoints[0] );
-  Timing::mainTimer.wait( WAIT_DURATION );
+  graphics()->gfxWait( WAIT_DURATION );
 
   itsImpl->itsTpIndex = 1;
 
@@ -201,6 +201,9 @@ DOTRACE("BallsExpt::runExperiment");
 
 void BallsExpt::runFmriExpt() {
 DOTRACE("BallsExpt::runFmriExpt");
+
+  if (MAKING_MOVIE)
+	 graphics()->startRecording();
 
   for (int trial = 0; trial < NUM_TRIALS; ++trial)
 	 {
@@ -241,9 +244,13 @@ DOTRACE("BallsExpt::runFmriExpt");
 
 			 Timing::mainTimer.set();
 			 Timing::getTime( &itsImpl->itsTimePoints[itsImpl->itsTpIndex++] );
-			 Timing::mainTimer.wait( WAIT_DURATION );
+			 graphics()->gfxWait( WAIT_DURATION );
 		  }
 	 }
+
+
+  if (MAKING_MOVIE)
+	 graphics()->stopRecording();
 }
 
 void BallsExpt::runEyeTrackingExpt() {

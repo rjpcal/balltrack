@@ -3,7 +3,7 @@
 // main.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 12:27:11 2000
-// written: Fri Jun 23 17:51:35 2000
+// written: Wed Feb 28 12:36:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,18 @@ const bool USE_RGBA = true;
 #  error No architecture macro.
 #endif
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// main function
+//
+// Although there's some ugly hackery in using the compile-time macros
+// to determine the application mode, the macros are only tested in
+// this main file, and are used to set (global) variables
+// accordingly. This limits the amount of ifdef'ing that is needed.
+//
+///////////////////////////////////////////////////////////////////////
+
 int main( int argc, char** argv ) {
 
 #if defined(MODE_TRAINING)
@@ -55,6 +67,10 @@ int main( int argc, char** argv ) {
   APPLICATION_MODE = FMRI_SESSION;
 #else
 #  error No application mode macro.
+#endif
+
+#if defined(MAKE_MOVIE)
+  MAKING_MOVIE = true;
 #endif
 
   XHints hints;
