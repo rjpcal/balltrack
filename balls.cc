@@ -482,7 +482,7 @@ DOTRACE("Balls::runTrial");
           gfx.swapBuffers();
 
           gfx.gfxWait(timer, itsParams.remindSeconds / 2.0);
-      }
+        }
       else
         {
           gfx.gfxWait(timer, itsParams.remindSeconds);
