@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Thu Dec  7 14:41:34 2000
+// written: Wed Feb 28 15:03:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 
 #include "glfont.h"
 #include "params.h"
+#include "simplemovie.h"
 #include "timing.h"
 #include "xhints.h"
 #include "xstuff.h"
@@ -36,7 +37,7 @@ namespace {
 
 	 unsigned int listbase = GLFont::getStrokeFontListBase();
 
-	 double x_scale = char_width/4.0;
+	 double x_scale = char_width/5.0;
 	 double y_scale = char_height/6.0;
 
 	 if (rgba)
@@ -73,7 +74,9 @@ OpenglGfx::OpenglGfx(XStuff* xinfo, const XHints& hints,
   Graphics(aWidth, aHeight),
   itsXStuff(xinfo),
   itsGLXContext(0),
-  itsClearIndex(0)
+  itsClearIndex(0),
+  itsMovie(0),
+  itsIsRecording(false)
 {
 DOTRACE("OpenglGfx::OpenglGfx");
   std::vector<int> attribList;
@@ -101,6 +104,10 @@ DOTRACE("OpenglGfx::OpenglGfx");
 		fprintf( stdout,"Couldn't get an OpenGL graphics context.\n" );
 		exit( -1 );
     }
+}
+
+OpenglGfx::~OpenglGfx() {
+  delete itsMovie;
 }
 
 void OpenglGfx::initWindow() {
@@ -174,6 +181,38 @@ DOTRACE("OpenglGfx::swapBuffers");
   glXSwapBuffers(itsXStuff->display(), itsXStuff->window());
   glXWaitGL();
   glXWaitX();
+
+  if (itsMovie && itsIsRecording) {
+	 static int f = 0;
+	 ++f;
+
+	 glReadBuffer( GL_FRONT );
+	 glReadPixels( (width()-itsMovie->width()) / 2,
+						(height()-itsMovie->height()) / 2,
+						itsMovie->width(),
+						itsMovie->height(),
+						GL_RGBA,
+						GL_UNSIGNED_BYTE,
+						itsMovie->tempFrameBuffer() );
+
+	 unsigned int* buf = (unsigned int*) itsMovie->tempFrameBuffer();
+
+	 for (int i = 0; i < itsMovie->frameSize()/4; ++i)
+		{
+		  unsigned int reformat = 0;
+
+		  reformat |= (buf[i] & 0xff000000) >> 24;
+		  reformat |= (buf[i] & 0x00ff0000) >> 8;
+		  reformat |= (buf[i] & 0x0000ff00) << 8;
+
+		  buf[i] = reformat;
+		}
+
+	 itsMovie->appendTempBuffer();
+
+//  	 if (f > 90)
+//  		exit(1);
+  }
 }
 
 void OpenglGfx::waitFrameCount(int number) {
@@ -187,9 +226,23 @@ DOTRACE("OpenglGfx::drawMessage");
 
   writeUpperPlanes();
 
+  int nchars = 0;
+
+  char* p = &word[0];
+  while (*p) { ++p; ++nchars; }
+
+  int availWidth = 0.8 * width();
+
+  if (itsMovie && itsIsRecording) {
+	 availWidth = itsMovie->width();
+  }
+
+  int charWidth = availWidth / nchars;
+  int charHeight = int (charWidth * 1.4);
+
   drawGLText(word, 4,
-				 width()/2 - 500, height()/2-100,
-				 140, 250,
+				 (width()-availWidth)/2, (height()-charHeight)/2,
+				 charWidth, charHeight,
 				 isRgba());
 
   writeLowerPlanes();
@@ -277,7 +330,7 @@ DOTRACE("OpenglGfx::showMenu");
   glFlush();
   glXSwapBuffers(itsXStuff->display(), itsXStuff->window());
 
-  int char_width = 13;
+  int char_width = 16;
   int char_height = 25;
 
   for( int i=0; i<nmenu; i++ )
@@ -329,6 +382,34 @@ DOTRACE("OpenglGfx::writeTrueColorMap");
   glDrawPixels(size, size, GL_RGBA, GL_UNSIGNED_BYTE, ptr);
 }
 
+void OpenglGfx::startRecording() {
+DOTRACE("OpenglGfx::startRecording");
+
+  if (MAKING_MOVIE && (itsMovie == 0))
+	 itsMovie = new SimpleMovie("ballmovie.mov", MV_FORMAT_QT,
+  										 DISPLAY_X, DISPLAY_Y);
+
+  itsIsRecording = true;
+}
+
+void OpenglGfx::stopRecording() {
+DOTRACE("OpenglGfx::stopRecording");
+  itsIsRecording = false;
+}
+
+void OpenglGfx::gfxWait(double delaySeconds) {
+DOTRACE("OpenglGfx::gfxWait");
+  if (itsMovie && itsIsRecording) {
+	 int nframes = delaySeconds * itsMovie->frameRate();
+
+	 // Repeat frames of whatever was most recently appended
+	 for (int i = 0; i < nframes; ++i)
+		itsMovie->appendTempBuffer();
+  }
+  else {
+	 Graphics::gfxWait(delaySeconds);
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
