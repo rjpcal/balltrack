@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:37:03 2000
-// written: Tue Feb  1 16:37:11 2000
+// written: Wed Feb 23 08:19:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,6 @@
 #define RAD2DEG  (360./TWOPI)
 
 #define STRINGSIZE      100
-
-#define VELOSCALE      1000
 
 static const char vcid_defs_h[] = "$Header$";
 #endif // !DEFS_H_DEFINED
