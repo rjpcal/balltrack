@@ -3,7 +3,7 @@
 // ballsexpt.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:20 2000
-// written: Tue Mar  6 17:31:14 2001
+// written: Wed Sep  3 14:19:42 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,8 @@
 #include "menuapp.h"
 #endif
 
-class BallsExpt : public MenuApplication {
+class BallsExpt : public MenuApplication
+{
 public:
   BallsExpt(const XHints& hints);
   virtual ~BallsExpt();

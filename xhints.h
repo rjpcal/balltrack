@@ -3,7 +3,7 @@
 // xhints.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Feb 25 13:11:45 2000
-// written: Fri Feb 25 14:15:56 2000
+// written: Wed Sep  3 14:19:41 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,17 +11,18 @@
 #ifndef XHINTS_H_DEFINED
 #define XHINTS_H_DEFINED
 
-class XHints {
+class XHints
+{
 public:
   XHints() :
-	 itsName("xstuff"),
-	 itsWidth(1280),
-	 itsHeight(1024),
-	 itsDepth(8),
-	 itsVisualClass("PseudoColor"),
-	 itsPrivateCmap(false),
-	 itsDoubleBuffer(false),
-	 itsRgba(false)
+         itsName("xstuff"),
+         itsWidth(1280),
+         itsHeight(1024),
+         itsDepth(8),
+         itsVisualClass("PseudoColor"),
+         itsPrivateCmap(false),
+         itsDoubleBuffer(false),
+         itsRgba(false)
   {}
 
   XHints& argc(int hint) { itsArgc = hint; return* this; }

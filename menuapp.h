@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:55:05 2000
-// written: Tue Jun 13 14:47:32 2000
+// written: Wed Sep  3 14:19:42 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,8 @@
 #include "defs.h"
 #endif
 
-class MenuApplication : public Application {
+class MenuApplication : public Application
+{
 public:
   MenuApplication(const XHints& hints);
   virtual ~MenuApplication();

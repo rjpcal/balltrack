@@ -3,7 +3,7 @@
 // xstuff.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:55 2000
-// written: Wed Sep  3 12:56:28 2003
+// written: Wed Sep  3 14:19:40 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,15 +24,17 @@
 #include "trace.h"
 #include "debug.h"
 
-class VisualClass {
+class VisualClass
+{
 public:
   VisualClass(int class_id) : itsId(class_id), itsName("")
     {
       for (int i = 0; i < 6; ++i)
-        if ( ids[i] == itsId ) {
-          itsName = names[i];
-          break;
-        }
+        if ( ids[i] == itsId )
+          {
+            itsName = names[i];
+            break;
+          }
     }
 
   bool matches(int class_id)
@@ -52,7 +54,8 @@ private:
   static const char* const names[];
 };
 
-const int VisualClass::ids[] = {
+const int VisualClass::ids[] =
+{
   StaticGray,
   GrayScale,
   StaticColor,
@@ -61,7 +64,8 @@ const int VisualClass::ids[] = {
   DirectColor,
 };
 
-const char* const VisualClass::names[] = {
+const char* const VisualClass::names[] =
+{
   "StaticGray",
   "GrayScale",
   "StaticColor",
@@ -87,15 +91,18 @@ DOTRACE("XStuff::XStuff");
   openDisplay();
 }
 
-void XStuff::setPrefVisInfo(const XVisualInfo* vinfo) {
+void XStuff::setPrefVisInfo(const XVisualInfo* vinfo)
+{
 DOTRACE("XStuff::setPrefVisInfo");
-  if (vinfo != 0) {
-    itsPrefVisInfo = *vinfo;
-    itsHasPrefVisInfo = true;
-  }
+  if (vinfo != 0)
+    {
+      itsPrefVisInfo = *vinfo;
+      itsHasPrefVisInfo = true;
+    }
 }
 
-void XStuff::openWindow(const XHints& hints) {
+void XStuff::openWindow(const XHints& hints)
+{
 DOTRACE("XStuff::openWindow");
   createVisual(hints);
   createColormap(hints);
@@ -103,7 +110,8 @@ DOTRACE("XStuff::openWindow");
   selectInput();
 }
 
-void XStuff::openDisplay() {
+void XStuff::openDisplay()
+{
 DOTRACE("XStuff::openDisplay");
 
   itsDisplay = XOpenDisplay( NULL );
@@ -120,54 +128,60 @@ DOTRACE("XStuff::openDisplay");
   itsScreen = DefaultScreen( itsDisplay );
 }
 
-void XStuff::createVisual(const XHints& hints) {
+void XStuff::createVisual(const XHints& hints)
+{
 DOTRACE("XStuff::createVisual");
 
-  if ( !itsHasPrefVisInfo ) {
-    XVisualInfo vtemp;
-    vtemp.screen = itsScreen;
-    vtemp.depth    = hints.depth();
+  if ( !itsHasPrefVisInfo )
+    {
+      XVisualInfo vtemp;
+      vtemp.screen = itsScreen;
+      vtemp.depth    = hints.depth();
 
-    int vnumber;
+      int vnumber;
 
-    XVisualInfo* vlist = XGetVisualInfo( itsDisplay,
-                                         VisualScreenMask|VisualDepthMask,
-                                         &vtemp, &vnumber );
+      XVisualInfo* vlist = XGetVisualInfo( itsDisplay,
+                                           VisualScreenMask|VisualDepthMask,
+                                           &vtemp, &vnumber );
 
-    itsVisInfo = vlist[0];
+      itsVisInfo = vlist[0];
 
-    for( int i=0; i<vnumber; i++ ) {
+      for( int i=0; i<vnumber; i++ )
+        {
+          VisualClass vclass(vlist[i].c_class);
 
-      VisualClass vclass(vlist[i].c_class);
+          fprintf( stdout, " %s visual %d of depth %d mapsize %d\n",
+                   vclass.name(),
+                   vlist[i].visualid,
+                   vlist[i].depth,
+                   vlist[i].colormap_size );
 
-      fprintf( stdout, " %s visual %d of depth %d mapsize %d\n",
-               vclass.name(),
-               vlist[i].visualid,
-               vlist[i].depth,
-               vlist[i].colormap_size );
-
-      if( vclass.matches(hints.visualClass()) ) {
-        itsVisInfo = vlist[i];
-        break;
-      }
+          if( vclass.matches(hints.visualClass()) )
+            {
+              itsVisInfo = vlist[i];
+              break;
+            }
+        }
     }
-  }
-  else {
-    itsVisInfo = itsPrefVisInfo;
-  }
+  else
+    {
+      itsVisInfo = itsPrefVisInfo;
+    }
 
   itsVisual = itsVisInfo.visual;
   itsDepth  = itsVisInfo.depth;
 }
 
-void XStuff::createColormap(const XHints& hints) {
+void XStuff::createColormap(const XHints& hints)
+{
 DOTRACE("XStuff::createColormap");
 
   int alloc = AllocNone;
 
-  if (hints.privateCmap()) {
-    alloc = AllocAll;
-  }
+  if (hints.privateCmap())
+    {
+      alloc = AllocAll;
+    }
 
   itsColormap =
     XCreateColormap( itsDisplay,
@@ -184,7 +198,8 @@ DOTRACE("XStuff::createColormap");
   XAllocColor( itsDisplay, itsColormap, &itsMeanColor );
 }
 
-void XStuff::createWindow(const char* name) {
+void XStuff::createWindow(const char* name)
+{
 DOTRACE("XStuff::createWindow");
 
   XSetWindowAttributes winAttributes;
@@ -216,7 +231,8 @@ DOTRACE("XStuff::createWindow");
   fclose( fp );
 }
 
-void XStuff::selectInput() {
+void XStuff::selectInput()
+{
 DOTRACE("XStuff::selectInput");
 
   XSelectInput( itsDisplay, itsWindow,
@@ -226,7 +242,8 @@ DOTRACE("XStuff::selectInput");
   XSync( itsDisplay, False );
 }
 
-void XStuff::setWmProperty(char* name) {
+void XStuff::setWmProperty(char* name)
+{
 DOTRACE("XStuff::setWmProperty");
 
   XClassHint* class_hint = XAllocClassHint(  );
@@ -260,7 +277,8 @@ DOTRACE("XStuff::setWmProperty");
                     size_hints, wm_hints, class_hint );
 }
 
-void XStuff::setWmProtocol() {
+void XStuff::setWmProtocol()
+{
 DOTRACE("XStuff::setWmProtocol");
 
   Atom wm_protocols[2];
@@ -270,7 +288,8 @@ DOTRACE("XStuff::setWmProtocol");
   XSetWMProtocols( itsDisplay, itsWindow, wm_protocols, 2 );
 }
 
-void XStuff::mapWindow(const char* name) {
+void XStuff::mapWindow(const char* name)
+{
 DOTRACE("XStuff::mapWindow");
 
   char temp_name[STRINGSIZE];
@@ -284,7 +303,8 @@ DOTRACE("XStuff::mapWindow");
   XMapWindow( itsDisplay, itsWindow );
 }
 
-void XStuff::printWindowInfo() {
+void XStuff::printWindowInfo()
+{
 DOTRACE("XStuff::printWindowInfo");
 
   int items;
@@ -297,7 +317,8 @@ DOTRACE("XStuff::printWindowInfo");
   fflush( stdout );
 }
 
-void XStuff::wrapX() {
+void XStuff::wrapX()
+{
 DOTRACE("XStuff::wrapX");
 
   XDestroyWindow( itsDisplay, itsWindow );
@@ -305,7 +326,8 @@ DOTRACE("XStuff::wrapX");
 }
 
 void XStuff::storeColor(unsigned int index,
-                        double red, double green, double blue) {
+                        double red, double green, double blue)
+{
 DOTRACE("XStuff::storeColor");
   XColor col;
   col.flags = DoRed | DoGreen | DoBlue;

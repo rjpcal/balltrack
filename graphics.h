@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Wed Sep  3 12:53:14 2003
+// written: Wed Sep  3 14:00:59 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,8 @@
 
 #include "defs.h"
 
-class Application;
-
-class XStuff;
-
-class Graphics {
+class Graphics
+{
 public:
   Graphics(int wid, int hgt);
 

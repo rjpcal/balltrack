@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Tue Feb 29 16:18:42 2000
+// written: Wed Sep  3 14:00:28 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,8 @@ class XStuff;
 
 class Graphics;
 
-class Application {
+class Application
+{
 private:
   Application(const Application&);
   Application& operator=(const Application&);
@@ -32,7 +33,7 @@ public:
 
   void run();
   void quit(int code);
-  
+
   void buttonPressLoop();
 
   char getKeystroke();

@@ -16,8 +16,8 @@
 
 #define MEANGREY                      127
 #define STRINGSIZE                    128
-#define DEPTH_HINT		      8
-#define VISUAL_CLASS		      "PseudoColor"
+#define DEPTH_HINT                    8
+#define VISUAL_CLASS                  "PseudoColor"
 
 static char *visual_class[]={
   "StaticGray",
@@ -38,8 +38,8 @@ XColor mean;
 GC gc;
 
 main( argc, argv )
-	  int argc;
-	  char **argv;
+          int argc;
+          char **argv;
 {
   width     = 50;
   height    = 50;
@@ -51,20 +51,20 @@ main( argc, argv )
 
   Create_colormap( display, screen, visual, &colormap, &mean );
 
-  Create_window( argc, argv, display, screen, visual, depth, colormap, 
-					  mean, &window, width, height, name );
+  Create_window( argc, argv, display, screen, visual, depth, colormap,
+                                          mean, &window, width, height, name );
 
   XSelectInput( display, window, ExposureMask|KeyPressMask );
 
   XSync( display, False );
 
   Map_image_window( argc, argv, display, window, width, height,
-						  name );
+                                                  name );
 
   EventLoop( argc, argv, display, screen, window );
 }
 
-/******
+#if 0
 main( argc, argv )
 int argc;
 char **argv;
@@ -77,80 +77,79 @@ char **argv;
     button_event.xbutton.type = ButtonPressMask;
     button_event.xbutton.display = display;
     button_event.xbutton.send_event = False;
-  
+
     key_event.xkey.type = KeyPressMask;
     key_event.xkey.display = display;
     key_event.xkey.send_event = False;
-  
+
     OpenSerial();
 
     while( 1 )
-    {
+      {
         ReadSerial( &crctr );
 
-	printf( "%c\n", crctr );
+        printf( "%c\n", crctr );
 
         XSendEvent( display, InputFocus, False, KeyPressMask, &key_event );
         XSendEvent( display, PointerWindow, False, KeyPressMask, &key_event );
         XSendEvent( display, InputFocus, False, ButtonPressMask, &button_event );
         XSendEvent( display, PointerWindow, False, ButtonPressMask, &button_event );
 
-    }
+      }
 
     CloseSerial();
 
 }
-*******/
+#endif
 
 OpenDisplay( display, screen )
-	  Display **display;
-	  int *screen;
+          Display **display;
+          int *screen;
 {
 
   *display = XOpenDisplay( NULL );
 
-  if ( *display == NULL ) 
+  if ( *display == NULL )
     {
-		if ( ( char * ) getenv( "DISPLAY" ) == ( char * ) NULL ) 
-		  fprintf( stdout,"You need to set the DISPLAY env var\n" );
-		else 
-		  fprintf( stdout,"Cannot open DISPLAY %s,\n",getenv( "DISPLAY" ) );
-		exit( -1 );
+      if ( ( char * ) getenv( "DISPLAY" ) == ( char * ) NULL )
+        fprintf( stdout,"You need to set the DISPLAY env var\n" );
+      else
+        fprintf( stdout,"Cannot open DISPLAY %s,\n",getenv( "DISPLAY" ) );
+      exit( -1 );
     }
 
   *screen = DefaultScreen( *display );
 }
 
-Create_visual( display, screen, visual, depth ) 
-	  Display *display;
-	  int screen;
-	  Visual **visual;
-	  int *depth;
+Create_visual( display, screen, visual, depth )
+          Display *display;
+          int screen;
+          Visual **visual;
+          int *depth;
 {
   int i, vnumber;
   XVisualInfo vtemp, *vlist;
 
   vtemp.screen = screen;
-  vtemp.depth	 = DEPTH_HINT;
-    
+  vtemp.depth    = DEPTH_HINT;
+
   vlist = XGetVisualInfo( display, VisualScreenMask|VisualDepthMask,
-								  &vtemp, &vnumber );
-    
+                                                                  &vtemp, &vnumber );
+
   for( i=0; i<vnumber; i++ )
     {
+      fprintf( stdout, " %s visual %d of depth %d mapsize %d\n",
+               visual_class[vlist[i].class],
+               vlist[i].visualid,
+               vlist[i].depth,
+               vlist[i].colormap_size );
 
-		fprintf( stdout, " %s visual %d of depth %d mapsize %d\n", 
-					visual_class[vlist[i].class], 
-					vlist[i].visualid, 
-					vlist[i].depth, 
-					vlist[i].colormap_size );
-
-		if( !strcmp( visual_class[vlist[i].class], VISUAL_CLASS ) )
-		  {
-			 *visual = vlist[i].visual;
-			 *depth  = vlist[i].depth;
-			 return;
-		  }
+      if( !strcmp( visual_class[vlist[i].class], VISUAL_CLASS ) )
+        {
+          *visual = vlist[i].visual;
+          *depth  = vlist[i].depth;
+          return;
+        }
     }
 
   *visual = vlist[0].visual;
@@ -158,60 +157,60 @@ Create_visual( display, screen, visual, depth )
 }
 
 Create_colormap( display, screen, visual, colormap, mean )
-	  Display *display;
-	  int screen;
-	  Visual *visual;
-	  Colormap *colormap;
-	  XColor *mean;
+          Display *display;
+          int screen;
+          Visual *visual;
+          Colormap *colormap;
+          XColor *mean;
 {
   *colormap = XCreateColormap( display, RootWindow( display, screen ),
-										 visual, AllocNone );
+                               visual, AllocNone );
 
   mean->flags = DoRed | DoGreen | DoBlue;
   mean->red = mean->green = mean->blue = ( unsigned long )(257*MEANGREY);
   XAllocColor( display, *colormap, mean );
 }
 
-Create_window( argc, argv, display, screen, visual, depth, colormap, mean, 
-					window, width, height, name )
-	  int argc, depth, screen, width, height;
-	  char **argv, *name;
-	  Display *display;
-	  Visual *visual;
-	  Colormap colormap;
-	  XColor mean;
-	  Window *window;
+Create_window( argc, argv, display, screen, visual, depth, colormap, mean,
+                                        window, width, height, name )
+          int argc, depth, screen, width, height;
+          char **argv, *name;
+          Display *display;
+          Visual *visual;
+          Colormap colormap;
+          XColor mean;
+          Window *window;
 {
   XSetWindowAttributes winAttributes;
-  XSizeHints	hints;
+  XSizeHints    hints;
 
   winAttributes.event_mask = ExposureMask;
   winAttributes.colormap   = colormap;
   winAttributes.background_pixel = mean.pixel;
   winAttributes.border_pixel = mean.pixel;
 
-  *window = XCreateWindow( display, 
-									RootWindow( display, screen ),
-									0, 0, width, height, 2,
-									depth, InputOutput, visual,
-									( CWBackPixel | CWColormap | CWBorderPixel | 
-									  CWEventMask ),
-									&winAttributes );
+  *window = XCreateWindow( display,
+                                                                        RootWindow( display, screen ),
+                                                                        0, 0, width, height, 2,
+                                                                        depth, InputOutput, visual,
+                                                                        ( CWBackPixel | CWColormap | CWBorderPixel |
+                                                                          CWEventMask ),
+                                                                        &winAttributes );
 
   hints.flags = ( USSize | USPosition );
   hints.x = 0;
   hints.y = 0;
-  hints.width	 = width;
+  hints.width    = width;
   hints.height = height;
   XSetStandardProperties( display, *window, name, name,
-								  None, argv, argc, &hints );
+                                                                  None, argv, argc, &hints );
 }
 
 Map_image_window( argc, argv, display, window, width, height, name )
-	  int argc, width, height;
-	  char **argv, *name;
-	  Display *display;
-	  Window window;
+          int argc, width, height;
+          char **argv, *name;
+          Display *display;
+          Window window;
 {
   char *device;
 
@@ -227,15 +226,15 @@ Map_image_window( argc, argv, display, window, width, height, name )
 }
 
 Set_wm_property( argc, argv, display, window, width, height, name )
-	  int argc, width, height;
-	  char **argv, *name;
-	  Display *display;
-	  Window window;
+          int argc, width, height;
+          char **argv, *name;
+          Display *display;
+          Window window;
 {
   char *list[1];
-  XSizeHints	  *size_hints;
-  XClassHint	  *class_hint;
-  XWMHints	  *wm_hints;
+  XSizeHints      *size_hints;
+  XClassHint      *class_hint;
+  XWMHints        *wm_hints;
   XTextProperty window_name, icon_name;
 
   class_hint = XAllocClassHint(  );
@@ -243,7 +242,7 @@ Set_wm_property( argc, argv, display, window, width, height, name )
   class_hint->res_class = "Test";
 
   size_hints = XAllocSizeHints(  );
-  size_hints->flags	  = USSize|PMinSize|PMaxSize;
+  size_hints->flags       = USSize|PMinSize|PMaxSize;
   size_hints->min_width = width;
   size_hints->max_width = width;
   size_hints->min_height= height;
@@ -255,17 +254,17 @@ Set_wm_property( argc, argv, display, window, width, height, name )
   list[0] = name;
   XStringListToTextProperty( list, 1, &icon_name );
 
-  wm_hints              = XAllocWMHints(	 );
-  wm_hints->flags	  = InputHint;
-  wm_hints->input	  = False;
+  wm_hints              = XAllocWMHints(         );
+  wm_hints->flags         = InputHint;
+  wm_hints->input         = False;
 
   XSetWMProperties( display, window, &window_name, &icon_name,
-						  argv, argc, size_hints, wm_hints, class_hint );
+                                                  argv, argc, size_hints, wm_hints, class_hint );
 }
 
 Set_wm_protocol( display, window )
-	  Display *display;
-	  Window window;
+          Display *display;
+          Window window;
 {
   Atom wm_protocols[2];
 
@@ -275,11 +274,11 @@ Set_wm_protocol( display, window )
 }
 
 EventLoop( argc, argv, display, screen, window )
-	  int argc;
-	  char **argv;
-	  Display *display;
-	  int screen;
-	  Window window;
+          int argc;
+          char **argv;
+          Display *display;
+          int screen;
+          Window window;
 {
   int n, stream;
   Window other_window;
@@ -293,32 +292,32 @@ EventLoop( argc, argv, display, screen, window )
 
   while( 1 )
     {
-		n = ReadSerial( stream );
+      n = ReadSerial( stream );
 
-		if( n >= 0 )
-		  {
-			 MakeKeyPressEvent( display, window, n, &key_event ); 
+      if( n >= 0 )
+        {
+          MakeKeyPressEvent( display, window, n, &key_event );
 
-			 XSendEvent( display, other_window, False, KeyPressMask, &key_event);
+          XSendEvent( display, other_window, False, KeyPressMask, &key_event);
 
-			 XSync( display, False ); 
-		  }
+          XSync( display, False );
+        }
     }
 
   CloseSerial();
-} 
+}
 
 GetOtherWindow( other_window )
-	  Window *other_window;
+          Window *other_window;
 {
   FILE *fp;
 
   if( ( fp = fopen( "wdwptr", "r" ) ) == NULL )
     {
-		printf( " cannot open file\n" );
-		exit();
+      printf( " cannot open file\n" );
+      exit();
     }
-   
+
   fscanf( fp, " %ld", other_window );
   printf( " window read %ld\n", *other_window );
 
@@ -326,10 +325,10 @@ GetOtherWindow( other_window )
 }
 
 MakeKeyPressEvent( display, window, keynumber, event )
-	  Display *display;
-	  Window window;
-	  XEvent *event;
-	  int keynumber;
+          Display *display;
+          Window window;
+          XEvent *event;
+          int keynumber;
 {
   struct timeval  tp;
   struct timezone tzp;
@@ -349,15 +348,15 @@ MakeKeyPressEvent( display, window, keynumber, event )
 }
 
 OpenSerial( stream )
-	  int *stream;
+          int *stream;
 {
   struct termios ti;
 
   if( ( *stream = open(SERDEV, O_RDONLY) ) == -1 )
-	 {
-      fprintf(stderr, "cannot open %s\n", SERDEV); 
+    {
+      fprintf(stderr, "cannot open %s\n", SERDEV);
       exit(0);
-	 }
+    }
 
   tcgetattr( *stream, &ti );
 
@@ -372,7 +371,7 @@ OpenSerial( stream )
 }
 
 int ReadSerial( stream )
-	  int stream;
+          int stream;
 {
   int i, n;
   char c[STRINGSIZE];
@@ -381,18 +380,18 @@ int ReadSerial( stream )
 
   for( i=0; i<n; i++ )
     {
-		if( 65 <= c[i] && c[i] <= 72 )
-		  {
-			 printf("c = %d\n", (int)c[i]);
-			 return( c[i] );
-		  }
+      if( 65 <= c[i] && c[i] <= 72 )
+        {
+          printf("c = %d\n", (int)c[i]);
+          return( c[i] );
+        }
     }
 
   return( -1 );
 }
 
 CloseSerial( stream )
-	  int stream;
+          int stream;
 {
   close(stream);
 }

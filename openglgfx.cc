@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Wed Sep  3 12:56:46 2003
+// written: Wed Sep  3 14:19:41 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,11 +29,13 @@
 #include "trace.h"
 #include "debug.h"
 
-namespace {
+namespace
+{
   void drawGLText(const char* word, int stroke_width,
                   int x_pos, int y_pos,
                   int char_width, int char_height,
-                  bool rgba) {
+                  bool rgba)
+  {
   DOTRACE("<openglgfx.cc>::drawGLText");
 
     unsigned int listbase = GLFont::getStrokeFontListBase();
@@ -137,15 +139,17 @@ DOTRACE("OpenglGfx::initWindow");
   // forces the frame time to be computed and then cached in the base class
   frameTime();
 
-  if (isDoubleBuffered()) {
-    clearBackBufferRegion(false);
-    swapBuffers();
-    clearBackBufferRegion(false);
-    swapBuffers();
-  }
-  else {
-    clearFrontBuffer();
-  }
+  if (isDoubleBuffered())
+    {
+      clearBackBufferRegion(false);
+      swapBuffers();
+      clearBackBufferRegion(false);
+      swapBuffers();
+    }
+  else
+    {
+      clearFrontBuffer();
+    }
 }
 
 void OpenglGfx::wrapGraphics()
@@ -159,7 +163,8 @@ bool OpenglGfx::isRgba()
 DOTRACE("OpenglGfx::isRgba");
 
   if (isItRgba == 0)
-    {
+
+{
       GLboolean is_rgba;
       glGetBooleanv(GL_RGBA_MODE, &is_rgba);
       isItRgba = new bool(is_rgba == GL_TRUE ? true : false);
@@ -172,7 +177,8 @@ bool OpenglGfx::isDoubleBuffered()
 DOTRACE("OpenglGfx::isDoubleBuffered");
 
   if (isItDoubleBuffered == 0)
-    {
+
+{
       GLboolean is_db;
       glGetBooleanv(GL_DOUBLEBUFFER, &is_db);
       isItDoubleBuffered = new bool(is_db == GL_TRUE ? true : false);
@@ -211,37 +217,38 @@ DOTRACE("OpenglGfx::swapBuffers");
   glXWaitGL();
   glXWaitX();
 
-  if (itsMovie && isItRecording) {
-    static int f = 0;
-    ++f;
+  if (itsMovie && isItRecording)
+    {
+      static int f = 0;
+      ++f;
 
-    glReadBuffer( GL_FRONT );
-    glReadPixels( (width()-itsMovie->width()) / 2,
-                  (height()-itsMovie->height()) / 2,
-                  itsMovie->width(),
-                  itsMovie->height(),
-                  GL_RGBA,
-                  GL_UNSIGNED_BYTE,
-                  itsMovie->tempFrameBuffer() );
+      glReadBuffer( GL_FRONT );
+      glReadPixels( (width()-itsMovie->width()) / 2,
+                    (height()-itsMovie->height()) / 2,
+                    itsMovie->width(),
+                    itsMovie->height(),
+                    GL_RGBA,
+                    GL_UNSIGNED_BYTE,
+                    itsMovie->tempFrameBuffer() );
 
-    unsigned int* buf = (unsigned int*) itsMovie->tempFrameBuffer();
+      unsigned int* buf = (unsigned int*) itsMovie->tempFrameBuffer();
 
-    for (unsigned int i = 0; i < itsMovie->frameSize()/4; ++i)
-      {
-        unsigned int reformat = 0;
+      for (unsigned int i = 0; i < itsMovie->frameSize()/4; ++i)
+        {
+          unsigned int reformat = 0;
 
-        reformat |= (buf[i] & 0xff000000) >> 24;
-        reformat |= (buf[i] & 0x00ff0000) >> 8;
-        reformat |= (buf[i] & 0x0000ff00) << 8;
+          reformat |= (buf[i] & 0xff000000) >> 24;
+          reformat |= (buf[i] & 0x00ff0000) >> 8;
+          reformat |= (buf[i] & 0x0000ff00) << 8;
 
-        buf[i] = reformat;
-      }
+          buf[i] = reformat;
+        }
 
-    itsMovie->appendTempBuffer();
+      itsMovie->appendTempBuffer();
 
 //     if (f > 90)
 //       exit(1);
-  }
+    }
 }
 
 void OpenglGfx::waitFrameCount(int number)
@@ -323,9 +330,10 @@ void OpenglGfx::loadColormap(float colors[][3], int ncolors)
 DOTRACE("OpenglGfx::loadColormap");
 
   waitVerticalRetrace();
-  for (int i = 0; i < ncolors; ++i) {
-    itsXStuff->storeColor(i, colors[i][0], colors[i][1], colors[i][2]);
-  }
+  for (int i = 0; i < ncolors; ++i)
+    {
+      itsXStuff->storeColor(i, colors[i][0], colors[i][1], colors[i][2]);
+    }
 }
 
 void OpenglGfx::clearFrontBuffer()
@@ -339,18 +347,20 @@ void OpenglGfx::clearBackBufferRegion(bool use_scissor)
 {
 DOTRACE("OpenglGfx::clearBackBufferRegion");
 
-  if (false & use_scissor) {
-    glEnable(GL_SCISSOR_TEST);
-    glScissor( (width() - DISPLAY_X)/2, (height() - DISPLAY_Y)/2,
-               DISPLAY_X, DISPLAY_Y );
-  }
+  if (false & use_scissor)
+    {
+      glEnable(GL_SCISSOR_TEST);
+      glScissor( (width() - DISPLAY_X)/2, (height() - DISPLAY_Y)/2,
+                 DISPLAY_X, DISPLAY_Y );
+    }
 
   glDrawBuffer(GL_BACK);
   glClear(GL_COLOR_BUFFER_BIT);
 
-  if (use_scissor) {
-    glDisable(GL_SCISSOR_TEST);
-  }
+  if (use_scissor)
+    {
+      glDisable(GL_SCISSOR_TEST);
+    }
 }
 
 void OpenglGfx::clearBackBuffer()
@@ -392,13 +402,14 @@ DOTRACE("OpenglGfx::showParams");
                10, 15,
                isRgba());
 
-  if( col1+1 < col2 ) {
-    for( int i=col1+1; i<col2; i++ )
-      drawGLText(params[i], 2,
-                 width()/2 + 100, height()/2 - 1370 + i * 40,
-                 10, 15,
-                 isRgba());
-  }
+  if( col1+1 < col2 )
+    {
+      for( int i=col1+1; i<col2; i++ )
+        drawGLText(params[i], 2,
+                   width()/2 + 100, height()/2 - 1370 + i * 40,
+                   10, 15,
+                   isRgba());
+    }
 }
 
 void OpenglGfx::moveBlock(int x, int y, int xsz, int ysz, int nx, int ny)

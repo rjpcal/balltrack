@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 28 12:20:41 2001
-// written: Wed Jun 27 15:21:34 2001
+// written: Wed Sep  3 14:19:42 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,8 @@
 enum MVfileformat { MV_FORMAT_QT }; // just spoof the dmedia declaration
 #endif
 
-class SimpleMovie {
+class SimpleMovie
+{
 public:
 
   SimpleMovie(const char* filename, MVfileformat fileFormat,

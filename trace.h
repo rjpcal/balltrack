@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Wed Sep  3 12:55:59 2003
+// written: Wed Sep  3 14:19:41 2003
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -64,36 +64,43 @@ const char* const TRACE_TAB = "  ";
 //                long           tv_usec;  /* and microseconds */
 //            };
 
-namespace Util {
+namespace Util
+{
   class Prof;
   class Trace;
 }
 
-class Util::Prof {
+class Util::Prof
+{
 public:
-  Prof(const char* s) : funcName(s), callCount(0) {
+  Prof(const char* s) : funcName(s), callCount(0)
+  {
     totalTime.tv_sec = 0;
     totalTime.tv_usec = 0;
   }
   ~Prof();
   int count() const { return callCount; }
-  void add(timeval t) {
+  void add(timeval t)
+  {
     totalTime.tv_sec += t.tv_sec;
     totalTime.tv_usec += t.tv_usec;
     // avoid overflow
-    while (totalTime.tv_usec >= 1000000) {
-      ++(totalTime.tv_sec);
-      totalTime.tv_usec -= 1000000;
-    }
+    while (totalTime.tv_usec >= 1000000)
+      {
+        ++(totalTime.tv_sec);
+        totalTime.tv_usec -= 1000000;
+      }
     // avoid underflow
-    while (totalTime.tv_usec <= -1000000) {
-      --(totalTime.tv_sec);
-      totalTime.tv_usec += 1000000;
-    }
+    while (totalTime.tv_usec <= -1000000)
+      {
+        --(totalTime.tv_sec);
+        totalTime.tv_usec += 1000000;
+      }
     ++callCount;
   }
   const char* name() const { return funcName; }
-  double avgTime() const {
+  double avgTime() const
+  {
     return (double(totalTime.tv_sec)*1000000 + totalTime.tv_usec)/callCount;
   }
 private:
@@ -102,34 +109,41 @@ private:
   timeval totalTime;
 };
 
-class Util::Trace {
+class Util::Trace
+{
 public:
-  Trace(Prof& p, bool useMsg) : prof(p), giveTraceMsg(useMsg) {
-    if (giveTraceMsg) {
-      if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
-        for (int i=0; i < TRACE_LEVEL; ++i)
-          std::cerr << TRACE_TAB;
-        std::cerr << "entering " << prof.name() << "...\n";
+  Trace(Prof& p, bool useMsg) : prof(p), giveTraceMsg(useMsg)
+  {
+    if (giveTraceMsg)
+      {
+        if (TRACE_LEVEL < MAX_TRACE_LEVEL)
+          {
+            for (int i=0; i < TRACE_LEVEL; ++i)
+              std::cerr << TRACE_TAB;
+            std::cerr << "entering " << prof.name() << "...\n";
+          }
+        ++TRACE_LEVEL;
       }
-      ++TRACE_LEVEL;
-    }
     gettimeofday(&start, NULL);
   }
 
-  ~Trace() {
+  ~Trace()
+  {
     gettimeofday(&finish, NULL);
     elapsed.tv_sec = finish.tv_sec - start.tv_sec;
     elapsed.tv_usec = finish.tv_usec - start.tv_usec;
     prof.add(elapsed);
-    if (giveTraceMsg) {
-      --TRACE_LEVEL;
-      if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
-        for (int i=0; i < TRACE_LEVEL; ++i)
-          std::cerr << TRACE_TAB;
-        std::cerr << "leaving " << prof.name() << ".\n";
+    if (giveTraceMsg)
+      {
+        --TRACE_LEVEL;
+        if (TRACE_LEVEL < MAX_TRACE_LEVEL)
+          {
+            for (int i=0; i < TRACE_LEVEL; ++i)
+              std::cerr << TRACE_TAB;
+            std::cerr << "leaving " << prof.name() << ".\n";
+          }
+        if (TRACE_LEVEL == 0) std::cerr << '\n';
       }
-      if (TRACE_LEVEL == 0) std::cerr << '\n';
-    }
   }
 private:
   Prof& prof;

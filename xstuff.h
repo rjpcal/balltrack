@@ -3,7 +3,7 @@
 // xstuff.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:27 2000
-// written: Mon Feb 28 17:38:07 2000
+// written: Wed Sep  3 14:01:48 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@
 
 class XHints;
 
-struct XStuff {
+struct XStuff
+{
 public:
   XStuff(const XHints& hints);
 

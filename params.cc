@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Tue Mar  6 17:03:24 2001
+// written: Wed Sep  3 14:19:41 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,10 +67,11 @@ void process_id( char pid[] );
 /************************************************/
 
 
-FILE* ParamFile::openfile(Application* app, char mode, char extension[]) {
+FILE* ParamFile::openfile(Application* app, char mode, char extension[])
+{
 DOTRACE("ParamFile::openfile");
 
-  FILE* fp; 
+  FILE* fp;
 
   char fname[STRINGSIZE];
 
@@ -79,10 +80,10 @@ DOTRACE("ParamFile::openfile");
   char mode_string[2] = { mode, '\0' };
 
   if( ( fp = fopen( fname, mode_string) ) == NULL )
-	 {
-		printf( "cannot open %s in mode '%s'\n", fname, mode_string);
-		app->quit(0);
-	 }
+    {
+      printf( "cannot open %s in mode '%s'\n", fname, mode_string);
+      app->quit(0);
+    }
 
   return fp;
 }
@@ -151,17 +152,18 @@ void ParamFile::putText(const char* var, const char* name)
   fprintf(itsFile, "%-19s %+s\n", name, var);
 }
 
-void Params::readParams(Application* app, char extension[]) {
+void Params::readParams(Application* app, char extension[])
+{
 DOTRACE("Params::readParams");
 
   ParamFile pmfile(app, READ, extension);
 
-  pmfile.getInt(   DISPLAY_X  );         
-  pmfile.getInt(   DISPLAY_Y  );         
+  pmfile.getInt(   DISPLAY_X  );
+  pmfile.getInt(   DISPLAY_Y  );
   pmfile.getInt(   CYCLE_NUMBER  );
-  pmfile.getFloat( WAIT_DURATION  );       
-  pmfile.getFloat( EPOCH_DURATION  );       
-  pmfile.getFloat( PAUSE_DURATION  );       
+  pmfile.getFloat( WAIT_DURATION  );
+  pmfile.getFloat( EPOCH_DURATION  );
+  pmfile.getFloat( PAUSE_DURATION  );
   pmfile.getFloat( REMIND_DURATION  );
   pmfile.getInt(   REMINDS_PER_EPOCH  );
   pmfile.getInt(   FRAMES_PER_REMIND  );
@@ -186,23 +188,24 @@ DOTRACE("Params::readParams");
   RecomputeParams(app->graphics());
 }
 
-void RecomputeParams(Graphics* gfx) {
+void RecomputeParams(Graphics* gfx)
+{
 DOTRACE("RecomputeParams");
 
   float time_between_reminds;
 
-  BORDER_X    = ( gfx->width() - DISPLAY_X ) / 2; 
+  BORDER_X    = ( gfx->width() - DISPLAY_X ) / 2;
   BORDER_Y    = ( gfx->height() - DISPLAY_Y ) / 2;
 
   time_between_reminds = ( EPOCH_DURATION - PAUSE_DURATION - REMIND_DURATION )
-	 / REMINDS_PER_EPOCH;
+         / REMINDS_PER_EPOCH;
 
   double frametime = gfx->frameTime();
 
   printf( " Video frame time %7.4lf ms\n", frametime );
 
   FRAMES_PER_REMIND    = (int)( 1000.0*(time_between_reminds-REMIND_DURATION)
-										  / frametime ) - FUDGEFRAME;
+                                / frametime ) - FUDGEFRAME;
 
   DebugEval(time_between_reminds);
   DebugEval(frametime);
@@ -211,7 +214,8 @@ DOTRACE("RecomputeParams");
   DebugEvalNL(FRAMES_PER_REMIND);
 }
 
-void Params::writeParams(Application* app, char extension[]) {
+void Params::writeParams(Application* app, char extension[])
+{
 DOTRACE("Params::writeParams");
 
   ParamFile pmfile(app, WRITE, extension);
@@ -219,15 +223,16 @@ DOTRACE("Params::writeParams");
   appendParams(pmfile);
 }
 
-void Params::appendParams(ParamFile& pmfile) {
+void Params::appendParams(ParamFile& pmfile)
+{
 DOTRACE("Params::appendParams");
 
-  pmfile.putInt(   (DISPLAY_X),        ("DISPLAY_X") );         
-  pmfile.putInt(   (DISPLAY_Y),        ("DISPLAY_Y") );         
+  pmfile.putInt(   (DISPLAY_X),        ("DISPLAY_X") );
+  pmfile.putInt(   (DISPLAY_Y),        ("DISPLAY_Y") );
   pmfile.putInt(   (CYCLE_NUMBER),     ("CYCLE_NUMBER") );
-  pmfile.putFloat( (WAIT_DURATION),    ("WAIT_DURATION") );       
-  pmfile.putFloat( (EPOCH_DURATION),   ("EPOCH_DURATION") );       
-  pmfile.putFloat( (PAUSE_DURATION),   ("PAUSE_DURATION") );       
+  pmfile.putFloat( (WAIT_DURATION),    ("WAIT_DURATION") );
+  pmfile.putFloat( (EPOCH_DURATION),   ("EPOCH_DURATION") );
+  pmfile.putFloat( (PAUSE_DURATION),   ("PAUSE_DURATION") );
   pmfile.putFloat( (REMIND_DURATION),  ("REMIND_DURATION") );
   pmfile.putInt(   (REMINDS_PER_EPOCH),("REMINDS_PER_EPOCH") );
   pmfile.putInt(   (FRAMES_PER_REMIND),("FRAMES_PER_REMIND") );
@@ -243,17 +248,19 @@ DOTRACE("Params::appendParams");
   pmfile.putText(  (FILENAME),         ("FILENAME") );
 
   const char* app_mode = "unknown";
-  switch (APPLICATION_MODE) {
-  case TRAINING:      app_mode = "TRAINING";     break;
-  case EYE_TRACKING:  app_mode = "EYE_TRACKING"; break;
-  case FMRI_SESSION:  app_mode = "FMRI_SESSION"; break;
-  }
+  switch (APPLICATION_MODE)
+    {
+    case TRAINING:      app_mode = "TRAINING";     break;
+    case EYE_TRACKING:  app_mode = "EYE_TRACKING"; break;
+    case FMRI_SESSION:  app_mode = "FMRI_SESSION"; break;
+    }
 
   pmfile.putText(   (app_mode),         ("APPLICATION_MODE") );
   pmfile.putInt(    (FMRI_SESSION_NUMBER),("FMRI_SESSION_NUMBER") );
 }
 
-void Params::logParams(Application* app, ParamFile& logfile) {
+void Params::logParams(Application* app, ParamFile& logfile)
+{
 DOTRACE("Params::logParams");
 
   writeParams(app, "cur");
@@ -267,10 +274,11 @@ DOTRACE("Params::logParams");
   fprintf( logfile.fp(), "\n\n");
 }
 
-void Params::displayParams(Application* app) {
+void Params::displayParams(Application* app)
+{
 DOTRACE("Params::displayParams");
 
-  const int MAXPARAMS = 60; 
+  const int MAXPARAMS = 60;
 
   int nparams = 0;
   char params[MAXPARAMS][STRINGSIZE];
@@ -282,10 +290,10 @@ DOTRACE("Params::displayParams");
   int curparam = MAXPARAMS - 1;
 
   while( curparam >= 0 &&
-			fgets( params[curparam], STRINGSIZE, pmfile.fp()) !=  NULL )
-    {    
-		--curparam;
-		++nparams;
+         fgets( params[curparam], STRINGSIZE, pmfile.fp()) !=  NULL )
+    {
+      --curparam;
+      ++nparams;
     }
 
   app->graphics()->clearFrontBuffer();
@@ -294,7 +302,8 @@ DOTRACE("Params::displayParams");
   app->graphics()->swapBuffers();
 }
 
-void SetParameters1(Application* app) {
+void SetParameters1(Application* app)
+{
 DOTRACE("SetParameters1");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
@@ -302,19 +311,20 @@ DOTRACE("SetParameters1");
   Graphics* gfx = app->graphics();
 
   gfx->clearFrontBuffer();
-  for (int ii = 0; ii < 2; ++ii) {
-	 gfx->clearBackBuffer();
-	 gfx->swapBuffers();
-  }
+  for (int ii = 0; ii < 2; ++ii)
+    {
+      gfx->clearBackBuffer();
+      gfx->swapBuffers();
+    }
 
   sprintf( text[0], " BALL  NUMBER TRACK  VELOC  SIZE   MINDIS RADIUS SIGMA2 TWIST" );
   sprintf( text[1], "" );
   sprintf( text[2], "" );
-  sprintf( text[3], "       %-6d %-6d %-6d %-6d %-6d %-6.1f %-6.1f %-6.3f", 
-			  BALL_NUMBER, BALL_TRACK_NUMBER, BALL_VELOCITY,
-			  BALL_ARRAY_SIZE, BALL_MIN_DISTANCE, BALL_RADIUS,
-			  BALL_SIGMA2, BALL_TWIST_ANGLE );
-  
+  sprintf( text[3], "       %-6d %-6d %-6d %-6d %-6d %-6.1f %-6.1f %-6.3f",
+                          BALL_NUMBER, BALL_TRACK_NUMBER, BALL_VELOCITY,
+                          BALL_ARRAY_SIZE, BALL_MIN_DISTANCE, BALL_RADIUS,
+                          BALL_SIGMA2, BALL_TWIST_ANGLE );
+
   gfx->showMenu(text, 4);
   gfx->swapBuffers();
 
@@ -369,7 +379,8 @@ DOTRACE("SetParameters1");
   RecomputeParams(gfx);
 }
 
-void SetParameters2(Application* app) {
+void SetParameters2(Application* app)
+{
 DOTRACE("SetParameters2");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
@@ -377,17 +388,18 @@ DOTRACE("SetParameters2");
   Graphics* gfx = app->graphics();
 
   gfx->clearFrontBuffer();
-  for (int ii = 0; ii < 2; ++ii) {
-	 gfx->clearBackBuffer();
-	 gfx->swapBuffers();
-  }
+  for (int ii = 0; ii < 2; ++ii)
+    {
+      gfx->clearBackBuffer();
+      gfx->swapBuffers();
+    }
 
   sprintf( text[0], "       CYCL_NUM WAIT_DUR EPCH_DUR PAUS_DUR RMND_NUM RMND_DUR" );
   sprintf( text[1], "" );
   sprintf( text[2], "" );
-  sprintf( text[3], "       %-8d %-8.2f %-8.2f %-8.2f %-8d %-8.2f", 
-			  CYCLE_NUMBER, WAIT_DURATION, EPOCH_DURATION,
-			  PAUSE_DURATION, REMINDS_PER_EPOCH, REMIND_DURATION );
+  sprintf( text[3], "       %-8d %-8.2f %-8.2f %-8.2f %-8d %-8.2f",
+                          CYCLE_NUMBER, WAIT_DURATION, EPOCH_DURATION,
+                          PAUSE_DURATION, REMINDS_PER_EPOCH, REMIND_DURATION );
 
   gfx->showMenu(text, 4);
   gfx->swapBuffers();
@@ -431,7 +443,8 @@ DOTRACE("SetParameters2");
   RecomputeParams(gfx);
 }
 
-void SetParameters3(Application* app) {
+void SetParameters3(Application* app)
+{
 DOTRACE("SetParameters2");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
@@ -439,16 +452,17 @@ DOTRACE("SetParameters2");
   Graphics* gfx = app->graphics();
 
   gfx->clearFrontBuffer();
-  for (int ii = 0; ii < 2; ++ii) {
-	 gfx->clearBackBuffer();
-	 gfx->swapBuffers();
-  }
+  for (int ii = 0; ii < 2; ++ii)
+    {
+      gfx->clearBackBuffer();
+      gfx->swapBuffers();
+    }
 
   sprintf( text[0], "       SESSION_NUMBER" );
   sprintf( text[1], "" );
   sprintf( text[2], "" );
-  sprintf( text[3], "       %-8d", 
-			  FMRI_SESSION_NUMBER );
+  sprintf( text[3], "       %-8d",
+                          FMRI_SESSION_NUMBER );
 
   gfx->showMenu(text, 4);
   gfx->swapBuffers();
@@ -462,20 +476,23 @@ DOTRACE("SetParameters2");
   RecomputeParams(gfx);
 }
 
-void GetWord(Application* app, char* buf, int sz) {
+void GetWord(Application* app, char* buf, int sz)
+{
 DOTRACE("GetWord");
 
   int n = 0;
   char c;
 
-  while( ( c = app->getKeystroke() ) != ' '  && n < sz ) {
-	 buf[n++] = c;        
-  }
-    
+  while( ( c = app->getKeystroke() ) != ' '  && n < sz )
+    {
+      buf[n++] = c;
+    }
+
   buf[n] = '\0';
 }
 
-void EnterInt( Application* app, int* pi ) {
+void EnterInt( Application* app, int* pi )
+{
 DOTRACE("EnterInt");
 
   char word[STRINGSIZE];
@@ -484,7 +501,8 @@ DOTRACE("EnterInt");
   sscanf( word, "%d", pi );
 }
 
-void EnterFloat( Application* app, float* pf ) {
+void EnterFloat( Application* app, float* pf )
+{
 DOTRACE("EnterFloat");
 
   char word[STRINGSIZE];
@@ -493,7 +511,8 @@ DOTRACE("EnterFloat");
   sscanf( word, "%f", pf );
 }
 
-void EnterText( Application* app, char* ps ) {
+void EnterText( Application* app, char* ps )
+{
 DOTRACE("EnterText");
 
   char word[STRINGSIZE];
@@ -502,41 +521,43 @@ DOTRACE("EnterText");
   sscanf( word, "%s", ps );
 }
 
-void date( char* p ) {
+void date( char* p )
+{
 DOTRACE("date");
 
   FILE *fp;
 
-  if( ( fp =	popen( "date", "r")) ==	 NULL) 
+  if ( ( fp =    popen( "date", "r")) ==  NULL)
     {
-		printf( "cannot access date");
-		return;
+      printf( "cannot access date");
+      return;
     }
-  if( fgets( p, 50, fp) ==  NULL) 
+  if ( fgets( p, 50, fp) ==  NULL)
     {
-		printf( "cannot read date");
-		return;
+      printf( "cannot read date");
+      return;
     }
   pclose(fp);
 }
 
-void process_id( char pid[] ) {
+void process_id( char pid[] )
+{
 DOTRACE("process_id");
 
   FILE *fp;
   char line[ STRINGSIZE ];
 
   sprintf( line, "ps | grep %s", PROGRAM );
-  
-  if( ( fp =	popen( line, "r")) ==	 NULL) 
+
+  if ( ( fp =    popen( line, "r")) ==    NULL)
     {
-		printf( "cannot access PID");
-		return;
+      printf( "cannot access PID");
+      return;
     }
-  if( fgets( line, STRINGSIZE, fp) ==  NULL) 
+  if ( fgets( line, STRINGSIZE, fp) ==  NULL)
     {
-		printf( "cannot read PID");
-		return;
+      printf( "cannot read PID");
+      return;
     }
   pclose(fp);
 

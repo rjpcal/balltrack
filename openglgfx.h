@@ -3,7 +3,7 @@
 // openglgfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:03:44 2000
-// written: Wed Jun 27 16:45:15 2001
+// written: Wed Sep  3 14:19:42 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,15 +16,14 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 
-class Application;
-
 class XStuff;
 
 class XHints;
 
 class SimpleMovie;
 
-class OpenglGfx : public Graphics {
+class OpenglGfx : public Graphics
+{
 public:
   OpenglGfx(XStuff* xinfo, const XHints& hints, int aWidth, int aHeight);
   virtual ~OpenglGfx();

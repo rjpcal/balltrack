@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 28 12:21:07 2001
-// written: Wed Sep  3 12:54:24 2003
+// written: Wed Sep  3 14:19:40 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,28 +39,33 @@ SimpleMovie::SimpleMovie(const char* filename, MVfileformat fileFormat,
   itsFrameRate(0.0)
 {
 #ifndef NO_MOVIE
-  if ( dmParamsCreate( &itsMovieParams ) != DM_SUCCESS ) {
-    handleError("couldn't create movie params");
-  }
+  if ( dmParamsCreate( &itsMovieParams ) != DM_SUCCESS )
+    {
+      handleError("couldn't create movie params");
+    }
 
   if ( mvSetMovieDefaults( itsMovieParams, fileFormat )
-       != DM_SUCCESS ) {
-    handleError("couldn't set movie defaults");
-  }
+       != DM_SUCCESS )
+    {
+      handleError("couldn't set movie defaults");
+    }
 
   if ( mvCreateFile( filename, itsMovieParams, NULL, &itsMovie )
-       != DM_SUCCESS ) {
-    handleError("couldn't create movie file");
-  }
+       != DM_SUCCESS )
+    {
+      handleError("couldn't create movie file");
+    }
 
-  if ( dmParamsCreate( &itsImageParams ) != DM_SUCCESS ) {
-    handleError("couldn't create image track params");
-  }
+  if ( dmParamsCreate( &itsImageParams ) != DM_SUCCESS )
+    {
+      handleError("couldn't create image track params");
+    }
 
   if ( mvSetImageDefaults( itsImageParams, width, height, fileFormat )
-       != DM_SUCCESS ) {
-    handleError("couldn't set image defaults");
-  }
+       != DM_SUCCESS )
+    {
+      handleError("couldn't set image defaults");
+    }
 
   dmParamsSetString(itsImageParams, DM_IMAGE_COMPRESSION, DM_IMAGE_QT_ANIM);
 
@@ -70,9 +75,10 @@ SimpleMovie::SimpleMovie(const char* filename, MVfileformat fileFormat,
                    DM_IMAGE,
                    itsImageParams,
                    NULL,
-                   &itsImageTrack ) != DM_SUCCESS ) {
-    handleError("couldn't add track");
-  }
+                   &itsImageTrack ) != DM_SUCCESS )
+    {
+      handleError("couldn't add track");
+    }
 
   if ( mvSetImageRate(itsImageTrack, 15.0) != DM_SUCCESS )
     handleError("couldn't set frame rate");

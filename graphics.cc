@@ -3,7 +3,7 @@
 // graphics.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:01:32 2000
-// written: Wed Sep  3 12:53:10 2003
+// written: Wed Sep  3 14:19:41 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,8 @@ void Graphics::gfxWait(double delaySeconds)
   Timing::mainTimer.wait(delaySeconds);
 }
 
-double Graphics::frameTime() {
+double Graphics::frameTime()
+{
 #ifndef I686
   if (itsFrameTime < 0)
     itsFrameTime = computeFrameTime();

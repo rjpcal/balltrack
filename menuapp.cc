@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:06:33 2000
-// written: Tue Jun 13 14:02:32 2000
+// written: Wed Sep  3 14:11:45 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,24 +29,28 @@ DOTRACE("MenuApplication::MenuApplication");
   Params::readParams(this, "sta");
 }
 
-MenuApplication::~MenuApplication() {
+MenuApplication::~MenuApplication()
+{
 DOTRACE("MenuApplication::~MenuApplication");
 }
 
-void MenuApplication::wrap() {
+void MenuApplication::wrap()
+{
 DOTRACE("MenuApplication::wrap");
   Params::writeParams(this, "sta");
 
   graphics()->wrapGraphics();
 }
 
-void MenuApplication::onExpose() {
+void MenuApplication::onExpose()
+{
 DOTRACE("MenuApplication::onExpose");
 
   makeMenu();
 }
 
-void MenuApplication::makeMenu() {
+void MenuApplication::makeMenu()
+{
 DOTRACE("MenuApplication::makeMenu");
 
   const int nmenu = 8;
@@ -56,10 +60,11 @@ DOTRACE("MenuApplication::makeMenu");
 
   graphics()->clearFrontBuffer();
 
-  for (int ii = 0; ii < 2; ++ii) {
-	 graphics()->clearBackBuffer();
-	 graphics()->swapBuffers();
-  }
+  for (int ii = 0; ii < 2; ++ii)
+    {
+      graphics()->clearBackBuffer();
+      graphics()->swapBuffers();
+    }
 
   graphics()->showMenu(menu, nmenu);
 

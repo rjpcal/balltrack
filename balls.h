@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:58:20 2000
-// written: Tue Feb 29 15:55:33 2000
+// written: Wed Sep  3 14:19:42 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@ class Graphics;
 
 struct timeval;
 
-class Ball {
+class Ball
+{
 public:
   void randomPosition(int width, int height);
   bool isTooClose(const Ball& other) const;
@@ -39,7 +40,8 @@ private:
   int itsYvel;
 };
 
-class Balls {
+class Balls
+{
 private:
   void prepare(Graphics* gfx);
 

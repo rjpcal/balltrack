@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Wed Sep  3 12:51:55 2003
+// written: Wed Sep  3 14:19:40 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,8 @@ DOTRACE("Application::Application");
   srand48( tp.tv_sec );
 }
 
-void Application::whoAreYou() {
+void Application::whoAreYou()
+{
 DOTRACE("Application::whoAreYou");
   if( argc() < 2 )
     {
@@ -79,20 +80,21 @@ DOTRACE("Application::whoAreYou");
   strcpy( FILENAME, argv(1) );
 }
 
-Application::~Application() {
+Application::~Application()
+{
 DOTRACE("Application::~Application");
   delete itsXStuff;
   delete itsGraphics;
 }
 
-void Application::run() {
+void Application::run()
+{
 DOTRACE("Application::run");
 
   XEvent event;
 
   while( True )
     {
-
       XNextEvent( itsXStuff->display(), &event );
 
       switch( event.type )
@@ -142,7 +144,8 @@ DOTRACE("Application::run");
     }
 }
 
-void Application::quit(int code) {
+void Application::quit(int code)
+{
 DOTRACE("Application::quit");
 
   wrap();
@@ -152,7 +155,8 @@ DOTRACE("Application::quit");
   exit(code);
 }
 
-void Application::buttonPressLoop() {
+void Application::buttonPressLoop()
+{
 DOTRACE("Application::buttonPressLoop");
 
   XEvent event;
@@ -170,7 +174,8 @@ DOTRACE("Application::buttonPressLoop");
     }
 }
 
-void Application::keyPressAction( XEvent* event ) {
+void Application::keyPressAction( XEvent* event )
+{
 DOTRACE("Application::keyPressAction");
 
   char buffer[10];
@@ -182,26 +187,27 @@ DOTRACE("Application::keyPressAction");
   buffer[ count ] = '\0';
 
   if( count > 1 || keysym == XK_Return ||
-      keysym == XK_BackSpace || keysym == XK_Delete ) {
-
+      keysym == XK_BackSpace || keysym == XK_Delete )
+    {
       ringBell(50);
       return;
-  }
+    }
 
   if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
-       keysym >= XK_space    && keysym <= XK_asciitilde ) {
+       keysym >= XK_space    && keysym <= XK_asciitilde )
+    {
+      struct timeval tp;
+      struct timezone tzp;
+      gettimeofday( &tp, &tzp );
 
-    struct timeval tp;
-    struct timezone tzp;
-    gettimeofday( &tp, &tzp );
+      Timing::initTimeStack( (double) event->xkey.time, &tp );
 
-    Timing::initTimeStack( (double) event->xkey.time, &tp );
-
-    onMenuChoice( buffer[0] );
-  }
+      onMenuChoice( buffer[0] );
+    }
 }
 
-void Application::timeButtonEvent( XEvent* event ) {
+void Application::timeButtonEvent( XEvent* event )
+{
 DOTRACE("Application::timeButtonEvent");
 
   int nbutton = 0;
@@ -227,19 +233,20 @@ DOTRACE("Application::timeButtonEvent");
 
       DebugEvalNL(keycode);
 
-      switch (keycode) {
-      case 'a': case 'b': case 'c': case 'd':
-      case 'A': case 'B': case 'C': case 'D':
-        nbutton = LEFTBUTTON;
+      switch (keycode)
+        {
+        case 'a': case 'b': case 'c': case 'd':
+        case 'A': case 'B': case 'C': case 'D':
+          nbutton = LEFTBUTTON;
+          break;
+        case 'e': case 'f': case 'g': case 'h':
+        case 'E': case 'F': case 'G': case 'H':
+          nbutton = MIDDLEBUTTON;
+          break;
+        default:
+          nbutton = 0;
         break;
-      case 'e': case 'f': case 'g': case 'h':
-      case 'E': case 'F': case 'G': case 'H':
-        nbutton = MIDDLEBUTTON;
-        break;
-      default:
-        nbutton = 0;
-        break;
-      }
+        }
 
       Timing::addToResponseStack( (long) event->xkey.subwindow /* sec */,
                                   (long) event->xkey.time /* usec */,
@@ -247,58 +254,64 @@ DOTRACE("Application::timeButtonEvent");
     }
 }
 
-char Application::getKeystroke() {
+char Application::getKeystroke()
+{
 DOTRACE("Application::getKeystroke");
 
-  while( true ) {
-    XEvent event;
-    XNextEvent( itsXStuff->display(), &event );
+  while( true )
+    {
+      XEvent event;
+      XNextEvent( itsXStuff->display(), &event );
 
-    if( event.type != KeyPress || event.xkey.window != itsXStuff->window() )
-      continue;
+      if( event.type != KeyPress || event.xkey.window != itsXStuff->window() )
+        continue;
 
-    KeySym keysym;
-    char buffer[10];
+      KeySym keysym;
+      char buffer[10];
 
-    // For some reason, if we pass a non-null XComposeStatus* to this
-    // function, the 'buffer' gets screwed up... very weird.
-    int count = XLookupString( (XKeyEvent *) &event, &buffer[0], 9,
-                               &keysym, (XComposeStatus*) 0  );
+      // For some reason, if we pass a non-null XComposeStatus* to this
+      // function, the 'buffer' gets screwed up... very weird.
+      int count = XLookupString( (XKeyEvent *) &event, &buffer[0], 9,
+                                 &keysym, (XComposeStatus*) 0  );
 
-    buffer[ count ] = '\0';
+      buffer[ count ] = '\0';
 
-    DebugEvalNL(buffer);
-    if( count > 1 || keysym == XK_Return ||
-        keysym == XK_BackSpace || keysym == XK_Delete ) {
+      DebugEvalNL(buffer);
+      if( count > 1 || keysym == XK_Return ||
+          keysym == XK_BackSpace || keysym == XK_Delete )
+        {
+          ringBell(50);
+          continue;
+        }
 
-      ringBell(50);
-      continue;
+      if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
+           keysym >= XK_space    && keysym <= XK_asciitilde )
+        {
+
+          DebugEvalNL(buffer[0]);
+          return( buffer[0] );
+        }
     }
-
-    if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
-         keysym >= XK_space    && keysym <= XK_asciitilde ) {
-
-      DebugEvalNL(buffer[0]);
-      return( buffer[0] );
-    }
-  }
-
 }
 
-void Application::ringBell(int duration) {
+void Application::ringBell(int duration)
+{
 DOTRACE("Application::ringBell");
   XBell( itsXStuff->display(), duration );
 }
 
-void Application::wrap() {
+void Application::wrap()
+{
 DOTRACE("Application::wrap");
 }
 
-void Application::onExpose() {
+void Application::onExpose()
+{
 DOTRACE("Application::onExpose");
 }
 
-void Application::onMenuChoice(char) {
+void Application::onMenuChoice(char)
+{
 DOTRACE("Application::onMenuChoice");
 }
 

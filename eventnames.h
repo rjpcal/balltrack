@@ -3,7 +3,7 @@
 // eventnames.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Mar 28 17:50:30 2000
-// written: Mon Jun 12 15:05:26 2000
+// written: Wed Sep  3 14:19:42 2003
 // $Id$
 //
 /////////////////////////////////////////////////////////////////////*/
@@ -13,9 +13,11 @@
 
 
 #ifdef __cplusplus
-static const char *event_names[] = {
+static const char *event_names[] =
+{
 #else
-static char *event_names[] = {
+static char *event_names[] =
+{
 #endif
 "",
 "",

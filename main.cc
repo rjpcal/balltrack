@@ -3,7 +3,7 @@
 // main.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 12:27:11 2000
-// written: Wed Sep  3 12:49:57 2003
+// written: Wed Sep  3 14:19:41 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,8 @@ const bool USE_RGBA = true;
 //
 ///////////////////////////////////////////////////////////////////////
 
-int main( int argc, char** argv ) {
+int main( int argc, char** argv )
+{
 
 #if defined(MODE_TRAINING)
   APPLICATION_MODE = TRAINING;
