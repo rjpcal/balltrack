@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Mon Mar  5 10:46:38 2001
+// written: Tue Mar  6 17:02:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,7 +124,8 @@ DOTRACE("OpenglGfx::initWindow");
   glClearIndex(0);
   glClear(GL_COLOR_BUFFER_BIT);
 
-  checkFrameTime();
+  // forces the frame time to be computed and then cached in the base class
+  frameTime();
 
   if (isDoubleBuffered()) {
     clearBackBufferRegion(false);
@@ -421,8 +422,8 @@ DOTRACE("OpenglGfx::gfxWait");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void OpenglGfx::checkFrameTime() {
-DOTRACE("OpenglGfx::checkFrameTime");
+double OpenglGfx::computeFrameTime() {
+DOTRACE("OpenglGfx::computeFrameTime");
 
   struct timeval tp[2];
 
@@ -436,9 +437,9 @@ DOTRACE("OpenglGfx::checkFrameTime");
 
   Timing::getTime( &tp[1] );
 
-  FRAMETIME = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
+  double frametime = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
 
-  printf( " Video frame time %7.4lf ms\n", FRAMETIME );  
+  return frametime;
 }
 
 static const char vcid_openglgfx_cc[] = "$Header$";
