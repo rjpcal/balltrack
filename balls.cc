@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Thu Dec  7 14:40:49 2000
+// written: Wed Feb 28 14:37:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -451,7 +451,7 @@ DOTRACE("Balls::runTrial");
 
   prepare(gfx);
 
-  Timing::mainTimer.wait( PAUSE_DURATION );
+  gfx->gfxWait( PAUSE_DURATION );
 
   // Show the initial position of the balls
   Timing::mainTimer.set();
@@ -469,7 +469,7 @@ DOTRACE("Balls::runTrial");
 
   gfx->swapBuffers();
 
-  Timing::mainTimer.wait( REMIND_DURATION );
+  gfx->gfxWait( REMIND_DURATION );
 
   if (ttype == Balls::CHECK_ALL ||
 		ttype == Balls::CHECK_ONE) {
@@ -502,7 +502,7 @@ DOTRACE("Balls::runTrial");
 
 		  Timing::addToStimulusStack(LEFTBUTTON);
 
-		  Timing::mainTimer.wait( REMIND_DURATION );
+		  gfx->gfxWait( REMIND_DURATION );
 		}
 		else if (ttype == Balls::CHECK_ONE) {
 		  // Randomly choose whether the highlighted ball will be a
@@ -533,7 +533,7 @@ DOTRACE("Balls::runTrial");
 		  else
 			 Timing::addToStimulusStack(MIDDLEBUTTON);
 
-		  Timing::mainTimer.wait( REMIND_DURATION / 2.0 );
+		  gfx->gfxWait( REMIND_DURATION / 2.0 );
 
 		  Timing::mainTimer.set();
 
@@ -549,10 +549,10 @@ DOTRACE("Balls::runTrial");
 
 		  gfx->swapBuffers();
 
-		  Timing::mainTimer.wait( REMIND_DURATION / 2.0 );
+		  gfx->gfxWait( REMIND_DURATION / 2.0 );
 		}
 		else {
-		  Timing::mainTimer.wait( REMIND_DURATION );
+		  gfx->gfxWait( REMIND_DURATION );
 		}
 
 		gfx->clearUpperPlanes();
