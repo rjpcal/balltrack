@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Thu Feb 24 14:16:33 2000
+// written: Thu Feb 24 14:20:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #ifndef _XLIB_H_
 typedef union _XEvent XEvent;
 #endif
+
+class XStuff;
 
 class Graphics;
 
@@ -60,7 +62,6 @@ private:
 
   int itsFildes;
 
-  struct XStuff;
   XStuff* itsXStuff;
 
   Graphics* itsGraphics;
