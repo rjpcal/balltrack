@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// applic.c
+// menuapp.cc
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:06:33 2000
@@ -9,10 +9,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef APPLIC_C_DEFINED
-#define APPLIC_C_DEFINED
+#ifndef MENUAPP_CC_DEFINED
+#define MENUAPP_CC_DEFINED
 
-#include "applic.h"
+#include "menuapp.h"
 
 #include "defs.h"
 #include "graphics.h"
@@ -66,5 +66,5 @@ DOTRACE("MenuApplication::makeMenu");
   graphics()->swapBuffers();
 }
 
-static const char vcid_applic_c[] = "$Header$";
-#endif // !APPLIC_C_DEFINED
+static const char vcid_menuapp_cc[] = "$Header$";
+#endif // !MENUAPP_CC_DEFINED
