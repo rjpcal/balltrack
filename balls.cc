@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Tue Feb 29 15:54:34 2000
+// written: Tue Feb 29 17:17:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <vector>
 
 #include "defs.h"
 #include "graphics.h"
@@ -28,32 +29,22 @@
 namespace {
   const int VELOSCALE = 1000;
 
-#if defined(COLOR_INDEX)
-  const int BYTES_PER_PIXEL = 1;
-#elif defined(RGBA)
-  const int BYTES_PER_PIXEL = 4;
-#else
-#  error No color format macro.
-#endif
-
-  // XXX These need to be big enough for BALL_ARRAY_SIZE^2
-  unsigned char theirBallmap[128*128*BYTES_PER_PIXEL];
-  unsigned char theirHimap[128*128*BYTES_PER_PIXEL];
+  vector<unsigned char> theirBallmap;
+  vector<unsigned char> theirHimap;
 }
 
 namespace Local {
-  int round( int x );
+  int roundVelocity( int x );
   int fround( float x );
   int abs( int a );
 
-  void makeBallMap( unsigned char* ptr, int size,
+  void makeBallMap( vector<unsigned char>& vec, int size,
 						  float radius, float sigma,
-						  unsigned char background);
+						  unsigned char background,
+						  bool rgba );
 
   bool colorsAlreadyGenerated = false;
 }
-
-struct timeval tp[2];
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -61,8 +52,8 @@ struct timeval tp[2];
 //
 ///////////////////////////////////////////////////////////////////////
 
-int Local::round( int x ) {
-DOTRACE("Local::round");
+int Local::roundVelocity( int x ) {
+DOTRACE("Local::roundVelocity");
 
   int ix = (x < 0) ? ( x - VELOSCALE/2 ) / VELOSCALE
 	                : ( x + VELOSCALE/2 ) / VELOSCALE;
@@ -85,12 +76,19 @@ DOTRACE("Local::abs");
   return( ( a > 0 ) ? a : -a );
 }
 
-void Local::makeBallMap( unsigned char* ptr, int size,
+void Local::makeBallMap( vector<unsigned char>& vec, int size,
 								 float radius, float sigma,
-								 unsigned char background ) {
+								 unsigned char background,
+								 bool rgba ) {
 DOTRACE("Local::makeBallMap");
 
   Balls::generateColors(); 
+
+  int bytes_per_pixel = rgba ? 4 : 1;
+
+  int num_bytes = size*size*bytes_per_pixel;
+
+  vec.resize(num_bytes);
 
   for( int i=0; i<size; i++ ) {
     for( int j=0; j<size; j++ ) {
@@ -111,16 +109,17 @@ DOTRACE("Local::makeBallMap");
 		  index = (unsigned char)( background );
 		}
 
-#if defined(COLOR_INDEX)
-		*ptr++ = index;
-#elif defined(RGBA)
-		ptr[0] = (unsigned char)(255 * theColors[index][0]); // Red
-		ptr[1] = (unsigned char)(255 * theColors[index][1]); // Green
-		ptr[2] = (unsigned char)(255 * theColors[index][2]); // Blue
-		ptr[3] = (unsigned char)(255); // Alpha
-		ptr += 4;
-#endif
+		size_t base_loc = bytes_per_pixel*(i*size + j);
 
+		if (rgba) {
+		  vec[base_loc + 0] = (unsigned char)(255 * Balls::theColors[index][0]);
+		  vec[base_loc + 1] = (unsigned char)(255 * Balls::theColors[index][1]);
+		  vec[base_loc + 2] = (unsigned char)(255 * Balls::theColors[index][2]);
+		  vec[base_loc + 3] = (unsigned char)(255);
+		}
+		else {
+		  vec[base_loc] = index;
+		}
 	 }
   }
 }
@@ -160,19 +159,19 @@ DOTRACE("Ball::randomVelocity");
 void Ball::nextPosition(int width, int height) {
 DOTRACE("Ball::nextPosition");
 
-  itsNx = itsXpos + Local::round( itsXvel );
-  itsNy = itsYpos + Local::round( itsYvel );
+  itsNx = itsXpos + Local::roundVelocity( itsXvel );
+  itsNy = itsYpos + Local::roundVelocity( itsYvel );
 
   if( itsNx < BORDER_X || itsNx > width - BORDER_X - BALL_ARRAY_SIZE )
 	 {
 		itsXvel = -itsXvel;
-		itsNx   = itsXpos + Local::round( itsXvel );
+		itsNx   = itsXpos + Local::roundVelocity( itsXvel );
 	 }
 
   if( itsNy < BORDER_Y || itsNy > height - BORDER_Y - BALL_ARRAY_SIZE )
 	 {
 		itsYvel = -itsYvel;
-		itsNy   = itsYpos + Local::round( itsYvel );
+		itsNy   = itsYpos + Local::roundVelocity( itsYvel );
 	 }
 }
 
@@ -224,11 +223,11 @@ DOTRACE("Ball::collide");
 		other.itsYvel = Local::fround( fj * ( voj * yo + vai * ya ) );
 	 }
 
-  itsNx = itsXpos + Local::round( itsXvel );
-  itsNy = itsYpos + Local::round( itsYvel );
+  itsNx = itsXpos + Local::roundVelocity( itsXvel );
+  itsNy = itsYpos + Local::roundVelocity( itsYvel );
 
-  other.itsNx = other.itsXpos + Local::round( other.itsXvel );
-  other.itsNy = other.itsYpos + Local::round( other.itsYvel );
+  other.itsNx = other.itsXpos + Local::roundVelocity( other.itsXvel );
+  other.itsNy = other.itsYpos + Local::roundVelocity( other.itsYvel );
 		
 }
 
@@ -273,11 +272,10 @@ DOTRACE("Ball::copy");
 void Ball::draw(Graphics* gfx, unsigned char* bitmap) {
 DOTRACE("Ball::draw");
 
-#if defined(COLOR_INDEX)
-  gfx->writeBitmap(bitmap, itsXpos, itsYpos, BALL_ARRAY_SIZE);
-#elif defined(RGBA)
-  gfx->writeTrueColorMap(bitmap, itsXpos, itsYpos, BALL_ARRAY_SIZE);
-#endif
+  if (gfx->isRgba()) 
+	 gfx->writeTrueColorMap(bitmap, itsXpos, itsYpos, BALL_ARRAY_SIZE);
+  else
+	 gfx->writeBitmap(bitmap, itsXpos, itsYpos, BALL_ARRAY_SIZE);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -343,7 +341,7 @@ DOTRACE("Balls::moveBalls");
 
 #if defined(IRIX6)
   for(int i = 0; i < BALL_NUMBER; ++i) {
-	 itsBalls[i].draw(gfx, theirBallmap);
+	 itsBalls[i].draw(gfx, &theirBallmap[0]);
   }
 #elif defined(HP9000S700)
   for(int i = 0; i < BALL_NUMBER; ++i) {
@@ -392,9 +390,9 @@ DOTRACE("Balls::prepare");
   initialize(gfx);
 
   Local::makeBallMap( theirHimap, BALL_ARRAY_SIZE,
-							 BALL_RADIUS, BALL_SIGMA2, 255 );
+							 BALL_RADIUS, BALL_SIGMA2, 255, gfx->isRgba() );
   Local::makeBallMap( theirBallmap, BALL_ARRAY_SIZE,
-							 BALL_RADIUS, BALL_SIGMA2, 0 );
+							 BALL_RADIUS, BALL_SIGMA2, 0, gfx->isRgba() );
 }
 
 void Balls::generateColors() {
@@ -461,11 +459,11 @@ DOTRACE("Balls::runTrial");
   gfx->clearUpperPlanes();
   gfx->drawCross();
 
-  drawNBalls(gfx, 0, BALL_NUMBER, theirBallmap);
+  drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);
  
   if (ttype == Balls::CHECK_ALL ||
 		ttype == Balls::CHECK_ONE) {
-	 drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, theirHimap);
+	 drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, &theirHimap[0]);
 	 gfx->drawCross();
   }
 
@@ -477,7 +475,7 @@ DOTRACE("Balls::runTrial");
 		ttype == Balls::CHECK_ONE) {
  	 gfx->clearUpperPlanes();
  	 gfx->drawCross();
-	 drawNBalls(gfx, 0, BALL_NUMBER, theirBallmap);
+	 drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);
 	 gfx->swapBuffers();
   }
 
@@ -495,8 +493,8 @@ DOTRACE("Balls::runTrial");
 		if (ttype == Balls::CHECK_ALL) {
 		  gfx->waitVerticalRetrace();
 		  gfx->clearBackBuffer();
-		  drawNBalls(gfx, 0, BALL_NUMBER, theirBallmap);
-		  drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, theirHimap);
+		  drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);
+		  drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, &theirHimap[0]);
 
 		  gfx->drawCross();
 		  gfx->swapBuffers();
@@ -513,8 +511,8 @@ DOTRACE("Balls::runTrial");
 			 random_ball = int( (BALL_NUMBER - BALL_TRACK_NUMBER) * drand48() )
 				+ BALL_TRACK_NUMBER;
 
-		  drawNBalls(gfx, 0, BALL_NUMBER, theirBallmap);
-		  drawNHiBalls(gfx, random_ball, random_ball+1, theirHimap);
+		  drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);
+		  drawNHiBalls(gfx, random_ball, random_ball+1, &theirHimap[0]);
 
 		  gfx->swapBuffers();
 
@@ -526,8 +524,8 @@ DOTRACE("Balls::runTrial");
 		  Timing::mainTimer.wait( REMIND_DURATION );
 
 		  Timing::mainTimer.set();
-		  drawNHiBalls(gfx, random_ball, random_ball+1, theirBallmap);
-		  drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, theirHimap);
+		  drawNHiBalls(gfx, random_ball, random_ball+1, &theirBallmap[0]);
+		  drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, &theirHimap[0]);
 		  gfx->drawCross();
 		  gfx->swapBuffers();
 		}
@@ -537,7 +535,7 @@ DOTRACE("Balls::runTrial");
 		gfx->clearUpperPlanes();
 		gfx->drawCross();
 
-		drawNBalls(gfx, 0, BALL_NUMBER, theirBallmap);
+		drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);
     }
 
   gfx->writeAllPlanes();
