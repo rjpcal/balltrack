@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Tue Feb 29 14:45:08 2000
+// written: Tue Feb 29 16:21:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,8 @@
 #include <cstdio>
 
 #include "application.h"
-#include "graphics.h"
 #include "defs.h"
+#include "graphics.h"
 
 #include "trace.h"
 #include "debug.h"
@@ -69,19 +69,6 @@ void process_id( char pid[] );
 
 /************************************************/
 
-
-void WhoAreYou( Application* app )
-{
-  if( app->argc() < 2 )
-    {
-		printf( " Who are you?\n" );
-		app->quit(0);
-    }
-
-  strcpy( PROGRAM,  app->argv(0) );
-  strcpy( OBSERVER, app->argv(1) );
-  strcpy( FILENAME, app->argv(1) );
-}
 
 namespace {
   char LINE[STRINGSIZE];

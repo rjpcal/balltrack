@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:05:04 2000
-// written: Mon Feb 28 10:48:26 2000
+// written: Tue Feb 29 16:19:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,6 @@ extern double FRAMETIME;
 #define      APPEND          	   'a'
 #define      OPTIONAL        	   'o'
 
-void WhoAreYou(Application* app);
 void ReadParams(Application* app, char extension[]);
 void CheckParams(Graphics* gfx);
 void WriteParams(Application* app, char extension[]);
