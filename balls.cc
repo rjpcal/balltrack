@@ -15,7 +15,6 @@
 #include "balls.h"
 
 #include <cmath>
-#include <cstdlib>
 #include <vector>
 
 #include "graphics.h"
