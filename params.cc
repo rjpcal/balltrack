@@ -392,8 +392,11 @@ namespace
   class MenuItem
   {
   public:
-    MenuItem(int& v)    : dvar(0), ivar(&v) {}
-    MenuItem(double& v) : dvar(&v), ivar(0) {}
+    MenuItem(const std::string& n, int& v)    : name(n), width(6), dvar(0), ivar(&v) {}
+    MenuItem(const std::string& n, double& v) : name(n), width(6), dvar(&v), ivar(0) {}
+
+    std::string name;
+    int width;
 
     double* dvar;
     int* ivar;
@@ -401,50 +404,46 @@ namespace
 
   struct ParamMenu
   {
-    ParamMenu() :
-      prefix("      ")
-    {
-      oss.setf(std::ios::left | std::ios::fixed);
-      oss.precision(2);
-      oss << prefix;
-    }
+    ParamMenu() {}
 
     template <class T>
-    void addItem(T& v)
+    void addItem(const std::string& n, T& v)
     {
-      items.push_back(MenuItem(v));
+      items.push_back(MenuItem(n, v));
     }
 
     void go(Graphics& gfx)
     {
+      this->setupMenu0();
+      this->menu[1] = "";
+      this->menu[2] = "";
       this->setupMenu3();
 
       this->redraw(gfx);
+
+      std::ostringstream oss;
+
+      oss.setf(std::ios::left | std::ios::fixed);
+      oss.precision(2);
 
       for (unsigned int i = 0; i < items.size(); ++i)
         {
           if (items[i].dvar != 0)
             {
               gfx.getValueFromKeyboard(*items[i].dvar);
-              this->putValue(*items[i].dvar);
+              oss << " " << std::setw(items[i].width) << *items[i].dvar;
             }
           else if (items[i].ivar != 0)
             {
               gfx.getValueFromKeyboard(*items[i].ivar);
-              this->putValue(*items[i].ivar);
+              oss << " " << std::setw(items[i].width) << *items[i].ivar;
             }
+          menu[1] = oss.str();
           this->redraw(gfx);
         }
     }
 
   private:
-
-    template <class T>
-    void putValue(const T& v)
-    {
-      oss << " " << std::setw(6) << v;
-      menu[1] = oss.str();
-    }
 
     void redraw(Graphics& gfx)
     {
@@ -452,30 +451,39 @@ namespace
       gfx.swapBuffers();
     }
 
+    void setupMenu0()
+    {
+      std::ostringstream s;
+      s.setf(std::ios::left | std::ios::fixed);
+      s.precision(2);
+      for (unsigned int i = 0; i < items.size(); ++i)
+        {
+          s << " " << std::setw(items[i].width) << items[i].name;
+        }
+      menu[0] = s.str();
+    }
+
     void setupMenu3()
     {
       std::ostringstream s;
       s.setf(std::ios::left | std::ios::fixed);
       s.precision(2);
-      s << prefix;
       for (unsigned int i = 0; i < items.size(); ++i)
         {
           if (items[i].dvar != 0)
             {
-              s << " " << std::setw(6) << *items[i].dvar;
+              s << " " << std::setw(items[i].width) << *items[i].dvar;
             }
           else if (items[i].ivar != 0)
             {
-              s << " " << std::setw(6) << *items[i].ivar;
+              s << " " << std::setw(items[i].width) << *items[i].ivar;
             }
         }
       menu[3] = s.str();
     }
 
-  public:
     const char* prefix;
     std::string menu[4];
-    std::ostringstream oss;
     std::vector<MenuItem> items;
   };
 }
@@ -488,18 +496,14 @@ DOTRACE("Params::setGroup1");
 
   gfx.clearBackBuffer();
 
-  pm.menu[0] = " BALL  NUMBER TRACK  SPEED  SIZE   MINDIS RADIUS SIGMA2 TWIST";
-  pm.menu[1] = "";
-  pm.menu[2] = "";
-
-  pm.addItem(this->ballNumber);
-  pm.addItem(this->ballTrackNumber);
-  pm.addItem(this->ballSpeed);
-  pm.addItem(this->ballPixmapSize);
-  pm.addItem(this->ballMinDistance);
-  pm.addItem(this->ballRadius);
-  pm.addItem(this->ballSigma2);
-  pm.addItem(this->ballTwistAngle);
+  pm.addItem("BALL#", this->ballNumber);
+  pm.addItem("TRACK#", this->ballTrackNumber);
+  pm.addItem("SPEED", this->ballSpeed);
+  pm.addItem("SIZE", this->ballPixmapSize);
+  pm.addItem("MINDIS", this->ballMinDistance);
+  pm.addItem("RADIUS", this->ballRadius);
+  pm.addItem("SIGMA2", this->ballSigma2);
+  pm.addItem("TWIST", this->ballTwistAngle);
 
   pm.go(gfx);
 }
