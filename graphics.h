@@ -34,8 +34,6 @@ public:
   void getInt(int& i) const { itsXStuff.getInt(i); }
   void getDouble(double& d) const { itsXStuff.getDouble(d); }
 
-  void initWindow();
-
   // This gives a hook to allow movie frames to be recorded during the
   // delay
   void gfxWait(Timer& t, double delaySeconds);

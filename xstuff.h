@@ -28,7 +28,7 @@ public:
 
   void openWindow(const char* winname,
                   const XVisualInfo* vinfo,
-                  int width, int height, int depth);
+                  int width, int height);
 
   Display* display() { return itsDisplay; }
   Window window() const { return itsWindow; }

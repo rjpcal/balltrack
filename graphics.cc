@@ -63,11 +63,11 @@ namespace
 }
 
 Graphics::Graphics(const char* winname,
-                   int width, int height, int depth) :
-  itsWidth(width),
-  itsHeight(height),
+                   int w, int h, int depth) :
+  itsWidth(w),
+  itsHeight(h),
   itsFrameTime(-1.0),
-  itsXStuff(width, height),
+  itsXStuff(w, h),
   itsGLXContext(0),
   isItRecording(false)
 {
@@ -97,22 +97,9 @@ DOTRACE("Graphics::Graphics");
   glPixelStorei(GL_PACK_ALIGNMENT, 4);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-  itsXStuff.openWindow(winname, vi, width, height, depth);
+  itsXStuff.openWindow(winname, vi, itsWidth, itsHeight);
 
   XFree(vi);
-
-  initWindow();
-}
-
-Graphics::~Graphics()
-{
-DOTRACE("Graphics::~Graphics");
-  glXDestroyContext(itsXStuff.display(), itsGLXContext);
-}
-
-void Graphics::initWindow()
-{
-DOTRACE("Graphics::initWindow");
 
   glXMakeCurrent(itsXStuff.display(), itsXStuff.window(),
                  itsGLXContext);
@@ -130,6 +117,12 @@ DOTRACE("Graphics::initWindow");
   this->swapBuffers();
   this->clearBackBuffer();
   this->swapBuffers();
+}
+
+Graphics::~Graphics()
+{
+DOTRACE("Graphics::~Graphics");
+  glXDestroyContext(itsXStuff.display(), itsGLXContext);
 }
 
 void Graphics::gfxWait(Timer& t, double delaySeconds)

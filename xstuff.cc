@@ -106,7 +106,7 @@ DOTRACE("XStuff::~XStuff");
 
 void XStuff::openWindow(const char* winname,
                         const XVisualInfo* vinfo,
-                        int width, int height, int depth)
+                        int width, int height)
 {
 DOTRACE("XStuff::openWindow");
 
