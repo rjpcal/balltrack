@@ -103,9 +103,7 @@ DOTRACE("XStuff::~XStuff");
   XCloseDisplay(itsDisplay);
 }
 
-void XStuff::openWindow(const char* winname,
-                        const XVisualInfo* vinfo,
-                        int width, int height)
+void XStuff::openWindow(const char* winname, const XVisualInfo* vinfo)
 {
 DOTRACE("XStuff::openWindow");
 

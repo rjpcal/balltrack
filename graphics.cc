@@ -67,8 +67,6 @@ namespace
 
 Graphics::Graphics(const char* winname,
                    int w, int h, int depth) :
-  itsWidth(w),
-  itsHeight(h),
   itsXStuff(w, h),
   itsGLXContext(0),
   itsUsingVsync(false),
@@ -102,7 +100,7 @@ DOTRACE("Graphics::Graphics");
   glPixelStorei(GL_PACK_ALIGNMENT, 4);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-  itsXStuff.openWindow(winname, vi, itsWidth, itsHeight);
+  itsXStuff.openWindow(winname, vi);
 
   XFree(vi);
 

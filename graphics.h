@@ -39,8 +39,8 @@ public:
   // delay
   void gfxWait(const Timepoint& t, double delaySeconds);
 
-  int width() const { return itsWidth; }
-  int height() const { return itsHeight; }
+  int width() const { return itsXStuff.width(); }
+  int height() const { return itsXStuff.height(); }
 
   void clearBackBuffer();
 
@@ -68,9 +68,6 @@ public:
 
 private:
   void dumpFrames(int count);
-
-  const int itsWidth;
-  const int itsHeight;
 
   XStuff itsXStuff;
   GLXContext itsGLXContext;
