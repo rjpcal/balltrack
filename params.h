@@ -14,8 +14,6 @@
 
 #include <cstdio>
 
-class Application;
-
 class Graphics;
 
 enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
@@ -46,7 +44,6 @@ extern char  PROGRAM[];
 extern char  FILENAME[];
 extern char  OBSERVER[];
 
-#define      NOBUTTON            'n'
 #define      LEFTBUTTON            'l'
 #define      RIGHTBUTTON           'r'
 #define      MIDDLEBUTTON          'm'
@@ -69,7 +66,6 @@ public:
   FILE* fp() { return itsFile; }
 
   void getInt(int& var);
-  void getChar(char& var);
   void getFloat(float& var);
   void getText(char* var);
 

@@ -14,7 +14,6 @@
 
 #include "params.h"
 
-#include "application.h"
 #include "defs.h"
 #include "graphics.h"
 
@@ -98,12 +97,6 @@ void ParamFile::getInt(int& var)
 {
   fetchLine();
   sscanf(itsLine, "%s %d", itsText, &var);
-}
-
-void ParamFile::getChar(char& var)
-{
-  fetchLine();
-  sscanf(itsLine, "%s %c", itsText, &var);
 }
 
 void ParamFile::getFloat(float& var)
