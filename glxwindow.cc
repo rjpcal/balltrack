@@ -140,9 +140,6 @@ DOTRACE("GlxWindow::GlxWindow");
       exit(1);
     }
 
-  glPixelStorei(GL_PACK_ALIGNMENT, 4);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
   const int screen = DefaultScreen(itsDisplay);
 
   const Window parent = RootWindow(itsDisplay, screen);
@@ -183,6 +180,9 @@ DOTRACE("GlxWindow::GlxWindow");
   glXMakeCurrent(itsDisplay, itsWindow, itsGLXContext);
 
   glViewport(0, 0, itsWidth, itsHeight);
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 4);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
