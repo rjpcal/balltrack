@@ -19,7 +19,11 @@
 class Graphics;
 class Params;
 
-struct timeval;
+struct vec
+{
+  double x;
+  double y;
+};
 
 class Ball
 {
@@ -32,6 +36,15 @@ public:
   void nextPosition(int width, int height,
                     int xdisplay, int ydisplay,
                     int arraysize, double lapsed_seconds);
+
+  bool checkInsideBorder(int width, int height,
+                         int xdisplay, int ydisplay,
+                         int arraysize) const;
+
+  void bringInsideBorder(int width, int height,
+                         int xdisplay, int ydisplay,
+                         int arraysize);
+
   void collideIfNeeded(Ball& other, int min_dist,
                        double lapsed_seconds);
   void twist(double angle);
@@ -40,12 +53,9 @@ public:
             bool debug);
 
 private:
-  double xpos;
-  double ypos;
-  double xnext;
-  double ynext;
-  double velx; // pixels per second
-  double vely; // pixels per second
+  vec pos;
+  vec next;
+  vec vel; // pixels per second
 };
 
 struct Stimulus

@@ -100,16 +100,16 @@ DOTRACE("Ball::randomPosition");
   const int xborder = (width-xdisplay)/2;
   const int yborder = (height-ydisplay)/2;
 
-  this->xpos = xborder + (width - arraysize - 2*xborder) * drand48();
-  this->ypos = yborder + (height - arraysize - 2*yborder) * drand48();
+  this->pos.x = xborder + (width - arraysize - 2*xborder) * drand48();
+  this->pos.y = yborder + (height - arraysize - 2*yborder) * drand48();
 }
 
 bool Ball::isTooClose(const Ball& other, int min_dist) const
 {
 DOTRACE("Ball::isTooClose");
 
-  return (fabs(this->xpos - other.xpos) < min_dist &&
-          fabs(this->ypos - other.ypos) < min_dist);
+  return (fabs(this->pos.x - other.pos.x) < min_dist &&
+          fabs(this->pos.y - other.pos.y) < min_dist);
 }
 
 void Ball::randomSpeed(double vel)
@@ -119,8 +119,8 @@ DOTRACE("Ball::randomVelocity");
   // Pick a random direction for the velocity
   const double angle = 2 * M_PI * drand48();
 
-  this->velx = vel * cos(angle);
-  this->vely = vel * sin(angle);
+  this->vel.x = vel * cos(angle);
+  this->vel.y = vel * sin(angle);
 }
 
 void Ball::nextPosition(int width, int height,
@@ -132,19 +132,19 @@ DOTRACE("Ball::nextPosition");
   const int xborder = (width-xdisplay)/2;
   const int yborder = (height-ydisplay)/2;
 
-  this->xnext = this->xpos + (lapsed_seconds * this->velx);
-  this->ynext = this->ypos + (lapsed_seconds * this->vely);
+  this->next.x = this->pos.x + (lapsed_seconds * this->vel.x);
+  this->next.y = this->pos.y + (lapsed_seconds * this->vel.y);
 
-  if (this->xnext < xborder || this->xnext > width - xborder - arraysize)
+  if (this->next.x < xborder || this->next.x > width - xborder - arraysize)
     {
-      this->velx  = -this->velx;
-      this->xnext = this->xpos + (lapsed_seconds * this->velx);
+      this->vel.x  = -this->vel.x;
+      this->next.x = this->pos.x + (lapsed_seconds * this->vel.x);
     }
 
-  if (this->ynext < yborder || this->ynext > height - yborder - arraysize)
+  if (this->next.y < yborder || this->next.y > height - yborder - arraysize)
     {
-      this->vely  = -this->vely;
-      this->ynext = this->ypos + (lapsed_seconds * this->vely);
+      this->vel.y  = -this->vel.y;
+      this->next.y = this->pos.y + (lapsed_seconds * this->vel.y);
     }
 }
 
@@ -157,12 +157,12 @@ DOTRACE("Ball::checkInsideBorder");
   const int xborder = (width-xdisplay)/2;
   const int yborder = (height-ydisplay)/2;
 
-  if (this->xnext < xborder || this->xnext > width - xborder - arraysize)
+  if (this->next.x < xborder || this->next.x > width - xborder - arraysize)
     {
       return false;
     }
 
-  if (this->ynext < yborder || this->ynext > height - yborder - arraysize)
+  if (this->next.y < yborder || this->next.y > height - yborder - arraysize)
     {
       return false;
     }
@@ -179,15 +179,15 @@ DOTRACE("Ball::bringInsideBorder");
   const int xborder = (width-xdisplay)/2;
   const int yborder = (height-ydisplay)/2;
 
-  if (this->xnext < xborder)
-    this->xnext = xborder;
-  else if (this->xnext > width - xborder - arraysize)
-    this->xnext = width - xborder - arraysize;
+  if (this->next.x < xborder)
+    this->next.x = xborder;
+  else if (this->next.x > width - xborder - arraysize)
+    this->next.x = width - xborder - arraysize;
 
-  if (this->ynext < yborder)
-    this->ynext = yborder;
-  else if (this->ynext > height - yborder - arraysize)
-    this->ynext = height - yborder - arraysize;
+  if (this->next.y < yborder)
+    this->next.y = yborder;
+  else if (this->next.y > height - yborder - arraysize)
+    this->next.y = height - yborder - arraysize;
 }
 
 void Ball::collideIfNeeded(Ball& other, int min_dist,
@@ -195,8 +195,8 @@ void Ball::collideIfNeeded(Ball& other, int min_dist,
 {
 DOTRACE("Ball::collideIfNeeded");
 
-  const double xij = this->xnext - other.xnext; // units pixels
-  const double yij = this->ynext - other.ynext; // units pixels
+  const double xij = this->next.x - other.next.x; // units pixels
+  const double yij = this->next.y - other.next.y; // units pixels
 
   if (fabs(xij) >= min_dist || fabs(yij) >= min_dist)
     return;
@@ -207,13 +207,13 @@ DOTRACE("Ball::collideIfNeeded");
   const double xo   = -ya;    // unitless
   const double yo   =  xa;    // unitless
 
-  const double vai  = this->velx*xa + this->vely*ya; // units pix/sec
-  const double vaj  = other.velx*xa + other.vely*ya; // units pix/sec
+  const double vai  = this->vel.x*xa + this->vel.y*ya; // units pix/sec
+  const double vaj  = other.vel.x*xa + other.vel.y*ya; // units pix/sec
 
   if (vai - vaj < 0.0)
     {
-      const double voi  = this->velx*xo + this->vely*yo; // pix/sec
-      const double voj  = other.velx*xo + other.vely*yo; // pix/sec
+      const double voi  = this->vel.x*xo + this->vel.y*yo; // pix/sec
+      const double voj  = other.vel.x*xo + other.vel.y*yo; // pix/sec
       /*
         ovi2 = vai*vai + voi*voi;
         ovj2 = vaj*vaj + voj*voj;
@@ -226,17 +226,17 @@ DOTRACE("Ball::collideIfNeeded");
       const double fi   = sqrt(1. + vij2 / nvi2); // unitless
       const double fj   = sqrt(1. - vij2 / nvj2); // unitless
 
-      this->velx = fi * (voi * xo + vaj * xa); // pix/sec
-      this->vely = fi * (voi * yo + vaj * ya); // pix/sec
+      this->vel.x = fi * (voi * xo + vaj * xa); // pix/sec
+      this->vel.y = fi * (voi * yo + vaj * ya); // pix/sec
 
-      other.velx = fj * (voj * xo + vai * xa); // pix/sec
-      other.vely = fj * (voj * yo + vai * ya); // pix/sec
+      other.vel.x = fj * (voj * xo + vai * xa); // pix/sec
+      other.vel.y = fj * (voj * yo + vai * ya); // pix/sec
 
-      this->xnext = this->xpos + (lapsed_seconds * this->velx);
-      this->ynext = this->ypos + (lapsed_seconds * this->vely);
+      this->next.x = this->pos.x + (lapsed_seconds * this->vel.x);
+      this->next.y = this->pos.y + (lapsed_seconds * this->vel.y);
 
-      other.xnext = other.xpos + (lapsed_seconds * other.velx);
-      other.ynext = other.ypos + (lapsed_seconds * other.vely);
+      other.next.x = other.pos.x + (lapsed_seconds * other.vel.x);
+      other.next.y = other.pos.y + (lapsed_seconds * other.vel.y);
     }
 }
 
@@ -253,19 +253,19 @@ DOTRACE("Ball::twist");
   const double a21  = -sin(angle);
   const double a22  =  cos(angle);
 
-  const double x = this->velx;
-  const double y = this->vely;
+  const double x = this->vel.x;
+  const double y = this->vel.y;
 
-  this->velx = a11*x + a12*y;
-  this->vely = a21*x + a22*y;
+  this->vel.x = a11*x + a12*y;
+  this->vel.y = a21*x + a22*y;
 }
 
 void Ball::copy()
 {
 DOTRACE("Ball::copy");
 
-  this->xpos = this->xnext;
-  this->ypos = this->ynext;
+  this->pos.x = this->next.x;
+  this->pos.y = this->next.y;
 }
 
 void Ball::draw(Graphics& gfx, unsigned char* bitmap, int size,
@@ -273,15 +273,15 @@ void Ball::draw(Graphics& gfx, unsigned char* bitmap, int size,
 {
 DOTRACE("Ball::draw");
 
-  gfx.writePixmap(int(round(this->xpos)),
-                  int(round(this->ypos)),
+  gfx.writePixmap(int(round(this->pos.x)),
+                  int(round(this->pos.y)),
                   bitmap, size);
 
   if (debug)
-    gfx.drawLine(this->xpos + size/2,
-                 this->ypos + size/2,
-                 this->xpos + size/2 - this->velx / 4,
-                 this->ypos + size/2 - this->vely / 4);
+    gfx.drawLine(this->pos.x + size/2,
+                 this->pos.y + size/2,
+                 this->pos.x + size/2 - this->vel.x / 4,
+                 this->pos.y + size/2 - this->vel.y / 4);
 }
 
 ///////////////////////////////////////////////////////////////////////
