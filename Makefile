@@ -30,7 +30,7 @@ ifeq ($(ARCH),irix6)
 endif
 
 ifeq ($(ARCH),i686)
-	CC  := g++-3
+	CC  := g++
 	CFLAGS :=  -DI686 -Wall -Werror
 	LFLAGS := -L/usr/X11R6/lib
 	LIB   := -lGLU -lGL -lX11 -lm
