@@ -126,7 +126,10 @@ XSTUFF_CC = $(XSTUFF_H) $(DEFS_H) $(XHINTS_H) $(TRACE_H) $(DEBUG_H) xstuff.cc
 # Targets
 #
 
-all:	$(ALL)
+all:	dirs $(ALL)
+
+dirs:
+	mkdir -p $(ARCH)
 
 mvtest: mvtest.cc
 	$(CC) $(CFLAGS) -o mvtest simplemovie.cc mvtest.cc -lmoviefile -ldmedia
