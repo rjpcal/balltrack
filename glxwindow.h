@@ -24,7 +24,7 @@ class GlxWindow
 {
 public:
   GlxWindow(const char* winname, int width, int height, int depth);
-  ~GlxWindow();
+  virtual ~GlxWindow();
 
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
