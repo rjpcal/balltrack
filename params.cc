@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Wed Feb 28 12:33:59 2001
+// written: Mon Mar  5 10:12:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,6 +85,9 @@ namespace {
 #define GETINTL(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %d %d %d %d",TEXT,&(name)[0],&(name)[1],&(name)[2],&(name)[3]);}
 #define GETTEXTL(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %s %s %s %s",TEXT,(name)[0],(name)[1],(name)[2],(name)[3]);}
 
+#define GETTEXTDUMMY(var) {fgets(LINE,120,fp);sscanf(LINE,"%s %s",TEXT,(var));}
+
+
 #define PUTINT(name,text) {fprintf(fp,"%-19s %d\n",(text),(name));}
 #define PUTCHAR(name,text) {fprintf(fp,"%-19s %c\n",(text),(name));}
 #define PUTFLOAT(name,text) {fprintf(fp,"%-19s %.2f\n",(text),(name));}
@@ -128,6 +131,13 @@ DOTRACE("ReadParams");
   GETFLOAT( (BALL_TWIST_ANGLE) );
   GETTEXT(  (OBSERVER) );
   GETTEXT(  (FILENAME) );
+
+  // we read into a dummy variable since the actual application mode
+  // is set at startup time
+  char dummyAppMode[80];
+  GETTEXTDUMMY(dummyAppMode);
+
+  GETINT( (FMRI_SESSION_NUMBER) );
 
   Closefile( fp );
 
@@ -274,30 +284,6 @@ DOTRACE("Closefile");
 
   if(fp != NULL)
 	 fclose(fp);
-}
-
-void PrintParams() {
-DOTRACE("PrintParams");
-
-  PRINTINT(   (DISPLAY_X),        ("DISPLAY_X") );         
-  PRINTINT(   (DISPLAY_Y),        ("DISPLAY_Y") );         
-  PRINTINT(   (CYCLE_NUMBER),     ("CYCLE_NUMBER") );
-  PRINTFLOAT( (WAIT_DURATION),    ("WAIT_DURATION") );       
-  PRINTFLOAT( (EPOCH_DURATION),   ("EPOCH_DURATION") );       
-  PRINTFLOAT( (PAUSE_DURATION),   ("PAUSE_DURATION") );       
-  PRINTFLOAT( (REMIND_DURATION),  ("REMIND_DURATION") );
-  PRINTINT(   (REMINDS_PER_EPOCH),("REMINDS_PER_EPOCH") );
-  PRINTINT(   (FRAMES_PER_REMIND),("FRAMES_PER_REMIND") );
-  PRINTINT(   (BALL_NUMBER),      ("BALL_NUMBER") );
-  PRINTINT(   (BALL_TRACK_NUMBER),("BALL_TRACK_NUMBER") );
-  PRINTINT(   (BALL_VELOCITY),    ("BALL_VELOCITY") );
-  PRINTINT(   (BALL_ARRAY_SIZE),  ("BALL_ARRAY_SIZE") );
-  PRINTINT(   (BALL_MIN_DISTANCE),("BALL_MIN_DISTANCE") );
-  PRINTFLOAT( (BALL_RADIUS),      ("BALL_RADIUS") );
-  PRINTFLOAT( (BALL_SIGMA2),      ("BALL_SIGMA2") );
-  PRINTFLOAT( (BALL_TWIST_ANGLE), ("BALL_TWIST_ANGLE") );
-  PRINTTEXT(  (OBSERVER),         ("OBSERVER") );
-  PRINTTEXT(  (FILENAME),         ("FILENAME") );
 }
 
 void SetParameters1(Application* app) {
