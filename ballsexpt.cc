@@ -29,24 +29,6 @@
 #include "trace.h"
 #include "debug.h"
 
-namespace
-{
-  const int NUM_TRIALS = 8;
-
-  const int TRACK_NUMBERS[9][NUM_TRIALS] =
-    {
-      {2, 0, 4, 5, 3, 0, 5, 2},
-      {3, 4, 2, 0, 5, 3, 4, 0},
-      {4, 0, 5, 3, 2, 0, 3, 4},
-      {5, 2, 3, 0, 4, 5, 2, 0},
-      {2, -1, 4, 5, 3, -1, 5, 2},
-      {3, 4, 2, -1, 5, 3, 4, -1},
-      {4, -1, 5, 3, 2, -1, 3, 4},
-      {5, 2, 3, -1, 4, 5, 2, -1},
-      {-1, -1, -1, 0, 2, 3, 4, 5}
-    };
-}
-
 struct Response
 {
   Response(double t, int v) : time(t), val(v) {}
@@ -362,9 +344,24 @@ DOTRACE("BallsExpt::runFmriExpt");
     rep->gfx.startRecording(rep->params.displayX,
                             rep->params.displayY);
 
+  const int NUM_TRIALS = 8;
+
+  const int TRACK_NUMBERS[9][NUM_TRIALS] =
+    {
+      {2, 0, 4, 5, 3, 0, 5, 2},
+      {3, 4, 2, 0, 5, 3, 4, 0},
+      {4, 0, 5, 3, 2, 0, 3, 4},
+      {5, 2, 3, 0, 4, 5, 2, 0},
+      {2, -1, 4, 5, 3, -1, 5, 2},
+      {3, 4, 2, -1, 5, 3, 4, -1},
+      {4, -1, 5, 3, 2, -1, 3, 4},
+      {5, 2, 3, -1, 4, 5, 2, -1},
+      {-1, -1, -1, 0, 2, 3, 4, 5}
+    };
+
   for (int trial = 0; trial < NUM_TRIALS; ++trial)
     {
-      int track_number =
+      const int track_number =
         TRACK_NUMBERS[ rep->params.fmriSessionNumber-1 ][ trial ];
 
       if (track_number < 0)
