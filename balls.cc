@@ -404,6 +404,8 @@ DOTRACE("Balls::runTrial");
 
       Timepoint t0 = tstart;
 
+      gfx.resetFrameTimer();
+
       // Here's the main loop where the balls are moving randomly
       int nframes = 0;
       while (true)
@@ -413,9 +415,8 @@ DOTRACE("Balls::runTrial");
           drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0],
                      itsParams.showPhysics);
           gfx.drawCross();
-          gfx.swapBuffers();
 
-          const double lapsed_sec = t0.elapsedMsecAndReset()/1000.0;
+          const double lapsed_sec = gfx.swapBuffers() / 1000.0;
 
           pickNextPositions(gfx, lapsed_sec);
 

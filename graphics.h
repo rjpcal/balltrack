@@ -11,6 +11,7 @@
 #ifndef GRAPHICS_H_DEFINED
 #define GRAPHICS_H_DEFINED
 
+#include "timing.h"
 #include "xstuff.h"
 
 #include <string>
@@ -43,7 +44,9 @@ public:
 
   void clearBackBuffer();
 
-  void swapBuffers();
+  // Returns the msec elapsed since the last swapBuffers(), or the
+  // last resetFrameTimer().
+  double swapBuffers();
 
   void drawMessage(const std::string& word);
   void drawCross();
@@ -61,6 +64,8 @@ public:
   void startRecording();
   void stopRecording();
 
+  void resetFrameTimer() { itsFrameTimer.reset(); }
+
 private:
   void dumpFrames(int count);
 
@@ -73,6 +78,7 @@ private:
   bool itsUsingVsync;
   bool isItRecording;
   int itsFrameCounter;
+  Timepoint itsFrameTimer;
 };
 
 static const char vcid_graphics_h[] = "$Header$";

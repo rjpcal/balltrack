@@ -73,7 +73,8 @@ Graphics::Graphics(const char* winname,
   itsGLXContext(0),
   itsUsingVsync(false),
   isItRecording(false),
-  itsFrameCounter(0)
+  itsFrameCounter(0),
+  itsFrameTimer(Timepoint::now())
 {
 DOTRACE("Graphics::Graphics");
 
@@ -179,7 +180,7 @@ extern "C"
   extern int glXWaitVideoSyncSGI (int, int, unsigned int *);
 }
 
-void Graphics::swapBuffers()
+double Graphics::swapBuffers()
 {
 DOTRACE("Graphics::swapBuffers");
   glFlush();
@@ -200,7 +201,10 @@ DOTRACE("Graphics::swapBuffers");
   if (isItRecording)
     {
       dumpFrames(1);
+      return 33.0;
     }
+
+  return itsFrameTimer.elapsedMsecAndReset();
 }
 
 void Graphics::drawMessage(const std::string& word)
