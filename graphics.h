@@ -68,8 +68,8 @@ private:
   void waitFrameCount(int number);
   double computeFrameTime();
 
-  int itsWidth;
-  int itsHeight;
+  const int itsWidth;
+  const int itsHeight;
   double itsFrameTime;
 
   XStuff itsXStuff;
