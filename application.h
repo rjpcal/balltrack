@@ -35,8 +35,6 @@ public:
 
   char getKeystroke();
 
-  void ringBell(int duration);
-
   Graphics& graphics() const { return itsGraphics; }
 
 protected:

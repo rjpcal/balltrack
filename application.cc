@@ -132,7 +132,6 @@ DOTRACE("Application::keyPressAction");
   if( count > 1 || keysym == XK_Return ||
       keysym == XK_BackSpace || keysym == XK_Delete )
     {
-      ringBell(50);
       return;
     }
 
@@ -221,10 +220,9 @@ DOTRACE("Application::getKeystroke");
       buffer[ count ] = '\0';
 
       DebugEvalNL(buffer);
-      if( count > 1 || keysym == XK_Return ||
-          keysym == XK_BackSpace || keysym == XK_Delete )
+      if ( count > 1 || keysym == XK_Return ||
+           keysym == XK_BackSpace || keysym == XK_Delete )
         {
-          ringBell(50);
           continue;
         }
 
@@ -235,12 +233,6 @@ DOTRACE("Application::getKeystroke");
           return( buffer[0] );
         }
     }
-}
-
-void Application::ringBell(int duration)
-{
-DOTRACE("Application::ringBell");
-  XBell( itsGraphics.xstuff().display(), duration );
 }
 
 static const char vcid_application_cc[] = "$Header$";
