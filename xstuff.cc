@@ -191,8 +191,8 @@ DOTRACE("XStuff::getKeypress");
 
       // For some reason, if we pass a non-null XComposeStatus* to this
       // function, the 'buffer' gets screwed up... very weird.
-      int count = XLookupString((XKeyEvent *) &event, &buffer[0], 9,
-                                &keysym, (XComposeStatus*) 0);
+      const int count = XLookupString(&event.xkey, &buffer[0], 9,
+                                      &keysym, (XComposeStatus*) 0);
 
       buffer[ count ] = '\0';
 
