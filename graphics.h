@@ -44,9 +44,6 @@ public:
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
 
-  bool isRgba();
-  bool isDoubleBuffered();
-
   void clearFrontBuffer();
   void clearBackBuffer();
   void clearUpperPlanes();
@@ -65,7 +62,6 @@ public:
   void showMenu(char menu[][STRINGSIZE], int nmenu);
   void showParams(char params[][STRINGSIZE], int nparams);
 
-  void writeBitmap(unsigned char* ptr, int x, int y, int size);
   void writeTrueColorMap(unsigned char* ptr, int x, int y, int size);
   void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
 
@@ -89,9 +85,6 @@ private:
 
   SimpleMovie* itsMovie;
   bool isItRecording;
-
-  bool* isItRgba;
-  bool* isItDoubleBuffered;
 };
 
 static const char vcid_graphics_h[] = "$Header$";

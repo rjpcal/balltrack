@@ -42,8 +42,7 @@ namespace Local
 
   void makeBallMap( std::vector<unsigned char>& vec, int size,
                     float radius, float sigma,
-                    unsigned char background,
-                    bool rgba );
+                    unsigned char background );
 
   bool colorsAlreadyGenerated = false;
 }
@@ -83,27 +82,26 @@ DOTRACE("Local::abs");
 
 void Local::makeBallMap( std::vector<unsigned char>& vec, int size,
                          float radius, float sigma,
-                         unsigned char background,
-                         bool rgba )
+                         unsigned char background )
 {
 DOTRACE("Local::makeBallMap");
 
   Balls::generateColors();
 
-  int bytes_per_pixel = rgba ? 4 : 1;
+  const int bytes_per_pixel = 4;
 
-  int num_bytes = size*size*bytes_per_pixel;
+  const int num_bytes = size*size*bytes_per_pixel;
 
   vec.resize(num_bytes);
 
-  for( int i=0; i<size; i++ )
+  for (int i=0; i<size; ++i)
     {
-      for( int j=0; j<size; j++ )
+      for (int j=0; j<size; ++j)
         {
-          float x   = (float)( i - size/2 + 0.5 );
-          float y   = (float)( j - size/2 + 0.5 );
+          const float x   = float( i - size/2 + 0.5 );
+          const float y   = float( j - size/2 + 0.5 );
 
-          float rsq = x*x + y*y;
+          const float rsq = x*x + y*y;
 
           unsigned char index;
 
@@ -119,19 +117,12 @@ DOTRACE("Local::makeBallMap");
               index = (unsigned char)( background );
             }
 
-          size_t base_loc = bytes_per_pixel*(i*size + j);
+          const size_t base_loc = bytes_per_pixel*(i*size + j);
 
-          if (rgba)
-            {
-              vec[base_loc + 0] = (unsigned char)(0xff * Balls::theColors[index][0]);
-              vec[base_loc + 1] = (unsigned char)(0xff * Balls::theColors[index][1]);
-              vec[base_loc + 2] = (unsigned char)(0xff * Balls::theColors[index][2]);
-              vec[base_loc + 3] = (unsigned char)(0xff);
-            }
-          else
-            {
-              vec[base_loc] = index;
-            }
+          vec[base_loc + 0] = (unsigned char)(0xff * Balls::theColors[index][0]);
+          vec[base_loc + 1] = (unsigned char)(0xff * Balls::theColors[index][1]);
+          vec[base_loc + 2] = (unsigned char)(0xff * Balls::theColors[index][2]);
+          vec[base_loc + 3] = (unsigned char)(0xff);
         }
     }
 }
@@ -294,10 +285,7 @@ void Ball::draw(Graphics& gfx, unsigned char* bitmap)
 {
 DOTRACE("Ball::draw");
 
-  if (gfx.isRgba())
-    gfx.writeTrueColorMap(bitmap, itsXpos, itsYpos, BALL_ARRAY_SIZE);
-  else
-    gfx.writeBitmap(bitmap, itsXpos, itsYpos, BALL_ARRAY_SIZE);
+  gfx.writeTrueColorMap(bitmap, itsXpos, itsYpos, BALL_ARRAY_SIZE);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -369,21 +357,11 @@ void Balls::moveBalls(Graphics& gfx)
 DOTRACE("Balls::moveBalls");
   gfx.waitVerticalRetrace();
 
-  if (gfx.isDoubleBuffered())
-    {
-      gfx.clearBackBuffer();
+  gfx.clearBackBuffer();
 
-      for(int i = 0; i < BALL_NUMBER; ++i)
-        {
-          itsBalls[i].draw(gfx, &theirBallmap[0]);
-        }
-    }
-  else
+  for(int i = 0; i < BALL_NUMBER; ++i)
     {
-      for(int i = 0; i < BALL_NUMBER; ++i)
-        {
-          itsBalls[i].move(gfx);
-        }
+      itsBalls[i].draw(gfx, &theirBallmap[0]);
     }
 
   gfx.drawCross();
@@ -431,9 +409,9 @@ DOTRACE("Balls::prepare");
   initialize(gfx);
 
   Local::makeBallMap( theirHimap, BALL_ARRAY_SIZE,
-                      BALL_RADIUS, BALL_SIGMA2, 255, gfx.isRgba() );
+                      BALL_RADIUS, BALL_SIGMA2, 255 );
   Local::makeBallMap( theirBallmap, BALL_ARRAY_SIZE,
-                      BALL_RADIUS, BALL_SIGMA2, 0, gfx.isRgba() );
+                      BALL_RADIUS, BALL_SIGMA2, 0 );
 }
 
 void Balls::generateColors()

@@ -33,8 +33,7 @@ namespace
 {
   void drawGLText(const char* word, int stroke_width,
                   int x_pos, int y_pos,
-                  int char_width, int char_height,
-                  bool rgba)
+                  int char_width, int char_height)
   {
   DOTRACE("<graphics.cc>::drawGLText");
 
@@ -43,10 +42,7 @@ namespace
     double x_scale = char_width/5.0;
     double y_scale = char_height/6.0;
 
-    if (rgba)
-      glColor3d(1.0, 1.0, 1.0);
-    else
-      glIndexi(1);
+    glColor3d(1.0, 1.0, 1.0);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -75,9 +71,7 @@ Graphics::Graphics(const char* winname,
   itsGLXContext(0),
   itsClearIndex(0),
   itsMovie(0),
-  isItRecording(false),
-  isItRgba(0),
-  isItDoubleBuffered(0)
+  isItRecording(false)
 {
 DOTRACE("Graphics::Graphics");
 
@@ -115,8 +109,6 @@ DOTRACE("Graphics::Graphics");
 Graphics::~Graphics()
 {
 DOTRACE("Graphics::~Graphics");
-  delete isItDoubleBuffered;
-  delete isItRgba;
   delete itsMovie;
 }
 
@@ -138,17 +130,10 @@ DOTRACE("Graphics::initWindow");
   // forces the frame time to be computed and then cached in the base class
   frameTime();
 
-  if (isDoubleBuffered())
-    {
-      clearBackBufferRegion(false);
-      swapBuffers();
-      clearBackBufferRegion(false);
-      swapBuffers();
-    }
-  else
-    {
-      clearFrontBuffer();
-    }
+  clearBackBufferRegion(false);
+  swapBuffers();
+  clearBackBufferRegion(false);
+  swapBuffers();
 }
 
 void Graphics::wrapGraphics()
@@ -184,35 +169,6 @@ double Graphics::frameTime()
   itsFrameTime = 13;
 #endif
   return itsFrameTime;
-}
-
-
-bool Graphics::isRgba()
-{
-DOTRACE("Graphics::isRgba");
-
-  if (isItRgba == 0)
-
-{
-      GLboolean is_rgba;
-      glGetBooleanv(GL_RGBA_MODE, &is_rgba);
-      isItRgba = new bool(is_rgba == GL_TRUE ? true : false);
-    }
-  return *isItRgba;
-}
-
-bool Graphics::isDoubleBuffered()
-{
-DOTRACE("Graphics::isDoubleBuffered");
-
-  if (isItDoubleBuffered == 0)
-
-{
-      GLboolean is_db;
-      glGetBooleanv(GL_DOUBLEBUFFER, &is_db);
-      isItDoubleBuffered = new bool(is_db == GL_TRUE ? true : false);
-    }
-  return *isItDoubleBuffered;
 }
 
 void Graphics::clearFrontBuffer()
@@ -328,8 +284,7 @@ DOTRACE("Graphics::drawMessage");
 
   drawGLText(word, 4,
              (width()-availWidth)/2, (height()-charHeight)/2,
-             charWidth, charHeight,
-             isRgba());
+             charWidth, charHeight);
 
   writeLowerPlanes();
 }
@@ -346,10 +301,7 @@ DOTRACE("Graphics::drawCross");
 
   writeUpperPlanes();
 
-  if (isRgba())
-    glColor3d(1.0, 1.0, 1.0);
-  else
-    glIndexi(192);
+  glColor3d(1.0, 1.0, 1.0);
 
   glBegin(GL_LINES);
   glVertex2i(x-50, y);
@@ -377,8 +329,7 @@ DOTRACE("Graphics::showMenu");
   for( int i=0; i<nmenu; i++ )
     drawGLText(menu[i], 2,
                100, height() - 200 - i * (char_height*2),
-               char_width, char_height,
-               isRgba());
+               char_width, char_height);
 }
 
 void Graphics::showParams(char params[][STRINGSIZE], int nparams)
@@ -390,25 +341,15 @@ DOTRACE("Graphics::showParams");
   for( int i=0; i<col1; i++ )
     drawGLText(params[i], 2,
                width()/2 - 500, height()/2 -  450 + i * 40,
-               10, 15,
-               isRgba());
+               10, 15);
 
   if( col1+1 < col2 )
     {
       for( int i=col1+1; i<col2; i++ )
         drawGLText(params[i], 2,
                    width()/2 + 100, height()/2 - 1370 + i * 40,
-                   10, 15,
-                   isRgba());
+                   10, 15);
     }
-}
-
-void Graphics::writeBitmap(unsigned char* ptr, int x, int y, int size)
-{
-DOTRACE("Graphics::writeBitmap");
-  glRasterPos2i(x,y);
-
-  glDrawPixels(size, size, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, ptr);
 }
 
 void Graphics::writeTrueColorMap(unsigned char* ptr, int x, int y, int size)
