@@ -1,14 +1,54 @@
+///////////////////////////////////////////////////////////////////////
+//
+// balls.c
+// Rob Peters rjpeters@klab.caltech.edu
+//   created by Achim Braun
+// created: Tue Feb  1 16:12:25 2000
+// written: Tue Feb  1 16:42:41 2000
+// $Id$
+//
+///////////////////////////////////////////////////////////////////////
 
-#include "incl.h"
+#ifndef BALLS_C_DEFINED
+#define BALLS_C_DEFINED
+
+#include "balls.h"
+
+#include <cmath>
+#include <cstdlib>
+#include <starbase.c.h>
+#include <X11/Xlib.h>
+
+#include "image.h"
+#include "defs.h"
+#include "params.h"
+#include "timing.h"
 
 int xpos[25], ypos[25], nx[25], ny[25],
   xvel[25], yvel[25];
 
 struct timeval tp[2];
 
-char ballmap[128*128], himap[128*128];
+unsigned char ballmap[128*128], himap[128*128];
 
-RunApplication()
+// Prototypes
+void PrepareTrial();
+void RunTrial();
+void RunDummy();
+void InitBalls();
+void NextBalls();
+int Round( int x );
+int Fround( float x );
+void Collide( int xij, int yij, int* vxi, int* vyi, int* vxj, int* vyj );
+void Twist( int* vx, int* vy, float angle );
+void CopyBalls( int x[], int y[], int nx[], int ny[] );
+void WriteBalls( int xpos[], int ypos[], int number, unsigned char* bitmap );
+void WriteHiBalls( int xpos[], int ypos[], int number, unsigned char* bitmap );
+int Abs( int a );
+void SmallLoop();
+void TimeButtonEvent( XEvent* event );
+
+void RunApplication()
 {
   FILE *fl;
   int cycle, i;
@@ -89,7 +129,7 @@ RunApplication()
   Closefile( fl );
 }
 
-PrepareTrial()
+void PrepareTrial()
 {
   InitBalls();
 
@@ -98,7 +138,7 @@ PrepareTrial()
   MakeBallMap( ballmap, BALL_ARRAY_SIZE, BALL_RADIUS, BALL_SIGMA2 );
 }
 
-RunTrial()
+void RunTrial()
 {
   int i, j;
 
@@ -146,7 +186,7 @@ RunTrial()
   DrawCross();
 }
 
-RunDummy()
+void RunDummy()
 {
   int i, j;
 
@@ -185,7 +225,7 @@ RunDummy()
   DrawCross();
 }
 
-InitBalls()
+void InitBalls()
 {
   int i, j, too_close;
   float angle;
@@ -219,7 +259,7 @@ InitBalls()
     }
 }
 
-NextBalls()
+void NextBalls()
 {
   int i, j, tmp, dx, dy;
 
@@ -266,8 +306,7 @@ NextBalls()
     }
 }
 
-int Round( x )
-	  int x;
+int Round( int x )
 {
   int ix;
 
@@ -279,8 +318,7 @@ int Round( x )
   return( ix );
 }
 
-int Fround( x )
-	  float x;
+int Fround( float x )
 {
   int ix;
 
@@ -292,8 +330,7 @@ int Fround( x )
   return( ix );
 }
 
-Collide( xij, yij, vxi, vyi, vxj, vyj )
-	  int xij, yij, *vxi, *vyi, *vxj, *vyj;
+void Collide( int xij, int yij, int* vxi, int* vyi, int* vxj, int* vyj )
 {
   float xa, ya, xo, yo, d, fi, fj, nvi2, nvj2, vij2, vai, voi, vaj, voj;
 
@@ -330,9 +367,7 @@ Collide( xij, yij, vxi, vyi, vxj, vyj )
     }
 }
 
-Twist( vx, vy, angle )
-	  int *vx, *vy;
-	  float angle;
+void Twist( int* vx, int* vy, float angle )
 {
   static int flag = 0;
   static float a11, a12, a22, a21;
@@ -362,8 +397,7 @@ Twist( vx, vy, angle )
     }
 }
 
-CopyBalls( x, y, nx, ny )
-	  int x[], y[], nx[], ny[];
+void CopyBalls( int x[], int y[], int nx[], int ny[] )
 {
   int i;
 
@@ -374,8 +408,7 @@ CopyBalls( x, y, nx, ny )
     }
 }
 
-float Zerototwopi( angle )
-	  float angle;
+float Zerototwopi( float angle )
 {
   while( angle > TWOPI )
 	 angle -= TWOPI;
@@ -386,9 +419,7 @@ float Zerototwopi( angle )
   return( angle );
 }
 
-WriteBalls( xpos, ypos, number, bitmap )
-	  int xpos[], ypos[], number;
-	  char *bitmap;
+void WriteBalls( int xpos[], int ypos[], int number, unsigned char* bitmap )
 {
   int i;
 
@@ -396,9 +427,7 @@ WriteBalls( xpos, ypos, number, bitmap )
 	 WriteBitmap( bitmap, xpos[i], ypos[i], BALL_ARRAY_SIZE );
 }
 
-WriteHiBalls( xpos, ypos, number, bitmap )
-	  int xpos[], ypos[], number;
-	  char *bitmap;
+void WriteHiBalls( int xpos[], int ypos[], int number, unsigned char* bitmap )
 {
   int i;
 
@@ -408,8 +437,10 @@ WriteHiBalls( xpos, ypos, number, bitmap )
   write_enable( fildes, 0x3f );
 }
 
-int Abs( a )
-	  int a;
+int Abs( int a )
 {
   return( ( a > 0 ) ? a : -a );
 }
+
+static const char vcid_balls_c[] = "$Header$";
+#endif // !BALLS_C_DEFINED

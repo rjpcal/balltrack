@@ -1,16 +1,37 @@
+///////////////////////////////////////////////////////////////////////
+//
+// applic.c
+// Rob Peters rjpeters@klab.caltech.edu
+//   created by Achim Braun
+// created: Tue Feb  1 16:06:33 2000
+// written: Tue Feb  1 16:41:53 2000
+// $Id$
+//
+///////////////////////////////////////////////////////////////////////
 
-#include "incl.h"
+#ifndef APPLIC_C_DEFINED
+#define APPLIC_C_DEFINED
+
+#include "applic.h"
+
+#include <cstdlib>
+#include <cstring>
+#include <sys/time.h>
+
+#include "balls.h"
+#include "image.h"
+#include "defs.h"
+#include "main.h"
+#include "params.h"
 
 char  PROGRAM[STRINGSIZE];
 
-WhoAreYou( argc, argv )
-	  int argc;
-	  char **argv;
+void WhoAreYou( int argc, char** argv )
 {
   if( argc < 2 )
     {
 		printf( " Who are you?\n" );
-		Exit();
+		Exit(0);
     }
 
   strcpy( PROGRAM,  argv[0] );
@@ -18,7 +39,7 @@ WhoAreYou( argc, argv )
   strcpy( FILENAME, argv[1] );
 }
 
-InitApplication()
+void InitApplication()
 {
   int stimT;
 
@@ -32,20 +53,19 @@ InitApplication()
   ReadParams( "sta" );
 }
 
-WrapApplication()
+void WrapApplication()
 {
   WriteParams( "sta" );
 
   RestoreColormap();
 }
 
-SwitchApplication( c )
-	  char c;
+void SwitchApplication( char c )
 {
   switch( c )
     {
 	 case 'q':
-		Exit();
+		Exit(0);
 		break;
 
 	 case 'r':
@@ -71,7 +91,7 @@ SwitchApplication( c )
     }
 }
 
-MakeMenu()
+void MakeMenu()
 {
   int nmenu;
   char menu[10][STRINGSIZE];
@@ -89,8 +109,5 @@ MakeMenu()
   ShowMenu( menu, nmenu );
 }
 
-
-
-
-
-
+static const char vcid_applic_c[] = "$Header$";
+#endif // !APPLIC_C_DEFINED

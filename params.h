@@ -1,3 +1,17 @@
+///////////////////////////////////////////////////////////////////////
+//
+// params.h
+// Rob Peters rjpeters@klab.caltech.edu
+//   created by Achim Braun
+// created: Tue Feb  1 16:05:04 2000
+// written: Tue Feb  1 16:29:05 2000
+// $Id$
+//
+///////////////////////////////////////////////////////////////////////
+
+#ifndef PARAMS_H_DEFINED
+#define PARAMS_H_DEFINED
+
 
 extern int   DISPLAY_X;
 extern int   DISPLAY_Y;
@@ -79,4 +93,18 @@ extern int width, height, fildes;
 
 extern char line[], text[];
 
+#include <cstdio>
 
+void ReadParams( char extension[] );
+void CheckParams();
+void WriteParams( char extension[] );
+void LogParams( FILE* fl );
+void ListParams();
+void Openfile( FILE** fp, char mode, char extension[] );
+void Closefile( FILE* fp );
+void PrintParams();
+void SetParameters1();
+void SetParameters2();
+
+static const char vcid_params_h[] = "$Header$";
+#endif // !PARAMS_H_DEFINED

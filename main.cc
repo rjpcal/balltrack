@@ -1,5 +1,16 @@
+#include "main.h"
 
-#include "incl.h"
+#include <cstring>				  // for strcpy
+#include <cstdlib>				  // for exit
+#include <starbase.c.h>
+#include <X11/keysym.h>
+
+#include "applic.h"
+#include "image.h"
+#include "params.h"
+#include "timing.h"
+
+#include "defs.h"
 
 #define WINDOW_NAME		     "tracking"
 
@@ -29,9 +40,7 @@ Colormap colormap;
 XColor mean;
 GC gc;
 
-main( argc, argv )
-	  int argc;
-	  char **argv;
+int main( int argc, char** argv )
 {
   width  = WINDOW_X;
   height = WINDOW_Y;
@@ -65,10 +74,10 @@ main( argc, argv )
 
   Handle_events( argc, argv, display, screen, window, fildes );
 
-  Exit();
+  Exit(0);
 }
 
-Exit()
+void Exit(int code)
 {
   WrapApplication();
 
@@ -76,12 +85,10 @@ Exit()
 
   XCloseDisplay( display );
 
-  exit();
+  exit(code);
 }
 
-OpenDisplay( display, screen )
-	  Display **display;
-	  int *screen;
+void OpenDisplay( Display** display, int* screen )
 {
 
   *display = XOpenDisplay( NULL );
@@ -98,11 +105,7 @@ OpenDisplay( display, screen )
   *screen = DefaultScreen( *display );
 }
 
-Create_visual( display, screen, visual, depth ) 
-	  Display *display;
-	  int screen;
-	  Visual **visual;
-	  int *depth;
+void Create_visual( Display* display, int screen, Visual** visual, int* depth ) 
 {
   int i, vnumber;
   XVisualInfo vtemp, *vlist;
@@ -117,12 +120,12 @@ Create_visual( display, screen, visual, depth )
     {
 
 		fprintf( stdout, " %s visual %d of depth %d mapsize %d\n", 
-					visual_class[vlist[i].class], 
+					visual_class[vlist[i].c_class], 
 					vlist[i].visualid, 
 					vlist[i].depth, 
 					vlist[i].colormap_size );
 
-		if( !strcmp( visual_class[vlist[i].class], VISUAL_CLASS ) )
+		if( !strcmp( visual_class[vlist[i].c_class], VISUAL_CLASS ) )
 		  {
 			 *visual = vlist[i].visual;
 			 *depth  = vlist[i].depth;
@@ -134,12 +137,8 @@ Create_visual( display, screen, visual, depth )
   *depth  = vlist[0].depth;
 }
 
-Create_colormap( display, screen, visual, colormap, mean )
-	  Display *display;
-	  int screen;
-	  Visual *visual;
-	  Colormap *colormap;
-	  XColor *mean;
+void Create_colormap( Display* display, int screen, Visual* visual,
+							 Colormap* colormap, XColor* mean )
 {
   *colormap = XCreateColormap( display, RootWindow( display, screen ),
 										 visual, AllocNone );
@@ -149,15 +148,9 @@ Create_colormap( display, screen, visual, colormap, mean )
   XAllocColor( display, *colormap, mean );
 }
 
-Create_window( argc, argv, display, screen, visual, depth, colormap, mean, 
-					window, width, height, name )
-	  int argc, depth, screen, width, height;
-	  char **argv, *name;
-	  Display *display;
-	  Visual *visual;
-	  Colormap colormap;
-	  XColor mean;
-	  Window *window;
+void Create_window( int argc, char** argv, Display* display, int screen,
+						  Visual* visual, int depth, Colormap colormap, XColor mean, 
+						  Window* window, int width, int height, char* name )
 {
   XSetWindowAttributes winAttributes;
   XSizeHints	hints;
@@ -184,11 +177,8 @@ Create_window( argc, argv, display, screen, visual, depth, colormap, mean,
 								  None, argv, argc, &hints );
 }
 
-int Map_image_window( argc, argv, display, window, width, height, name )
-	  int argc, width, height;
-	  char **argv, *name;
-	  Display *display;
-	  Window window;
+int Map_image_window( int argc, char** argv, Display* display,
+							 Window window, int width, int height, char* name )
 {
   int fildes = 0;
   char *device;
@@ -217,11 +207,8 @@ int Map_image_window( argc, argv, display, window, width, height, name )
   return( fildes );
 }
 
-Set_wm_property( argc, argv, display, window, width, height, name )
-	  int argc, width, height;
-	  char **argv, *name;
-	  Display *display;
-	  Window window;
+void Set_wm_property( int argc, char** argv, Display* display, Window window,
+							 int width, int height, char* name )
 {
   char *list[1];
   XSizeHints	  *size_hints;
@@ -254,9 +241,7 @@ Set_wm_property( argc, argv, display, window, width, height, name )
 						  argv, argc, size_hints, wm_hints, class_hint );
 }
 
-Set_wm_protocol( display, window )
-	  Display *display;
-	  Window window;
+void Set_wm_protocol( Display* display, Window window )
 {
   Atom wm_protocols[2];
 
@@ -265,9 +250,7 @@ Set_wm_protocol( display, window )
   XSetWMProtocols( display, window, wm_protocols, 2 );
 }
 
-Window_info( display, visual )
-	  Display *display;
-	  Visual *visual;
+void Window_info( Display* display, Visual* visual )
 {
   int items;
   XVisualInfo info;
@@ -275,17 +258,12 @@ Window_info( display, visual )
   info.visualid = visual->visualid;
   info = *XGetVisualInfo( display, VisualIDMask, &info, &items );
   fprintf( stdout, " Window %d with %s visual %d of depth %d\n", 
-			  0, visual_class[info.class], info.visualid, info.depth );
+			  0, visual_class[info.c_class], info.visualid, info.depth );
   fflush( stdout );
 }
 
-Handle_events( argc, argv, display, screen, window, fildes )
-	  int argc;
-	  char **argv;
-	  Display *display;
-	  int screen;
-	  Window window;
-	  int fildes; 
+void Handle_events( int argc, char** argv, Display* display,
+						  int screen, Window window, int fildes )
 {
   XEvent event;
     
@@ -349,8 +327,7 @@ Handle_events( argc, argv, display, screen, window, fildes )
     }
 } 
 
-KeyPressAction( event )
-	  XEvent *event;
+void KeyPressAction( XEvent* event )
 {
   int count;
   KeySym keysym;
@@ -379,44 +356,7 @@ KeyPressAction( event )
 		}
 }
 
-SmallLoop()
-{
-  XEvent event;
-
-  while( XCheckMaskEvent( display, ButtonPressMask, &event ) )
-    {
-
-		if( event.type == ButtonPress &&
-			 event.xbutton.window == window )
-		  {
-			 TimeButtonEvent( &event );
-        }
-    }
-} 
-
-TimeButtonEvent( event )
-	  XEvent *event;
-{
-  int nbutton;    
-
-  if( event->xbutton.button == Button1 )
-	 nbutton = LEFTBUTTON;
-  else
-    if( event->xbutton.button == Button2 )
-		nbutton = MIDDLEBUTTON;
-    else
-		if( event->xbutton.button == Button3 )
-        nbutton = RIGHTBUTTON;
-		else
-        nbutton = 0;
-
-  AddToResponseStack( (double) event->xbutton.time, nbutton );
-}
-
-WrapWindow( display, window, fildes )
-	  Display *display;
-	  Window window;
-	  int fildes;
+void WrapWindow( Display* display, Window window, int fildes )
 {
   gclose( fildes );
   XDestroyWindow( display, window );
@@ -455,87 +395,36 @@ char GetKeystroke()
     }
 }
 
-int GetMouseclick( xclick, yclick )
-	  int *xclick, *yclick;
+void SmallLoop()
 {
   XEvent event;
-  Window root, child;
-  int root_x, root_y, win_x, win_y, keys_button, nbutton;
 
-  while( True )
+  while( XCheckMaskEvent( display, ButtonPressMask, &event ) )
     {
-		XNextEvent( display, &event );
 
-		if( event.type           == ButtonPress && 
-			 event.xbutton.window == window  )
+		if( event.type == ButtonPress &&
+			 event.xbutton.window == window )
 		  {
-			 XQueryPointer( display, window, &root, &child, 
-								 &root_x, &root_y, &win_x, &win_y,
-								 &keys_button );
-
-			 *xclick = win_x;
-			 *yclick = win_y;
-
-			 if( event.xbutton.button == Button1 )
-				nbutton = LEFTBUTTON;
-			 else
-            if( event.xbutton.button == Button2 )
-				  nbutton = MIDDLEBUTTON;
-				else
-				  if( event.xbutton.button == Button3 )
-					 nbutton = RIGHTBUTTON;
-				  else
-					 nbutton = 0;
-
-			 return( nbutton );
+			 TimeButtonEvent( &event );
         }
     }
-}
+} 
 
-int GetMouseOrKey()
+void TimeButtonEvent( XEvent* event )
 {
-  int count, nbutton;
-  KeySym keysym;
-  XComposeStatus compose;
-  char buffer[10];
-  XEvent event;
-    
-  while( True )
-    {
-		XNextEvent( display, &event );
+  int nbutton;    
 
-		if( event.type==KeyPress && event.xkey.window==window )
-		  {
-			 count = XLookupString( (XKeyEvent *) &event, buffer, 10, 
-											&keysym, &compose );
-			 buffer[ count ] = '\0';
-
-			 if( count > 1 || keysym == XK_Return || 
-				  keysym == XK_BackSpace || keysym == XK_Delete )
-            {
-				  XBell( display, 50 );
-            }
-			 else
-            if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
-					  keysym >= XK_space    && keysym <= XK_asciitilde )
-				  {
-                return( buffer[0] );
-				  }
-        }
+  if( event->xbutton.button == Button1 )
+	 nbutton = LEFTBUTTON;
+  else
+    if( event->xbutton.button == Button2 )
+		nbutton = MIDDLEBUTTON;
+    else
+		if( event->xbutton.button == Button3 )
+        nbutton = RIGHTBUTTON;
 		else
-		  if( event.type==ButtonPress && event.xbutton.window==window  )
-			 {
-            if( event.xbutton.button == Button1 )
-				  nbutton = LEFTBUTTON;
-				else
-				  if( event.xbutton.button == Button2 )
-					 nbutton = MIDDLEBUTTON;
-				  else
-					 if( event.xbutton.button == Button3 )
-						nbutton = RIGHTBUTTON;
+        nbutton = 0;
 
-				return( nbutton );
-			 }
-    }
+  AddToResponseStack( (double) event->xbutton.time, nbutton );
 }
 

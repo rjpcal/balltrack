@@ -3,7 +3,7 @@
 // timing.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb  1 16:42:55 2000
-// written: Tue Feb  1 16:43:14 2000
+// written: Tue Feb  1 16:43:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,8 @@
 #define TIMING_C_DEFINED
 
 #include "timing.h"
+
+#include <cmath>
 
 #include "image.h"
 #include "defs.h"
