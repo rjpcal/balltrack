@@ -14,7 +14,7 @@
 #include "application.h"
 
 #include "timing.h"
-#include "graphics.h"
+#include "xstuff.h"
 
 #include <cstdlib>              // for srand48()
 #include <X11/Xlib.h>
@@ -30,67 +30,15 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-Application::Application(Graphics& x, void* cdata,
-                         ExposeFunc* e, KeyFunc* k) :
-  itsGraphics(x),
-  itsCdata(cdata),
-  itsOnExpose(e),
-  itsOnKey(k)
+Application::Application(XStuff& x) :
+  itsXStuff(x)
 {
 DOTRACE("Application::Application");
-
-  // seed the random number generator based on the time
-  struct timeval tp;
-  Timing::getTime(&tp);
-  srand48(tp.tv_sec);
 }
 
 Application::~Application()
 {
 DOTRACE("Application::~Application");
-}
-
-void Application::run()
-{
-DOTRACE("Application::run");
-
-  XEvent event;
-
-  while (true)
-    {
-      XNextEvent(itsGraphics.display(), &event);
-
-      switch (event.type)
-        {
-        case Expose:
-          if (event.xexpose.count == 0)
-            if (event.xexpose.window == itsGraphics.window())
-              (*itsOnExpose)(itsCdata);
-          break;
-
-        case ButtonPress:
-          if (event.xbutton.button == Button3)
-            return;
-          else
-            (*itsOnExpose)(itsCdata);
-          break;
-
-        case KeyPress:
-          if (event.xkey.window == itsGraphics.window())
-            {
-              Timing::logTimer.set();
-              Timing::mainTimer.set();
-
-              char key = keyPressAction(&event);
-              if ((*itsOnKey)(itsCdata, key) == true)
-                return;
-            }
-          break;
-
-        default:
-          break;
-        }
-    }
 }
 
 void Application::buttonPressLoop()
@@ -99,7 +47,7 @@ DOTRACE("Application::buttonPressLoop");
 
   XEvent event;
 
-  while (XCheckMaskEvent(itsGraphics.display(),
+  while (XCheckMaskEvent(itsXStuff.display(),
                          ButtonPressMask | KeyPressMask,
                          &event))
     {
@@ -114,54 +62,7 @@ char Application::getKeystroke()
 {
 DOTRACE("Application::getKeystroke");
 
-  return itsGraphics.getKeypress();
-}
-
-// void Application::exposeCallback(void* cdata)
-// {
-// DOTRACE("Application::exposeCallback");
-//   Application* p = static_cast<Application*>(cdata);
-//   p->onExpose();
-// }
-
-// bool Application::keyCallback(void* cdata, char c)
-// {
-// DOTRACE("Application::keyCallback");
-//   Application* p = static_cast<Application*>(cdata);
-//   return p->onKey(c);
-// }
-
-char Application::keyPressAction(XEvent* event)
-{
-DOTRACE("Application::keyPressAction");
-
-  char buffer[10];
-  KeySym keysym;
-  XComposeStatus compose;
-
-  int count = XLookupString((XKeyEvent*) event, buffer, 9,
-                            &keysym, &compose);
-  buffer[ count ] = '\0';
-
-  if (count > 1 || keysym == XK_Return ||
-      keysym == XK_BackSpace || keysym == XK_Delete)
-    {
-      return '\0';
-    }
-
-  if (keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
-      keysym >= XK_space    && keysym <= XK_asciitilde)
-    {
-      struct timeval tp;
-      struct timezone tzp;
-      gettimeofday(&tp, &tzp);
-
-      Timing::initTimeStack(double(event->xkey.time), &tp);
-
-      return buffer[0];
-    }
-
-  return '\0';
+  return itsXStuff.getKeypress();
 }
 
 void Application::timeButtonEvent(XEvent* event)

@@ -47,8 +47,8 @@ namespace
 
 struct BallsExpt::Impl
 {
-  Impl(Params& p, Graphics& g, void* cdata) :
-    appl(g, cdata, &BallsExpt::onExpose, &BallsExpt::onKey),
+  Impl(Params& p, Graphics& g) :
+    appl(g.xstuff()),
     timepoints(),
     timepointIdx(0),
     ballset(p),
@@ -79,7 +79,7 @@ struct BallsExpt::Impl
 };
 
 BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
-  rep(new Impl(p, gfx, static_cast<void*>(this)))
+  rep(new Impl(p, gfx))
 {
 DOTRACE("BallsExpt::BallsExpt");
 
@@ -98,7 +98,9 @@ DOTRACE("BallsExpt::~BallsExpt");
 void BallsExpt::run()
 {
 DOTRACE("BallsExpt::run");
-  rep->appl.run();
+  rep->gfx.xstuff().eventLoop(static_cast<void*>(this),
+                              &onExpose,
+                              &onKey);
 }
 
 void BallsExpt::onExpose(void* cdata)

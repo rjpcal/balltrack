@@ -14,9 +14,15 @@
 #include "ballsexpt.h"
 #include "graphics.h"
 #include "params.h"
+#include "timing.h"
 
 int main(int argc, char** argv)
 {
+  // seed the random number generator based on the time
+  struct timeval tp;
+  Timing::getTime(&tp);
+  srand48(tp.tv_sec);
+
   Params p(argc, argv);
 
   Graphics gfx("tracking", // window name

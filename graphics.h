@@ -30,7 +30,7 @@ public:
 
   ~Graphics();
 
-//   XStuff& xstuff() { return itsXStuff; }
+  XStuff& xstuff() { return itsXStuff; }
 
   Display* display() { return itsXStuff.display(); }
   Window window() const { return itsXStuff.window(); }

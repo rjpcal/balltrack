@@ -16,11 +16,12 @@
 
 #include <string>
 
+typedef void ExposeFunc(void*);
+typedef bool KeyFunc(void*, char c);
+
 struct XStuff
 {
-private:
-  friend class Graphics;
-
+public:
   XStuff(int width, int height);
   ~XStuff();
 
@@ -36,6 +37,11 @@ private:
   void getInt(int* pi) const;
   void getFloat(float* pf) const;
 
+  void eventLoop(void* cdata,
+                 ExposeFunc* onExpose,
+                 KeyFunc* onKey);
+
+private:
   std::string getWord() const;
 
   int itsWidth;

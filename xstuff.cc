@@ -13,6 +13,8 @@
 
 #include "xstuff.h"
 
+#include "timing.h"
+
 #include <cstring>              // for strncpy
 #include <cstdlib>              // for getenv
 #include <cstdio>
@@ -39,6 +41,39 @@ namespace
       }
     std::cerr << "unknown visual class " << c_class << "\n";
     exit(1);
+  }
+
+  char keyPressAction(XEvent* event)
+  {
+    DOTRACE("<xstuff.cc>::keyPressAction");
+
+    char buffer[10];
+    KeySym keysym;
+    XComposeStatus compose;
+
+    int count = XLookupString((XKeyEvent*) event, buffer, 9,
+                              &keysym, &compose);
+    buffer[ count ] = '\0';
+
+    if (count > 1 || keysym == XK_Return ||
+        keysym == XK_BackSpace || keysym == XK_Delete)
+      {
+        return '\0';
+      }
+
+    if (keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
+        keysym >= XK_space    && keysym <= XK_asciitilde)
+      {
+        struct timeval tp;
+        struct timezone tzp;
+        gettimeofday(&tp, &tzp);
+
+        Timing::initTimeStack(double(event->xkey.time), &tp);
+
+        return buffer[0];
+      }
+
+    return '\0';
   }
 }
 
@@ -185,22 +220,6 @@ DOTRACE("XStuff::getKeypress");
     }
 }
 
-std::string XStuff::getWord() const
-{
-DOTRACE("XStuff::getWord");
-
-  char c;
-
-  std::string result;
-
-  while ((c = this->getKeypress()) != ' ')
-    {
-      result += c;
-    }
-
-  return result;
-}
-
 void XStuff::getInt(int* pi) const
 {
 DOTRACE("XStuff::getInt");
@@ -217,6 +236,67 @@ DOTRACE("XStuff::getFloat");
   const std::string buf = this->getWord();
 
   sscanf(&buf[0], "%f", pf);
+}
+
+void XStuff::eventLoop(void* cdata,
+                       ExposeFunc* onExpose,
+                       KeyFunc* onKey)
+{
+DOTRACE("XStuff::eventLoop");
+
+  XEvent event;
+
+  while (true)
+    {
+      XNextEvent(itsDisplay, &event);
+
+      switch (event.type)
+        {
+        case Expose:
+          if (event.xexpose.count == 0)
+            if (event.xexpose.window == itsWindow)
+              (*onExpose)(cdata);
+          break;
+
+        case ButtonPress:
+          if (event.xbutton.button == Button3)
+            return;
+          else
+            (*onExpose)(cdata);
+          break;
+
+        case KeyPress:
+          if (event.xkey.window == itsWindow)
+            {
+              Timing::logTimer.set();
+              Timing::mainTimer.set();
+
+              char key = keyPressAction(&event);
+              if ((*onKey)(cdata, key) == true)
+                return;
+            }
+          break;
+
+        default:
+          break;
+        }
+    }
+}
+
+std::string XStuff::getWord() const
+{
+DOTRACE("XStuff::getWord");
+
+  char c;
+
+  std::string result;
+
+  while ((c = this->getKeypress()) != ' ')
+    {
+      result += c;
+    }
+
+  return result;
 }
 
 static const char vcid_xstuff_cc[] = "$Header$";

@@ -15,7 +15,7 @@
 typedef union _XEvent XEvent;
 #endif
 
-class Graphics;
+class XStuff;
 
 class Application
 {
@@ -25,27 +25,17 @@ private:
 
 public:
 
-  typedef void ExposeFunc(void*);
-  typedef bool KeyFunc(void*, char c);
-
-  Application(Graphics& x, void* cdata,
-              ExposeFunc* e, KeyFunc* k);
+  Application(XStuff& x);
   virtual ~Application();
-
-  void run();
 
   void buttonPressLoop();
 
   char getKeystroke();
 
 private:
-  static char keyPressAction(XEvent* event);
   static void timeButtonEvent(XEvent* event);
 
-  Graphics& itsGraphics;
-  void* itsCdata;
-  ExposeFunc* itsOnExpose;
-  KeyFunc* itsOnKey;
+  XStuff& itsXStuff;
 };
 
 static const char vcid_application_h[] = "$Header$";
