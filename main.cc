@@ -31,17 +31,6 @@ const bool DOUBLEBUFFER = true;
 const bool USE_RGBA = true;
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// main function
-//
-// Although there's some ugly hackery in using the compile-time macros
-// to determine the application mode, the macros are only tested in
-// this main file, and are used to set (global) variables
-// accordingly. This limits the amount of ifdef'ing that is needed.
-//
-///////////////////////////////////////////////////////////////////////
-
 int main( int argc, char** argv )
 {
   APPLICATION_MODE = TRAINING;
