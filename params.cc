@@ -469,10 +469,10 @@ namespace
               oss << sep << std::setw(6) << items[i].iorig;
             }
 
+          const char* marker = items[i].changed() ? "* " : "  ";
+
           if (i < nitems)
             {
-              const char* marker = items[i].changed() ? "* " : "  ";
-
               if (items[i].dvar != 0)
                 {
                   oss << sep << marker << std::setw(6) << *items[i].dvar;
@@ -484,7 +484,7 @@ namespace
             }
           else if (i == nitems)
             {
-              oss << sep << std::setw(6) << "???";
+              oss << sep << marker << std::setw(6) << "???";
             }
 
           if (i < nitems)
