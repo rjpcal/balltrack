@@ -301,20 +301,18 @@ DOTRACE("BallsExpt::runFmriExpt");
       else if (track_number == 0)
         {
           // Run passive trial
-          rep->ballset.runTrial
-            (rep->gfx, rep->timing,
-             &rep->timepoints[rep->timepointIdx++],
-             Balls::PASSIVE);
+          rep->timepoints[rep->timepointIdx++] =
+            rep->ballset.runTrial
+            (rep->gfx, rep->timing, Balls::PASSIVE);
         }
       else
         {
           rep->params.ballTrackNumber = track_number;
 
           // Run active tracking trial with objective check
-          rep->ballset.runTrial
-            (rep->gfx, rep->timing,
-             &rep->timepoints[rep->timepointIdx++],
-             Balls::CHECK_ONE);
+          rep->timepoints[rep->timepointIdx++] =
+            rep->ballset.runTrial
+            (rep->gfx, rep->timing, Balls::CHECK_ONE);
         }
 
       // If there will be more trials, then do a fixation cross interval
@@ -348,24 +346,21 @@ DOTRACE("BallsExpt::runEyeTrackingExpt");
     {
       // Run active tracking trial
       runFixationCalibration();
-      rep->ballset.runTrial
-        (rep->gfx, rep->timing,
-         &rep->timepoints[rep->timepointIdx++],
-         Balls::CHECK_ALL);
+      rep->timepoints[rep->timepointIdx++] =
+        rep->ballset.runTrial
+        (rep->gfx, rep->timing, Balls::CHECK_ALL);
 
       // Run active tracking trial with objective check
       runFixationCalibration();
-      rep->ballset.runTrial
-        (rep->gfx, rep->timing,
-         &rep->timepoints[rep->timepointIdx++],
-         Balls::CHECK_ONE);
+      rep->timepoints[rep->timepointIdx++] =
+        rep->ballset.runTrial
+        (rep->gfx, rep->timing, Balls::CHECK_ONE);
 
       // Run passive trial
       runFixationCalibration();
-      rep->ballset.runTrial
-        (rep->gfx, rep->timing,
-         &rep->timepoints[rep->timepointIdx++],
-         Balls::PASSIVE);
+      rep->timepoints[rep->timepointIdx++] =
+        rep->ballset.runTrial
+        (rep->gfx, rep->timing, Balls::PASSIVE);
     }
 }
 
@@ -376,15 +371,13 @@ DOTRACE("BallsExpt::runTrainingExpt");
   for (int cycle=0; cycle < rep->params.cycleNumber; ++cycle)
     {
       // Run active tracking trial
-      rep->ballset.runTrial
-        (rep->gfx, rep->timing,
-         &rep->timepoints[rep->timepointIdx++],
-         Balls::CHECK_ALL);
+      rep->timepoints[rep->timepointIdx++] =
+        rep->ballset.runTrial
+        (rep->gfx, rep->timing, Balls::CHECK_ALL);
       // Run active tracking trial with objective check
-      rep->ballset.runTrial
-        (rep->gfx, rep->timing,
-         &rep->timepoints[rep->timepointIdx++],
-         Balls::CHECK_ONE);
+      rep->timepoints[rep->timepointIdx++] =
+        rep->ballset.runTrial
+        (rep->gfx, rep->timing, Balls::CHECK_ONE);
     }
 }
 

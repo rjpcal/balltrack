@@ -63,8 +63,8 @@ public:
 
   Balls(const Params& params);
 
-  void runTrial(Graphics& gfx, Timing& timing,
-                timeval* starttime, TrialType ttype);
+  // Returns the start time of the trial
+  timeval runTrial(Graphics& gfx, Timing& timing, TrialType ttype);
 
 private:
   Ball itsBalls[MAX_BALLS];

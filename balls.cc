@@ -333,8 +333,8 @@ DOTRACE("Balls::drawNHiBalls");
   drawNBalls(gfx, first, last, bitmap);
 }
 
-void Balls::runTrial(Graphics& gfx, Timing& timing,
-                     timeval* starttime, TrialType ttype)
+timeval Balls::runTrial(Graphics& gfx, Timing& timing,
+                        TrialType ttype)
 {
 DOTRACE("Balls::runTrial");
 
@@ -342,8 +342,8 @@ DOTRACE("Balls::runTrial");
 
   timer.reset();
 
-  // FIXME what happens to starttime?
-  *starttime = Timing::getTime();
+  // FIXME can't the caller just do this?
+  const timeval starttime = Timing::getTime();
 
   gfx.clearFrontBuffer();
   gfx.clearBackBuffer();
@@ -502,6 +502,8 @@ DOTRACE("Balls::runTrial");
   gfx.clearBackBuffer();
   gfx.drawCross();
   gfx.swapBuffers();
+
+  return starttime;
 }
 
 static const char vcid_balls_cc[] = "$Header$";
