@@ -46,6 +46,157 @@ namespace
     };
 }
 
+struct Response
+{
+  Response(double t, int v) : time(t), val(v) {}
+  double time;
+  int val;
+};
+
+class ResponseData
+{
+public:
+  ResponseData();
+
+  // Used in BallsExpt::onButton
+  void addToResponseStack(double xtime, int nbutton);
+
+  // From BallsExpt::onKey
+  void initTimeStack(double xtime, timeval* tp);
+
+  // From BallsExpt::runExperiment
+  void tallyReactionTime(ParamFile& f, float remind_duration);
+
+  double recentPercentCorrect();
+
+  std::vector<Stimulus> itsStimuli;
+  std::vector<Response> itsResponses;
+
+  struct timeval itsStimulusTime0;
+  double itsResponseTime0;
+
+  double itsPercentCorrect;
+};
+
+ResponseData::ResponseData() :
+  itsStimuli(),
+  itsResponses(),
+  itsStimulusTime0(),
+  itsResponseTime0(),
+  itsPercentCorrect(0.0)
+{}
+
+
+void ResponseData::initTimeStack(double xtime, timeval* tp)
+{
+DOTRACE("ResponseData::initTimeStack");
+
+  itsResponseTime0 = xtime;
+
+  itsResponses.clear();
+  itsResponses.push_back(Response(0.0, 0));
+  itsStimuli.clear();
+  itsStimuli.push_back(Stimulus(*tp, 0));
+  itsStimulusTime0 = *tp;
+}
+
+void ResponseData::addToResponseStack(double xtime, int nbutton)
+{
+DOTRACE("ResponseData::addToResponseStack");
+
+  double delta = xtime - itsResponseTime0;
+
+  if (delta < 0.0)
+    delta = delta + 4294967295.0;
+
+  itsResponses.push_back(Response(delta, nbutton));
+}
+
+void ResponseData::tallyReactionTime(ParamFile& f, float remind_duration)
+{
+DOTRACE("ResponseData::tallyReactionTime");
+
+  int total_stims = 0;
+  int number_correct = 0;
+
+  // Compute the response time for each stimulus (or indicate a
+  // non-response with -1.0)
+  for (unsigned int i = 1;  i < itsStimuli.size(); ++i)
+    {
+      unsigned int j;
+
+      // Find the first response (j'th) that came after the i'th stimulus
+      for (j = 0; j < itsResponses.size(); ++j)
+        {
+          if (itsResponses[j].time > itsStimuli[i].msecFrom(itsStimulusTime0))
+            break;
+        }
+
+      // If we found a corresponding response, compute the response time...
+      if (j < itsResponses.size())
+        {
+          itsStimuli[i].reaction_time =
+            itsResponses[j].time - itsStimuli[i].msecFrom(itsStimulusTime0);
+          itsStimuli[i].reaction_correct =
+            (itsResponses[j].val == itsStimuli[i].correct_val);
+        }
+
+      // But if there was no corresponding response, indicate a
+      // non-response with -1.0
+      else
+        {
+          itsStimuli[i].reaction_time = -1.0;
+          itsStimuli[i].reaction_correct = false;
+        }
+
+      // If the reaction time was too large, it doesn't count, so
+      // indicate a non-response with -1.0
+      if (itsStimuli[i].reaction_time > remind_duration*1000)
+        {
+          itsStimuli[i].reaction_time = -1.0;
+          itsStimuli[i].reaction_correct = false;
+        }
+
+      ++total_stims;
+      if (itsStimuli[i].reaction_correct) ++number_correct;
+  }
+
+  itsPercentCorrect = (100.0 * number_correct) / total_stims;
+
+  // write reactions to the log file
+
+  char buf[512];
+
+  f.putLine(" reaction times:");
+  for (unsigned int i = 1; i < itsStimuli.size(); ++i)
+    {
+      snprintf(buf, 512, " %d %.0lf",
+               i, itsStimuli[i].reaction_time);
+      f.putLine(buf);
+    }
+  f.putLine("");
+  f.putLine("");
+
+  f.putLine(" reaction correct?:");
+  for (unsigned int j = 1; j < itsStimuli.size(); ++j)
+    {
+      snprintf(buf, 512, " %d %d",
+               j, int(itsStimuli[j].reaction_correct));
+      f.putLine(buf);
+    }
+  f.putLine("");
+
+  snprintf(buf, 512, " percent correct: %d", int(itsPercentCorrect));
+  f.putLine(buf);
+  f.putLine("");
+}
+
+double ResponseData::recentPercentCorrect()
+{
+DOTRACE("ResponseData::recentPercentCorrect");
+  return itsPercentCorrect;
+}
+
 struct BallsExpt::Impl
 {
   Impl(Params& p, Graphics& g) :

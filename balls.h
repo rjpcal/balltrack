@@ -12,7 +12,7 @@
 #ifndef BALLS_H_DEFINED
 #define BALLS_H_DEFINED
 
-#include "timing.h"
+#include <vector>
 
 class Graphics;
 class Params;
@@ -44,6 +44,24 @@ private:
   double ynext;
   double xvel;
   double yvel;
+};
+
+#include "timing.h"
+
+struct Stimulus
+{
+  Stimulus(const timeval& now, int v) :
+    time(now),
+    correct_val(v)
+  {}
+  timeval time;
+  int correct_val;
+
+  double msecFrom(const timeval& time0) const
+  { return Timing::elapsedMsec(time0, this->time); }
+
+  double reaction_time;
+  bool reaction_correct;
 };
 
 class Balls
