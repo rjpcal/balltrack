@@ -62,7 +62,6 @@ struct BallsExpt::Impl
     params(p),
     gfx(g),
     stimuli(),
-    responses(),
     stimTime0(),
     respTime0(),
     percentCorrect(0.0)
@@ -72,6 +71,8 @@ struct BallsExpt::Impl
   {
     double xtime;
     int nbutton;
+
+    std::vector<Response> responses;
 
     while (this->gfx.xstuff().getButtonPress(xtime, nbutton))
       {
@@ -85,10 +86,10 @@ struct BallsExpt::Impl
 
         switch (nbutton)
           {
-          case 1:  this->responses.push_back(Response(delta, BUTTON1)); break;
-          case 2:  this->responses.push_back(Response(delta, BUTTON2)); break;
-          case 3:  this->responses.push_back(Response(delta, BUTTON3)); break;
-          default: this->responses.push_back(Response(delta, 0)); break;
+          case 1:  responses.push_back(Response(delta, BUTTON1)); break;
+          case 2:  responses.push_back(Response(delta, BUTTON2)); break;
+          case 3:  responses.push_back(Response(delta, BUTTON3)); break;
+          default: responses.push_back(Response(delta, 0)); break;
           }
       }
 
@@ -114,25 +115,25 @@ struct BallsExpt::Impl
 
         // Find the first response (j'th) that came after the i'th
         // stimulus
-        for (j = 0; j < this->responses.size(); ++j)
+        for (j = 0; j < responses.size(); ++j)
           {
-            if (this->responses[j].time > this->stimuli[i].msecFrom(this->stimTime0))
+            if (responses[j].time > this->stimuli[i].msecFrom(this->stimTime0))
               break;
           }
 
         // If we found a corresponding response, compute the response
         // time...
-        if (j < this->responses.size())
+        if (j < responses.size())
           {
             double diff =
-              this->responses[j].time - this->stimuli[i].msecFrom(this->stimTime0);
+              responses[j].time - this->stimuli[i].msecFrom(this->stimTime0);
 
             // Make sure the reaction time wasn't too large
             if (diff <= params.remindSeconds*1000)
               {
                 reaction_time = diff;
                 reaction_correct =
-                  (this->responses[j].val == this->stimuli[i].correct_val);
+                  (responses[j].val == this->stimuli[i].correct_val);
               }
           }
 
@@ -161,7 +162,6 @@ struct BallsExpt::Impl
   Graphics& gfx;
 
   std::vector<Stimulus> stimuli;
-  std::vector<Response> responses;
 
   struct timeval stimTime0;
   double respTime0;
@@ -295,9 +295,6 @@ void BallsExpt::runExperiment(double xtime)
 DOTRACE("BallsExpt::runExperiment");
 
   rep->respTime0 = xtime;
-
-  rep->responses.clear();
-  rep->responses.push_back(Response(0.0, 0));
 
   rep->stimTime0 = Timing::now();
 
