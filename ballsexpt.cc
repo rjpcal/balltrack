@@ -53,28 +53,6 @@ struct Response
   int val;
 };
 
-class ResponseData
-{
-public:
-  ResponseData();
-
-  std::vector<Stimulus> itsStimuli;
-  std::vector<Response> itsResponses;
-
-  struct timeval itsStimulusTime0;
-  double itsResponseTime0;
-
-  double itsPercentCorrect;
-};
-
-ResponseData::ResponseData() :
-  itsStimuli(),
-  itsResponses(),
-  itsStimulusTime0(),
-  itsResponseTime0(),
-  itsPercentCorrect(0.0)
-{}
-
 
 struct BallsExpt::Impl
 {
@@ -83,7 +61,11 @@ struct BallsExpt::Impl
     ballset(p),
     params(p),
     gfx(g),
-    rdata()
+    itsStimuli(),
+    itsResponses(),
+    itsStimulusTime0(),
+    itsResponseTime0(),
+    itsPercentCorrect(0.0)
   {}
 
   void tallyReactionTime(ParamFile& f)
@@ -93,73 +75,73 @@ struct BallsExpt::Impl
 
     // Compute the response time for each stimulus (or indicate a
     // non-response with -1.0)
-    for (unsigned int i = 1;  i < rdata.itsStimuli.size(); ++i)
+    for (unsigned int i = 1;  i < this->itsStimuli.size(); ++i)
       {
         unsigned int j;
 
         // Find the first response (j'th) that came after the i'th stimulus
-        for (j = 0; j < rdata.itsResponses.size(); ++j)
+        for (j = 0; j < this->itsResponses.size(); ++j)
           {
-            if (rdata.itsResponses[j].time > rdata.itsStimuli[i].msecFrom(rdata.itsStimulusTime0))
+            if (this->itsResponses[j].time > this->itsStimuli[i].msecFrom(this->itsStimulusTime0))
               break;
           }
 
         // If we found a corresponding response, compute the response time...
-        if (j < rdata.itsResponses.size())
+        if (j < this->itsResponses.size())
           {
-            rdata.itsStimuli[i].reaction_time =
-              rdata.itsResponses[j].time - rdata.itsStimuli[i].msecFrom(rdata.itsStimulusTime0);
-            rdata.itsStimuli[i].reaction_correct =
-              (rdata.itsResponses[j].val == rdata.itsStimuli[i].correct_val);
+            this->itsStimuli[i].reaction_time =
+              this->itsResponses[j].time - this->itsStimuli[i].msecFrom(this->itsStimulusTime0);
+            this->itsStimuli[i].reaction_correct =
+              (this->itsResponses[j].val == this->itsStimuli[i].correct_val);
           }
 
         // But if there was no corresponding response, indicate a
         // non-response with -1.0
         else
           {
-            rdata.itsStimuli[i].reaction_time = -1.0;
-            rdata.itsStimuli[i].reaction_correct = false;
+            this->itsStimuli[i].reaction_time = -1.0;
+            this->itsStimuli[i].reaction_correct = false;
           }
 
         // If the reaction time was too large, it doesn't count, so
         // indicate a non-response with -1.0
-        if (rdata.itsStimuli[i].reaction_time >
+        if (this->itsStimuli[i].reaction_time >
             params.remindSeconds*1000)
           {
-            rdata.itsStimuli[i].reaction_time = -1.0;
-            rdata.itsStimuli[i].reaction_correct = false;
+            this->itsStimuli[i].reaction_time = -1.0;
+            this->itsStimuli[i].reaction_correct = false;
           }
 
         ++total_stims;
-        if (rdata.itsStimuli[i].reaction_correct) ++number_correct;
+        if (this->itsStimuli[i].reaction_correct) ++number_correct;
       }
 
-    rdata.itsPercentCorrect = (100.0 * number_correct) / total_stims;
+    this->itsPercentCorrect = (100.0 * number_correct) / total_stims;
 
     // write reactions to the log file
 
     char buf[512];
 
     f.putLine(" reaction times:");
-    for (unsigned int i = 1; i < rdata.itsStimuli.size(); ++i)
+    for (unsigned int i = 1; i < this->itsStimuli.size(); ++i)
       {
         snprintf(buf, 512, " %d %.0lf",
-                 i, rdata.itsStimuli[i].reaction_time);
+                 i, this->itsStimuli[i].reaction_time);
         f.putLine(buf);
       }
     f.putLine("");
     f.putLine("");
 
     f.putLine(" reaction correct?:");
-    for (unsigned int j = 1; j < rdata.itsStimuli.size(); ++j)
+    for (unsigned int j = 1; j < this->itsStimuli.size(); ++j)
       {
         snprintf(buf, 512, " %d %d",
-                 j, int(rdata.itsStimuli[j].reaction_correct));
+                 j, int(this->itsStimuli[j].reaction_correct));
         f.putLine(buf);
       }
     f.putLine("");
 
-    snprintf(buf, 512, " percent correct: %d", int(rdata.itsPercentCorrect));
+    snprintf(buf, 512, " percent correct: %d", int(this->itsPercentCorrect));
     f.putLine(buf);
     f.putLine("");
   }
@@ -168,7 +150,14 @@ struct BallsExpt::Impl
   Balls ballset;
   Params& params;
   Graphics& gfx;
-  ResponseData rdata;
+
+  std::vector<Stimulus> itsStimuli;
+  std::vector<Response> itsResponses;
+
+  struct timeval itsStimulusTime0;
+  double itsResponseTime0;
+
+  double itsPercentCorrect;
 };
 
 BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
@@ -219,13 +208,13 @@ DOTRACE("BallsExpt::onKey");
       gettimeofday(&tp, (struct timezone*)0);
 
       // FIXME clean this up
-      p->rep->rdata.itsResponseTime0 = xtime;
+      p->rep->itsResponseTime0 = xtime;
 
-      p->rep->rdata.itsResponses.clear();
-      p->rep->rdata.itsResponses.push_back(Response(0.0, 0));
-      p->rep->rdata.itsStimuli.clear();
-      p->rep->rdata.itsStimuli.push_back(Stimulus(tp, 0));
-      p->rep->rdata.itsStimulusTime0 = tp;
+      p->rep->itsResponses.clear();
+      p->rep->itsResponses.push_back(Response(0.0, 0));
+      p->rep->itsStimuli.clear();
+      p->rep->itsStimuli.push_back(Stimulus(tp, 0));
+      p->rep->itsStimulusTime0 = tp;
 
       p->runExperiment();
       p->makeMenu();
@@ -260,17 +249,17 @@ void BallsExpt::onButton(void* cdata, double xtime, int button_number)
 DOTRACE("BallsExpt::onButton");
   BallsExpt* p = static_cast<BallsExpt*>(cdata);
 
-  double delta = xtime - p->rep->rdata.itsResponseTime0;
+  double delta = xtime - p->rep->itsResponseTime0;
 
   if (delta < 0.0)
     delta = delta + 4294967295.0;
 
   switch (button_number)
     {
-    case 1:  p->rep->rdata.itsResponses.push_back(Response(delta, BUTTON1)); break;
-    case 2:  p->rep->rdata.itsResponses.push_back(Response(delta, BUTTON2)); break;
-    case 3:  p->rep->rdata.itsResponses.push_back(Response(delta, BUTTON3)); break;
-    default: p->rep->rdata.itsResponses.push_back(Response(delta, 0)); break;
+    case 1:  p->rep->itsResponses.push_back(Response(delta, BUTTON1)); break;
+    case 2:  p->rep->itsResponses.push_back(Response(delta, BUTTON2)); break;
+    case 3:  p->rep->itsResponses.push_back(Response(delta, BUTTON3)); break;
+    default: p->rep->itsResponses.push_back(Response(delta, 0)); break;
     }
 }
 
@@ -300,7 +289,7 @@ DOTRACE("BallsExpt::makeMenu");
   menu[5] = "q     quit program";
   menu[6] = "";
   menu[7] = "recent percent correct: "
-    + makestring(int(rep->rdata.itsPercentCorrect));
+    + makestring(int(rep->itsPercentCorrect));
 
   rep->gfx.drawStrings(menu, nitems, 100, -200, 20);
 
@@ -418,7 +407,7 @@ DOTRACE("BallsExpt::runFmriExpt");
           // Run passive trial
           rep->timepoints.push_back(Timing::now());
           rep->ballset.runTrial
-            (rep->gfx, rep->rdata.itsStimuli, Balls::PASSIVE);
+            (rep->gfx, rep->itsStimuli, Balls::PASSIVE);
         }
       else
         {
@@ -427,7 +416,7 @@ DOTRACE("BallsExpt::runFmriExpt");
           // Run active tracking trial with objective check
           rep->timepoints.push_back(Timing::now());
           rep->ballset.runTrial
-            (rep->gfx, rep->rdata.itsStimuli, Balls::CHECK_ONE);
+            (rep->gfx, rep->itsStimuli, Balls::CHECK_ONE);
         }
 
       // If there will be more trials, then do a fixation cross interval
@@ -463,19 +452,19 @@ DOTRACE("BallsExpt::runEyeTrackingExpt");
       runFixationCalibration();
       rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->rdata.itsStimuli, Balls::CHECK_ALL);
+        (rep->gfx, rep->itsStimuli, Balls::CHECK_ALL);
 
       // Run active tracking trial with objective check
       runFixationCalibration();
       rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->rdata.itsStimuli, Balls::CHECK_ONE);
+        (rep->gfx, rep->itsStimuli, Balls::CHECK_ONE);
 
       // Run passive trial
       runFixationCalibration();
       rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->rdata.itsStimuli, Balls::PASSIVE);
+        (rep->gfx, rep->itsStimuli, Balls::PASSIVE);
     }
 }
 
@@ -488,11 +477,11 @@ DOTRACE("BallsExpt::runTrainingExpt");
       // Run active tracking trial
       rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->rdata.itsStimuli, Balls::CHECK_ALL);
+        (rep->gfx, rep->itsStimuli, Balls::CHECK_ALL);
       // Run active tracking trial with objective check
       rep->timepoints.push_back(Timing::now());
       rep->ballset.runTrial
-        (rep->gfx, rep->rdata.itsStimuli, Balls::CHECK_ONE);
+        (rep->gfx, rep->itsStimuli, Balls::CHECK_ONE);
     }
 }
 
