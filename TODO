@@ -1,4 +1,2 @@
-use std::vector
-use double instead of float
 use std::iostreams instead of stdio
 get rid of graphics() and xstuff() accessors
