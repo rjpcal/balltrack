@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 28 12:21:07 2001
-// written: Wed Feb 28 13:09:27 2001
+// written: Wed Feb 28 14:31:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,8 @@ SimpleMovie::SimpleMovie(const char* filename, MVfileformat fileFormat,
   itsImageTrack(0),
   itsImageParams(0),
   itsFrameSize(0),
-  itsTempFrameBuffer(0)
+  itsTempFrameBuffer(0),
+  itsFrameRate(0.0)
 {
   if ( dmParamsCreate( &itsMovieParams ) != DM_SUCCESS ) {
 	 handleError("couldn't create movie params");
@@ -68,6 +69,11 @@ SimpleMovie::SimpleMovie(const char* filename, MVfileformat fileFormat,
 						 &itsImageTrack ) != DM_SUCCESS ) {
 	 handleError("couldn't add track");
   }
+
+  if ( mvSetImageRate(itsImageTrack, 15.0) != DM_SUCCESS )
+	 handleError("couldn't set frame rate");
+
+  itsFrameRate = mvGetImageRate( itsImageTrack );
 }
 
 SimpleMovie::~SimpleMovie() {
