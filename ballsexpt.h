@@ -26,7 +26,9 @@ protected:
   static void onExpose(void* cdata);
 
   // Returns true if application should quit
-  static bool onKey(void* cdata, char c);
+  static bool onKey(void* cdata, double xtime, char c);
+
+  static void onButton(void* cdata, double xtime, int button_number);
 
   void makeMenu();
 

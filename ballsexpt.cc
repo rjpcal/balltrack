@@ -51,7 +51,8 @@ struct BallsExpt::Impl
     timepointIdx(0),
     ballset(p),
     params(p),
-    gfx(g)
+    gfx(g),
+    timing()
   {}
 
   /// XXX this needs to be at least as big as (cycleNumber+1)*NUM_CONDITIONS
@@ -60,6 +61,7 @@ struct BallsExpt::Impl
   Balls ballset;
   Params& params;
   Graphics& gfx;
+  Timing timing;
 
   void logTimePoints(ParamFile& f)
   {
@@ -108,7 +110,7 @@ DOTRACE("BallsExpt::onExpose");
   p->makeMenu();
 }
 
-bool BallsExpt::onKey(void* cdata, char c)
+bool BallsExpt::onKey(void* cdata, double xtime, char c)
 {
 DOTRACE("BallsExpt::onKey");
   BallsExpt* p = static_cast<BallsExpt*>(cdata);
@@ -119,6 +121,10 @@ DOTRACE("BallsExpt::onKey");
       break;
 
     case 'r':
+      struct timeval tp;
+      gettimeofday(&tp, (struct timezone*)0);
+      p->rep->timing.initTimeStack(xtime, &tp);
+
       p->runExperiment();
       p->makeMenu();
       break;
@@ -147,6 +153,19 @@ DOTRACE("BallsExpt::onKey");
   return false;
 }
 
+void BallsExpt::onButton(void* cdata, double xtime, int button_number)
+{
+DOTRACE("BallsExpt::onButton");
+  BallsExpt* p = static_cast<BallsExpt*>(cdata);
+  switch (button_number)
+    {
+    case 1:  p->rep->timing.addToResponseStack(xtime, LEFTBUTTON); break;
+    case 2:  p->rep->timing.addToResponseStack(xtime, MIDDLEBUTTON); break;
+    case 3:  p->rep->timing.addToResponseStack(xtime, RIGHTBUTTON); break;
+    default: p->rep->timing.addToResponseStack(xtime, 0); break;
+    }
+}
+
 namespace
 {
   std::string makestring(int i)
@@ -173,7 +192,7 @@ DOTRACE("BallsExpt::makeMenu");
   menu[5] = "q     quit program";
   menu[6] = "";
   menu[7] = "recent percent correct: "
-    + makestring(int(Timing::recentPercentCorrect()));
+    + makestring(int(rep->timing.recentPercentCorrect()));
 
   rep->gfx.drawStrings(menu, nitems, 100, -200, 20);
 
@@ -205,6 +224,9 @@ DOTRACE("BallsExpt::runFixationCalibration");
 void BallsExpt::runExperiment()
 {
 DOTRACE("BallsExpt::runExperiment");
+
+  Timing::logTimer.set();
+  Timing::mainTimer.set();
 
   ParamFile tmefile(rep->params.filestem, 'a', "tme");
 
@@ -250,10 +272,11 @@ DOTRACE("BallsExpt::runExperiment");
 
   rep->logTimePoints(tmefile);
 
-  rep->gfx.xstuff().buttonPressLoop();
+  rep->gfx.xstuff().buttonPressLoop(static_cast<void*>(this),
+                                    &onButton);
 
-  Timing::tallyReactionTime(tmefile,
-                            rep->params.remindSeconds);
+  rep->timing.tallyReactionTime(tmefile,
+                                rep->params.remindSeconds);
 }
 
 void BallsExpt::runFmriExpt()
@@ -278,7 +301,8 @@ DOTRACE("BallsExpt::runFmriExpt");
         {
           // Run passive trial
           rep->ballset.runTrial
-            (rep->gfx, &rep->timepoints[rep->timepointIdx++],
+            (rep->gfx, rep->timing,
+             &rep->timepoints[rep->timepointIdx++],
              Balls::PASSIVE);
         }
       else
@@ -287,7 +311,8 @@ DOTRACE("BallsExpt::runFmriExpt");
 
           // Run active tracking trial with objective check
           rep->ballset.runTrial
-            (rep->gfx, &rep->timepoints[rep->timepointIdx++],
+            (rep->gfx, rep->timing,
+             &rep->timepoints[rep->timepointIdx++],
              Balls::CHECK_ONE);
         }
 
@@ -322,19 +347,22 @@ DOTRACE("BallsExpt::runEyeTrackingExpt");
       // Run active tracking trial
       runFixationCalibration();
       rep->ballset.runTrial
-        (rep->gfx, &rep->timepoints[rep->timepointIdx++],
+        (rep->gfx, rep->timing,
+         &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ALL);
 
       // Run active tracking trial with objective check
       runFixationCalibration();
       rep->ballset.runTrial
-        (rep->gfx, &rep->timepoints[rep->timepointIdx++],
+        (rep->gfx, rep->timing,
+         &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ONE);
 
       // Run passive trial
       runFixationCalibration();
       rep->ballset.runTrial
-        (rep->gfx, &rep->timepoints[rep->timepointIdx++],
+        (rep->gfx, rep->timing,
+         &rep->timepoints[rep->timepointIdx++],
          Balls::PASSIVE);
     }
 }
@@ -347,11 +375,13 @@ DOTRACE("BallsExpt::runTrainingExpt");
     {
       // Run active tracking trial
       rep->ballset.runTrial
-        (rep->gfx, &rep->timepoints[rep->timepointIdx++],
+        (rep->gfx, rep->timing,
+         &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ALL);
       // Run active tracking trial with objective check
       rep->ballset.runTrial
-        (rep->gfx, &rep->timepoints[rep->timepointIdx++],
+        (rep->gfx, rep->timing,
+         &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ONE);
     }
 }

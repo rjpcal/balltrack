@@ -333,7 +333,8 @@ DOTRACE("Balls::drawNHiBalls");
   drawNBalls(gfx, first, last, bitmap);
 }
 
-void Balls::runTrial(Graphics& gfx, timeval* starttime, TrialType ttype)
+void Balls::runTrial(Graphics& gfx, Timing& timing,
+                     timeval* starttime, TrialType ttype)
 {
 DOTRACE("Balls::runTrial");
 
@@ -433,7 +434,7 @@ DOTRACE("Balls::runTrial");
 
           gfx.swapBuffers();
 
-          Timing::addToStimulusStack(LEFTBUTTON);
+          timing.addToStimulusStack(LEFTBUTTON);
 
           gfx.gfxWait(itsParams.remindSeconds);
         }
@@ -462,9 +463,9 @@ DOTRACE("Balls::runTrial");
 
           // Note what the correct response should be for the random ball
           if (random_ball < itsParams.ballTrackNumber)
-            Timing::addToStimulusStack(LEFTBUTTON);
+            timing.addToStimulusStack(LEFTBUTTON);
           else
-            Timing::addToStimulusStack(MIDDLEBUTTON);
+            timing.addToStimulusStack(MIDDLEBUTTON);
 
           gfx.gfxWait(itsParams.remindSeconds / 2.0);
 

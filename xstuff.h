@@ -17,7 +17,8 @@
 #include <string>
 
 typedef void ExposeFunc(void*);
-typedef bool KeyFunc(void*, char c);
+typedef bool KeyFunc(void*, double xtime, char c);
+typedef void ButtonFunc(void*, double xtime, int button_number);
 
 struct XStuff
 {
@@ -41,7 +42,8 @@ public:
                  ExposeFunc* onExpose,
                  KeyFunc* onKey);
 
-  void buttonPressLoop();
+  void buttonPressLoop(void* cdata,
+                       ButtonFunc* onButton);
 
 private:
   std::string getWord() const;

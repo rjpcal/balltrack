@@ -14,6 +14,7 @@
 
 class Graphics;
 class Params;
+class Timing;
 
 struct timeval;
 
@@ -62,7 +63,8 @@ public:
 
   Balls(const Params& params);
 
-  void runTrial(Graphics& gfx, timeval* starttime, TrialType ttype);
+  void runTrial(Graphics& gfx, Timing& timing,
+                timeval* starttime, TrialType ttype);
 
 private:
   Ball itsBalls[MAX_BALLS];

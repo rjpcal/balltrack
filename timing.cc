@@ -151,33 +151,6 @@ DOTRACE("Timing::initTimeStack");
   ss_0 = *tp;
 }
 
-
-void Timing::addToResponseStack(double xtime, int nbutton)
-{
-DOTRACE("Timing::addToResponseStack");
-
-  double delta = xtime - response_time_stack_0;
-
-  if (delta < 0.0)
-    delta = delta + 4294967295.0;
-
-  response_hist.push_back(Response(delta, nbutton));
-}
-
-void Timing::addToResponseStack(long sec, long usec, int nbutton)
-{
-DOTRACE("Timing::addToResponseStack");
-
-  timeval tp;
-  tp.tv_sec = sec;
-  tp.tv_usec = usec;
-
-  const double delta = elapsedMsec(&response_timeval_0, &tp);
-
-  response_hist.push_back(Response(delta, nbutton));
-}
-
-
 void Timing::addToStimulusStack(int correct_nbutton)
 {
 DOTRACE("Timing::addToStimulusStack");
@@ -190,6 +163,18 @@ DOTRACE("Timing::addToStimulusStack");
   // (2) Note the correct response value
   stimulus_hist.push_back(Stimulus(elapsedMsec(&ss_0, &tp),
                                    correct_nbutton));
+}
+
+void Timing::addToResponseStack(double xtime, int nbutton)
+{
+DOTRACE("Timing::addToResponseStack");
+
+  double delta = xtime - response_time_stack_0;
+
+  if (delta < 0.0)
+    delta = delta + 4294967295.0;
+
+  response_hist.push_back(Response(delta, nbutton));
 }
 
 void Timing::tallyReactionTime(ParamFile& f, float remind_duration)
