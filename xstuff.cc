@@ -289,10 +289,10 @@ DOTRACE("XStuff::getWord");
   return result;
 }
 
-void XStuff::buttonPressLoop(void* cdata,
-                             ButtonFunc* onButton)
+bool XStuff::getButtonPress(double& xtime,
+                            int& button_number)
 {
-DOTRACE("XStuff::buttonPressLoop");
+DOTRACE("XStuff::getButtonPress");
 
   XEvent event;
 
@@ -303,17 +303,20 @@ DOTRACE("XStuff::buttonPressLoop");
       if (event.xbutton.window != itsWindow)
         continue;
 
-      int nbutton = 0;
+      button_number = 0;
 
       if (event.xbutton.button == Button1)
-        nbutton = 1;
+        button_number = 1;
       else if (event.xbutton.button == Button2)
-        nbutton = 2;
+        button_number = 2;
       else if (event.xbutton.button == Button3)
-        nbutton = 3;
+        button_number = 3;
 
-      (*onButton)(cdata, double(event.xbutton.time), nbutton);
+      xtime = double(event.xbutton.time);
+      return true;
     }
+
+  return false;
 }
 
 static const char vcid_xstuff_cc[] = "$Header$";

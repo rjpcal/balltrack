@@ -42,8 +42,7 @@ public:
                  ExposeFunc* onExpose,
                  KeyFunc* onKey);
 
-  void buttonPressLoop(void* cdata,
-                       ButtonFunc* onButton);
+  bool getButtonPress(double& xtime, int& button_number);
 
 private:
   std::string getWord() const;

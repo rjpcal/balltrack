@@ -219,12 +219,11 @@ DOTRACE("BallsExpt::onKey");
   return false;
 }
 
-void BallsExpt::onButton(void* cdata, double xtime, int button_number)
+void BallsExpt::onButton(double xtime, int button_number)
 {
 DOTRACE("BallsExpt::onButton");
-  BallsExpt* p = static_cast<BallsExpt*>(cdata);
 
-  double delta = xtime - p->rep->respTime0;
+  double delta = xtime - this->rep->respTime0;
 
   if (delta < 0.0)
     delta = delta + 4294967295.0;
@@ -234,10 +233,10 @@ DOTRACE("BallsExpt::onButton");
 
   switch (button_number)
     {
-    case 1:  p->rep->responses.push_back(Response(delta, BUTTON1)); break;
-    case 2:  p->rep->responses.push_back(Response(delta, BUTTON2)); break;
-    case 3:  p->rep->responses.push_back(Response(delta, BUTTON3)); break;
-    default: p->rep->responses.push_back(Response(delta, 0)); break;
+    case 1:  this->rep->responses.push_back(Response(delta, BUTTON1)); break;
+    case 2:  this->rep->responses.push_back(Response(delta, BUTTON2)); break;
+    case 3:  this->rep->responses.push_back(Response(delta, BUTTON3)); break;
+    default: this->rep->responses.push_back(Response(delta, 0)); break;
     }
 }
 
@@ -359,8 +358,14 @@ DOTRACE("BallsExpt::runExperiment");
       tmefile.putLine(buf);
     }
 
-  rep->gfx.xstuff().buttonPressLoop(static_cast<void*>(this),
-                                    &onButton);
+
+  double xt;
+  int nbutton;
+
+  while (rep->gfx.xstuff().getButtonPress(xt, nbutton))
+    {
+      onButton(xt, nbutton);
+    }
 
   rep->tallyReactionTime(tmefile);
 }
