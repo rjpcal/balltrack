@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Tue Feb 29 10:46:17 2000
+// written: Tue Feb 29 14:52:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,44 +21,32 @@ class StarbaseGfx : public Graphics {
 public:
   StarbaseGfx(XStuff* xinfo, int aWidth, int aHeight);
 
-  virtual void makeCurrent();
+  virtual void initWindow();
 
   virtual void wrapGraphics();
+
+  virtual void clearFrontBuffer();
+  virtual void clearBackBuffer();
+  virtual void clearUpperPlanes();
+
+  virtual void waitVerticalRetrace();
+  virtual void swapBuffers();
 
   virtual void writeUpperPlanes();
   virtual void writeLowerPlanes();
   virtual void writeAllPlanes();
 
-  virtual void waitVerticalRetrace();
-  virtual void swapBuffers();
-
   virtual void drawMessage(char word[]);
   virtual void drawCross();
-  virtual void clearUpperPlanes();
 
   virtual void setTransparent();
 
-  // called from Application::Application()
-  virtual void initWindow();
-
-  // called from many
-  virtual void clearWindow();
-
-  virtual void clearBackBuffer();
-
-  // called from MenuApplication::makeMenu() and <params.c>::SetParametersN()
   virtual void showMenu(char menu[][STRINGSIZE], int nmenu);
-
-  // called from <params.c>::ListParams()
   virtual void showParams(char params[][STRINGSIZE], int nparams);
 
-  // called from Ball::move()
-  virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
-
-  // called from Ball::draw()
   virtual void writeBitmap(unsigned char* ptr, int x, int y, int size);
-
   virtual void writeTrueColorMap(unsigned char* ptr, int x, int y, int size);
+  virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
 
 private:
   int fildes() const { return itsFildes; }

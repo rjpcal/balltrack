@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Tue Feb 29 10:44:32 2000
+// written: Tue Feb 29 14:45:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ DOTRACE("BallsExpt::runExperiment");
   graphics()->writeAllPlanes();
 
   for (int k = 0; k < 2; ++k) {
-	 graphics()->clearWindow();
+	 graphics()->clearFrontBuffer();
 	 graphics()->drawCross();
 	 graphics()->setTransparent();
 	 graphics()->swapBuffers();

@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Feb 29 12:24:01 2000
+// written: Tue Feb 29 14:53:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,8 +116,9 @@ DOTRACE("OpenglGfx::OpenglGfx");
     }
 }
 
-void OpenglGfx::makeCurrent() {
-DOTRACE("OpenglGfx::makeCurrent");
+void OpenglGfx::initWindow() {
+DOTRACE("OpenglGfx::initWindow");
+
   glXMakeCurrent(itsXStuff->display(), itsXStuff->window(), itsGLXContext);
 
   glViewport(0, 0, width(), height());
@@ -128,6 +129,18 @@ DOTRACE("OpenglGfx::makeCurrent");
 
   glClearIndex(0);
   glClear(GL_COLOR_BUFFER_BIT);
+
+//   sizeColormap();
+
+//   saveColormap();
+
+  newColormap();
+
+  setTransparent();
+
+  checkFrameTime();
+
+  clearFrontBuffer();
 }
 
 void OpenglGfx::wrapGraphics() {
@@ -210,7 +223,7 @@ DOTRACE("OpenglGfx::clearUpperPlanes");
 
   writeUpperPlanes();
 
-  clearWindow();
+  clearFrontBuffer();
 
   writeLowerPlanes();
 }
@@ -229,24 +242,8 @@ DOTRACE("OpenglGfx::setTransparent");
 #endif
 }
 
-void OpenglGfx::initWindow() {
-DOTRACE("OpenglGfx::initWindow");
-
-//   sizeColormap();
-
-//   saveColormap();
-
-  newColormap();
-
-  setTransparent();
-
-  checkFrameTime();
-
-  clearWindow();
-}
-
-void OpenglGfx::clearWindow() {
-DOTRACE("OpenglGfx::clearWindow");
+void OpenglGfx::clearFrontBuffer() {
+DOTRACE("OpenglGfx::clearFrontBuffer");
 
   GLint mask;
   glGetIntegerv(GL_INDEX_WRITEMASK, &mask);
@@ -263,7 +260,7 @@ DOTRACE("OpenglGfx::clearBackBuffer");
 
 void OpenglGfx::showMenu(char menu[][STRINGSIZE], int nmenu) {
 DOTRACE("OpenglGfx::showMenu");
-  clearWindow();
+  clearFrontBuffer();
 	 
   glIndexi(1);
 	 
@@ -331,7 +328,7 @@ DOTRACE("OpenglGfx::checkFrameTime");
 
   struct timeval tp[2];
 
-  clearWindow();
+  clearFrontBuffer();
 
   waitFrameCount( 1 );
 

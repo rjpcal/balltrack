@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:06:33 2000
-// written: Tue Feb 29 12:12:56 2000
+// written: Tue Feb 29 14:51:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,6 @@ MenuApplication::MenuApplication(const XHints& hints) :
   Application(hints)
 {
 DOTRACE("MenuApplication::MenuApplication");
-
-  graphics()->initWindow();
 
   ReadParams(this, "sta");
 }
@@ -69,7 +67,7 @@ DOTRACE("MenuApplication::makeMenu");
 
   nmenu = 7;
 
-  graphics()->clearWindow();
+  graphics()->clearFrontBuffer();
 
   for (int ii = 0; ii < 2; ++ii) {
 	 graphics()->clearBackBuffer();

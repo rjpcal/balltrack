@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Tue Feb 29 10:44:56 2000
+// written: Tue Feb 29 14:53:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,8 +44,9 @@ StarbaseGfx::StarbaseGfx(XStuff* xinfo, int aWidth, int aHeight) :
 DOTRACE("StarbaseGfx::StarbaseGfx");
 }
 
-void StarbaseGfx::makeCurrent() {
-DOTRACE("StarbaseGfx::makeCurrent");
+void StarbaseGfx::initWindow() {
+DOTRACE("StarbaseGfx::initWindow");
+
   char* device = ( char * ) make_X11_gopen_string( itsXStuff->display(),
 																	itsXStuff->window() );
   itsFildes = gopen( device, OUTDEV, NULL, INT_XFORM|CMAP_FULL );
@@ -60,6 +61,24 @@ DOTRACE("StarbaseGfx::makeCurrent");
 		fprintf( stdout,"Could not gopen window.\n" );
 		exit( -1 );
     }
+
+  sizeColormap();
+
+  saveColormap();
+
+  newColormap();
+
+  intvdc_extent( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
+
+  intview_port( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
+
+  intview_window( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
+
+  setTransparent();
+
+  checkFrameTime();
+
+  clearFrontBuffer();
 }
 
 void StarbaseGfx::wrapGraphics() {
@@ -150,30 +169,8 @@ DOTRACE("StarbaseGfx::setTransparent");
   define_color_table( fildes(), 0, COLOR_NUMBER, Color[0] );
 }
 
-void StarbaseGfx::initWindow() {
-DOTRACE("StarbaseGfx::initWindow");
-
-  sizeColormap();
-
-  saveColormap();
-
-  newColormap();
-
-  intvdc_extent( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
-
-  intview_port( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
-
-  intview_window( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
-
-  setTransparent();
-
-  checkFrameTime();
-
-  clearWindow();
-}
-
-void StarbaseGfx::clearWindow() {
-DOTRACE("StarbaseGfx::clearWindow");
+void StarbaseGfx::clearFrontBuffer() {
+DOTRACE("StarbaseGfx::clearFrontBuffer");
 
   background_color_index( fildes(), 0 );
   clear_view_surface( fildes() );
@@ -262,7 +259,7 @@ DOTRACE("StarbaseGfx::checkFrameTime");
 
   struct timeval tp[2];
 
-  clearWindow();
+  clearFrontBuffer();
 
   waitFrameCount( 1 );
 

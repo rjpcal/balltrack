@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Tue Feb 29 10:43:32 2000
+// written: Tue Feb 29 14:51:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,47 +24,35 @@ public:
   // Virtual destructor ensures proper destruction of base classes.
   virtual ~Graphics();
 
-  virtual void makeCurrent() = 0;
+  virtual void initWindow() = 0;
 
   virtual void wrapGraphics() = 0;
 
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
 
-  virtual void writeUpperPlanes() = 0;
-  virtual void writeLowerPlanes() = 0;
-  virtual void writeAllPlanes() = 0;
+  virtual void clearFrontBuffer() = 0;
+  virtual void clearBackBuffer() = 0;
+  virtual void clearUpperPlanes() = 0;
 
   virtual void waitVerticalRetrace() = 0;
   virtual void swapBuffers() = 0;
 
+  virtual void writeUpperPlanes() = 0;
+  virtual void writeLowerPlanes() = 0;
+  virtual void writeAllPlanes() = 0;
+
   virtual void drawMessage(char word[]) = 0;
   virtual void drawCross() = 0;
-  virtual void clearUpperPlanes() = 0;
 
   virtual void setTransparent() = 0;
 
-  // called from Application::Application()
-  virtual void initWindow() = 0;
-
-  // called from many
-  virtual void clearWindow() = 0;
-
-  virtual void clearBackBuffer() = 0;
-
-  // called from MenuApplication::makeMenu() and <params.c>::SetParametersN()
   virtual void showMenu(char menu[][STRINGSIZE], int nmenu) = 0;
-
-  // called from <params.c>::ListParams()
   virtual void showParams(char params[][STRINGSIZE], int nparams) = 0;
 
-  // called from Ball::move()
-  virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny) = 0;
-
-  // called from Ball::draw()
   virtual void writeBitmap(unsigned char* ptr, int x, int y, int size) = 0;
-
   virtual void writeTrueColorMap(unsigned char* ptr, int x, int y, int size) = 0;
+  virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny) = 0;
 
 private:
   int itsHeight;

@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Tue Feb 29 10:25:54 2000
+// written: Tue Feb 29 14:45:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -536,7 +536,7 @@ DOTRACE("Balls::runTrial");
     }
 
   gfx->writeAllPlanes();
-  gfx->clearWindow();
+  gfx->clearFrontBuffer();
   gfx->drawCross();
 }
 

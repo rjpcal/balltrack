@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Tue Feb 29 12:13:03 2000
+// written: Tue Feb 29 14:45:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ DOTRACE("ListParams");
 
   Closefile( fp );
 
-  app->graphics()->clearWindow();
+  app->graphics()->clearFrontBuffer();
   app->graphics()->clearBackBuffer();
   app->graphics()->showParams(params, nparams);
   app->graphics()->swapBuffers();
@@ -307,7 +307,7 @@ DOTRACE("SetParameters1");
 
   Graphics* gfx = app->graphics();
 
-  gfx->clearWindow();
+  gfx->clearFrontBuffer();
   for (int ii = 0; ii < 2; ++ii) {
 	 gfx->clearBackBuffer();
 	 gfx->swapBuffers();
@@ -382,7 +382,7 @@ DOTRACE("SetParameters2");
 
   Graphics* gfx = app->graphics();
 
-  gfx->clearWindow();
+  gfx->clearFrontBuffer();
   for (int ii = 0; ii < 2; ++ii) {
 	 gfx->clearBackBuffer();
 	 gfx->swapBuffers();
