@@ -391,17 +391,13 @@ namespace
 {
   struct ParamInfo
   {
-    ParamInfo(const std::string& n, int& v) :
-      descr(n), width(6), dvar(0), ivar(&v), dorig(0.0), iorig(v)
-    {
-      width = std::max(6u, n.length() + 1);
-    }
+    ParamInfo(const std::string& d, const std::string& n, int& v) :
+      descr(d), name(n), dvar(0), ivar(&v), dorig(0.0), iorig(v)
+    {}
 
-    ParamInfo(const std::string& n, double& v) :
-      descr(n), width(6), dvar(&v), ivar(0), dorig(v), iorig(0)
-    {
-      width = std::max(6u, n.length() + 1);
-    }
+    ParamInfo(const std::string& d, const std::string& n, double& v) :
+      descr(d), name(n), dvar(&v), ivar(0), dorig(v), iorig(0)
+    {}
 
     bool changed() const
     {
@@ -410,7 +406,7 @@ namespace
     }
 
     std::string descr;
-    unsigned int width;
+    std::string name;
 
     double* dvar;
     int* ivar;
@@ -425,21 +421,29 @@ namespace
     ParamMenu() {}
 
     template <class T>
-    void addItem(const std::string& n, T& v)
+    void addItem(const std::string& d, const std::string& n, T& v)
     {
-      items.push_back(ParamInfo(n, v));
+      items.push_back(ParamInfo(d, n, v));
     }
 
     void showVmenu(Graphics& gfx, unsigned int nitems)
     {
       std::vector<TextLine> vmenu;
 
-      unsigned int maxwid = 0;
+      unsigned int descrwid = 0;
+      unsigned int namewid = 0;
 
       for (unsigned int i = 0; i < items.size(); ++i)
         {
-          if (items[i].width > maxwid) maxwid = items[i].width;
+          if (items[i].descr.length() > descrwid)
+            descrwid = items[i].descr.length();
+
+          if (items[i].name.length() > namewid)
+            namewid = items[i].name.length();
         }
+
+      descrwid += 1;
+      namewid += 1;
 
       std::ostringstream oss;
 
@@ -452,7 +456,9 @@ namespace
         {
           oss.str("");
           oss.setf(std::ios::right);
-          oss << std::setw(maxwid) << items[i].descr;
+          oss << std::setw(descrwid) << items[i].descr;
+
+          oss << sep << std::setw(namewid+2) << ('(' + items[i].name + ')');
 
           if (items[i].dvar != 0)
             {
@@ -493,7 +499,7 @@ namespace
         }
 
       gfx.clearBackBuffer();
-      gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 14);
+      gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 12);
       gfx.swapBuffers();
     }
 
@@ -527,23 +533,26 @@ DOTRACE("Params::setParams");
 
   ParamMenu pm;
 
-  pm.addItem("number of balls (total) ", this->ballNumber);
-  pm.addItem("number of balls to track", this->ballTrackNumber);
-  pm.addItem("ball speed (ball widths/second)", this->ballSpeed);
-  pm.addItem("ball pixmap size (#pixels)", this->ballPixmapSize);
-  pm.addItem("minimum distance before collision (#pixels)", this->ballMinDistance);
-  pm.addItem("ball radius (#pixels)", this->ballRadius);
-  pm.addItem("ball sigma^2 (#pixels)", this->ballSigma2);
-  pm.addItem("ball twist angle (radians)", this->ballTwistAngle);
+  pm.addItem("arena width",                                 "DISPLAY_X", this->displayX);
+  pm.addItem("arena height",                                "DISPLAY_Y", this->displayY);
 
-  pm.addItem("# of cycles", this->cycleNumber);
-  pm.addItem("wait duration (seconds)", this->waitSeconds);
-  pm.addItem("epoch duration (seconds)", this->epochSeconds);
-  pm.addItem("pause duration (seconds)", this->pauseSeconds);
-  pm.addItem("# of reminds per epoch", this->remindsPerEpoch);
-  pm.addItem("remind duration (seconds)", this->remindSeconds);
+  pm.addItem("# of cycles",                                 "CYCLE_NUMBER", this->cycleNumber);
+  pm.addItem("wait duration (seconds)",                     "WAIT_DURATION", this->waitSeconds);
+  pm.addItem("epoch duration (seconds)",                    "EPOCH_DURATION", this->epochSeconds);
+  pm.addItem("pause duration (seconds)",                    "PAUSE_DURATION", this->pauseSeconds);
+  pm.addItem("remind duration (seconds)",                   "REMIND_DURATION", this->remindSeconds);
+  pm.addItem("# of reminds per epoch",                      "REMINDS_PER_EPOCH", this->remindsPerEpoch);
 
-  pm.addItem("fMRI session #", this->fmriSessionNumber);
+  pm.addItem("number of balls (total) ",                    "BALL_NUMBER", this->ballNumber);
+  pm.addItem("number of balls to track",                    "BALL_TRACK_NUMBER", this->ballTrackNumber);
+  pm.addItem("ball speed (ball widths/second)",             "BALL_SPEED", this->ballSpeed);
+  pm.addItem("ball pixmap size (#pixels)",                  "BALL_ARRAY_SIZE", this->ballPixmapSize);
+  pm.addItem("minimum distance before collision (#pixels)", "BALL_MIN_DISTANCE", this->ballMinDistance);
+  pm.addItem("ball radius (#pixels)",                       "BALL_RADIUS", this->ballRadius);
+  pm.addItem("ball sigma^2 (#pixels)",                      "BALL_SIGMA2", this->ballSigma2);
+  pm.addItem("ball twist angle (radians)",                  "BALL_TWIST_ANGLE", this->ballTwistAngle);
+
+  pm.addItem("fMRI session #",                              "FMRI_SESSION_NUMBER", this->fmriSessionNumber);
 
   pm.goVert(gfx);
 }
