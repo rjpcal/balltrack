@@ -148,6 +148,48 @@ DOTRACE("Ball::nextPosition");
     }
 }
 
+bool Ball::checkInsideBorder(int width, int height,
+                             int xdisplay, int ydisplay,
+                             int arraysize) const
+{
+DOTRACE("Ball::checkInsideBorder");
+
+  const int xborder = (width-xdisplay)/2;
+  const int yborder = (height-ydisplay)/2;
+
+  if (this->xnext < xborder || this->xnext > width - xborder - arraysize)
+    {
+      return false;
+    }
+
+  if (this->ynext < yborder || this->ynext > height - yborder - arraysize)
+    {
+      return false;
+    }
+
+  return true;
+}
+
+void Ball::bringInsideBorder(int width, int height,
+                             int xdisplay, int ydisplay,
+                             int arraysize)
+{
+DOTRACE("Ball::bringInsideBorder");
+
+  const int xborder = (width-xdisplay)/2;
+  const int yborder = (height-ydisplay)/2;
+
+  if (this->xnext < xborder)
+    this->xnext = xborder;
+  else if (this->xnext > width - xborder - arraysize)
+    this->xnext = width - xborder - arraysize;
+
+  if (this->ynext < yborder)
+    this->ynext = yborder;
+  else if (this->ynext > height - yborder - arraysize)
+    this->ynext = height - yborder - arraysize;
+}
+
 void Ball::collideIfNeeded(Ball& other, int min_dist,
                            double lapsed_seconds)
 {
@@ -189,13 +231,13 @@ DOTRACE("Ball::collideIfNeeded");
 
       other.velx = fj * (voj * xo + vai * xa); // pix/sec
       other.vely = fj * (voj * yo + vai * ya); // pix/sec
+
+      this->xnext = this->xpos + (lapsed_seconds * this->velx);
+      this->ynext = this->ypos + (lapsed_seconds * this->vely);
+
+      other.xnext = other.xpos + (lapsed_seconds * other.velx);
+      other.ynext = other.ypos + (lapsed_seconds * other.vely);
     }
-
-  this->xnext = this->xpos + (lapsed_seconds * this->velx);
-  this->ynext = this->ypos + (lapsed_seconds * this->vely);
-
-  other.xnext = other.xpos + (lapsed_seconds * other.velx);
-  other.ynext = other.ypos + (lapsed_seconds * other.vely);
 }
 
 void Ball::twist(double maxangle)
@@ -259,7 +301,7 @@ DOTRACE("Balls::pickInitialPositions");
 
   itsBalls.resize(itsParams.ballNumber);
 
-  const int maxtries = 1000;
+  const int maxtries = 100000;
 
   for (int i=0; i < itsParams.ballNumber; ++i)
     {
@@ -312,6 +354,16 @@ DOTRACE("Balls::pickNextPositions");
                                itsParams.displayY,
                                itsParams.ballPixmapSize,
                                lapsed_seconds);
+
+      if (!itsBalls[i].checkInsideBorder(gfx.width(), gfx.height(),
+                                         itsParams.displayX,
+                                         itsParams.displayY,
+                                         itsParams.ballPixmapSize))
+        {
+          std::cerr << "OOPS! A ball sneaked out of the arena (after moving)...\n"
+                    << "Try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER\n";
+          exit(1);
+        }
     }
 
   for (int i=0; i<itsParams.ballNumber-1; ++i)
@@ -321,12 +373,52 @@ DOTRACE("Balls::pickNextPositions");
           itsBalls[i].collideIfNeeded(itsBalls[j],
                                       itsParams.ballMinDistance,
                                       lapsed_seconds);
+
+          itsBalls[i].bringInsideBorder(gfx.width(), gfx.height(),
+                                        itsParams.displayX,
+                                        itsParams.displayY,
+                                        itsParams.ballPixmapSize);
+
+          itsBalls[j].bringInsideBorder(gfx.width(), gfx.height(),
+                                        itsParams.displayX,
+                                        itsParams.displayY,
+                                        itsParams.ballPixmapSize);
+
+          if (!itsBalls[j].checkInsideBorder(gfx.width(), gfx.height(),
+                                             itsParams.displayX,
+                                             itsParams.displayY,
+                                             itsParams.ballPixmapSize))
+            {
+              std::cerr << "OOPS! A ball sneaked out of the arena (after colliding)...\n"
+                        << "Try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER\n";
+              exit(1);
+            }
+
+          if (!itsBalls[i].checkInsideBorder(gfx.width(), gfx.height(),
+                                             itsParams.displayX,
+                                             itsParams.displayY,
+                                             itsParams.ballPixmapSize))
+            {
+              std::cerr << "OOPS! A ball sneaked out of the arena (after colliding)...\n"
+                        << "Try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER\n";
+              exit(1);
+            }
         }
     }
 
   for (int i=0; i<itsParams.ballNumber; ++i)
     {
       itsBalls[i].twist(itsParams.ballTwistAngle);
+
+      if (!itsBalls[i].checkInsideBorder(gfx.width(), gfx.height(),
+                                         itsParams.displayX,
+                                         itsParams.displayY,
+                                         itsParams.ballPixmapSize))
+        {
+          std::cerr << "OOPS! A ball sneaked out of the arena (after twisting)...\n"
+                    << "Try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER\n";
+          exit(1);
+        }
     }
 
   for (int i=0; i<itsParams.ballNumber; ++i)
@@ -345,6 +437,19 @@ DOTRACE("Balls::drawNBalls");
       itsBalls[first].draw(gfx, bitmap,
                            itsParams.ballPixmapSize, debug);
       ++first;
+    }
+
+  if (itsParams.showPhysics)
+    {
+      const double left = gfx.width()/2.0 - itsParams.displayX/2.0;
+      const double right = gfx.width()/2.0 + itsParams.displayX/2.0;
+      const double bottom = gfx.height()/2.0 - itsParams.displayY/2.0;
+      const double top = gfx.height()/2.0 + itsParams.displayY/2.0;
+
+      gfx.drawLine(left, bottom, left, top);
+      gfx.drawLine(right, bottom, right, top);
+      gfx.drawLine(left, bottom, right, bottom);
+      gfx.drawLine(left, top, right, top);
     }
 }
 
