@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Thu Feb 24 14:32:34 2000
+// written: Thu Feb 24 14:34:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,8 +57,6 @@ private:
 
   int itsWidth;
   int itsHeight;
-
-  int itsFildes;
 
   XStuff* itsXStuff;
 
