@@ -79,14 +79,16 @@ struct BallsExpt::Impl
       {
         unsigned int j;
 
-        // Find the first response (j'th) that came after the i'th stimulus
+        // Find the first response (j'th) that came after the i'th
+        // stimulus
         for (j = 0; j < this->responses.size(); ++j)
           {
             if (this->responses[j].time > this->stimuli[i].msecFrom(this->stimTime0))
               break;
           }
 
-        // If we found a corresponding response, compute the response time...
+        // If we found a corresponding response, compute the response
+        // time...
         if (j < this->responses.size())
           {
             this->stimuli[i].reaction_time =
@@ -122,23 +124,19 @@ struct BallsExpt::Impl
 
     char buf[512];
 
-    f.putLine(" reaction times:");
+    snprintf(buf, 512, " %-4s %15s   %20s",
+             "#", "reaction time", "reaction correct?");
+    f.putLine(buf);
+
     for (unsigned int i = 1; i < this->stimuli.size(); ++i)
       {
-        snprintf(buf, 512, " %d %.0lf",
-                 i, this->stimuli[i].reaction_time);
+        snprintf(buf, 512, " %-4d %15.2f   %20d",
+                 i,
+                 this->stimuli[i].reaction_time,
+                 this->stimuli[i].reaction_correct);
         f.putLine(buf);
       }
     f.putLine("");
-    f.putLine("");
-
-    f.putLine(" reaction correct?:");
-    for (unsigned int j = 1; j < this->stimuli.size(); ++j)
-      {
-        snprintf(buf, 512, " %d %d",
-                 j, int(this->stimuli[j].reaction_correct));
-        f.putLine(buf);
-      }
     f.putLine("");
 
     snprintf(buf, 512, " percent correct: %.2f", this->percentCorrect);
@@ -241,6 +239,9 @@ DOTRACE("BallsExpt::onButton");
 
   if (delta < 0.0)
     delta = delta + 4294967295.0;
+
+  std::cout << " button " << button_number
+            << " at delta " << delta << " msec" << std::endl;
 
   switch (button_number)
     {
