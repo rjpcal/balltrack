@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Wed Mar  8 09:06:29 2000
+// written: Wed May 31 17:02:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -501,6 +501,8 @@ DOTRACE("Balls::runTrial");
 		  gfx->swapBuffers();
 
 		  Timing::addToStimulusStack(LEFTBUTTON);
+
+		  Timing::mainTimer.wait( REMIND_DURATION * 2);
 		}
 		else if (ttype == Balls::CHECK_ONE) {
 		  // Randomly choose whether the highlighted ball will be a
@@ -546,9 +548,12 @@ DOTRACE("Balls::runTrial");
 		  drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, &theirHimap[0]);
 
 		  gfx->swapBuffers();
-		}
 
-		Timing::mainTimer.wait( REMIND_DURATION );
+		  Timing::mainTimer.wait( REMIND_DURATION );
+		}
+		else {
+		  Timing::mainTimer.wait( REMIND_DURATION * 2 );
+		}
 
 		gfx->clearUpperPlanes();
 		gfx->drawCross();
