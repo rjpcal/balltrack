@@ -36,9 +36,9 @@ namespace
   {
     DOTRACE("<balls.cc>::makeBallPixmap");
 
-    const double tint_r = 1.0;
-    const double tint_g = 0.5;
-    const double tint_b = 0.0;
+    const double tint_r = 0.0;
+    const double tint_g = 1.0;
+    const double tint_b = 0.5;
 
     const int bytes_per_pixel = 4;
 
@@ -362,13 +362,13 @@ DOTRACE("Balls::runTrial");
 
   initialize(gfx);
 
-  std::vector<ubyte> theirBallmap;
-  std::vector<ubyte> theirHimap;
+  std::vector<ubyte> pixmap;
+  std::vector<ubyte> hilitemap;
 
-  makeBallPixmap(theirHimap, itsParams.ballPixmapSize,
+  makeBallPixmap(hilitemap, itsParams.ballPixmapSize,
                  itsParams.ballRadius, itsParams.ballSigma2,
                  255, 255, 255);
-  makeBallPixmap(theirBallmap, itsParams.ballPixmapSize,
+  makeBallPixmap(pixmap, itsParams.ballPixmapSize,
                  itsParams.ballRadius, itsParams.ballSigma2,
                  0, 0, 0);
 
@@ -380,12 +380,12 @@ DOTRACE("Balls::runTrial");
   gfx.clearFrontBuffer();
   gfx.drawCross();
 
-  drawNBalls(gfx, 0, itsParams.ballNumber, &theirBallmap[0]);
+  drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
 
   if (ttype == Balls::CHECK_ALL ||
       ttype == Balls::CHECK_ONE)
     {
-      drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &theirHimap[0]);
+      drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
       gfx.drawCross();
     }
 
@@ -398,7 +398,7 @@ DOTRACE("Balls::runTrial");
     {
       gfx.clearFrontBuffer();
       gfx.drawCross();
-      drawNBalls(gfx, 0, itsParams.ballNumber, &theirBallmap[0]);
+      drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
       gfx.swapBuffers();
     }
 
@@ -412,7 +412,7 @@ DOTRACE("Balls::runTrial");
 
           for (int i = 0; i < itsParams.ballNumber; ++i)
             {
-              itsBalls[i].draw(gfx, &theirBallmap[0],
+              itsBalls[i].draw(gfx, &pixmap[0],
                                itsParams.ballPixmapSize);
             }
 
@@ -429,8 +429,8 @@ DOTRACE("Balls::runTrial");
           gfx.clearBackBuffer();
 
           gfx.drawCross();
-          drawNBalls(gfx, 0, itsParams.ballNumber, &theirBallmap[0]);
-          drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &theirHimap[0]);
+          drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
+          drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
 
           gfx.swapBuffers();
 
@@ -456,8 +456,8 @@ DOTRACE("Balls::runTrial");
           gfx.clearBackBuffer();
 
           gfx.drawCross();
-          drawNBalls(gfx, 0, itsParams.ballNumber, &theirBallmap[0]);
-          drawNHiBalls(gfx, random_ball, random_ball+1, &theirHimap[0]);
+          drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
+          drawNHiBalls(gfx, random_ball, random_ball+1, &hilitemap[0]);
 
           gfx.swapBuffers();
 
@@ -476,9 +476,9 @@ DOTRACE("Balls::runTrial");
           gfx.clearBackBuffer();
 
           gfx.drawCross();
-          drawNHiBalls(gfx, random_ball, random_ball+1, &theirBallmap[0]);
-          drawNBalls(gfx, itsParams.ballTrackNumber, itsParams.ballNumber, &theirBallmap[0]);
-          drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &theirHimap[0]);
+          drawNHiBalls(gfx, random_ball, random_ball+1, &pixmap[0]);
+          drawNBalls(gfx, itsParams.ballTrackNumber, itsParams.ballNumber, &pixmap[0]);
+          drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
 
           gfx.swapBuffers();
 
@@ -492,7 +492,7 @@ DOTRACE("Balls::runTrial");
       gfx.clearFrontBuffer();
       gfx.drawCross();
 
-      drawNBalls(gfx, 0, itsParams.ballNumber, &theirBallmap[0]);
+      drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
     }
 
   gfx.clearFrontBuffer();
