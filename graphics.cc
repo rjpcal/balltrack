@@ -14,7 +14,6 @@
 #include "graphics.h"
 
 #include "glfont.h"
-#include "params.h"
 #include "timing.h"
 #include "trace.h"
 #include "xstuff.h"
