@@ -18,6 +18,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 #include "debug.h"
 #include "trace.h"
@@ -109,34 +110,25 @@ DOTRACE("Timing::elapsedMsec");
 }
 
 
-#define MAXTIMESTACKSIZE 1000
+struct Stimulus
+{
+  Stimulus(double t, int v) : time(t), correct_val(v) {}
+  double time;
+  int correct_val;
 
-int RESPONSESTACKSIZE;
-int STIMULUSSTACKSIZE;
-int RESPONSE_VAL_STACK_SIZE;
+  double reaction_time;
+  bool reaction_correct;
+};
 
 struct Response
 {
+  Response(double t, int v) : time(t), val(v) {}
   double time;
   int val;
 };
 
-struct Stimulus
-{
-  double time;
-  int correct_val;
-};
-
-Stimulus stimulus_stack[MAXTIMESTACKSIZE];
-Response response_stack[MAXTIMESTACKSIZE];
-
-struct Reaction
-{
-  double time;
-  bool correct;
-};
-
-Reaction reaction_stack[MAXTIMESTACKSIZE];
+std::vector<Stimulus> stimulus_hist;
+std::vector<Response> response_hist;
 
 struct timeval ss_0;
 double response_time_stack_0;
@@ -152,13 +144,11 @@ DOTRACE("Timing::initTimeStack");
 
   response_timeval_0 = *tp;
 
-  response_stack[0].time = 0.0;
-  stimulus_stack[0].time = 0.0;
+  response_hist.clear();
+  response_hist.push_back(Response(0.0, 0));
+  stimulus_hist.clear();
+  stimulus_hist.push_back(Stimulus(0.0, 0));
   ss_0 = *tp;
-
-  RESPONSESTACKSIZE = 1;
-  STIMULUSSTACKSIZE = 1;
-  RESPONSE_VAL_STACK_SIZE = 1;
 }
 
 
@@ -168,20 +158,10 @@ DOTRACE("Timing::addToResponseStack");
 
   double delta = xtime - response_time_stack_0;
 
-  if (delta >= 0.0)
-    response_stack[RESPONSESTACKSIZE].time = delta;
-  else
-    response_stack[RESPONSESTACKSIZE].time = delta + 4294967295.0;
+  if (delta < 0.0)
+    delta = delta + 4294967295.0;
 
-  response_stack[RESPONSESTACKSIZE].val = nbutton;
-
-  ++RESPONSESTACKSIZE;
-
-  if (RESPONSESTACKSIZE >= MAXTIMESTACKSIZE)
-    {
-      printf(" MAXTIMESTACKSIZE too small\n");
-      exit(0);
-    }
+  response_hist.push_back(Response(delta, nbutton));
 }
 
 void Timing::addToResponseStack(long sec, long usec, int nbutton)
@@ -192,19 +172,9 @@ DOTRACE("Timing::addToResponseStack");
   tp.tv_sec = sec;
   tp.tv_usec = usec;
 
-  double delta = elapsedMsec(&response_timeval_0, &tp);
+  const double delta = elapsedMsec(&response_timeval_0, &tp);
 
-  response_stack[RESPONSESTACKSIZE].time = delta;
-
-  response_stack[RESPONSESTACKSIZE].val = nbutton;
-
-  RESPONSESTACKSIZE++;
-
-  if (RESPONSESTACKSIZE >= MAXTIMESTACKSIZE)
-    {
-      printf(" MAXTIMESTACKSIZE too small\n");
-      exit(0);
-    }
+  response_hist.push_back(Response(delta, nbutton));
 }
 
 
@@ -216,19 +186,10 @@ DOTRACE("Timing::addToStimulusStack");
 
   Timing::getTime(&tp);
 
-  // Compute the trial onset time relative to the first time
-  stimulus_stack[STIMULUSSTACKSIZE].time = elapsedMsec(&ss_0, &tp);
-
-  // Note the correct response value
-  stimulus_stack[STIMULUSSTACKSIZE].correct_val = correct_nbutton;
-
-  STIMULUSSTACKSIZE++;
-
-  if (STIMULUSSTACKSIZE >= MAXTIMESTACKSIZE)
-    {
-      printf(" MAXTIMESTACKSIZE too small\n");
-      exit(0);
-    }
+  // (1) Compute the trial onset time relative to the first time
+  // (2) Note the correct response value
+  stimulus_hist.push_back(Stimulus(elapsedMsec(&ss_0, &tp),
+                                   correct_nbutton));
 }
 
 void Timing::tallyReactionTime(ParamFile& f, float remind_duration)
@@ -240,44 +201,44 @@ DOTRACE("Timing::tallyReactionTime");
 
   // Compute the response time for each stimulus (or indicate a
   // non-response with -1.0)
-  for (int i=1; i<STIMULUSSTACKSIZE; ++i)
+  for (unsigned int i = 1;  i < stimulus_hist.size(); ++i)
     {
-      int j;
+      unsigned int j;
 
       // Find the first response (j'th) that came after the i'th stimulus
-      for (j=0; j<RESPONSESTACKSIZE; ++j)
+      for (j = 0; j < response_hist.size(); ++j)
         {
-          if (response_stack[j].time > stimulus_stack[i].time)
+          if (response_hist[j].time > stimulus_hist[i].time)
             break;
         }
 
-         // If we found a corresponding response, compute the response time...
-      if (j < RESPONSESTACKSIZE)
+      // If we found a corresponding response, compute the response time...
+      if (j < response_hist.size())
         {
-          reaction_stack[i].time =
-            response_stack[j].time - stimulus_stack[i].time;
-          reaction_stack[i].correct =
-            (response_stack[j].val == stimulus_stack[i].correct_val);
+          stimulus_hist[i].reaction_time =
+            response_hist[j].time - stimulus_hist[i].time;
+          stimulus_hist[i].reaction_correct =
+            (response_hist[j].val == stimulus_hist[i].correct_val);
         }
 
       // But if there was no corresponding response, indicate a
       // non-response with -1.0
       else
         {
-          reaction_stack[i].time = -1.0;
-          reaction_stack[i].correct = false;
+          stimulus_hist[i].reaction_time = -1.0;
+          stimulus_hist[i].reaction_correct = false;
         }
 
       // If the reaction time was too large, it doesn't count, so
       // indicate a non-response with -1.0
-      if (reaction_stack[i].time > remind_duration*1000)
+      if (stimulus_hist[i].reaction_time > remind_duration*1000)
         {
-          reaction_stack[i].time = -1.0;
-          reaction_stack[i].correct = false;
+          stimulus_hist[i].reaction_time = -1.0;
+          stimulus_hist[i].reaction_correct = false;
         }
 
       ++total_stims;
-      if (reaction_stack[i].correct) ++number_correct;
+      if (stimulus_hist[i].reaction_correct) ++number_correct;
   }
 
   percent_correct = (100.0 * number_correct) / total_stims;
@@ -287,18 +248,20 @@ DOTRACE("Timing::tallyReactionTime");
   char buf[512];
 
   f.putLine(" reaction times:");
-  for (int i=1; i<STIMULUSSTACKSIZE; ++i)
+  for (unsigned int i = 1; i < stimulus_hist.size(); ++i)
     {
-      snprintf(buf, 512, " %d %.0lf", i, reaction_stack[i].time);
+      snprintf(buf, 512, " %d %.0lf",
+               i, stimulus_hist[i].reaction_time);
       f.putLine(buf);
     }
   f.putLine("");
   f.putLine("");
 
   f.putLine(" reaction correct?:");
-  for (int j=1; j<STIMULUSSTACKSIZE; ++j)
+  for (unsigned int j = 1; j < stimulus_hist.size(); ++j)
     {
-      snprintf(buf, 512, " %d %d", j, int(reaction_stack[j].correct));
+      snprintf(buf, 512, " %d %d",
+               j, int(stimulus_hist[j].reaction_correct));
       f.putLine(buf);
     }
   f.putLine("");
