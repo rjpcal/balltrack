@@ -304,17 +304,15 @@ void BallsExpt::runExperiment(double xtime)
 {
 DOTRACE("BallsExpt::runExperiment");
 
-  struct timeval tp;
-  gettimeofday(&tp, (struct timezone*)0);
-
-  // FIXME clean this up
   rep->respTime0 = xtime;
 
   rep->responses.clear();
   rep->responses.push_back(Response(0.0, 0));
+
+  rep->stimTime0 = Timing::now();
+
   rep->stimuli.clear();
-  rep->stimuli.push_back(Stimulus(tp, 0));
-  rep->stimTime0 = tp;
+  rep->stimuli.push_back(Stimulus(rep->stimTime0, 0));
 
   ParamFile tmefile(rep->params.filestem, 'a', "tme");
 
