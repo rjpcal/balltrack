@@ -44,12 +44,15 @@ namespace Timing
 
 struct Stimulus
 {
-  Stimulus(const timeval& time0, const timeval& now, int v) :
-    msec_from_time0(Timing::elapsedMsec(time0, now)),
+  Stimulus(const timeval& now, int v) :
+    time(now),
     correct_val(v)
   {}
-  double msec_from_time0;
+  timeval time;
   int correct_val;
+
+  double msecFrom(const timeval& time0) const
+  { return Timing::elapsedMsec(time0, this->time); }
 
   double reaction_time;
   bool reaction_correct;

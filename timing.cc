@@ -124,7 +124,7 @@ DOTRACE("ResponseData::initTimeStack");
   itsResponses.clear();
   itsResponses.push_back(Response(0.0, 0));
   itsStimuli.clear();
-  itsStimuli.push_back(Stimulus(*tp, *tp, 0));
+  itsStimuli.push_back(Stimulus(*tp, 0));
   itsStimulusTime0 = *tp;
 }
 
@@ -132,12 +132,7 @@ void ResponseData::addToStimulusStack(int correct_nbutton)
 {
 DOTRACE("ResponseData::addToStimulusStack");
 
-  const timeval tp = Timing::now();
-
-  // (1) Compute the trial onset time relative to the first time
-  // (2) Note the correct response value
-  itsStimuli.push_back(Stimulus(itsStimulusTime0, tp,
-                                correct_nbutton));
+  itsStimuli.push_back(Stimulus(Timing::now(), correct_nbutton));
 }
 
 void ResponseData::addToResponseStack(double xtime, int nbutton)
@@ -168,7 +163,7 @@ DOTRACE("ResponseData::tallyReactionTime");
       // Find the first response (j'th) that came after the i'th stimulus
       for (j = 0; j < itsResponses.size(); ++j)
         {
-          if (itsResponses[j].time > itsStimuli[i].msec_from_time0)
+          if (itsResponses[j].time > itsStimuli[i].msecFrom(itsStimulusTime0))
             break;
         }
 
@@ -176,7 +171,7 @@ DOTRACE("ResponseData::tallyReactionTime");
       if (j < itsResponses.size())
         {
           itsStimuli[i].reaction_time =
-            itsResponses[j].time - itsStimuli[i].msec_from_time0;
+            itsResponses[j].time - itsStimuli[i].msecFrom(itsStimulusTime0);
           itsStimuli[i].reaction_correct =
             (itsResponses[j].val == itsStimuli[i].correct_val);
         }
