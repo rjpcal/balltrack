@@ -408,6 +408,7 @@ DOTRACE("Balls::runTrial");
 
       // Here's the main loop where the balls are moving randomly
       int nframes = 0;
+      double simulated_lapsed_sec = 0.0;
       while (true)
         {
           ++nframes;
@@ -420,9 +421,11 @@ DOTRACE("Balls::runTrial");
 
           pickNextPositions(gfx, lapsed_sec);
 
+          simulated_lapsed_sec += lapsed_sec;
+
           // amount of time lapsed in the entire motion sequence so far
 
-          if (tstart.elapsedSec() >= itsParams.ballMotionSeconds())
+          if (simulated_lapsed_sec >= itsParams.ballMotionSeconds())
             break;
         }
 
