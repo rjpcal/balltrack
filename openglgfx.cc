@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Fri Jun 23 17:59:15 2000
+// written: Thu Dec  7 14:41:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ OpenglGfx::OpenglGfx(XStuff* xinfo, const XHints& hints,
   itsClearIndex(0)
 {
 DOTRACE("OpenglGfx::OpenglGfx");
-  vector<int> attribList;
+  std::vector<int> attribList;
 
   if (hints.doubleBuffer()) 
 	 attribList.push_back(GLX_DOUBLEBUFFER);

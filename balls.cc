@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Mon Jun 12 14:13:53 2000
+// written: Thu Dec  7 14:40:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,8 @@
 namespace {
   const int VELOSCALE = 1000;
 
-  vector<unsigned char> theirBallmap;
-  vector<unsigned char> theirHimap;
+  std::vector<unsigned char> theirBallmap;
+  std::vector<unsigned char> theirHimap;
 }
 
 namespace Local {
@@ -38,7 +38,7 @@ namespace Local {
   int fround( float x );
   int abs( int a );
 
-  void makeBallMap( vector<unsigned char>& vec, int size,
+  void makeBallMap( std::vector<unsigned char>& vec, int size,
 						  float radius, float sigma,
 						  unsigned char background,
 						  bool rgba );
@@ -76,7 +76,7 @@ DOTRACE("Local::abs");
   return( ( a > 0 ) ? a : -a );
 }
 
-void Local::makeBallMap( vector<unsigned char>& vec, int size,
+void Local::makeBallMap( std::vector<unsigned char>& vec, int size,
 								 float radius, float sigma,
 								 unsigned char background,
 								 bool rgba ) {
