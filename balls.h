@@ -32,8 +32,12 @@ struct vec
                this->y - other.y); }
 
   vec operator+(const vec& other) const
-  { return vec(this->x - other.x,
-               this->y - other.y); }
+  { return vec(this->x + other.x,
+               this->y + other.y); }
+
+  vec operator*(double v) const
+  { return vec(this->x * v,
+               this->y * v); }
 
   vec operator/(double v) const
   { return vec(this->x / v,
