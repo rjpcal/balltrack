@@ -25,9 +25,9 @@ int main(int argc, char** argv)
   Params p(argc, argv);
 
   Graphics gfx("tracking", // window name
-               1280, // window width
-               1024, // window height
-               24);  // window bit depth
+               p.windowWidth,
+               p.windowHeight,
+               p.windowDepth);
 
   BallsExpt expt(gfx, p);
 

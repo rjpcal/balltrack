@@ -130,9 +130,9 @@ Params::Params(int argc, char** argv) :
   pauseSeconds(),
   remindSeconds(),
   waitSeconds(),
-  ballPixmapSize(),
   ballMinDistance(),
   ballNumber(),
+  ballPixmapSize(),
   ballTrackNumber(),
   ballVelocity(),
   borderX(),
@@ -140,10 +140,13 @@ Params::Params(int argc, char** argv) :
   cycleNumber(),
   displayX(),
   displayY(),
+  fmriSessionNumber(1),
   framesPerRemind(),
-  fudgeframes(10),
   remindsPerEpoch(),
-  fmriSessionNumber(1)
+  windowDepth(24),
+  windowHeight(1024),
+  windowWidth(1280),
+  fudgeframes(10)
 {
   this->appMode = Params::TRAINING;
 
@@ -170,6 +173,21 @@ Params::Params(int argc, char** argv) :
       else if (strcmp(argv[i], "--makemovie") == 0)
         {
           this->doMovie = true;
+        }
+      else if (strcmp(argv[i], "--depth") == 0)
+        {
+          this->windowDepth = atoi(argv[++i]);
+          std::cout << " windowDepth " << this->windowDepth << "\n";
+        }
+      else if (strcmp(argv[i], "--width") == 0)
+        {
+          this->windowWidth = atoi(argv[++i]);
+          std::cout << " windowWidth " << this->windowWidth << "\n";
+        }
+      else if (strcmp(argv[i], "--height") == 0)
+        {
+          this->windowHeight = atoi(argv[++i]);
+          std::cout << " windowHeight " << this->windowHeight << "\n";
         }
       else if (!got_filename)
         {

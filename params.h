@@ -65,9 +65,9 @@ public:
   double pauseSeconds;
   double remindSeconds;
   double waitSeconds;
-  int    ballPixmapSize;     // = 16;
   int    ballMinDistance; // = 24;
   int    ballNumber;                 // = 8;
+  int    ballPixmapSize;     // = 16;
   int    ballTrackNumber; // = 2;
   int    ballVelocity;       // = 3;
   int    borderX;                    // = (width - 120) / 2;
@@ -75,12 +75,14 @@ public:
   int    cycleNumber;
   int    displayX;
   int    displayY;
+  int    fmriSessionNumber;
   int    framesPerRemind; // = 11;
+  int    remindsPerEpoch; // = 72;
+  int    windowDepth;
+  int    windowHeight;
+  int    windowWidth;
 private:
   int    fudgeframes;
-public:
-  int    remindsPerEpoch; // = 72;
-  int    fmriSessionNumber;
 
 private:
   void recompute(Graphics& gfx);

@@ -368,7 +368,7 @@ DOTRACE("BallsExpt::runFmriExpt");
 
   if (rep->params.doMovie)
     rep->gfx.startRecording(rep->params.displayX,
-                              rep->params.displayY);
+                            rep->params.displayY);
 
   for (int trial = 0; trial < NUM_TRIALS; ++trial)
     {
