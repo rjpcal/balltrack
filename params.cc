@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// params.c
+// params.cc
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
@@ -9,8 +9,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef PARAMS_C_DEFINED
-#define PARAMS_C_DEFINED
+#ifndef PARAMS_CC_DEFINED
+#define PARAMS_CC_DEFINED
 
 #include "params.h"
 
@@ -534,5 +534,5 @@ DOTRACE("process_id");
 }
 
 
-static const char vcid_params_c[] = "$Header$";
-#endif // !PARAMS_C_DEFINED
+static const char vcid_params_cc[] = "$Header$";
+#endif // !PARAMS_CC_DEFINED
