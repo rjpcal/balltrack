@@ -61,14 +61,6 @@ public:
   // Used in BallsExpt::onButton
   void addToResponseStack(double xtime, int nbutton);
 
-  // From BallsExpt::onKey
-  void initTimeStack(double xtime, timeval* tp);
-
-  // From BallsExpt::runExperiment
-  void tallyReactionTime(ParamFile& f, float remind_duration);
-
-  double recentPercentCorrect();
-
   std::vector<Stimulus> itsStimuli;
   std::vector<Response> itsResponses;
 
@@ -87,19 +79,6 @@ ResponseData::ResponseData() :
 {}
 
 
-void ResponseData::initTimeStack(double xtime, timeval* tp)
-{
-DOTRACE("ResponseData::initTimeStack");
-
-  itsResponseTime0 = xtime;
-
-  itsResponses.clear();
-  itsResponses.push_back(Response(0.0, 0));
-  itsStimuli.clear();
-  itsStimuli.push_back(Stimulus(*tp, 0));
-  itsStimulusTime0 = *tp;
-}
-
 void ResponseData::addToResponseStack(double xtime, int nbutton)
 {
 DOTRACE("ResponseData::addToResponseStack");
@@ -112,91 +91,6 @@ DOTRACE("ResponseData::addToResponseStack");
   itsResponses.push_back(Response(delta, nbutton));
 }
 
-void ResponseData::tallyReactionTime(ParamFile& f, float remind_duration)
-{
-DOTRACE("ResponseData::tallyReactionTime");
-
-  int total_stims = 0;
-  int number_correct = 0;
-
-  // Compute the response time for each stimulus (or indicate a
-  // non-response with -1.0)
-  for (unsigned int i = 1;  i < itsStimuli.size(); ++i)
-    {
-      unsigned int j;
-
-      // Find the first response (j'th) that came after the i'th stimulus
-      for (j = 0; j < itsResponses.size(); ++j)
-        {
-          if (itsResponses[j].time > itsStimuli[i].msecFrom(itsStimulusTime0))
-            break;
-        }
-
-      // If we found a corresponding response, compute the response time...
-      if (j < itsResponses.size())
-        {
-          itsStimuli[i].reaction_time =
-            itsResponses[j].time - itsStimuli[i].msecFrom(itsStimulusTime0);
-          itsStimuli[i].reaction_correct =
-            (itsResponses[j].val == itsStimuli[i].correct_val);
-        }
-
-      // But if there was no corresponding response, indicate a
-      // non-response with -1.0
-      else
-        {
-          itsStimuli[i].reaction_time = -1.0;
-          itsStimuli[i].reaction_correct = false;
-        }
-
-      // If the reaction time was too large, it doesn't count, so
-      // indicate a non-response with -1.0
-      if (itsStimuli[i].reaction_time > remind_duration*1000)
-        {
-          itsStimuli[i].reaction_time = -1.0;
-          itsStimuli[i].reaction_correct = false;
-        }
-
-      ++total_stims;
-      if (itsStimuli[i].reaction_correct) ++number_correct;
-  }
-
-  itsPercentCorrect = (100.0 * number_correct) / total_stims;
-
-  // write reactions to the log file
-
-  char buf[512];
-
-  f.putLine(" reaction times:");
-  for (unsigned int i = 1; i < itsStimuli.size(); ++i)
-    {
-      snprintf(buf, 512, " %d %.0lf",
-               i, itsStimuli[i].reaction_time);
-      f.putLine(buf);
-    }
-  f.putLine("");
-  f.putLine("");
-
-  f.putLine(" reaction correct?:");
-  for (unsigned int j = 1; j < itsStimuli.size(); ++j)
-    {
-      snprintf(buf, 512, " %d %d",
-               j, int(itsStimuli[j].reaction_correct));
-      f.putLine(buf);
-    }
-  f.putLine("");
-
-  snprintf(buf, 512, " percent correct: %d", int(itsPercentCorrect));
-  f.putLine(buf);
-  f.putLine("");
-}
-
-double ResponseData::recentPercentCorrect()
-{
-DOTRACE("ResponseData::recentPercentCorrect");
-  return itsPercentCorrect;
-}
-
 struct BallsExpt::Impl
 {
   Impl(Params& p, Graphics& g) :
@@ -206,6 +100,84 @@ struct BallsExpt::Impl
     gfx(g),
     rdata()
   {}
+
+  void tallyReactionTime(ParamFile& f)
+  {
+    int total_stims = 0;
+    int number_correct = 0;
+
+    // Compute the response time for each stimulus (or indicate a
+    // non-response with -1.0)
+    for (unsigned int i = 1;  i < rdata.itsStimuli.size(); ++i)
+      {
+        unsigned int j;
+
+        // Find the first response (j'th) that came after the i'th stimulus
+        for (j = 0; j < rdata.itsResponses.size(); ++j)
+          {
+            if (rdata.itsResponses[j].time > rdata.itsStimuli[i].msecFrom(rdata.itsStimulusTime0))
+              break;
+          }
+
+        // If we found a corresponding response, compute the response time...
+        if (j < rdata.itsResponses.size())
+          {
+            rdata.itsStimuli[i].reaction_time =
+              rdata.itsResponses[j].time - rdata.itsStimuli[i].msecFrom(rdata.itsStimulusTime0);
+            rdata.itsStimuli[i].reaction_correct =
+              (rdata.itsResponses[j].val == rdata.itsStimuli[i].correct_val);
+          }
+
+        // But if there was no corresponding response, indicate a
+        // non-response with -1.0
+        else
+          {
+            rdata.itsStimuli[i].reaction_time = -1.0;
+            rdata.itsStimuli[i].reaction_correct = false;
+          }
+
+        // If the reaction time was too large, it doesn't count, so
+        // indicate a non-response with -1.0
+        if (rdata.itsStimuli[i].reaction_time >
+            params.remindSeconds*1000)
+          {
+            rdata.itsStimuli[i].reaction_time = -1.0;
+            rdata.itsStimuli[i].reaction_correct = false;
+          }
+
+        ++total_stims;
+        if (rdata.itsStimuli[i].reaction_correct) ++number_correct;
+      }
+
+    rdata.itsPercentCorrect = (100.0 * number_correct) / total_stims;
+
+    // write reactions to the log file
+
+    char buf[512];
+
+    f.putLine(" reaction times:");
+    for (unsigned int i = 1; i < rdata.itsStimuli.size(); ++i)
+      {
+        snprintf(buf, 512, " %d %.0lf",
+                 i, rdata.itsStimuli[i].reaction_time);
+        f.putLine(buf);
+      }
+    f.putLine("");
+    f.putLine("");
+
+    f.putLine(" reaction correct?:");
+    for (unsigned int j = 1; j < rdata.itsStimuli.size(); ++j)
+      {
+        snprintf(buf, 512, " %d %d",
+                 j, int(rdata.itsStimuli[j].reaction_correct));
+        f.putLine(buf);
+      }
+    f.putLine("");
+
+    snprintf(buf, 512, " percent correct: %d", int(rdata.itsPercentCorrect));
+    f.putLine(buf);
+    f.putLine("");
+  }
 
   std::vector<timeval> timepoints;
   Balls ballset;
@@ -260,7 +232,15 @@ DOTRACE("BallsExpt::onKey");
     case 'r':
       struct timeval tp;
       gettimeofday(&tp, (struct timezone*)0);
-      p->rep->rdata.initTimeStack(xtime, &tp);
+
+      // FIXME clean this up
+      p->rep->rdata.itsResponseTime0 = xtime;
+
+      p->rep->rdata.itsResponses.clear();
+      p->rep->rdata.itsResponses.push_back(Response(0.0, 0));
+      p->rep->rdata.itsStimuli.clear();
+      p->rep->rdata.itsStimuli.push_back(Stimulus(tp, 0));
+      p->rep->rdata.itsStimulusTime0 = tp;
 
       p->runExperiment();
       p->makeMenu();
@@ -329,7 +309,7 @@ DOTRACE("BallsExpt::makeMenu");
   menu[5] = "q     quit program";
   menu[6] = "";
   menu[7] = "recent percent correct: "
-    + makestring(int(rep->rdata.recentPercentCorrect()));
+    + makestring(int(rep->rdata.itsPercentCorrect));
 
   rep->gfx.drawStrings(menu, nitems, 100, -200, 20);
 
@@ -421,8 +401,7 @@ DOTRACE("BallsExpt::runExperiment");
   rep->gfx.xstuff().buttonPressLoop(static_cast<void*>(this),
                                     &onButton);
 
-  rep->rdata.tallyReactionTime(tmefile,
-                               rep->params.remindSeconds);
+  rep->tallyReactionTime(tmefile);
 }
 
 void BallsExpt::runFmriExpt()
