@@ -13,9 +13,7 @@
 #ifndef SIMPLEMOVIE_H_DEFINED
 #define SIMPLEMOVIE_H_DEFINED
 
-#if !defined(IRIX6)
 #define NO_MOVIE
-#endif
 
 #ifndef NO_MOVIE
 #include <dmedia/moviefile.h>

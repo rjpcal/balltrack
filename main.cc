@@ -24,33 +24,11 @@ const char* WINDOW_NAME = "tracking";
 const int WINDOW_X = 1280;
 const int WINDOW_Y = 1024;
 
-#if defined(HP9000S700)
-
-const int DEPTH_HINT = 8;
-const char* VISUAL_CLASS = "PseudoColor";
-const bool PRIVATE_CMAP = true;
-const bool DOUBLEBUFFER = false;
-const bool USE_RGBA = false;
-
-#elif defined(IRIX6)
-
 const int DEPTH_HINT = 24;
 const char* VISUAL_CLASS = "TrueColor";
 const bool PRIVATE_CMAP = false;
 const bool DOUBLEBUFFER = true;
 const bool USE_RGBA = true;
-
-#elif defined(I686)
-
-const int DEPTH_HINT = 24;
-const char* VISUAL_CLASS = "TrueColor";
-const bool PRIVATE_CMAP = false;
-const bool DOUBLEBUFFER = true;
-const bool USE_RGBA = true;
-
-#else
-#  error No architecture macro.
-#endif
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -106,10 +84,6 @@ int main( int argc, char** argv )
     }
 
   BallsExpt theApp(hints);
-
-#ifdef HP9000S700
-  system("./serial&");
-#endif
 
   theApp.run();
 

@@ -10,59 +10,33 @@
 
 prefix := ./
 
-ifeq ($(ARCH),hp9000s700)
-	CC  := aCC
-	CFLAGS := +W302,495,829,749,740 -I/usr/include/X11R6 -I/usr/include \
-		-I/cit/rjpeters/include -DHP9000S700
-	LFLAGS := -L/usr/lib/X11R6 -L/opt/graphics/common/lib -L/opt/graphics/OpenGL/lib
-	LIB   := -lGLU -lGL -lXwindow -lsb -lXhp11 -lX11 -lm -ldld
-	GFXOBJ := $(ARCH)/starbasegfx.o
-endif
+objdir := obj
 
-ifeq ($(ARCH),irix6)
-	CC  := /opt/MIPSpro/bin/CC
-	CFLAGS :=  -I/usr/include/X11R6 -I/cit/rjpeters/include \
-		-I/cit/rjpeters/include/cppheaders -DIRIX6
-	LFLAGS :=
-	LIB   := -lmoviefile -ldmedia -lGLU -lGL -lX11 -lm
-	GFXOBJ := $(ARCH)/glfont.o $(ARCH)/openglgfx.o
-endif
-
-ifeq ($(ARCH),i686)
-	CC  := g++
-	CFLAGS :=  -DI686 -Wall -Werror
-	LFLAGS := -L/usr/X11R6/lib
-	LIB   := -lGLU -lGL -lX11 -lm
-	GFXOBJ := $(ARCH)/glfont.o $(ARCH)/openglgfx.o
-endif
+CXX    := g++
+CFLAGS := -O2 -Wall -Werror
+LFLAGS := -L/usr/X11R6/lib
+LIB    := -lGLU -lGL -lX11 -lm
 
 OBJ   := \
-	$(ARCH)/application.o \
-	$(ARCH)/balls.o \
-	$(ARCH)/ballsexpt.o \
-	$(ARCH)/graphics.o \
-	$(ARCH)/menuapp.o \
-	$(ARCH)/params.o \
-	$(ARCH)/simplemovie.o \
-	$(ARCH)/timing.o \
-	$(ARCH)/trace.o \
-	$(ARCH)/xstuff.o \
-	$(GFXOBJ)
+$(objdir)/application.o \
+$(objdir)/balls.o \
+$(objdir)/ballsexpt.o \
+$(objdir)/glfont.o \
+$(objdir)/graphics.o \
+$(objdir)/menuapp.o \
+$(objdir)/openglgfx.o \
+$(objdir)/params.o \
+$(objdir)/simplemovie.o \
+$(objdir)/timing.o \
+$(objdir)/trace.o \
+$(objdir)/xstuff.o \
 
 TRAIN_TARGET := $(prefix)/bin/balls3_train
 ITRK_TARGET := $(prefix)/bin/balls3_itrk
 FMRI_TARGET := $(prefix)/bin/balls3_fmri
 MOVIE_TARGET := $(prefix)/bin/balls3_movie
 
-ifeq ($(ARCH),hp9000s700)
-	ALL   := $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET) $(MOVIE_TARGET) serial
-endif
-ifeq ($(ARCH),irix6)
-	ALL   := $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET) $(MOVIE_TARGET)
-endif
-ifeq ($(ARCH),i686)
-	ALL   := $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET)
-endif
+ALL   := $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET) $(MOVIE_TARGET)
 
 # Level 0
 APPLICATION_H := application.h
@@ -84,7 +58,6 @@ GRAPHICS_H := $(DEFS_H) graphics.h
 # Level 2
 BALLSEXPT_H := $(MENUAPP_H) ballsexpt.h
 OPENGLGFX_H := $(GRAPHICS_H) openglgfx.h
-STARBASEGFX_H := $(GRAPHICS_H) starbasegfx.h
 
 MENUAPP_CC := $(MENUAPP_H) $(DEFS_H) $(GRAPHICS_H) \
 	$(PARAMS_H) $(TRACE_H) $(DEBUG_H) menuapp.cc
@@ -114,9 +87,6 @@ PARAMS_CC := $(PARAMS_H) $(APPLICATION_H) $(DEFS_H) $(GRAPHICS_H) \
 
 SIMPLEMOVIE_CC := $(SIMPLEMOVIE_H) simplemovie.cc
 
-STARBASEGFX_CC := $(STARBASEGFX_H) $(PARAMS_H) $(TIMING_H) \
-	$(XSTUFF_H) $(TRACE_H) $(DEBUG_H) starbasegfx.cc
-
 TIMING_CC := $(TIMING_H) $(APPLICATION_H) $(DEFS_H) $(PARAMS_H) \
 	$(DEBUG_H) $(TRACE_H) timing.cc
 
@@ -131,55 +101,53 @@ XSTUFF_CC := $(XSTUFF_H) $(DEFS_H) $(XHINTS_H) $(TRACE_H) $(DEBUG_H) xstuff.cc
 all:	dirs $(ALL)
 
 dirs:
-	mkdir -p $(ARCH)
+	mkdir -p $(objdir)
 
 mvtest: mvtest.cc
-	$(CC) $(CFLAGS) -o mvtest simplemovie.cc mvtest.cc -lmoviefile -ldmedia
+	$(CXX) $(CFLAGS) -o mvtest simplemovie.cc mvtest.cc -lmoviefile -ldmedia
 
 clean:
 	rm -f core *.o *.a $(ALL)
 
 $(ITRK_TARGET): $(OBJ) $(MAIN_CC)
 	mkdir -p $(dir $@)
-	time $(CC) $(CFLAGS) -DMODE_EYE_TRACKING main.cc \
+	time $(CXX) $(CFLAGS) -DMODE_EYE_TRACKING main.cc \
 		$(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 $(FMRI_TARGET): $(OBJ) $(MAIN_CC)
 	mkdir -p $(dir $@)
-	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.cc \
+	time $(CXX) $(CFLAGS) -DMODE_FMRI_SESSION main.cc \
 		$(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 $(TRAIN_TARGET): $(OBJ) $(MAIN_CC)
 	mkdir -p $(dir $@)
-	time $(CC) $(CFLAGS) -DMODE_TRAINING main.cc \
+	time $(CXX) $(CFLAGS) -DMODE_TRAINING main.cc \
 		$(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 $(MOVIE_TARGET): $(OBJ) $(MAIN_CC)
 	mkdir -p $(dir $@)
-	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION -DMAKE_MOVIE main.cc \
+	time $(CXX) $(CFLAGS) -DMODE_FMRI_SESSION -DMAKE_MOVIE main.cc \
 		$(OBJ) -o $@ $(LFLAGS) $(LIB)
 
-serial: serial.c eventnames.h
-	cc -o $@ $< -L/usr/lib/X11R6 -lXwindow -lsb -lXhp11 -lX11 -lm -ldld
+$(objdir)/%.o : %.cc
+	time $(CXX) $(CFLAGS) \
+		-c $< \
+		-o $@
 
-$(ARCH)/%.o : %.cc
-	time $(CC) $(CFLAGS) -c $< -o $@
+$(objdir)/application.o: $(APPLICATION_CC)
+$(objdir)/balls.o: $(BALLS_CC)
+$(objdir)/ballsexpt.o: $(BALLSEXPT_CC)
+$(objdir)/glfont.o: $(GLFONT_CC)
+$(objdir)/graph ics.o: $(GRAPHICS_CC)
+$(objdir)/menuapp.o: $(MENUAPP_CC)
+$(objdir)/openglgfx.o: $(OPENGLGFX_CC)
+$(objdir)/params.o: $(PARAMS_CC)
+$(objdir)/simplemovie.o: $(SIMPLEMOVIE_CC)
+$(objdir)/timing.o: $(TIMING_CC)
+$(objdir)/trace.o: $(TRACE_CC)
+$(objdir)/xstuff.o: $(XSTUFF_CC)
 
-$(ARCH)/application.o: $(APPLICATION_CC)
-$(ARCH)/balls.o: $(BALLS_CC)
-$(ARCH)/ballsexpt.o: $(BALLSEXPT_CC)
-$(ARCH)/glfont.o: $(GLFONT_CC)
-$(ARCH)/graphics.o: $(GRAPHICS_CC)
-$(ARCH)/menuapp.o: $(MENUAPP_CC)
-$(ARCH)/openglgfx.o: $(OPENGLGFX_CC)
-$(ARCH)/params.o: $(PARAMS_CC)
-$(ARCH)/simplemovie.o: $(SIMPLEMOVIE_CC)
-$(ARCH)/starbasegfx.o: $(STARBASEGFX_CC)
-$(ARCH)/timing.o: $(TIMING_CC)
-$(ARCH)/trace.o: $(TRACE_CC)
-$(ARCH)/xstuff.o: $(XSTUFF_CC)
-
-TAGS: *.h *.cc *.c
+TAGS: *.h *.cc
 	etags $+
 
 DISTNAME := balltrack_$(shell date +%Y%m%d)

@@ -16,7 +16,6 @@
 #include "defs.h"
 #include "openglgfx.h"
 #include "params.h"
-#include "starbasegfx.h"
 #include "timing.h"
 #include "xhints.h"
 #include "xstuff.h"
@@ -41,13 +40,7 @@ Application::Application(const XHints& hints) :
   itsArgv(hints.argv()),
   itsWidth(hints.width()),
   itsHeight(hints.height()),
-#if defined(HP9000S700)
-  itsGraphics(new StarbaseGfx(hints, itsWidth, itsHeight))
-#elif defined(IRIX6) || defined(I686)
   itsGraphics(new OpenglGfx(hints, itsWidth, itsHeight))
-#else
-#  error No architecture macro.
-#endif
 {
 DOTRACE("Application::Application");
 
