@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Wed Feb 23 14:28:57 2000
+// written: Wed Feb 23 14:34:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,7 @@ class Application {
 
 public:
   Application(int argc, char** argv);
+  virtual ~Application();
 
   void run();
   void quit(int code);

@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Wed Feb 23 14:29:25 2000
+// written: Wed Feb 23 14:35:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,6 +71,10 @@ DOTRACE("Application::Application");
   windowInfo();
 
   WhoAreYou( this );
+}
+
+Application::~Application() {
+DOTRACE("Application::~Application");
 }
 
 void Application::openDisplay() {
