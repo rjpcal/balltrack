@@ -30,6 +30,8 @@ public:
   // Appends the data stored in tempFrameBuffer()
   void appendTempBuffer();
 
+  void flush();
+
   void addSillyFrames();
 
   int width() const { return itsWidth; }

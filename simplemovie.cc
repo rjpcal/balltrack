@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 28 12:21:07 2001
-// written: Wed Feb 28 14:31:46 2001
+// written: Wed Feb 28 15:17:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,7 +90,9 @@ void SimpleMovie::appendFrames(int frameCount, void* buffer) {
 							  buffer )
 		 != DM_SUCCESS )
 	 handleError("couldn't append frames");
+}
 
+void SimpleMovie::flush() {
   // Flushes all changes that have been made and makes sure that they
   // are written to the file.
   mvWrite(itsMovie);
