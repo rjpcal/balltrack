@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Mon Feb 28 19:05:08 2000
+// written: Tue Feb 29 10:16:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,9 +53,6 @@ public:
   // called from <params.c>::ListParams()
   virtual void showParams(char params[][STRINGSIZE], int nparams);
 
-  // called from showMenu(), showParams(), setMessage()
-  virtual void setText(int wd, int ht);
-
   // called from BallsExpt:runApplication()
   virtual void setMessage();
 
@@ -69,6 +66,9 @@ public:
 
 private:
   int fildes() const { return itsFildes; }
+
+  // called from showMenu(), showParams(), setMessage()
+  void setText(int wd, int ht);
 
   void waitFrameCount(int number);
 
