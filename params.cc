@@ -14,7 +14,6 @@
 
 #include "params.h"
 
-#include "defs.h"
 #include "graphics.h"
 
 #include <cstdio>

@@ -14,7 +14,6 @@
 #include "ballsexpt.h"
 
 #include "balls.h"
-#include "defs.h"
 #include "graphics.h"
 #include "params.h"
 #include "timing.h"

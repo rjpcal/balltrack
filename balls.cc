@@ -18,7 +18,6 @@
 #include <cstdlib>
 #include <vector>
 
-#include "defs.h"
 #include "graphics.h"
 #include "params.h"
 #include "timing.h"
@@ -109,7 +108,7 @@ void Ball::randomVelocity(int vel)
 DOTRACE("Ball::randomVelocity");
 
   // Pick a random direction for the velocity
-  float angle = TWOPI * drand48();
+  const double angle = 2 * M_PI * drand48();
 
   this->xvel = vel * cos(angle);
   this->yvel = vel * sin(angle);

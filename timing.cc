@@ -14,7 +14,6 @@
 #include "timing.h"
 
 #include "application.h"
-#include "defs.h"
 #include "params.h"
 
 #include <cmath>

@@ -13,7 +13,6 @@
 
 #include "application.h"
 
-#include "defs.h"
 #include "graphics.h"
 #include "params.h"
 #include "timing.h"

@@ -12,8 +12,6 @@
 #ifndef PARAMS_H_DEFINED
 #define PARAMS_H_DEFINED
 
-#include "defs.h"
-
 #include <cstdio>
 #include <string>
 

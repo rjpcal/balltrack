@@ -11,7 +11,6 @@
 #ifndef GRAPHICS_H_DEFINED
 #define GRAPHICS_H_DEFINED
 
-#include "defs.h"
 #include "xstuff.h"
 
 #include <GL/gl.h>

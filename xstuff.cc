@@ -13,8 +13,6 @@
 
 #include "xstuff.h"
 
-#include "defs.h"
-
 #include <cstring>              // for strncpy
 #include <cstdlib>              // for getenv
 #include <cstdio>
