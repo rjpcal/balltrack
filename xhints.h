@@ -18,11 +18,7 @@ public:
          itsName("xstuff"),
          itsWidth(1280),
          itsHeight(1024),
-         itsDepth(8),
-         itsVisualClass("PseudoColor"),
-         itsPrivateCmap(false),
-         itsDoubleBuffer(false),
-         itsRgba(false)
+         itsDepth(8)
   {}
 
   XHints& argc(int hint) { itsArgc = hint; return* this; }
@@ -43,17 +39,10 @@ public:
   XHints& depth(int hint) { itsDepth = hint; return *this; }
   int depth() const { return itsDepth; }
 
-  XHints& visualClass(const char* hint) { itsVisualClass = hint; return *this; }
-  const char* visualClass() const { return itsVisualClass; }
-
-  XHints& privateCmap(bool hint) { itsPrivateCmap = hint; return *this; }
-  bool privateCmap() const { return itsPrivateCmap; }
-
-  XHints& doubleBuffer(bool hint) { itsDoubleBuffer = hint; return *this; }
-  bool doubleBuffer() const { return itsDoubleBuffer; }
-
-  XHints& rgba(bool hint) { itsRgba = hint; return *this; }
-  bool rgba() const { return itsRgba; }
+  const char* visualClass() const { return "TrueColor"; }
+  bool privateCmap() const { return false; }
+  bool doubleBuffer() const { return true; }
+  bool rgba() const { return true; }
 
 private:
   int itsArgc;
@@ -63,10 +52,6 @@ private:
   int itsWidth;
   int itsHeight;
   int itsDepth;
-  const char* itsVisualClass;
-  bool itsPrivateCmap;
-  bool itsDoubleBuffer;
-  bool itsRgba;
 };
 
 
