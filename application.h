@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Thu Feb 24 11:31:54 2000
+// written: Thu Feb 24 14:16:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,11 +39,6 @@ public:
   char* argv(int argn) const { return itsArgv[argn]; }
 
   Graphics* graphics() const { return itsGraphics; }
-
-  int width() const { return itsWidth; }
-  int height() const { return itsHeight; }
-
-  int fildes() const { return itsFildes; }
 
 protected:
   virtual void wrap();
