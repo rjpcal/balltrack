@@ -124,7 +124,7 @@ DOTRACE("ResponseData::initTimeStack");
   itsResponses.clear();
   itsResponses.push_back(Response(0.0, 0));
   itsStimuli.clear();
-  itsStimuli.push_back(Stimulus(0.0, 0));
+  itsStimuli.push_back(Stimulus(*tp, *tp, 0));
   itsStimulusTime0 = *tp;
 }
 
@@ -136,7 +136,7 @@ DOTRACE("ResponseData::addToStimulusStack");
 
   // (1) Compute the trial onset time relative to the first time
   // (2) Note the correct response value
-  itsStimuli.push_back(Stimulus(Timing::elapsedMsec(itsStimulusTime0, tp),
+  itsStimuli.push_back(Stimulus(itsStimulusTime0, tp,
                                 correct_nbutton));
 }
 

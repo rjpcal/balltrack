@@ -36,9 +36,18 @@ private:
   double itsUsec;
 };
 
+namespace Timing
+{
+  timeval now();
+  double elapsedMsec(const timeval& tp0, const timeval& tp1);
+}
+
 struct Stimulus
 {
-  Stimulus(double t, int v) : msec_from_time0(t), correct_val(v) {}
+  Stimulus(const timeval& time0, const timeval& now, int v) :
+    msec_from_time0(Timing::elapsedMsec(time0, now)),
+    correct_val(v)
+  {}
   double msec_from_time0;
   int correct_val;
 
@@ -52,12 +61,6 @@ struct Response
   double time;
   int val;
 };
-
-namespace Timing
-{
-  timeval now();
-  double elapsedMsec(const timeval& tp0, const timeval& tp1);
-}
 
 class ResponseData
 {
