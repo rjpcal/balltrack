@@ -185,6 +185,7 @@ void ParamFileOut::putLine(const char* str)
 Params::Params(int argc, char** argv) :
   appMode(EYE_TRACKING),
   doMovie(false),
+  showPhysics(false),
   filestem(""),
   ballRadius(),
   ballSigma2(),
@@ -232,6 +233,10 @@ Params::Params(int argc, char** argv) :
       else if (strcmp(argv[i], "--makemovie") == 0)
         {
           this->doMovie = true;
+        }
+      else if (strcmp(argv[i], "--physics") == 0)
+        {
+          this->showPhysics = true;
         }
       else if (strcmp(argv[i], "--depth") == 0)
         {

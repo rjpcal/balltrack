@@ -36,7 +36,8 @@ public:
                        double lapsed_seconds);
   void twist(double angle);
   void copy();
-  void draw(Graphics& gfx, unsigned char* bitmap, int size);
+  void draw(Graphics& gfx, unsigned char* bitmap, int size,
+            bool debug);
 
 private:
   double xpos;
@@ -75,7 +76,7 @@ private:
   void pickNextPositions(Graphics& gfx, double lapsed_seconds);
 
   void drawNBalls(Graphics& gfx, int first, int last,
-                  unsigned char* bitmap);
+                  unsigned char* bitmap, bool debug);
 
 public:
   enum TrialType { PASSIVE, CHECK_ALL, CHECK_ONE };

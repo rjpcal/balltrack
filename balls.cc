@@ -31,7 +31,8 @@ namespace
 
   void makeBallPixmap(std::vector<ubyte>& vec, int size,
                       double radius, double sigma,
-                      ubyte bkg_r, ubyte bkg_g, ubyte bkg_b)
+                      ubyte bkg_r, ubyte bkg_g, ubyte bkg_b,
+                      bool debug)
   {
     DOTRACE("<balls.cc>::makeBallPixmap");
 
@@ -45,8 +46,6 @@ namespace
 
     vec.resize(num_bytes);
 
-    const double bound = radius*radius;
-
     for (int i=0; i<size; ++i)
       {
         for (int j=0; j<size; ++j)
@@ -55,10 +54,20 @@ namespace
             const double y   = double(j - size/2 + 0.5);
 
             const double rsq = x*x + y*y;
+            const double r   = sqrt(rsq);
 
             const size_t base_loc = bytes_per_pixel*(i*size + j);
 
-            if (rsq < bound)
+            if (debug &&
+                (i == 0 || i == size-1 || j == 0 || j == size-1 ||
+                 fabs(r-radius) < 2.0))
+              {
+                vec[base_loc + 0] = ubyte(127);
+                vec[base_loc + 1] = ubyte(127);
+                vec[base_loc + 2] = ubyte(127);
+                vec[base_loc + 3] = ubyte(255);
+              }
+            else if (r < radius)
               {
                 const double t = exp(-rsq/sigma);
 
@@ -192,11 +201,13 @@ DOTRACE("Ball::collideIfNeeded");
   other.ynext = other.ypos + (lapsed_seconds * other.vely);
 }
 
-void Ball::twist(double angle)
+void Ball::twist(double maxangle)
 {
 DOTRACE("Ball::twist");
 
   // Rotate the velocity vector by either +angle or -angle
+
+  const double angle = 2 * (drand48() - 0.5) * maxangle;
 
   const double a11  =  cos(angle);
   const double a12  =  sin(angle);
@@ -206,16 +217,8 @@ DOTRACE("Ball::twist");
   const double x = this->velx;
   const double y = this->vely;
 
-  if (drand48() < 0.5)
-    {
-      this->velx = a11*x + a12*y;
-      this->vely = a21*x + a22*y;
-    }
-  else
-    {
-      this->velx =  a11*x - a12*y;
-      this->vely = -a21*x + a22*y;
-    }
+  this->velx = a11*x + a12*y;
+  this->vely = a21*x + a22*y;
 }
 
 void Ball::copy()
@@ -226,13 +229,20 @@ DOTRACE("Ball::copy");
   this->ypos = this->ynext;
 }
 
-void Ball::draw(Graphics& gfx, unsigned char* bitmap, int size)
+void Ball::draw(Graphics& gfx, unsigned char* bitmap, int size,
+                bool debug)
 {
 DOTRACE("Ball::draw");
 
   gfx.writePixmap(int(round(this->xpos)),
                   int(round(this->ypos)),
                   bitmap, size);
+
+  if (debug)
+    gfx.drawLine(this->xpos + size/2,
+                 this->ypos + size/2,
+                 this->xpos + size/2 - this->velx / 4,
+                 this->ypos + size/2 - this->vely / 4);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -318,13 +328,14 @@ DOTRACE("Balls::pickNextPositions");
 }
 
 void Balls::drawNBalls(Graphics& gfx, int first, int last,
-                       unsigned char* bitmap)
+                       unsigned char* bitmap, bool debug)
 {
 DOTRACE("Balls::drawNBalls");
 
   while (first != last)
     {
-      itsBalls[first].draw(gfx, bitmap, itsParams.ballPixmapSize);
+      itsBalls[first].draw(gfx, bitmap,
+                           itsParams.ballPixmapSize, debug);
       ++first;
     }
 }
@@ -356,10 +367,10 @@ DOTRACE("Balls::runTrial");
 
   makeBallPixmap(hilitemap, itsParams.ballPixmapSize,
                  itsParams.ballRadius, itsParams.ballSigma2,
-                 255, 255, 255);
+                 255, 255, 255, itsParams.showPhysics);
   makeBallPixmap(pixmap, itsParams.ballPixmapSize,
                  itsParams.ballRadius, itsParams.ballSigma2,
-                 0, 0, 0);
+                 0, 0, 0, itsParams.showPhysics);
 
   gfx.gfxWait(timer, itsParams.pauseSeconds);
 
@@ -367,10 +378,12 @@ DOTRACE("Balls::runTrial");
   timer.reset();
 
   gfx.clearBackBuffer();
-  drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
+  drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0],
+             itsParams.showPhysics);
   if (ttype == Balls::CHECK_ALL || ttype == Balls::CHECK_ONE)
     {
-      drawNBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
+      drawNBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0],
+                 itsParams.showPhysics);
     }
   gfx.drawCross();
   gfx.swapBuffers();
@@ -380,7 +393,8 @@ DOTRACE("Balls::runTrial");
   if (ttype == Balls::CHECK_ALL || ttype == Balls::CHECK_ONE)
     {
       gfx.clearBackBuffer();
-      drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
+      drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0],
+                 itsParams.showPhysics);
       gfx.drawCross();
       gfx.swapBuffers();
     }
@@ -397,7 +411,8 @@ DOTRACE("Balls::runTrial");
         {
           ++nframes;
           gfx.clearBackBuffer();
-          drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
+          drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0],
+                     itsParams.showPhysics);
           gfx.drawCross();
           gfx.swapBuffers();
 
@@ -433,8 +448,10 @@ DOTRACE("Balls::runTrial");
       if (ttype == Balls::CHECK_ALL)
         {
           gfx.clearBackBuffer();
-          drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
-          drawNBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
+          drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0],
+                     itsParams.showPhysics);
+          drawNBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0],
+                     itsParams.showPhysics);
           gfx.drawCross();
           gfx.swapBuffers();
 
@@ -460,8 +477,10 @@ DOTRACE("Balls::runTrial");
 
           // Redraw the balls with the random ball highlighted
           gfx.clearBackBuffer();
-          drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
-          drawNBalls(gfx, random_ball, random_ball+1, &hilitemap[0]);
+          drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0],
+                     itsParams.showPhysics);
+          drawNBalls(gfx, random_ball, random_ball+1, &hilitemap[0],
+                     itsParams.showPhysics);
           gfx.drawCross();
           gfx.swapBuffers();
 
@@ -479,8 +498,11 @@ DOTRACE("Balls::runTrial");
           // Redraw the balls, but now with the correct balls
           // highlighted in order to cue the next trial
           gfx.clearBackBuffer();
-          drawNBalls(gfx, itsParams.ballTrackNumber, itsParams.ballNumber, &pixmap[0]);
-          drawNBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
+          drawNBalls(gfx, itsParams.ballTrackNumber,
+                     itsParams.ballNumber, &pixmap[0],
+                     itsParams.showPhysics);
+          drawNBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0],
+                     itsParams.showPhysics);
           gfx.drawCross();
 
           gfx.swapBuffers();
@@ -493,7 +515,8 @@ DOTRACE("Balls::runTrial");
         }
 
       gfx.clearBackBuffer();
-      drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
+      drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0],
+                 itsParams.showPhysics);
       gfx.drawCross();
       gfx.swapBuffers();
     }

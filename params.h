@@ -52,7 +52,8 @@ public:
 
   enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
   AppMode appMode;
-  bool  doMovie;
+  bool doMovie;
+  bool showPhysics;
   std::string filestem;
   double ballRadius;
   double ballSigma2;

@@ -251,6 +251,18 @@ DOTRACE("Graphics::drawCross");
   drawCross(width()/2, height()/2);
 }
 
+void Graphics::drawLine(double x1, double y1, double x2, double y2)
+{
+DOTRACE("Graphics::drawLine");
+
+  glColor4d(1.0, 1.0, 1.0, 1.0);
+
+  glBegin(GL_LINES);
+  glVertex2d(x1, y1);
+  glVertex2d(x2, y2);
+  glEnd();
+}
+
 void Graphics::drawCross(int x, int y)
 {
 DOTRACE("Graphics::drawCross");
