@@ -20,13 +20,12 @@ public:
   XStuff(int width, int height);
 
   void openWindow(const char* winname,
+                  const XVisualInfo* vinfo,
                   int width, int height, int depth);
   void wrapX();
 
   Display* display() { return itsDisplay; }
   Window window() const { return itsWindow; }
-
-  void setPrefVisInfo(const XVisualInfo* vinfo);
 
 private:
   int itsWidth;
@@ -34,7 +33,6 @@ private:
   Display* itsDisplay;
   Window itsWindow;
   XVisualInfo itsVisInfo;
-  bool itsHasVisInfo;
 };
 
 static const char vcid_xstuff_h[] = "$Header$";

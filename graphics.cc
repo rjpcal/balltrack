@@ -23,7 +23,7 @@
 #include <GL/glu.h>
 
 #include <cstdlib>
-#include <vector>
+#include <cstring>
 
 #define LOCAL_PROF
 #include "trace.h"
@@ -80,22 +80,19 @@ Graphics::Graphics(const char* winname,
   isItDoubleBuffered(0)
 {
 DOTRACE("Graphics::Graphics");
-  std::vector<int> attribList;
 
-  attribList.push_back(GLX_DOUBLEBUFFER);
-
-  attribList.push_back(GLX_RGBA);
-
-  attribList.push_back(GLX_BUFFER_SIZE);
-  attribList.push_back(depth);
-
-  attribList.push_back(None);
+  int attribList[] =
+    {
+      GLX_DOUBLEBUFFER,
+      GLX_RGBA,
+      GLX_BUFFER_SIZE,
+      depth,
+      None
+    };
 
   XVisualInfo* vi = glXChooseVisual(itsXStuff.display(),
                                     DefaultScreen(itsXStuff.display()),
                                     &attribList[0]);
-
-  itsXStuff.setPrefVisInfo(vi);
 
   itsGLXContext = glXCreateContext(itsXStuff.display(), vi, 0, GL_TRUE);
 
@@ -107,6 +104,12 @@ DOTRACE("Graphics::Graphics");
 
   glPixelStorei(GL_PACK_ALIGNMENT, 4);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+  itsXStuff.openWindow(winname, vi, width, height, depth);
+
+  XFree(vi);
+
+  initWindow();
 }
 
 Graphics::~Graphics()

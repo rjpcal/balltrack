@@ -85,14 +85,6 @@ int main( int argc, char** argv )
                24    // window bit depth
                );
 
-  gfx.xstuff().openWindow("tracking", // window name
-                          1280, // window width
-                          1024, // window height
-                          24    // window bit depth
-                          );
-
-  gfx.initWindow();
-
   BallsExpt theApp(gfx);
 
   theApp.run();

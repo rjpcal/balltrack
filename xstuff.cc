@@ -54,8 +54,7 @@ XStuff::XStuff(int width, int height) :
   itsHeight(height),
   itsDisplay(0),
   itsWindow(0),
-  itsVisInfo(),
-  itsHasVisInfo(false)
+  itsVisInfo()
 {
 DOTRACE("XStuff::XStuff");
 
@@ -72,27 +71,19 @@ DOTRACE("XStuff::XStuff");
 
 }
 
-void XStuff::setPrefVisInfo(const XVisualInfo* vinfo)
-{
-DOTRACE("XStuff::setPrefVisInfo");
-  if (vinfo != 0)
-    {
-      itsVisInfo = *vinfo;
-      itsHasVisInfo = true;
-    }
-}
-
 void XStuff::openWindow(const char* winname,
+                        const XVisualInfo* vinfo,
                         int width, int height, int depth)
 {
 DOTRACE("XStuff::openWindow");
 
-  if (!itsHasVisInfo)
+  if (vinfo == 0)
     {
-      fprintf(stderr,
-              "must call setPrefVisInfo() before openWindow()!\n");
+      fprintf(stderr, "XVisualInfo* was null in openWindow()!\n");
       exit(1);
     }
+
+  itsVisInfo = *vinfo;
 
   const int screen = DefaultScreen( itsDisplay );
 
