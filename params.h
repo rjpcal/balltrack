@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:05:04 2000
-// written: Thu Feb  3 15:04:26 2000
+// written: Tue Feb 22 15:12:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,6 @@ extern char  PROGRAM[];
 extern char  FILENAME[];
 extern char  OBSERVER[];
 extern double FRAMETIME;
-extern int width, height, fildes;
 
 /**************
 
