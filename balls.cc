@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Tue Feb 29 17:24:42 2000
+// written: Tue Feb 29 18:17:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -493,17 +493,21 @@ DOTRACE("Balls::runTrial");
 		if (ttype == Balls::CHECK_ALL) {
 		  gfx->waitVerticalRetrace();
 		  gfx->clearBackBuffer();
+
+		  gfx->drawCross();
 		  drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);
 		  drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, &theirHimap[0]);
 
-		  gfx->drawCross();
 		  gfx->swapBuffers();
 
 		  Timing::addToStimulusStack(LEFTBUTTON);
 		}
 		else if (ttype == Balls::CHECK_ONE) {
+		  // Randomly choose whether the highlighted ball will be a
+		  // target or a non-target
  		  bool pick_target = ( drand48() > 0.5 );
 
+		  // Pick a random ball
 		  int random_ball;
 		  if (pick_target)
 			 random_ball = int( BALL_TRACK_NUMBER * drand48() );
@@ -511,11 +515,17 @@ DOTRACE("Balls::runTrial");
 			 random_ball = int( (BALL_NUMBER - BALL_TRACK_NUMBER) * drand48() )
 				+ BALL_TRACK_NUMBER;
 
+		  // Redraw the balls with the random ball highlighted
+		  gfx->waitVerticalRetrace();
+		  gfx->clearBackBuffer();
+
+		  gfx->drawCross();
 		  drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);
 		  drawNHiBalls(gfx, random_ball, random_ball+1, &theirHimap[0]);
 
 		  gfx->swapBuffers();
 
+		  // Note what the correct response should be for the random ball
 		  if (random_ball < BALL_TRACK_NUMBER)
 			 Timing::addToStimulusStack(LEFTBUTTON);
 		  else
@@ -524,9 +534,16 @@ DOTRACE("Balls::runTrial");
 		  Timing::mainTimer.wait( REMIND_DURATION );
 
 		  Timing::mainTimer.set();
-		  drawNHiBalls(gfx, random_ball, random_ball+1, &theirBallmap[0]);
-		  drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, &theirHimap[0]);
+
+		  // Redraw the balls, but now with the correct balls
+		  // highlighted in order to cue the next trial
+		  gfx->waitVerticalRetrace();
+		  gfx->clearBackBuffer();
+
 		  gfx->drawCross();
+		  drawNBalls(gfx, BALL_TRACK_NUMBER, BALL_NUMBER, &theirBallmap[0]);
+		  drawNHiBalls(gfx, 0, BALL_TRACK_NUMBER, &theirHimap[0]);
+
 		  gfx->swapBuffers();
 		}
 
