@@ -327,7 +327,7 @@ DOTRACE("BallsExpt::runExperiment");
     {
       char buf[512];
       snprintf(buf, 512, " %d %lf", i,
-               rep->timepoints[i].elapsedMsecSince(rep->timepoints[0]));
+               1000.0*rep->timepoints[i].elapsedSecSince(rep->timepoints[0]));
 
       std::cout << buf << '\n';
       tmefile.putLine(buf);

@@ -58,7 +58,7 @@ struct Stimulus
   int correct_val;
 
   double msecFrom(const Timepoint& time0) const
-  { return this->time.elapsedMsecSince(time0); }
+  { return 1000.0*this->time.elapsedSecSince(time0); }
 };
 
 enum Buttons

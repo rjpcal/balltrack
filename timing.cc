@@ -26,7 +26,7 @@
 namespace taux
 {
   timeval now();
-  double elapsedMsec(const timeval& tp0, const timeval& tp1);
+  double elapsedSec(const timeval& tp0, const timeval& tp1);
 }
 
 timeval taux::now()
@@ -39,14 +39,14 @@ DOTRACE("taux::now");
   return tp;
 }
 
-double taux::elapsedMsec(const timeval& tp0, const timeval& tp1)
+double taux::elapsedSec(const timeval& tp0, const timeval& tp1)
 {
-DOTRACE("taux::elapsedMsec");
+DOTRACE("taux::elapsedSec");
 
   const double sec_lapsed  = double(tp1.tv_sec  - tp0.tv_sec);
-  const double msec_lapsed = double(tp1.tv_usec - tp0.tv_usec) / 1000.0;
+  const double usec_lapsed = double(tp1.tv_usec - tp0.tv_usec);
 
-  return sec_lapsed * 1000. + msec_lapsed;
+  return sec_lapsed + usec_lapsed/1000000.0;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -62,32 +62,32 @@ DOTRACE("Timer::set");
   itsStartTime = taux::now();
 }
 
-double Timepoint::elapsedMsecSince(const Timepoint& start) const
+double Timepoint::elapsedSecSince(const Timepoint& start) const
 {
-DOTRACE("Timepoint::elapsedMsecSince");
-  return taux::elapsedMsec(start.itsStartTime, this->itsStartTime);
+DOTRACE("Timepoint::elapsedSecSince");
+  return taux::elapsedSec(start.itsStartTime, this->itsStartTime);
 }
 
-double Timepoint::elapsedMsec() const
+double Timepoint::elapsedSec() const
 {
-DOTRACE("Timer::wait");
+DOTRACE("Timepoint::elapsedSec");
 
   const timeval tv = taux::now();
 
-  return taux::elapsedMsec(itsStartTime, tv);
+  return taux::elapsedSec(itsStartTime, tv);
 }
 
-double Timepoint::elapsedMsecAndReset()
+double Timepoint::elapsedSecAndReset()
 {
-DOTRACE("Timepoint::elapsedMsecAndReset");
+DOTRACE("Timepoint::elapsedSecAndReset");
 
   const timeval tv = taux::now();
 
-  const double result = taux::elapsedMsec(itsStartTime, tv);
+  const double sec = taux::elapsedSec(itsStartTime, tv);
 
   itsStartTime = tv;
 
-  return result;
+  return sec;
 }
 
 static const char vcid_timing_cc[] = "$Header$";

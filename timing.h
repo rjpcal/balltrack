@@ -19,17 +19,14 @@ class Timepoint
 private:
   Timepoint() { reset(); }
 public:
-//   Timepoint() { reset(); }
 
   static Timepoint now() { return Timepoint(); }
 
   void reset();
 
-  double elapsedMsecSince(const Timepoint& start) const;
-
-  double elapsedMsec() const;
-
-  double elapsedMsecAndReset();
+  double elapsedSecSince(const Timepoint& start) const;
+  double elapsedSec() const;
+  double elapsedSecAndReset();
 
   unsigned long tv_sec() const { return itsStartTime.tv_sec; }
 

@@ -422,16 +422,16 @@ DOTRACE("Balls::runTrial");
 
           // amount of time lapsed in the entire motion sequence so far
 
-          if (tstart.elapsedMsec()/1000.0 >= itsParams.ballMotionSeconds())
+          if (tstart.elapsedSec() >= itsParams.ballMotionSeconds())
             break;
         }
 
-      const double lapse = tstart.elapsedMsec();
+      const double lapse = 1000.0*tstart.elapsedSec();
 
       std::cout << " " << nframes << " frames in "
                 << lapse << " msec ("
                 << lapse/nframes << " msec/frame, "
-                << 1000*nframes/lapse << " frames/sec)\n";
+                << nframes/(lapse/1000.0) << " frames/sec)\n";
 
       timer.reset();
 

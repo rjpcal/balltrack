@@ -159,7 +159,7 @@ DOTRACE("Graphics::gfxWait");
     }
   else
     {
-      while (t.elapsedMsec() < 1000*delaySeconds)
+      while (t.elapsedSec() < delaySeconds)
         {
           usleep(1000);
         }
@@ -204,7 +204,7 @@ DOTRACE("Graphics::swapBuffers");
       return 33.0;
     }
 
-  return itsFrameTimer.elapsedMsecAndReset();
+  return 1000.0*itsFrameTimer.elapsedSecAndReset();
 }
 
 void Graphics::drawMessage(const std::string& word)
