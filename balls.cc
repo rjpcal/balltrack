@@ -220,10 +220,12 @@ DOTRACE("Ball::collideIfNeeded");
         ovi2 = vai*vai + voi*voi;
         ovj2 = vaj*vaj + voj*voj;
       */
-      const double nvi2 = vaj*vaj + voi*voi; // [pix^2/sec^2]
-      const double nvj2 = vai*vai + voj*voj; // [pix^2/sec^2]
+      const double nvi2 = vaj*vaj + voi*voi; // [pix^2/sec^2] always positive
+      const double nvj2 = vai*vai + voj*voj; // [pix^2/sec^2] always positive
 
-      const double vij2 = vai*vai - vaj*vaj; // [pix^2/sec^2]
+      const double vij2 = vai*vai - vaj*vaj; // [pix^2/sec^2] always negative
+
+      Assert(vij2 < 0.0);
 
       const double fi   = sqrt(1. + vij2 / nvi2); // [unitless]
       const double fj   = sqrt(1. - vij2 / nvj2); // [unitless]
