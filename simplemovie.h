@@ -23,8 +23,6 @@ public:
 
   ~SimpleMovie();
 
-  size_t frameSize() const { return itsFrameSize; }
-
   void appendFrames(int frameCount, void* buffer);
 
   char* tempFrameBuffer();
@@ -36,6 +34,10 @@ public:
 
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
+
+  size_t frameSize() const { return itsFrameSize; }
+
+  double frameRate() const { return itsFrameRate; }
 
 private:
   int itsWidth;
@@ -49,6 +51,8 @@ private:
 
   size_t itsFrameSize;
   char* itsTempFrameBuffer;
+
+  double itsFrameRate;
 
   static void handleError(const char* message);
 };
