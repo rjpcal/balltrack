@@ -3,7 +3,7 @@
 // main.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 12:27:11 2000
-// written: Wed Jun 27 14:13:27 2001
+// written: Wed Jun 27 17:22:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,15 @@ const bool PRIVATE_CMAP = true;
 const bool DOUBLEBUFFER = false;
 const bool USE_RGBA = false;
 
-#elif defined(IRIX6) || defined(I686)
+#elif defined(IRIX6)
+
+const int DEPTH_HINT = 24;
+const char* VISUAL_CLASS = "TrueColor";
+const bool PRIVATE_CMAP = false;
+const bool DOUBLEBUFFER = true;
+const bool USE_RGBA = true;
+
+#elif defined(I686)
 
 const int DEPTH_HINT = 24;
 const char* VISUAL_CLASS = "TrueColor";
