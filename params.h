@@ -41,14 +41,13 @@ class Params
 public:
   Params(int argc, char** argv);
 
-  void readFromFile(Graphics& gfx, const char* extension);
+  void readFromFile(const char* extension);
   void writeToFile(const char* extension);
   void appendToFile(ParamFileOut& pmfile);
+
   void showSettings(Graphics& gfx);
 
-  void setGroup1(Graphics& gfx);
-  void setGroup2(Graphics& gfx);
-  void setGroup3(Graphics& gfx);
+  void setParams(Graphics& gfx);
 
   enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
 

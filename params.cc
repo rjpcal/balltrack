@@ -290,7 +290,7 @@ Params::Params(int argc, char** argv) :
     }
 }
 
-void Params::readFromFile(Graphics& gfx, const char* extension)
+void Params::readFromFile(const char* extension)
 {
 DOTRACE("Params::readFromFile");
 
@@ -521,9 +521,9 @@ namespace
   };
 }
 
-void Params::setGroup1(Graphics& gfx)
+void Params::setParams(Graphics& gfx)
 {
-DOTRACE("Params::setGroup1");
+DOTRACE("Params::setParams");
 
   ParamMenu pm;
 
@@ -536,30 +536,12 @@ DOTRACE("Params::setGroup1");
   pm.addItem("ball sigma^2 (#pixels)", this->ballSigma2);
   pm.addItem("ball twist angle (radians)", this->ballTwistAngle);
 
-  pm.goVert(gfx);
-}
-
-void Params::setGroup2(Graphics& gfx)
-{
-DOTRACE("Params::setGroup2");
-
-  ParamMenu pm;
-
   pm.addItem("# of cycles", this->cycleNumber);
   pm.addItem("wait duration (seconds)", this->waitSeconds);
   pm.addItem("epoch duration (seconds)", this->epochSeconds);
   pm.addItem("pause duration (seconds)", this->pauseSeconds);
   pm.addItem("# of reminds per epoch", this->remindsPerEpoch);
   pm.addItem("remind duration (seconds)", this->remindSeconds);
-
-  pm.goVert(gfx);
-}
-
-void Params::setGroup3(Graphics& gfx)
-{
-DOTRACE("Params::setGroup2");
-
-  ParamMenu pm;
 
   pm.addItem("fMRI session #", this->fmriSessionNumber);
 

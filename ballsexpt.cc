@@ -159,7 +159,7 @@ BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
 {
 DOTRACE("BallsExpt::BallsExpt");
 
-  rep->params.readFromFile(gfx, "sta");
+  rep->params.readFromFile("sta");
 }
 
 BallsExpt::~BallsExpt()
@@ -203,15 +203,7 @@ DOTRACE("BallsExpt::onKey");
       break;
 
     case 'x':
-      p->rep->params.setGroup1(p->rep->gfx);
-      break;
-
-    case 'y':
-      p->rep->params.setGroup2(p->rep->gfx);
-      break;
-
-    case 'z':
-      p->rep->params.setGroup3(p->rep->gfx);
+      p->rep->params.setParams(p->rep->gfx);
       break;
 
     case 'p':
@@ -230,22 +222,20 @@ void BallsExpt::makeMenu()
 {
 DOTRACE("BallsExpt::makeMenu");
 
-  const int nitems = 8;
+  const int nitems = 6;
 
   std::string menu[nitems];
 
   menu[0] = "r     run experiment";
-  menu[1] = "x     set parameters 1";
-  menu[2] = "y     set parameters 2";
-  menu[3] = "z     set parameters 3";
-  menu[4] = "p     show parameters";
-  menu[5] = "q     quit program";
-  menu[6] = "";
+  menu[1] = "x     set parameters";
+  menu[2] = "p     show parameters";
+  menu[3] = "q     quit program";
+  menu[4] = "";
 
   char buf[64];
   snprintf(buf, 64, "%.2f", rep->percentCorrect);
 
-  menu[7] = std::string("recent percent correct: ") + buf;
+  menu[5] = std::string("recent percent correct: ") + buf;
 
   rep->gfx.clearBackBuffer();
   rep->gfx.drawStrings(menu, nitems, 100, -200, 20, 2);
