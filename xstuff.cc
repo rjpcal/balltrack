@@ -191,5 +191,20 @@ DOTRACE("XStuff::getKeypress");
     }
 }
 
+void XStuff::getWord(char* buf, int sz) const
+{
+DOTRACE("XStuff::getWord");
+
+  int n = 0;
+  char c;
+
+  while( ( c = this->getKeypress() ) != ' '  && n < sz )
+    {
+      buf[n++] = c;
+    }
+
+  buf[n] = '\0';
+}
+
 static const char vcid_xstuff_cc[] = "$Header$";
 #endif // !XSTUFF_CC_DEFINED

@@ -28,6 +28,8 @@ public:
   Window window() const { return itsWindow; }
 
   char getKeypress() const;
+  // FIXME use std::string
+  void getWord(char* buf, int sz) const;
 
 private:
   int itsWidth;
