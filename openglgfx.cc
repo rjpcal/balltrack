@@ -394,6 +394,10 @@ DOTRACE("OpenglGfx::startRecording");
 
 void OpenglGfx::stopRecording() {
 DOTRACE("OpenglGfx::stopRecording");
+
+  if (MAKING_MOVIE && (itsMovie != 0))
+	 itsMovie->flush();
+
   itsIsRecording = false;
 }
 
