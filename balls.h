@@ -12,7 +12,7 @@
 #ifndef BALLS_H_DEFINED
 #define BALLS_H_DEFINED
 
-#include "timing.h"
+#include "timepoint.h"
 
 #include <vector>
 

@@ -20,7 +20,7 @@
 
 #include "graphics.h"
 #include "params.h"
-#include "timing.h"
+#include "timepoint.h"
 
 #include "trace.h"
 #include "debug.h"

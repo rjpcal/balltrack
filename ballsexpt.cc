@@ -16,7 +16,7 @@
 #include "balls.h"
 #include "graphics.h"
 #include "params.h"
-#include "timing.h"
+#include "timepoint.h"
 
 #include <cstdio>
 #include <cstring>

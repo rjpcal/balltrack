@@ -14,7 +14,7 @@
 #include "ballsexpt.h"
 #include "graphics.h"
 #include "params.h"
-#include "timing.h"
+#include "timepoint.h"
 
 int main(int argc, char** argv)
 {

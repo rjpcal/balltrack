@@ -11,7 +11,7 @@
 #ifndef GRAPHICS_H_DEFINED
 #define GRAPHICS_H_DEFINED
 
-#include "timing.h"
+#include "timepoint.h"
 #include "xstuff.h"
 
 #include <string>

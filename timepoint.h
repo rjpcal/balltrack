@@ -1,8 +1,7 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// timing.h
+// timepoint.h
 // Rob Peters rjpeters@klab.caltech.edu
-//   created by Achim Braun
 // created: Tue Feb  1 15:52:28 2000
 // written: Wed Sep  3 14:19:41 2003
 // $Id$
