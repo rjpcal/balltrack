@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Fri Feb 25 10:47:16 2000
+// written: Mon Feb 28 14:03:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,7 @@ public:
   virtual void writeAllPlanes() = 0;
 
   virtual void waitVerticalRetrace() = 0;
+  virtual void swapBuffers() = 0;
 
   virtual void waitFrameCount(int number) = 0;
 
