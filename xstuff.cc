@@ -3,7 +3,7 @@
 // xstuff.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:55 2000
-// written: Mon Jun 12 15:26:15 2000
+// written: Wed Jun 27 15:01:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 
 #include "xstuff.h"
 
-#include <cstring>				  // for strcpy
-#include <cstdlib>				  // for getenv
+#include <cstring>              // for strcpy
+#include <cstdlib>              // for getenv
 #include <cstdio>
 #include <X11/Xutil.h>
 
@@ -27,19 +27,19 @@
 class VisualClass {
 public:
   VisualClass(int class_id) : itsId(class_id), itsName("")
-	 {
-		for (int i = 0; i < 6; ++i)
-		  if ( ids[i] == itsId ) {
-			 itsName = names[i];
-			 break;
-		  }
-	 }
+    {
+      for (int i = 0; i < 6; ++i)
+        if ( ids[i] == itsId ) {
+          itsName = names[i];
+          break;
+        }
+    }
 
   bool matches(int class_id)
-	 { return (itsId == class_id); }
+    { return (itsId == class_id); }
 
   bool matches(const char* class_name)
-	 { return (strcmp(itsName, class_name) == 0); }
+    { return (strcmp(itsName, class_name) == 0); }
 
   const char* name() { return itsName; }
   int id() { return itsId; }
@@ -90,8 +90,8 @@ DOTRACE("XStuff::XStuff");
 void XStuff::setPrefVisInfo(const XVisualInfo* vinfo) {
 DOTRACE("XStuff::setPrefVisInfo");
   if (vinfo != 0) {
-	 itsPrefVisInfo = *vinfo;
-	 itsHasPrefVisInfo = true;
+    itsPrefVisInfo = *vinfo;
+    itsHasPrefVisInfo = true;
   }
 }
 
@@ -108,13 +108,13 @@ DOTRACE("XStuff::openDisplay");
 
   itsDisplay = XOpenDisplay( NULL );
 
-  if ( itsDisplay == NULL ) 
+  if ( itsDisplay == NULL )
     {
-		if ( ( char * ) getenv( "DISPLAY" ) == ( char * ) NULL ) 
-		  fprintf( stdout,"You need to set the DISPLAY env var\n" );
-		else 
-		  fprintf( stdout,"Cannot open DISPLAY %s,\n",getenv( "DISPLAY" ) );
-		exit( -1 );
+      if ( ( char * ) getenv( "DISPLAY" ) == ( char * ) NULL )
+        fprintf( stdout,"You need to set the DISPLAY env var\n" );
+      else
+        fprintf( stdout,"Cannot open DISPLAY %s,\n",getenv( "DISPLAY" ) );
+      exit( -1 );
     }
 
   itsScreen = DefaultScreen( itsDisplay );
@@ -124,36 +124,36 @@ void XStuff::createVisual(const XHints& hints) {
 DOTRACE("XStuff::createVisual");
 
   if ( !itsHasPrefVisInfo ) {
-	 XVisualInfo vtemp;
-	 vtemp.screen = itsScreen;
-	 vtemp.depth	 = hints.depth();
+    XVisualInfo vtemp;
+    vtemp.screen = itsScreen;
+    vtemp.depth    = hints.depth();
 
-	 int vnumber;
+    int vnumber;
 
-	 XVisualInfo* vlist = XGetVisualInfo( itsDisplay,
-													  VisualScreenMask|VisualDepthMask,
-													  &vtemp, &vnumber );
-    
-	 itsVisInfo = vlist[0];
+    XVisualInfo* vlist = XGetVisualInfo( itsDisplay,
+                                         VisualScreenMask|VisualDepthMask,
+                                         &vtemp, &vnumber );
 
-	 for( int i=0; i<vnumber; i++ ) {
+    itsVisInfo = vlist[0];
 
-		VisualClass vclass(vlist[i].c_class);
+    for( int i=0; i<vnumber; i++ ) {
 
-		fprintf( stdout, " %s visual %d of depth %d mapsize %d\n", 
-					vclass.name(),
-					vlist[i].visualid, 
-					vlist[i].depth, 
-					vlist[i].colormap_size );
+      VisualClass vclass(vlist[i].c_class);
 
-		if( vclass.matches(hints.visualClass()) ) {
-		  itsVisInfo = vlist[i];
-		  break;
-		}
-	 }
+      fprintf( stdout, " %s visual %d of depth %d mapsize %d\n",
+               vclass.name(),
+               vlist[i].visualid,
+               vlist[i].depth,
+               vlist[i].colormap_size );
+
+      if( vclass.matches(hints.visualClass()) ) {
+        itsVisInfo = vlist[i];
+        break;
+      }
+    }
   }
   else {
-	 itsVisInfo = itsPrefVisInfo;
+    itsVisInfo = itsPrefVisInfo;
   }
 
   itsVisual = itsVisInfo.visual;
@@ -166,20 +166,20 @@ DOTRACE("XStuff::createColormap");
   int alloc = AllocNone;
 
   if (hints.privateCmap()) {
-	 alloc = AllocAll;
+    alloc = AllocAll;
   }
 
-  itsColormap = 
-	 XCreateColormap( itsDisplay,
-							RootWindow( itsDisplay, itsScreen ),
-							itsVisual, alloc );
+  itsColormap =
+    XCreateColormap( itsDisplay,
+                     RootWindow( itsDisplay, itsScreen ),
+                     itsVisual, alloc );
 
   itsMeanColor.flags = DoRed | DoGreen | DoBlue;
 
   const int MEANGREY = 127;
 
   itsMeanColor.red = itsMeanColor.green = itsMeanColor.blue =
-	 ( unsigned long )(257*MEANGREY);
+    ( unsigned long )(257*MEANGREY);
 
   XAllocColor( itsDisplay, itsColormap, &itsMeanColor );
 }
@@ -188,29 +188,29 @@ void XStuff::createWindow(const char* name) {
 DOTRACE("XStuff::createWindow");
 
   XSetWindowAttributes winAttributes;
-  XSizeHints	hints;
+  XSizeHints   hints;
 
   winAttributes.event_mask = ExposureMask;
   winAttributes.colormap   = itsColormap;
   winAttributes.background_pixel = itsMeanColor.pixel;
   winAttributes.border_pixel = itsMeanColor.pixel;
 
-  itsWindow = XCreateWindow( itsDisplay, 
-									  RootWindow( itsDisplay, itsScreen ),
-									  0, 0, itsWidth, itsHeight, 2,
-									  itsDepth, InputOutput, itsVisual,
-									  ( CWBackPixel | CWColormap | CWBorderPixel | 
-										 CWEventMask ),
-									  &winAttributes );
+  itsWindow = XCreateWindow( itsDisplay,
+                             RootWindow( itsDisplay, itsScreen ),
+                             0, 0, itsWidth, itsHeight, 2,
+                             itsDepth, InputOutput, itsVisual,
+                             ( CWBackPixel | CWColormap | CWBorderPixel |
+                               CWEventMask ),
+                             &winAttributes );
 
   FILE* fp;
 
   if( ( fp = fopen( "wdwptr", "w" ) ) == NULL )
-	 {
-		printf( " cannot open file\n" );
-		exit(-1);
-	 }
-   
+    {
+      printf( " cannot open file\n" );
+      exit(-1);
+    }
+
   fprintf( fp, "%ld\n", itsWindow );
   printf( " window written %ld\n", itsWindow );
 
@@ -220,9 +220,9 @@ DOTRACE("XStuff::createWindow");
 void XStuff::selectInput() {
 DOTRACE("XStuff::selectInput");
 
-  XSelectInput( itsDisplay, itsWindow, 
-					 ExposureMask|StructureNotifyMask|
-					 ButtonPressMask|KeyPressMask );
+  XSelectInput( itsDisplay, itsWindow,
+                ExposureMask|StructureNotifyMask|
+                ButtonPressMask|KeyPressMask );
 
   XSync( itsDisplay, False );
 }
@@ -230,18 +230,12 @@ DOTRACE("XStuff::selectInput");
 void XStuff::setWmProperty(char* name) {
 DOTRACE("XStuff::setWmProperty");
 
-  char *list[1];
-  XSizeHints	  *size_hints;
-  XClassHint	  *class_hint;
-  XWMHints	  *wm_hints;
-  XTextProperty window_name, icon_name;
-
-  class_hint = XAllocClassHint(  );
+  XClassHint* class_hint = XAllocClassHint(  );
   class_hint->res_name  = "test";
   class_hint->res_class = "Test";
 
-  size_hints = XAllocSizeHints(  );
-  size_hints->flags	  = USSize|USPosition|PMinSize|PMaxSize;
+  XSizeHints* size_hints = XAllocSizeHints(  );
+  size_hints->flags    = USSize|USPosition|PMinSize|PMaxSize;
   size_hints->x = 500;
   size_hints->y = 500;
   size_hints->width = itsWidth;
@@ -251,20 +245,20 @@ DOTRACE("XStuff::setWmProperty");
   size_hints->min_height= itsHeight;
   size_hints->max_height= itsHeight;
 
-  list[0] = name;
-  XStringListToTextProperty( list, 1, &window_name );
+  XTextProperty window_name;
+  XStringListToTextProperty( &name, 1, &window_name );
 
-  list[0] = name;
-  XStringListToTextProperty( list, 1, &icon_name );
+  XTextProperty icon_name;
+  XStringListToTextProperty( &name, 1, &icon_name );
 
-  wm_hints   = XAllocWMHints(	 );
-  wm_hints->flags	  = InputHint;
-  wm_hints->input	  = False;
+  XWMHints* wm_hints = XAllocWMHints(  );
+  wm_hints->flags    = InputHint;
+  wm_hints->input    = True;
 
   XSetWMProperties( itsDisplay, itsWindow,
-						  &window_name, &icon_name,
-						  itsArgv, itsArgc,
-						  size_hints, wm_hints, class_hint );
+                    &window_name, &icon_name,
+                    itsArgv, itsArgc,
+                    size_hints, wm_hints, class_hint );
 }
 
 void XStuff::setWmProtocol() {
@@ -299,8 +293,8 @@ DOTRACE("XStuff::printWindowInfo");
 
   info.visualid = itsVisual->visualid;
   info = *XGetVisualInfo( itsDisplay, VisualIDMask, &info, &items );
-  fprintf( stdout, " Window %d with %s visual %d of depth %d\n", 
-			  0, VisualClass(info.c_class).name(), info.visualid, info.depth );
+  fprintf( stdout, " Window %d with %s visual %d of depth %d\n",
+           0, VisualClass(info.c_class).name(), info.visualid, info.depth );
   fflush( stdout );
 }
 
@@ -312,7 +306,7 @@ DOTRACE("XStuff::wrapX");
 }
 
 void XStuff::storeColor(unsigned int index,
-								double red, double green, double blue) {
+                        double red, double green, double blue) {
 DOTRACE("XStuff::storeColor");
   XColor col;
   col.flags = DoRed | DoGreen | DoBlue;
