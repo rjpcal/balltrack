@@ -38,9 +38,6 @@ public:
   // delay
   void gfxWait(Timer& t, double delaySeconds);
 
-  // Returns the number of milliseconds per graphics frame
-  double frameTime();
-
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
 
@@ -66,7 +63,6 @@ private:
 
   const int itsWidth;
   const int itsHeight;
-  double itsFrameTime;
 
   XStuff itsXStuff;
   GLXContext itsGLXContext;

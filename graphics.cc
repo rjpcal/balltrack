@@ -67,7 +67,6 @@ Graphics::Graphics(const char* winname,
                    int w, int h, int depth) :
   itsWidth(w),
   itsHeight(h),
-  itsFrameTime(-1.0),
   itsXStuff(w, h),
   itsGLXContext(0),
   itsUsingVsync(false),
@@ -133,9 +132,6 @@ DOTRACE("Graphics::Graphics");
       std::cout << " got GLX_SGI_video_sync extension\n";
     }
 
-  // forces the frame time to be computed and then cached
-  frameTime();
-
   this->clearBackBuffer();
   this->swapBuffers();
   this->clearBackBuffer();
@@ -165,17 +161,6 @@ DOTRACE("Graphics::gfxWait");
     {
       t.wait(delaySeconds);
     }
-}
-
-double Graphics::frameTime()
-{
-#if 1
-  if (itsFrameTime < 0)
-    itsFrameTime = computeFrameTime();
-#else
-  itsFrameTime = 13;
-#endif
-  return itsFrameTime;
 }
 
 void Graphics::clearBackBuffer()
