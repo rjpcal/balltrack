@@ -3,15 +3,13 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Thu Feb 24 14:59:49 2000
+// written: Thu Feb 24 15:04:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef STARBASEGFX_H_DEFINED
 #define STARBASEGFX_H_DEFINED
-
-#include "defs.h"
 
 #include "graphics.h"
 
