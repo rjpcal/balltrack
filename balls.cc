@@ -274,8 +274,8 @@ DOTRACE("Balls::pickInitialPositions");
             }
         }
 
-    itsBalls[i].randomVelocity(itsParams.ballVelocity);
-  }
+      itsBalls[i].randomVelocity(itsParams.ballVelocity);
+    }
 }
 
 void Balls::nextBalls(Graphics& gfx)
