@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Tue Feb  1 16:42:41 2000
+// written: Tue Feb 22 15:16:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,10 +19,13 @@
 #include <starbase.c.h>
 #include <X11/Xlib.h>
 
-#include "image.h"
 #include "defs.h"
+#include "image.h"
+#include "main.h"
 #include "params.h"
 #include "timing.h"
+
+extern Application theApp;
 
 int xpos[25], ypos[25], nx[25], ny[25],
   xvel[25], yvel[25];
@@ -236,8 +239,8 @@ void InitBalls()
 		  {
 			 too_close = 0;
 
-			 xpos[i] = BORDER_X + (int)( ( width  - BALL_ARRAY_SIZE - 2 * BORDER_X ) * drand48() );
-			 ypos[i] = BORDER_Y + (int)( ( height - BALL_ARRAY_SIZE - 2 * BORDER_Y ) * drand48() );
+			 xpos[i] = BORDER_X + (int)( ( theApp.width  - BALL_ARRAY_SIZE - 2 * BORDER_X ) * drand48() );
+			 ypos[i] = BORDER_Y + (int)( ( theApp.height - BALL_ARRAY_SIZE - 2 * BORDER_Y ) * drand48() );
 			 for( j=0; j<i; j++ )
 				{
 				  if( Abs( xpos[i]-xpos[j] ) < BALL_MIN_DISTANCE &&
@@ -268,13 +271,13 @@ void NextBalls()
 		nx[i] = xpos[i] + Round( xvel[i] );
 		ny[i] = ypos[i] + Round( yvel[i] );
 
-		if( nx[i] < BORDER_X || nx[i] > width - BORDER_X - BALL_ARRAY_SIZE )
+		if( nx[i] < BORDER_X || nx[i] > theApp.width - BORDER_X - BALL_ARRAY_SIZE )
 		  {
 			 xvel[i] = -xvel[i];
 			 nx[i]   = xpos[i] + Round( xvel[i] );
 		  }
 
-		if( ny[i] < BORDER_Y || ny[i] > height - BORDER_Y - BALL_ARRAY_SIZE )
+		if( ny[i] < BORDER_Y || ny[i] > theApp.height - BORDER_Y - BALL_ARRAY_SIZE )
 		  {
 			 yvel[i] = -yvel[i];
 			 ny[i]   = ypos[i] + Round( yvel[i] );
@@ -431,10 +434,10 @@ void WriteHiBalls( int xpos[], int ypos[], int number, unsigned char* bitmap )
 {
   int i;
 
-  write_enable( fildes, 0xc0 );
+  write_enable( theApp.fildes, 0xc0 );
   for( i=0 ; i<number; i++ )
 	 WriteBitmap( bitmap, xpos[i], ypos[i], BALL_ARRAY_SIZE );
-  write_enable( fildes, 0x3f );
+  write_enable( theApp.fildes, 0x3f );
 }
 
 int Abs( int a )
