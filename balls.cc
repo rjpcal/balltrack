@@ -28,15 +28,17 @@
 
 namespace
 {
-  std::vector<unsigned char> theirBallmap;
-  std::vector<unsigned char> theirHimap;
+  typedef unsigned char ubyte;
 
-  const int BALL_COLOR_MIN = 8;
-  const int BALL_COLOR_MAX = 63;
+  std::vector<ubyte> theirBallmap;
+  std::vector<ubyte> theirHimap;
 
-  void makeBallPixmap(std::vector<unsigned char>& vec, int size,
+  const int BALL_COLOR_MIN = 0;
+  const int BALL_COLOR_MAX = 255;
+
+  void makeBallPixmap(std::vector<ubyte>& vec, int size,
                       float radius, float sigma,
-                      unsigned char background)
+                      ubyte bkg_r, ubyte bkg_g, ubyte bkg_b)
   {
     DOTRACE("<balls.cc>::makeBallPixmap");
 
@@ -44,28 +46,8 @@ namespace
     const double tint_g = 0.5;
     const double tint_b = 0.0;
 
-    const int numColors = 256;
-    double theColors[numColors][3];
-
     const double lmin =   0.0;
     const double lmax = 196.0;
-
-    for (int n=0; n<BALL_COLOR_MIN; ++n)
-      theColors[n][0] = theColors[n][1] = theColors[n][2] = 0.0;
-
-    for (int n=BALL_COLOR_MIN; n<=BALL_COLOR_MAX; ++n)
-      {
-        const double ratio = lmin/lmax +
-          ((lmax-lmin)*(n-BALL_COLOR_MIN)/
-           (lmax*(BALL_COLOR_MAX-BALL_COLOR_MIN)));
-
-        theColors[n][0] = tint_r*ratio;
-        theColors[n][1] = tint_g*ratio;
-        theColors[n][2] = tint_b*ratio;
-      }
-
-    for (int n=BALL_COLOR_MAX+1; n<numColors; ++n)
-      theColors[n][0] = theColors[n][1] = theColors[n][2] = 1.0;
 
     const int bytes_per_pixel = 4;
 
@@ -82,26 +64,28 @@ namespace
 
             const float rsq = x*x + y*y;
 
-            unsigned char index;
+            const size_t base_loc = bytes_per_pixel*(i*size + j);
 
             if (x*x+y*y < radius*radius)
               {
-                index =
-                  (unsigned char)
-                  (BALL_COLOR_MIN
-                   + (BALL_COLOR_MAX - BALL_COLOR_MIN) * exp(-rsq/sigma));
+                const ubyte n = ubyte (255 * exp(-rsq/sigma));
+
+                const double t =
+                  lmin/lmax +
+                  ((lmax-lmin)*n / (lmax*255));
+
+                vec[base_loc + 0] = ubyte(0xff * t * tint_r);
+                vec[base_loc + 1] = ubyte(0xff * t * tint_g);
+                vec[base_loc + 2] = ubyte(0xff * t * tint_b);
+                vec[base_loc + 3] = ubyte(0xff);
               }
             else
               {
-                index = (unsigned char)(background);
+                vec[base_loc + 0] = bkg_r;
+                vec[base_loc + 1] = bkg_g;
+                vec[base_loc + 2] = bkg_b;
+                vec[base_loc + 3] = ubyte(0xff);
               }
-
-            const size_t base_loc = bytes_per_pixel*(i*size + j);
-
-            vec[base_loc + 0] = (unsigned char)(0xff * theColors[index][0]);
-            vec[base_loc + 1] = (unsigned char)(0xff * theColors[index][1]);
-            vec[base_loc + 2] = (unsigned char)(0xff * theColors[index][2]);
-            vec[base_loc + 3] = (unsigned char)(0xff);
           }
       }
   }
@@ -386,9 +370,11 @@ DOTRACE("Balls::prepare");
   initialize(gfx);
 
   makeBallPixmap(theirHimap, itsParams.ballPixmapSize,
-                 itsParams.ballRadius, itsParams.ballSigma2, 255);
+                 itsParams.ballRadius, itsParams.ballSigma2,
+                 255, 255, 255);
   makeBallPixmap(theirBallmap, itsParams.ballPixmapSize,
-                 itsParams.ballRadius, itsParams.ballSigma2, 0);
+                 itsParams.ballRadius, itsParams.ballSigma2,
+                 0, 0, 0);
 }
 
 void Balls::runTrial(Graphics& gfx, timeval* starttime, TrialType ttype)
