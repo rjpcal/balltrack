@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 28 12:20:41 2001
-// written: Wed Feb 28 13:04:36 2001
+// written: Wed Jun 27 15:21:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,22 @@
 #ifndef SIMPLEMOVIE_H_DEFINED
 #define SIMPLEMOVIE_H_DEFINED
 
+#if !defined(IRIX6)
+#define NO_MOVIE
+#endif
+
+#ifndef NO_MOVIE
 #include <dmedia/moviefile.h>
+#else
+#include <cstdlib>
+enum MVfileformat { MV_FORMAT_QT }; // just spoof the dmedia declaration
+#endif
 
 class SimpleMovie {
 public:
 
   SimpleMovie(const char* filename, MVfileformat fileFormat,
-				  int width, int height);
+              int width, int height);
 
   ~SimpleMovie();
 
@@ -45,11 +54,13 @@ private:
   int itsWidth;
   int itsHeight;
 
+#ifndef NO_MOVIE
   MVid itsMovie;
   DMparams* itsMovieParams;
 
   MVid itsImageTrack;
   DMparams* itsImageParams;
+#endif
 
   size_t itsFrameSize;
   char* itsTempFrameBuffer;

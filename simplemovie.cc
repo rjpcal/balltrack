@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 28 12:21:07 2001
-// written: Wed Feb 28 15:17:36 2001
+// written: Wed Jun 27 15:21:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,44 +18,48 @@
 #include <cstdlib>
 #include <iostream.h>
 
-void SimpleMovie::handleError(const char* message) {
+void SimpleMovie::handleError(const char* message)
+{
   cerr << message << endl;
   exit(1);
 }
 
 SimpleMovie::SimpleMovie(const char* filename, MVfileformat fileFormat,
-								 int width, int height) :
+                         int width, int height) :
   itsWidth(width),
   itsHeight(height),
+#ifndef NO_MOVIE
   itsMovie(0),
   itsMovieParams(0),
   itsImageTrack(0),
   itsImageParams(0),
+#endif
   itsFrameSize(0),
   itsTempFrameBuffer(0),
   itsFrameRate(0.0)
 {
+#ifndef NO_MOVIE
   if ( dmParamsCreate( &itsMovieParams ) != DM_SUCCESS ) {
-	 handleError("couldn't create movie params");
+    handleError("couldn't create movie params");
   }
 
   if ( mvSetMovieDefaults( itsMovieParams, fileFormat )
-		 != DM_SUCCESS ) {
-	 handleError("couldn't set movie defaults");
+       != DM_SUCCESS ) {
+    handleError("couldn't set movie defaults");
   }
 
   if ( mvCreateFile( filename, itsMovieParams, NULL, &itsMovie )
-		 != DM_SUCCESS ) {
-	 handleError("couldn't create movie file");
+       != DM_SUCCESS ) {
+    handleError("couldn't create movie file");
   }
 
   if ( dmParamsCreate( &itsImageParams ) != DM_SUCCESS ) {
-	 handleError("couldn't create image track params");
+    handleError("couldn't create image track params");
   }
 
   if ( mvSetImageDefaults( itsImageParams, width, height, fileFormat )
-		 != DM_SUCCESS ) {
-	 handleError("couldn't set image defaults");
+       != DM_SUCCESS ) {
+    handleError("couldn't set image defaults");
   }
 
   dmParamsSetString(itsImageParams, DM_IMAGE_COMPRESSION, DM_IMAGE_QT_ANIM);
@@ -63,66 +67,82 @@ SimpleMovie::SimpleMovie(const char* filename, MVfileformat fileFormat,
   itsFrameSize = dmImageFrameSize( itsImageParams );
 
   if ( mvAddTrack( itsMovie,
-						 DM_IMAGE,
-						 itsImageParams,
-						 NULL,
-						 &itsImageTrack ) != DM_SUCCESS ) {
-	 handleError("couldn't add track");
+                   DM_IMAGE,
+                   itsImageParams,
+                   NULL,
+                   &itsImageTrack ) != DM_SUCCESS ) {
+    handleError("couldn't add track");
   }
 
   if ( mvSetImageRate(itsImageTrack, 15.0) != DM_SUCCESS )
-	 handleError("couldn't set frame rate");
+    handleError("couldn't set frame rate");
 
   itsFrameRate = mvGetImageRate( itsImageTrack );
+#else
+  itsFrameSize = 4*itsWidth*itsHeight;
+  itsFrameRate = 15.0;
+#endif
 }
 
-SimpleMovie::~SimpleMovie() {
+SimpleMovie::~SimpleMovie()
+{
   delete [] itsTempFrameBuffer;
+#ifndef NO_MOVIE
   dmParamsDestroy(itsImageParams);
   dmParamsDestroy(itsMovieParams);
   mvClose(itsMovie);
+#endif
 }
 
-void SimpleMovie::appendFrames(int frameCount, void* buffer) {
+void SimpleMovie::appendFrames(int frameCount, void* buffer)
+{
+#ifndef NO_MOVIE
   if ( mvAppendFrames( itsImageTrack,
-							  frameCount,
-							  frameCount * itsFrameSize,
-							  buffer )
-		 != DM_SUCCESS )
-	 handleError("couldn't append frames");
+                       frameCount,
+                       frameCount * itsFrameSize,
+                       buffer )
+       != DM_SUCCESS )
+    handleError("couldn't append frames");
+#endif
 }
 
-void SimpleMovie::flush() {
+void SimpleMovie::flush()
+{
+#ifndef NO_MOVIE
   // Flushes all changes that have been made and makes sure that they
   // are written to the file.
   mvWrite(itsMovie);
+#endif
 }
 
-char* SimpleMovie::tempFrameBuffer() {
+char* SimpleMovie::tempFrameBuffer()
+{
   if (itsTempFrameBuffer == 0)
-	 itsTempFrameBuffer = new char [itsFrameSize];
+    itsTempFrameBuffer = new char [itsFrameSize];
   return itsTempFrameBuffer;
 }
 
-void SimpleMovie::appendTempBuffer() {
+void SimpleMovie::appendTempBuffer()
+{
   appendFrames(1, tempFrameBuffer());
 }
 
-void SimpleMovie::addSillyFrames() {
+void SimpleMovie::addSillyFrames()
+{
   char* buf1 = new char[itsFrameSize];
   char* buf2 = new char[itsFrameSize];
 
   for (int k = 0; k < itsFrameSize; ++k) {
-	 buf1[k] = char(k / 256);
-	 buf2[k] = ~buf1[k];
+    buf1[k] = char(k / 256);
+    buf2[k] = ~buf1[k];
   }
 
   for (int i = 0; i < 10; ++i)
-	 {
-		cerr << i << endl;
-		appendFrames(1, buf1);
-		appendFrames(1, buf2);
-	 }
+    {
+      cerr << i << endl;
+      appendFrames(1, buf1);
+      appendFrames(1, buf2);
+    }
 
   delete [] buf2;
   delete [] buf1;
