@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:05:04 2000
-// written: Tue Feb 22 15:12:45 2000
+// written: Tue Feb 22 20:04:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,7 @@
 #ifndef PARAMS_H_DEFINED
 #define PARAMS_H_DEFINED
 
+class Application;
 
 extern int   DISPLAY_X;
 extern int   DISPLAY_Y;
@@ -73,16 +74,17 @@ extern char line[], text[];
 
 #include <cstdio>
 
-void ReadParams( char extension[] );
-void CheckParams();
+void ReadParams(Application* app, char extension[]);
+void CheckParams(Application* app);
 void WriteParams( char extension[] );
 void LogParams( FILE* fl );
-void ListParams();
+void ListParams(Application* app);
 void Openfile( FILE** fp, char mode, char extension[] );
 void Closefile( FILE* fp );
 void PrintParams();
-void SetParameters1();
-void SetParameters2();
+
+void SetParameters1(Application* app);
+void SetParameters2(Application* app);
 
 static const char vcid_params_h[] = "$Header$";
 #endif // !PARAMS_H_DEFINED

@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:52:28 2000
-// written: Tue Feb  1 16:25:09 2000
+// written: Tue Feb 22 18:11:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,9 @@
 #include <cstdio>
 #include <sys/time.h>
 
-void CheckFrameTime();
+class Application;
+
+void CheckFrameTime(Application* app);
 void SetVideoCount();
 void CheckVideoCount( int number );
 void SetTimer();

@@ -1,7 +1,21 @@
+///////////////////////////////////////////////////////////////////////
+//
+// main.c
+// Rob Peters rjpeters@klab.caltech.edu
+// created: Tue Feb 22 12:27:11 2000
+// written: Tue Feb 22 20:03:09 2000
+// $Id$
+//
+///////////////////////////////////////////////////////////////////////
+
+#ifndef MAIN_C_DEFINED
+#define MAIN_C_DEFINED
+
 #include "main.h"
 
 #include <cstring>				  // for strcpy
 #include <cstdlib>				  // for exit
+#include <iostream.h>
 #include <starbase.c.h>
 #include <X11/keysym.h>
 
@@ -11,6 +25,9 @@
 #include "timing.h"
 
 #include "defs.h"
+
+#include "trace.h"
+#include "debug.h"
 
 #define WINDOW_NAME		     "tracking"
 
@@ -22,7 +39,7 @@
 #define DEPTH_HINT		     8
 #define VISUAL_CLASS		     "PseudoColor"
 
-static char *visual_class[]={
+static char *visual_class[]= {
   "StaticGray",
   "GrayScale",
   "StaticColor",
@@ -31,69 +48,80 @@ static char *visual_class[]={
   "DirectColor"
 };
 
-Display *display;
-int screen, fildes, depth, width, height;
-char name[STRINGSIZE];
-Window window;
-Visual *visual;
-Colormap colormap;
-XColor mean;
-GC gc;
+Application theApp;
 
-int main( int argc, char** argv )
-{
-  width  = WINDOW_X;
-  height = WINDOW_Y;
-  strcpy( name, WINDOW_NAME);
+int main( int argc, char** argv ) {
+DOTRACE("main");
 
-  WhoAreYou( argc, argv );
+  theApp.initialize(argc, argv); 
 
-  OpenDisplay( &display, &screen );
+  theApp.install();
 
-  Create_visual( display, screen, &visual, &depth );
+  WhoAreYou( &theApp );
 
-  Create_colormap( display, screen, visual, &colormap, &mean );
+  InitWindow( &theApp );
 
-  Create_window( argc, argv, display, screen, visual, depth, colormap, 
-					  mean, &window, width, height, name );
+  InitApplication( &theApp );
 
-  XSelectInput( display, window, 
-					 ExposureMask|StructureNotifyMask|
-					 ButtonPressMask|KeyPressMask );
+  theApp.run();
 
-  XSync( display, False );
-
-  fildes = Map_image_window( argc, argv, display, window, width, height,
-									  name );
-
-  Window_info( display, visual );
-
-  InitWindow( width, height, fildes );
-
-  InitApplication();
-
-  Handle_events( argc, argv, display, screen, window, fildes );
-
-  Exit(0);
+  theApp.quit(0);
 }
 
-void Exit(int code)
-{
-  WrapApplication();
+void Exit(int code) {
+DOTRACE("Exit");
 
-  WrapWindow( display, window, fildes );
-
-  XCloseDisplay( display );
-
-  exit(code);
+  theApp.quit(code); 
 }
 
-void OpenDisplay( Display** display, int* screen )
-{
+///////////////////////////////////////////////////////////////////////
+//
+// Application member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
-  *display = XOpenDisplay( NULL );
+Application* Application::theAppPtr = 0;
 
-  if ( *display == NULL ) 
+Application& Application::app() {
+DOTRACE("Application::app");
+  if (theAppPtr == 0) {
+	 printf("No Application has been installed.\n");
+	 exit(-1);
+  }
+
+  return *theAppPtr;
+}
+
+void Application::initialize(int argc, char** argv) {
+DOTRACE("Application::initialize");
+
+  itsArgc = argc;
+  itsArgv = argv;
+
+  theApp.itsWidth  = WINDOW_X;
+  theApp.itsHeight = WINDOW_Y;
+  strcpy( theApp.itsName, WINDOW_NAME);
+
+  theApp.openDisplay();
+  theApp.createVisual();
+  theApp.createColormap();
+  theApp.createWindow();
+  theApp.selectInput();
+  theApp.mapImageWindow();
+  theApp.windowInfo();
+}
+
+void Application::install() {
+DOTRACE("Application::install");
+  theAppPtr = this;
+}
+
+void Application::openDisplay() {
+DOTRACE("Application::openDisplay");
+
+  itsDisplay = XOpenDisplay( NULL );
+
+  if ( itsDisplay == NULL ) 
     {
 		if ( ( char * ) getenv( "DISPLAY" ) == ( char * ) NULL ) 
 		  fprintf( stdout,"You need to set the DISPLAY env var\n" );
@@ -102,21 +130,23 @@ void OpenDisplay( Display** display, int* screen )
 		exit( -1 );
     }
 
-  *screen = DefaultScreen( *display );
+  itsScreen = DefaultScreen( itsDisplay );
 }
 
-void Create_visual( Display* display, int screen, Visual** visual, int* depth ) 
-{
-  int i, vnumber;
-  XVisualInfo vtemp, *vlist;
+void Application::createVisual() {
+DOTRACE("Application::createVisual");
 
-  vtemp.screen = screen;
+  XVisualInfo vtemp;
+  vtemp.screen = itsScreen;
   vtemp.depth	 = DEPTH_HINT;
     
-  vlist = XGetVisualInfo( display, VisualScreenMask|VisualDepthMask,
-								  &vtemp, &vnumber );
+  int vnumber;
+
+  XVisualInfo* vlist = XGetVisualInfo( itsDisplay,
+													VisualScreenMask|VisualDepthMask,
+													&vtemp, &vnumber );
     
-  for( i=0; i<vnumber; i++ )
+  for( int i=0; i<vnumber; i++ )
     {
 
 		fprintf( stdout, " %s visual %d of depth %d mapsize %d\n", 
@@ -127,89 +157,97 @@ void Create_visual( Display* display, int screen, Visual** visual, int* depth )
 
 		if( !strcmp( visual_class[vlist[i].c_class], VISUAL_CLASS ) )
 		  {
-			 *visual = vlist[i].visual;
-			 *depth  = vlist[i].depth;
+			 itsVisual = vlist[i].visual;
+			 itsDepth  = vlist[i].depth;
 			 return;
 		  }
     }
 
-  *visual = vlist[0].visual;
-  *depth  = vlist[0].depth;
+  itsVisual = vlist[0].visual;
+  itsDepth  = vlist[0].depth;
 }
 
-void Create_colormap( Display* display, int screen, Visual* visual,
-							 Colormap* colormap, XColor* mean )
-{
-  *colormap = XCreateColormap( display, RootWindow( display, screen ),
-										 visual, AllocNone );
+void Application::createColormap() {
+DOTRACE("Application::createColormap");
 
-  mean->flags = DoRed | DoGreen | DoBlue;
-  mean->red = mean->green = mean->blue = ( unsigned long )(257*MEANGREY);
-  XAllocColor( display, *colormap, mean );
+  itsColormap = XCreateColormap( itsDisplay, RootWindow( itsDisplay, itsScreen ),
+											itsVisual, AllocNone );
+
+  itsMeanColor.flags = DoRed | DoGreen | DoBlue;
+
+  itsMeanColor.red = itsMeanColor.green = itsMeanColor.blue =
+	 ( unsigned long )(257*MEANGREY);
+
+  XAllocColor( itsDisplay, itsColormap, &itsMeanColor );
 }
 
-void Create_window( int argc, char** argv, Display* display, int screen,
-						  Visual* visual, int depth, Colormap colormap, XColor mean, 
-						  Window* window, int width, int height, char* name )
-{
+void Application::createWindow() {
+DOTRACE("Application::createWindow");
+
   XSetWindowAttributes winAttributes;
   XSizeHints	hints;
 
   winAttributes.event_mask = ExposureMask;
-  winAttributes.colormap   = colormap;
-  winAttributes.background_pixel = mean.pixel;
-  winAttributes.border_pixel = mean.pixel;
+  winAttributes.colormap   = itsColormap;
+  winAttributes.background_pixel = itsMeanColor.pixel;
+  winAttributes.border_pixel = itsMeanColor.pixel;
 
-  *window = XCreateWindow( display, 
-									RootWindow( display, screen ),
-									0, 0, width, height, 2,
-									depth, InputOutput, visual,
-									( CWBackPixel | CWColormap | CWBorderPixel | 
-									  CWEventMask ),
-									&winAttributes );
+  itsWindow = XCreateWindow( itsDisplay, 
+									  RootWindow( itsDisplay, itsScreen ),
+									  0, 0, itsWidth, itsHeight, 2,
+									  itsDepth, InputOutput, itsVisual,
+									  ( CWBackPixel | CWColormap | CWBorderPixel | 
+										 CWEventMask ),
+									  &winAttributes );
 
   hints.flags = ( USSize | USPosition );
   hints.x = 0;
   hints.y = 0;
-  hints.width	 = width;
-  hints.height = height;
-  XSetStandardProperties( display, *window, name, name,
-								  None, argv, argc, &hints );
+  hints.width	 = itsWidth;
+  hints.height = itsHeight;
+
+  XSetStandardProperties( itsDisplay, itsWindow, itsName, itsName,
+								  None, itsArgv, itsArgc, &hints );
 }
 
-int Map_image_window( int argc, char** argv, Display* display,
-							 Window window, int width, int height, char* name )
-{
-  int fildes = 0;
-  char *device;
+void Application::selectInput() {
+DOTRACE("Application::selectInput");
+
+  XSelectInput( itsDisplay, itsWindow, 
+					 ExposureMask|StructureNotifyMask|
+					 ButtonPressMask|KeyPressMask );
+
+  XSync( itsDisplay, False );
+}
+
+void Application::mapImageWindow() {
+DOTRACE("Application::mapImageWindow");
+
+  char* device = ( char * ) make_X11_gopen_string( itsDisplay, itsWindow );
+  itsFildes = gopen( device, OUTDEV, NULL, INT_XFORM|CMAP_FULL );
+
   gescape_arg arg1, arg2;
 
-  device = ( char * ) make_X11_gopen_string( display, window );
-  fildes = gopen( device, OUTDEV, NULL, INT_XFORM|CMAP_FULL );
-
   arg1.i[0] = TRUE;
-  gescape( fildes, READ_COLOR_MAP, &arg1, &arg2 );
+  gescape( itsFildes, READ_COLOR_MAP, &arg1, &arg2 );
 
-  if ( fildes < 0 )
+  if ( itsFildes < 0 )
     {
 		fprintf( stdout,"Could not gopen window.\n" );
 		exit( -1 );
     }
 
-  Set_wm_property( argc, argv, display, window, width, height, name );
+  setWmProperty();
+  setWmProtocol();
 
-  Set_wm_protocol( display, window );
+  XSetCommand( itsDisplay, itsWindow, itsArgv, itsArgc );
 
-  XSetCommand( display, window, argv, argc );
-
-  XMapWindow( display, window );
-
-  return( fildes );
+  XMapWindow( itsDisplay, itsWindow );
 }
 
-void Set_wm_property( int argc, char** argv, Display* display, Window window,
-							 int width, int height, char* name )
-{
+void Application::setWmProperty() {
+DOTRACE("Application::setWmProperty");
+
   char *list[1];
   XSizeHints	  *size_hints;
   XClassHint	  *class_hint;
@@ -222,64 +260,73 @@ void Set_wm_property( int argc, char** argv, Display* display, Window window,
 
   size_hints = XAllocSizeHints(  );
   size_hints->flags	  = USSize|PMinSize|PMaxSize;
-  size_hints->min_width = width;
-  size_hints->max_width = width;
-  size_hints->min_height= height;
-  size_hints->max_height= height;
+  size_hints->min_width = itsWidth;
+  size_hints->max_width = itsWidth;
+  size_hints->min_height= itsHeight;
+  size_hints->max_height= itsHeight;
 
-  list[0] = name;
+  list[0] = itsName;
   XStringListToTextProperty( list, 1, &window_name );
 
-  list[0] = name;
+  list[0] = itsName;
   XStringListToTextProperty( list, 1, &icon_name );
 
   wm_hints   = XAllocWMHints(	 );
   wm_hints->flags	  = InputHint;
   wm_hints->input	  = False;
 
-  XSetWMProperties( display, window, &window_name, &icon_name,
-						  argv, argc, size_hints, wm_hints, class_hint );
+  XSetWMProperties( itsDisplay, itsWindow, &window_name, &icon_name,
+						  itsArgv, itsArgc, size_hints, wm_hints, class_hint );
 }
 
-void Set_wm_protocol( Display* display, Window window )
-{
+void Application::setWmProtocol() {
+DOTRACE("Application::setWmProtocol");
+
   Atom wm_protocols[2];
 
-  wm_protocols[0] = XInternAtom( display, "WM_DELETE_WINDOW", False );
-  wm_protocols[1] = XInternAtom( display, "WM_SAVE_YOURSELF", False );
-  XSetWMProtocols( display, window, wm_protocols, 2 );
+  wm_protocols[0] = XInternAtom( itsDisplay, "WM_DELETE_WINDOW", False );
+  wm_protocols[1] = XInternAtom( itsDisplay, "WM_SAVE_YOURSELF", False );
+  XSetWMProtocols( itsDisplay, itsWindow, wm_protocols, 2 );
 }
 
-void Window_info( Display* display, Visual* visual )
-{
+void Application::windowInfo() {
+DOTRACE("Application::windowInfo");
+
   int items;
   XVisualInfo info;
 
-  info.visualid = visual->visualid;
-  info = *XGetVisualInfo( display, VisualIDMask, &info, &items );
+  info.visualid = itsVisual->visualid;
+  info = *XGetVisualInfo( itsDisplay, VisualIDMask, &info, &items );
   fprintf( stdout, " Window %d with %s visual %d of depth %d\n", 
 			  0, visual_class[info.c_class], info.visualid, info.depth );
   fflush( stdout );
 }
 
-void Handle_events( int argc, char** argv, Display* display,
-						  int screen, Window window, int fildes )
-{
+void Application::wrapWindow() {
+DOTRACE("Application::wrapWindow");
+
+  gclose( itsFildes );
+  XDestroyWindow( itsDisplay, itsWindow );
+}
+
+void Application::run() {
+DOTRACE("Application::run");
+
   XEvent event;
     
   while( True )
     {
 
-		XNextEvent( display, &event );
+		XNextEvent( itsDisplay, &event );
 
 		switch( event.type )
 		  {
 		  case Expose:
 			 if ( event.xexpose.count == 0 )
 				{
-				  if( event.xexpose.window == window ) 
+				  if( event.xexpose.window == itsWindow ) 
 					 {
-						ExposeWindow();
+						ExposeWindow(this);
 					 }
 				}
 			 break;
@@ -287,15 +334,15 @@ void Handle_events( int argc, char** argv, Display* display,
 		  case ClientMessage:
 
 			 if ( ( Atom )event.xclient.data.l[0] == 
-					XInternAtom( display, "WM_DELETE_WINDOW", False ) )
+					XInternAtom( itsDisplay, "WM_DELETE_WINDOW", False ) )
 				{
 				  return;
 				}
 
 			 else if ( ( Atom )event.xclient.data.l[0] == 
-						  XInternAtom( display, "WM_SAVE_YOURSELF", False ) )
+						  XInternAtom( itsDisplay, "WM_SAVE_YOURSELF", False ) )
 				{
-				  XSetCommand( display, window, argv, argc );
+				  XSetCommand( itsDisplay, itsWindow, itsArgv, itsArgc );
 				}
 			 break;
 
@@ -307,17 +354,17 @@ void Handle_events( int argc, char** argv, Display* display,
 			 else
 				if ( event.xbutton.button == Button2 )
 				  {
-					 ExposeWindow();
+					 ExposeWindow(this);
 				  }
 			 break;
 
 		  case KeyPress:
-			 if ( event.xkey.window == window )
+			 if ( event.xkey.window == itsWindow )
 				{
 				  SetLogTimer();
 				  SetTimer();
 
-				  KeyPressAction( &event );
+				  keyPressAction( &event );
 				}
 			 break;
 
@@ -327,91 +374,65 @@ void Handle_events( int argc, char** argv, Display* display,
     }
 } 
 
-void KeyPressAction( XEvent* event )
-{
-  int count;
-  KeySym keysym;
-  XComposeStatus compose;
-  char buffer[10];
-  struct timeval tp;
-  struct timezone tzp;
+void Application::quit(int code) {
+DOTRACE("Application::quit");
 
-  count = XLookupString( (XKeyEvent*) event, buffer, 10, &keysym, &compose );
-  buffer[ count ] = '\0';
+  WrapApplication(this);
 
-  if( count > 1 ||
-		keysym == XK_Return || keysym == XK_BackSpace || keysym == XK_Delete )
-    {
-		XBell( display, 50 );
-    }
-  else
-    if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
-			keysym >= XK_space    && keysym <= XK_asciitilde )
-		{
-        gettimeofday( &tp, &tzp );
+  wrapWindow();
 
-        InitTimeStack( (double) event->xkey.time, &tp );
+  XCloseDisplay( itsDisplay );
 
-        SwitchApplication( buffer[0] );
-		}
+  exit(code);
 }
 
-void WrapWindow( Display* display, Window window, int fildes )
-{
-  gclose( fildes );
-  XDestroyWindow( display, window );
-}
+void Application::buttonPressLoop() {
+DOTRACE("Application::buttonPressLoop");
 
-char GetKeystroke()
-{
-  int count;
-  KeySym keysym;
-  XComposeStatus compose;
-  char buffer[10];
-  XEvent event;
-    
-  while( True )
-    {
-		XNextEvent( display, &event );
-
-		if( event.type==KeyPress && event.xkey.window == window )
-		  {
-			 count = XLookupString( (XKeyEvent *) &event, buffer, 10, 
-											&keysym, &compose );
-			 buffer[ count ] = '\0';
-
-			 if( count > 1 || keysym == XK_Return || 
-				  keysym == XK_BackSpace || keysym == XK_Delete )
-            {
-				  XBell( display, 50 );
-            }
-			 else
-            if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
-					  keysym >= XK_space    && keysym <= XK_asciitilde )
-				  {
-                return( buffer[0] );
-				  }
-        }
-    }
-}
-
-void SmallLoop()
-{
   XEvent event;
 
-  while( XCheckMaskEvent( display, ButtonPressMask, &event ) )
-    {
+  while( XCheckMaskEvent( itsDisplay, ButtonPressMask, &event ) ) {
 
-		if( event.type == ButtonPress &&
-			 event.xbutton.window == window )
-		  {
-			 TimeButtonEvent( &event );
-        }
-    }
+	 if( event.type == ButtonPress && event.xbutton.window == itsWindow ) {
+		timeButtonEvent( &event );
+	 }
+  }
 } 
 
-void TimeButtonEvent( XEvent* event )
-{
+void Application::keyPressAction( XEvent* event ) {
+DOTRACE("Application::keyPressAction");
+
+  char buffer[10];
+  KeySym keysym;
+  XComposeStatus compose;
+
+  int count = XLookupString( (XKeyEvent*) event, buffer, 9,
+									  &keysym, &compose );
+  buffer[ count ] = '\0';
+
+  if( count > 1 || keysym == XK_Return ||
+		keysym == XK_BackSpace || keysym == XK_Delete ) {
+
+		ringBell(50);
+		return;
+  }
+
+  if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
+		 keysym >= XK_space    && keysym <= XK_asciitilde ) {
+
+	 struct timeval tp;
+	 struct timezone tzp;
+	 gettimeofday( &tp, &tzp );
+
+	 InitTimeStack( (double) event->xkey.time, &tp );
+
+	 SwitchApplication( this, buffer[0] );
+  }
+}
+
+void Application::timeButtonEvent( XEvent* event ) {
+DOTRACE("Application::timeButtonEvent");
+
   int nbutton;    
 
   if( event->xbutton.button == Button1 )
@@ -428,3 +449,48 @@ void TimeButtonEvent( XEvent* event )
   AddToResponseStack( (double) event->xbutton.time, nbutton );
 }
 
+char Application::getKeystroke() {
+DOTRACE("Application::getKeystroke");
+
+  while( true ) {
+	 XEvent event;
+	 XNextEvent( itsDisplay, &event );
+
+	 if( event.type != KeyPress || event.xkey.window != itsWindow )
+		continue;
+
+	 KeySym keysym;
+	 char buffer[10];
+
+	 // For some reason, if we pass a non-null XComposeStatus* to this
+	 // function, the 'buffer' gets screwed up... very weird.
+	 int count = XLookupString( (XKeyEvent *) &event, &buffer[0], 9, 
+										 &keysym, (XComposeStatus*) 0  );
+
+	 buffer[ count ] = '\0';
+
+  	 DebugEvalNL(buffer);
+	 if( count > 1 || keysym == XK_Return || 
+		  keysym == XK_BackSpace || keysym == XK_Delete ) {
+
+		ringBell(50);
+		continue;
+	 }
+
+	 if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
+			keysym >= XK_space    && keysym <= XK_asciitilde ) {
+
+  		DebugEvalNL(buffer[0]);
+		return( buffer[0] );
+	 }
+  }
+
+}
+
+void Application::ringBell(int duration) {
+DOTRACE("Application::ringBell");
+  XBell( itsDisplay, duration );
+}
+
+static const char vcid_main_c[] = "$Header$";
+#endif // !MAIN_C_DEFINED
