@@ -13,7 +13,6 @@
 
 #include "timing.h"
 
-#include "application.h"
 #include "params.h"
 
 #include <cmath>
