@@ -471,13 +471,15 @@ namespace
 
           if (i < nitems)
             {
+              const char* marker = items[i].changed() ? "* " : "  ";
+
               if (items[i].dvar != 0)
                 {
-                  oss << sep << std::setw(6) << *items[i].dvar;
+                  oss << sep << marker << std::setw(6) << *items[i].dvar;
                 }
               else if (items[i].ivar != 0)
                 {
-                  oss << sep << std::setw(6) << *items[i].ivar;
+                  oss << sep << marker << std::setw(6) << *items[i].ivar;
                 }
             }
           else if (i == nitems)
