@@ -3,7 +3,7 @@
 // ballsexpt.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:20 2000
-// written: Fri Feb 25 13:30:44 2000
+// written: Tue Feb 29 15:52:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,7 @@
 
 class BallsExpt : public MenuApplication {
 public:
-  BallsExpt(const XHints& hints) :
-	 MenuApplication(hints)
-	 {}
+  BallsExpt(const XHints& hints);
 
   virtual void runExperiment();
 };
