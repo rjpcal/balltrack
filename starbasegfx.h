@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Tue Feb 29 17:20:39 2000
+// written: Thu Mar 30 17:15:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,6 +41,7 @@ public:
 
   virtual void drawMessage(char word[]);
   virtual void drawCross();
+  virtual void drawCross(int x, int y);
 
   virtual void loadColormap(float colors[][3], int ncolors);
 
