@@ -22,7 +22,7 @@ public:
 
   void run();
 
-protected:
+private:
   static void onExpose(void* cdata);
 
   // Returns true if application should quit
@@ -32,7 +32,6 @@ protected:
 
   void makeMenu();
 
-private:
   void runFixationCalibration();
   void runExperiment(double xtime);
 
