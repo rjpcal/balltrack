@@ -3,7 +3,7 @@
 // main.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 12:27:11 2000
-// written: Mon Feb 28 19:15:46 2000
+// written: Thu Mar 30 16:55:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "ballsexpt.h"
 
+#include "params.h"
 #include "xhints.h"
 
 const char* WINDOW_NAME = "tracking";
@@ -41,6 +42,16 @@ const bool USE_RGBA = true;
 #endif
 
 int main( int argc, char** argv ) {
+
+#if defined(MODE_TRAINING)
+  APPLICATION_MODE = TRAINING;
+#elif defined(MODE_EYE_TRACKING)
+  APPLICATION_MODE = EYE_TRACKING;
+#elif defined(MODE_FMRI_SESSION)
+  APPLICATION_MODE = FMRI_SESSION;
+#else
+#  error No application mode macro.
+#endif
 
   XHints hints;
 
