@@ -3,7 +3,7 @@
 // openglgfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:03:44 2000
-// written: Wed Feb 28 13:00:25 2001
+// written: Wed Feb 28 13:16:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,6 +60,9 @@ public:
   virtual void writeTrueColorMap(unsigned char* ptr, int x, int y, int size);
   virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
 
+  virtual void startRecording();
+  virtual void stopRecording();
+
 private:
   void clearBackBufferRegion(bool use_scissor);
 
@@ -75,6 +78,7 @@ private:
   int itsClearIndex;
 
   SimpleMovie* itsMovie;
+  bool itsIsRecording;
 };
 
 static const char vcid_openglgfx_h[] = "$Header$";

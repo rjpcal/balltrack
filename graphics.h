@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Thu Mar 30 17:03:42 2000
+// written: Wed Feb 28 13:15:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,6 +57,10 @@ public:
   virtual void writeBitmap(unsigned char* ptr, int x, int y, int size) = 0;
   virtual void writeTrueColorMap(unsigned char* ptr, int x, int y, int size) = 0;
   virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny) = 0;
+
+  // To control starting, stopping of movie recording
+  virtual void startRecording();
+  virtual void stopRecording();
 
 private:
   int itsHeight;
