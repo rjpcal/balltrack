@@ -71,11 +71,6 @@ BallsExpt::BallsExpt(const XHints& hints) :
 {
 DOTRACE("BallsExpt::BallsExpt");
   Balls::generateColors();
-
-  if ( !hints.rgba() )
-    {
-      graphics()->loadColormap(Balls::theColors, Balls::COLOR_NUMBER);
-    }
 }
 
 BallsExpt::~BallsExpt()

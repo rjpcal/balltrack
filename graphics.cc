@@ -82,14 +82,13 @@ Graphics::Graphics(const XHints& hints, int wid, int hgt) :
 DOTRACE("Graphics::Graphics");
   std::vector<int> attribList;
 
-  if (hints.doubleBuffer())
-    attribList.push_back(GLX_DOUBLEBUFFER);
+  attribList.push_back(GLX_DOUBLEBUFFER);
 
-  if (hints.rgba())
-    attribList.push_back(GLX_RGBA);
+  attribList.push_back(GLX_RGBA);
 
   attribList.push_back(GLX_BUFFER_SIZE);
   attribList.push_back(hints.depth());
+
   attribList.push_back(None);
 
   XVisualInfo* vi = glXChooseVisual(itsXStuff->display(),
@@ -356,17 +355,6 @@ DOTRACE("Graphics::drawCross");
   glEnd();
 
   writeLowerPlanes();
-}
-
-void Graphics::loadColormap(float colors[][3], int ncolors)
-{
-DOTRACE("Graphics::loadColormap");
-
-  waitVerticalRetrace();
-  for (int i = 0; i < ncolors; ++i)
-    {
-      itsXStuff->storeColor(i, colors[i][0], colors[i][1], colors[i][2]);
-    }
 }
 
 void Graphics::showMenu(char menu[][STRINGSIZE], int nmenu)

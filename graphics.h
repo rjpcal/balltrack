@@ -60,8 +60,6 @@ public:
   void drawCross();
   void drawCross(int x, int y);
 
-  void loadColormap(float colors[][3], int ncolors);
-
   void showMenu(char menu[][STRINGSIZE], int nmenu);
   void showParams(char params[][STRINGSIZE], int nparams);
 

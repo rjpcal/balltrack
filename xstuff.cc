@@ -178,11 +178,6 @@ DOTRACE("XStuff::createColormap");
 
   int alloc = AllocNone;
 
-  if (hints.privateCmap())
-    {
-      alloc = AllocAll;
-    }
-
   itsColormap =
     XCreateColormap( itsDisplay,
                      RootWindow( itsDisplay, itsScreen ),

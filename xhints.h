@@ -40,9 +40,6 @@ public:
   int depth() const { return itsDepth; }
 
   const char* visualClass() const { return "TrueColor"; }
-  bool privateCmap() const { return false; }
-  bool doubleBuffer() const { return true; }
-  bool rgba() const { return true; }
 
 private:
   int itsArgc;
