@@ -32,31 +32,38 @@ OBJ   = \
 	$(ARCH)/balls.o \
 	$(ARCH)/ballsexpt.o \
 	$(ARCH)/graphics.o \
-	$(ARCH)/main.o \
 	$(ARCH)/params.o \
 	$(ARCH)/timing.o \
 	$(ARCH)/trace.o \
 	$(ARCH)/xstuff.o \
 	$(GFXOBJ)
 
-TARGET = $(HOME)/bin/$(ARCH)/balls3
+TRAIN_TARGET = $(HOME)/bin/$(ARCH)/balls3_train
+ITRK_TARGET = $(HOME)/bin/$(ARCH)/balls3_itrk
+FMRI_TARGET = $(HOME)/bin/$(ARCH)/balls3_fmri
 
-ALL   = $(TARGET)
+ALL   = $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET)
 
 all:	$(ALL)
-	$(TARGET) xxx
+	$(TRAIN_TARGET) xxx
 
 clean:
 	rm -f core *.o *.a $(ALL)
 
-$(TARGET): $(OBJ)
-	$(CC) -o $@ ${OBJ} ${LFLAGS} $(LIB) 
+$(TRAIN_TARGET): $(OBJ) $(MAIN_CC)
+	time $(CC) $(CFLAGS) -DMODE_TRAINING main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+
+$(ITRK_TARGET): $(OBJ) $(MAIN_CC)
+	time $(CC) $(CFLAGS) -DMODE_EYE_TRACKING main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+
+$(FMRI_TARGET): $(OBJ) $(MAIN_CC)
+	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
 
 $(ARCH)/%.o : %.cc
-	$(CC) $(CFLAGS) -c $< -o $@ 
+	time $(CC) $(CFLAGS) -c $< -o $@ 
 
 $(ARCH)/%.o : %.c
-	$(CC) $(CFLAGS) -c $< -o $@ 
+	time $(CC) $(CFLAGS) -c $< -o $@ 
 
 # Level 0
 APPLICATION_H = application.h
@@ -96,7 +103,7 @@ GLFONT_CC = $(GLFONT_H) $(TRACE_H) $(DEBUG_H) glfont.cc
 
 GRAPHICS_CC = $(GRAPHICS_H) $(TRACE_H) graphics.cc
 
-MAIN_CC = $(BALLSEXPT_H) $(XHINTS_H) main.c
+MAIN_CC = $(BALLSEXPT_H) $(PARAMS_H) $(XHINTS_H) main.c
 
 OPENGLGFX_CC = $(OPENGLGFX_H) $(GLFONT_H) $(PARAMS_H) \
 	$(TIMING_H) $(XHINTS_H) $(XSTUFF_H) $(TRACE_H) $(DEBUG_H) openglgfx.cc
@@ -120,7 +127,6 @@ $(ARCH)/balls.o: $(BALLS_CC)
 $(ARCH)/ballsexpt.o: $(BALLSEXPT_CC)
 $(ARCH)/glfont.o: $(GLFONT_CC)
 $(ARCH)/graphics.o: $(GRAPHICS_CC)
-$(ARCH)/main.o: $(MAIN_CC)
 $(ARCH)/openglgfx.o: $(OPENGLGFX_CC)
 $(ARCH)/params.o: $(PARAMS_CC)
 $(ARCH)/starbasegfx.o: $(STARBASEGFX_CC)
