@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Wed Feb 23 14:35:10 2000
+// written: Wed Feb 23 14:36:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -337,8 +337,6 @@ DOTRACE("Application::run");
 
 void Application::quit(int code) {
 DOTRACE("Application::quit");
-
-  WrapApplication(this);
 
   wrapWindow();
 
