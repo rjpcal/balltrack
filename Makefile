@@ -18,9 +18,9 @@ ifeq ($(ARCH),hp9000s700)
 endif
 
 ifeq ($(ARCH),irix6)
-	CC  = g++
+	CC  = /opt/MIPSpro/bin/CC
 	CFLAGS=  -I/usr/include/X11R6 -I/cit/rjpeters/include \
-		-I/cit/rjpeters/gcc/include/g++-3 -DIRIX6
+		-I/cit/rjpeters/include/cppheaders -DIRIX6
 	LFLAGS= 
 	LIB   = -lGLU -lGL -lX11 -lm
 	GFXOBJ = $(ARCH)/glfont.o $(ARCH)/openglgfx.o
@@ -38,32 +38,12 @@ OBJ   = \
 	$(ARCH)/xstuff.o \
 	$(GFXOBJ)
 
-TRAIN_TARGET = $(HOME)/bin/$(ARCH)/balls3_train
-ITRK_TARGET = $(HOME)/bin/$(ARCH)/balls3_itrk
-FMRI_TARGET = $(HOME)/bin/$(ARCH)/balls3_fmri
+TRAIN_TARGET = $(HOME)/local/$(ARCH)/bin/balls3_train
+ITRK_TARGET = $(HOME)/local/$(ARCH)/bin/balls3_itrk
+FMRI_TARGET = $(HOME)/local/$(ARCH)/bin/balls3_fmri
+MOVIE_TARGET = $(HOME)/local/$(ARCH)/bin/balls3_movie
 
-ALL   = $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET)
-
-all:	$(ALL)
-	$(FMRI_TARGET) xxx
-
-clean:
-	rm -f core *.o *.a $(ALL)
-
-$(TRAIN_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_TRAINING main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
-
-$(ITRK_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_EYE_TRACKING main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
-
-$(FMRI_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
-
-$(ARCH)/%.o : %.cc
-	time $(CC) $(CFLAGS) -c $< -o $@ 
-
-$(ARCH)/%.o : %.c
-	time $(CC) $(CFLAGS) -c $< -o $@ 
+ALL   = $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET) $(MOVIE_TARGET) serial
 
 # Level 0
 APPLICATION_H = application.h
@@ -120,6 +100,40 @@ TIMING_CC = $(TIMING_H) $(APPLICATION_H) $(DEFS_H) $(PARAMS_H) \
 TRACE_CC = $(TRACE_H) trace.cc
 
 XSTUFF_CC = $(XSTUFF_H) $(DEFS_H) $(XHINTS_H) $(TRACE_H) $(DEBUG_H) xstuff.cc
+
+#
+# Targets
+#
+
+all:	$(ALL)
+
+mvtest: mvtest.cc
+	$(CC) $(CFLAGS) -o mvtest simplemovie.cc mvtest.cc -lmoviefile -ldmedia
+
+clean:
+	rm -f core *.o *.a $(ALL)
+
+$(TRAIN_TARGET): $(OBJ) $(MAIN_CC)
+	time $(CC) $(CFLAGS) -DMODE_TRAINING main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+
+$(ITRK_TARGET): $(OBJ) $(MAIN_CC)
+	time $(CC) $(CFLAGS) -DMODE_EYE_TRACKING main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+
+$(FMRI_TARGET): $(OBJ) $(MAIN_CC)
+	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+
+$(MOVIE_TARGET): $(OBJ) $(MAIN_CC)
+	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION -DMAKE_MOVIE main.c \
+		$(OBJ) -o $@ $(LFLAGS) $(LIB) 
+
+serial: serial.c eventnames.h
+	cc -o $@ $< -L/usr/lib/X11R6 -lXwindow -lsb -lXhp11 -lX11 -lm -ldld
+
+$(ARCH)/%.o : %.cc
+	time $(CC) $(CFLAGS) -c $< -o $@ 
+
+$(ARCH)/%.o : %.c
+	time $(CC) $(CFLAGS) -c $< -o $@ 
 
 $(ARCH)/applic.o: $(APPLIC_CC)
 $(ARCH)/application.o: $(APPLICATION_CC)

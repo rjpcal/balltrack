@@ -3,7 +3,7 @@
 // timing.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb  1 16:42:55 2000
-// written: Thu Mar  2 17:41:50 2000
+// written: Mon Jun 12 15:20:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -155,6 +155,7 @@ Reaction reaction_stack[ MAXTIMESTACKSIZE ];
 
 struct timeval ss_0;
 double response_time_stack_0;
+struct timeval response_timeval_0;
 
 double percent_correct = 0.0;
 
@@ -178,6 +179,9 @@ void Timing::initTimeStack( double xtime, timeval* tp ) {
 DOTRACE("Timing::initTimeStack");
 
   response_time_stack_0 = xtime;
+
+  response_timeval_0 = *tp;
+
   response_stack[0].time = 0.0;
   stimulus_stack[0].time = 0.0;
   ss_0 = *tp;
@@ -208,6 +212,29 @@ DOTRACE("Timing::addToResponseStack");
 		exit(0);
     }
 }
+
+void Timing::addToResponseStack(long sec, long usec, int nbutton) {
+DOTRACE("Timing::addToResponseStack");
+
+  timeval tp;
+  tp.tv_sec = sec;
+  tp.tv_usec = usec;
+
+  double delta = elapsedMsec( &response_timeval_0, &tp);
+
+  response_stack[ RESPONSESTACKSIZE ].time = delta;
+
+  response_stack[ RESPONSESTACKSIZE ].val = nbutton;
+
+  RESPONSESTACKSIZE++;
+
+  if( RESPONSESTACKSIZE >= MAXTIMESTACKSIZE )
+    {
+		printf( " MAXTIMESTACKSIZE too small\n" );
+		exit(0);
+    }
+}
+
 
 void Timing::addToStimulusStack(int correct_nbutton) {
 DOTRACE("Timing::addToStimulusStack");

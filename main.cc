@@ -3,7 +3,7 @@
 // main.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 12:27:11 2000
-// written: Mon Jun 12 10:49:50 2000
+// written: Fri Jun 23 17:51:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "params.h"
 #include "xhints.h"
 
+#include <cstdlib>
 #include <iostream.h>
 #include <strstream.h>
 
@@ -82,6 +83,10 @@ int main( int argc, char** argv ) {
 	 }
 
   BallsExpt theApp(hints); 
+
+#ifndef IRIX6
+  system("./serial&");
+#endif
 
   theApp.run();
 

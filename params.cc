@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Mon Jun 12 11:44:54 2000
+// written: Mon Jun 12 16:28:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@
 AppMode APPLICATION_MODE = EYE_TRACKING;
 int FMRI_SESSION_NUMBER = 1;
 
-int   FUDGEFRAME = 16;
+int   FUDGEFRAME = 10;
 
 int   DISPLAY_X;
 int   DISPLAY_Y;
@@ -429,6 +429,37 @@ DOTRACE("SetParameters2");
 
   EnterFloat( app, &REMIND_DURATION );
   sprintf( word, " %-8.2f", REMIND_DURATION );
+  strcat( text[1], word );
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
+
+  CheckParams(gfx);
+}
+
+void SetParameters3(Application* app) {
+DOTRACE("SetParameters2");
+
+  char word[STRINGSIZE], text[4][STRINGSIZE];
+
+  Graphics* gfx = app->graphics();
+
+  gfx->clearFrontBuffer();
+  for (int ii = 0; ii < 2; ++ii) {
+	 gfx->clearBackBuffer();
+	 gfx->swapBuffers();
+  }
+
+  sprintf( text[0], "       SESSION_NUMBER" );
+  sprintf( text[1], "" );
+  sprintf( text[2], "" );
+  sprintf( text[3], "       %-8d", 
+			  FMRI_SESSION_NUMBER );
+
+  gfx->showMenu(text, 4);
+  gfx->swapBuffers();
+
+  EnterInt( app, &FMRI_SESSION_NUMBER );
+  sprintf( word, "       %-8d", FMRI_SESSION_NUMBER );
   strcat( text[1], word );
   gfx->showMenu(text, 4);
   gfx->swapBuffers();

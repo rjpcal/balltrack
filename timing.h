@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:52:28 2000
-// written: Mon Feb 28 11:51:48 2000
+// written: Mon Jun 12 15:17:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,8 @@ public:
 
   // Used in Application::timeButtonEvent
   static void addToResponseStack(double xtime, int nbutton);
+
+  static void addToResponseStack(long sec, long usec, int nbutton);
 
   static Timer mainTimer;
   static Timer logTimer;

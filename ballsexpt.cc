@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Mon Jun 12 11:29:11 2000
+// written: Tue Jun 13 14:58:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,16 +26,44 @@
 #include "debug.h"
 
 namespace {
-  int TRACK_NUMBERS[4][4] = {
-	 {2,4,3,5},
-	 {3,2,5,4},
-	 {4,5,2,3},
-	 {5,3,4,2}
+  const int NUM_TRIALS = 8;
+
+  const int TRACK_NUMBERS[8][NUM_TRIALS] = {
+	 {2, 0, 4, 5, 3, 0, 5, 2}, 
+	 {3, 4, 2, 0, 5, 3, 4, 0}, 
+	 {4, 0, 5, 3, 2, 0, 3, 4}, 
+	 {5, 2, 3, 0, 4, 5, 2, 0}, 
+	 {2, 0, 4, 5, 3, 0, 5, 2}, 
+	 {3, 4, 2, 0, 5, 3, 4, 0}, 
+	 {4, 0, 5, 3, 2, 0, 3, 4}, 
+	 {5, 2, 3, 0, 4, 5, 2, 0},
   };
 }
 
+struct BallsExpt::Impl {
+  /// XXX this needs to be at least as big as (CYCLE_NUMBER+1)*NUM_CONDITIONS
+  timeval itsTimePoints[128];
+  int itsTpIndex;
+  Balls itsBalls;
+
+  void logTimePoints(FILE* fp)
+	 {
+		for( int i = 0; i < itsTpIndex; ++i )
+		  {
+			 printf( " %d %lf\n", i,
+						Timing::elapsedMsec( &itsTimePoints[0], 
+													&itsTimePoints[i] ) );
+			 fprintf( fp, " %d %lf\n", i,
+						 Timing::elapsedMsec( &itsTimePoints[0],
+													 &itsTimePoints[i] ) );
+		  }
+	 }
+};
+
+
 BallsExpt::BallsExpt(const XHints& hints) :
-  MenuApplication(hints)
+  MenuApplication(hints),
+  itsImpl(new Impl)
 {
 DOTRACE("BallsExpt::BallsExpt");
   Balls::generateColors();
@@ -45,21 +73,62 @@ DOTRACE("BallsExpt::BallsExpt");
   }
 }
 
+BallsExpt::~BallsExpt(){
+DOTRACE("BallsExpt::~BallsExpt");
+  delete itsImpl;
+}
+
+
 void BallsExpt::fillMenu(char menu[][STRINGSIZE], int nitems) {
 DOTRACE("BallsExpt::fillMenu");
 
-  if (nitems < 7) {
+  if (nitems < 8) {
 	 strcpy( menu[0], "insufficient space to create menu" );
   } 
   else {
 	 strcpy( menu[0], "r     run experiment");
 	 strcpy( menu[1], "x     set parameters 1");
 	 strcpy( menu[2], "y     set parameters 2");
-	 strcpy( menu[3], "p     show parameters");
-	 strcpy( menu[4], "q     quit program");
-	 strcpy( menu[5], "");
-	 sprintf( menu[6], "recent percent correct: %d",
+	 strcpy( menu[3], "z     set parameters 3");
+	 strcpy( menu[4], "p     show parameters");
+	 strcpy( menu[5], "q     quit program");
+	 strcpy( menu[6], "");
+	 sprintf( menu[7], "recent percent correct: %d",
 				 int(Timing::recentPercentCorrect()) );
+  }
+}
+
+void BallsExpt::onMenuChoice(char c) {
+DOTRACE("BallsExpt::onMenuChoice");
+  switch( c ) {
+  case 'q':
+	 this->quit(0);
+	 break;
+
+  case 'r':
+	 runExperiment();
+	 makeMenu();
+	 break;
+
+  case 'x':
+	 SetParameters1(this);
+	 break;
+
+  case 'y':
+	 SetParameters2(this);
+	 break;
+
+  case 'z':
+	 SetParameters3(this);
+	 break;
+
+  case 'p':
+	 ListParams(this);
+	 break;
+
+  default:
+	 makeMenu();
+	 break;
   }
 }
 
@@ -89,13 +158,6 @@ DOTRACE("BallsExpt::runFixationCalibration");
 void BallsExpt::runExperiment() {
 DOTRACE("BallsExpt::runExperiment");
 
-  const int NUM_CONDITIONS = 3; 
-
-  /// XXX this needs to be at least as big as (CYCLE_NUMBER+1)*NUM_CONDITIONS
-  struct timeval tp[128];
-
-  Balls theBalls;
-
   FILE *fl;
   Openfile(this, &fl, APPEND, "tme");
   LogParams(this, fl);
@@ -111,99 +173,22 @@ DOTRACE("BallsExpt::runExperiment");
   }
 
   Timing::mainTimer.set();
-
-  Timing::getTime( &tp[0] );
-
+  Timing::getTime( &itsImpl->itsTimePoints[0] );
   Timing::mainTimer.wait( WAIT_DURATION );
 
-  int timepoint = 1;
-
+  itsImpl->itsTpIndex = 1;
 
   if (FMRI_SESSION == APPLICATION_MODE)
-	 {
-		for (int block = 0; block < 4; ++block)
-		  {
-			 BALL_TRACK_NUMBER =
-				TRACK_NUMBERS[ FMRI_SESSION_NUMBER-1 ][ block ];
-
-			 // Run active tracking trial with objective check
-			 theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
+	 runFmriExpt();
+  else if (EYE_TRACKING == APPLICATION_MODE)
+	 runEyeTrackingExpt();
+  else if (TRAINING == APPLICATION_MODE)
+	 runTrainingExpt();
 
 
-			 graphics()->writeAllPlanes();
+  Timing::getTime( &itsImpl->itsTimePoints[itsImpl->itsTpIndex++] );
 
-			 graphics()->clearFrontBuffer();
-
-			 for (int k = 0; k < 2; ++k) {
-				graphics()->clearBackBuffer();
-				graphics()->drawCross();
-				graphics()->swapBuffers();
-			 }
-
-			 Timing::mainTimer.set();
-			 Timing::getTime( &tp[timepoint++] );
-			 Timing::mainTimer.wait( WAIT_DURATION );
-
-			 // Run passive trial
-			 theBalls.runTrial(graphics(), &tp[timepoint++], Balls::PASSIVE);
-
-
-			 graphics()->writeAllPlanes();
-			 graphics()->clearFrontBuffer();
-
-			 for (int kk = 0; kk < 2; ++kk) {
-				graphics()->clearBackBuffer();
-				graphics()->drawCross();
-				graphics()->swapBuffers();
-			 }
-
-			 Timing::mainTimer.set();
-			 Timing::getTime( &tp[timepoint++] );
-			 Timing::mainTimer.wait( WAIT_DURATION );
-		  }
-	 }
-  else 
-	 {
-		for( int cycle=0; cycle<CYCLE_NUMBER; ++cycle ) {
-
-		  if (EYE_TRACKING == APPLICATION_MODE)
-			 {
-				// Run active tracking trial
-				runFixationCalibration();
-				theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ALL);
-
-				// Run active tracking trial with objective check
-				runFixationCalibration();
-				theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
-
-				// Run passive trial
-				runFixationCalibration();
-				theBalls.runTrial(graphics(), &tp[timepoint++], Balls::PASSIVE);
-			 }
-
-		  if (TRAINING == APPLICATION_MODE)
-			 {
-				// Run active tracking trial
-				theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ALL);
-				// Run active tracking trial with objective check
-				theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
-			 }
-		}
-	 }
-
-//   Timing::mainTimer.set();
-
-  Timing::getTime( &tp[timepoint++] );
-
-//   Timing::mainTimer.wait( WAIT_DURATION );
-
-//   Timing::getTime( &tp[timepoint++] );
-
-  for( int i=0; i<timepoint; i++ )
-    {
-		printf( " %d %lf\n", i, Timing::elapsedMsec( &tp[0], &tp[i] ) );
-		fprintf( fl, " %d %lf\n", i, Timing::elapsedMsec( &tp[0], &tp[i] ) );
-    }
+  itsImpl->logTimePoints(fl);
 
   graphics()->writeAllPlanes();
 
@@ -213,6 +198,93 @@ DOTRACE("BallsExpt::runExperiment");
 
   Closefile( fl );
 }
+
+void BallsExpt::runFmriExpt() {
+DOTRACE("BallsExpt::runFmriExpt");
+
+  for (int trial = 0; trial < NUM_TRIALS; ++trial)
+	 {
+		int track_number = 
+		  TRACK_NUMBERS[ FMRI_SESSION_NUMBER-1 ][ trial ];
+
+		if (track_number == 0)
+		  {
+			 if (FMRI_SESSION_NUMBER <= 4)
+				{
+				  // Run passive trial
+				  itsImpl->itsBalls.runTrial(
+                  graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+						Balls::PASSIVE);
+				}
+		  }
+		else
+		  {
+			 BALL_TRACK_NUMBER = track_number;
+
+			 // Run active tracking trial with objective check
+			 itsImpl->itsBalls.runTrial(
+               graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+					Balls::CHECK_ONE);
+		  }
+
+		// If there will be more trials, then do a fixation cross interval
+		if ( trial < (NUM_TRIALS-1) )
+		  {
+			 graphics()->writeAllPlanes();
+			 graphics()->clearFrontBuffer();
+
+			 for (int k = 0; k < 2; ++k) {
+				graphics()->clearBackBuffer();
+				graphics()->drawCross();
+				graphics()->swapBuffers();
+			 }
+
+			 Timing::mainTimer.set();
+			 Timing::getTime( &itsImpl->itsTimePoints[itsImpl->itsTpIndex++] );
+			 Timing::mainTimer.wait( WAIT_DURATION );
+		  }
+	 }
+}
+
+void BallsExpt::runEyeTrackingExpt() {
+DOTRACE("BallsExpt::runEyeTrackingExpt");
+
+  for( int cycle=0; cycle<CYCLE_NUMBER; ++cycle ) {
+	 // Run active tracking trial
+	 runFixationCalibration();
+	 itsImpl->itsBalls.runTrial(
+         graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+			Balls::CHECK_ALL);
+
+	 // Run active tracking trial with objective check
+	 runFixationCalibration();
+	 itsImpl->itsBalls.runTrial(
+         graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+			Balls::CHECK_ONE);
+
+	 // Run passive trial
+	 runFixationCalibration();
+	 itsImpl->itsBalls.runTrial(
+         graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+			Balls::PASSIVE);
+  }
+}
+
+void BallsExpt::runTrainingExpt() {
+DOTRACE("BallsExpt::runTrainingExpt");
+
+  for( int cycle=0; cycle<CYCLE_NUMBER; ++cycle ) {
+	 // Run active tracking trial
+	 itsImpl->itsBalls.runTrial(
+         graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+			Balls::CHECK_ALL);
+	 // Run active tracking trial with objective check
+	 itsImpl->itsBalls.runTrial(
+         graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+			Balls::CHECK_ONE);
+  }
+}
+
 
 static const char vcid_ballsexpt_cc[] = "$Header$";
 #endif // !BALLSEXPT_CC_DEFINED

@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:05:04 2000
-// written: Mon Jun 12 10:46:21 2000
+// written: Mon Jun 12 16:17:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,6 +72,7 @@ void PrintParams();
 
 void SetParameters1(Application* app);
 void SetParameters2(Application* app);
+void SetParameters3(Application* app);
 
 static const char vcid_params_h[] = "$Header$";
 #endif // !PARAMS_H_DEFINED

@@ -3,7 +3,7 @@
 // xstuff.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:55 2000
-// written: Wed Mar  1 15:42:50 2000
+// written: Mon Jun 12 15:26:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -202,6 +202,19 @@ DOTRACE("XStuff::createWindow");
 									  ( CWBackPixel | CWColormap | CWBorderPixel | 
 										 CWEventMask ),
 									  &winAttributes );
+
+  FILE* fp;
+
+  if( ( fp = fopen( "wdwptr", "w" ) ) == NULL )
+	 {
+		printf( " cannot open file\n" );
+		exit(-1);
+	 }
+   
+  fprintf( fp, "%ld\n", itsWindow );
+  printf( " window written %ld\n", itsWindow );
+
+  fclose( fp );
 }
 
 void XStuff::selectInput() {

@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Mon Jun 12 12:19:13 2000
+// written: Mon Jun 12 16:35:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -162,8 +162,9 @@ DOTRACE("Application::buttonPressLoop");
 								  ButtonPressMask | KeyPressMask,
 								  &event ) )
 	 {
-		if( ((event.type == ButtonPress) || (event.type == KeyPress)) &&
-			 event.xbutton.window == itsXStuff->window() )
+		if( ((event.type == ButtonPress) || (event.type == KeyPress))
+//  			 && event.xbutton.window == itsXStuff->window()
+			 )
 		  {
 			 timeButtonEvent( &event );
 		  }
@@ -223,15 +224,17 @@ DOTRACE("Application::timeButtonEvent");
 	 }
   else if (event->type = KeyPress)
 	 {
-		char buf[20];
+		int keycode = event->xkey.keycode;
 
-		int count = XLookupString(&(event->xkey), buf, 20, 0, 0);
-		DebugEvalNL(buf[0]);
-		switch (buf[0]) {
+		DebugEvalNL(keycode);
+
+		switch (keycode) {
 		case 'a': case 'b': case 'c': case 'd':
+		case 'A': case 'B': case 'C': case 'D':
 		  nbutton = LEFTBUTTON;
 		  break;
 		case 'e': case 'f': case 'g': case 'h':
+		case 'E': case 'F': case 'G': case 'H':
 		  nbutton = MIDDLEBUTTON;
 		  break;
 		default:
@@ -239,7 +242,9 @@ DOTRACE("Application::timeButtonEvent");
 		  break;
 		}
 
-		Timing::addToResponseStack( (double) event->xkey.time, nbutton );
+		Timing::addToResponseStack( (long) event->xkey.subwindow /* sec */,
+											 (long) event->xkey.time /* usec */,
+											 nbutton );
 	 }
 }
 
