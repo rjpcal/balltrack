@@ -1,0 +1,199 @@
+############################# -* text -*- ############################
+#
+# This program runs a balltracking psychophysics experiment.
+#
+# Rob Peters <rjpeters at usc dot edu>
+# http://ilab.usc.edu/rjpeters/
+#
+# $Id$
+# $HeadURL$
+#
+######################################################################
+
+1. BUILDING THE PROGRAM
+
+   You should be able to build the program on a linux-type system by
+   just running 'make'. If that doesn't work, you may need to edit a
+   few of the variables at the top of the Makefile to point to your
+   c++ compiler (the CXX variable), you desired compiler flags
+   (CXXFLAGS), linker flags (LDFLAGS), and OpenGL and X11 libraries
+   (LIBS).
+
+   Once the program has been built, the executable will be sitting in
+   './bin/balltrack', unless you changed the $(prefix) variable in the
+   Makefile.
+
+2. COMMAND-LINE OPTIONS
+
+   If you run the program with no options (i.e. just type
+   './bin/balltrack') it will display a description of the usage
+   options for the program, which are reproduced here:
+
+   usage: ./bin/balltrack [options] <sta-file-name>
+
+       <sta-file-name> should be the base name of a file with the
+           extension '.sta', that contains initial parameter
+           settings. For example, if you have a file named
+           'sample.sta', then you should pass 'sample' as the last
+           argument to the progam.
+
+       [options] can be any of the following, although it is not
+           necessary to pass any options at all. If you have problems
+           getting the program to start, try including '--depth 16' or
+           '--depth 8'.  You can check which video modes are available
+           on your system by running 'glxinfo'.
+
+           --mode-fmri              run in fMRI mode
+           --mode-train             run in training mode
+           --mode-eyetrack          run in eyetracking mode
+           --fmri-session-number    select from [1-4] with --mode-fmri
+
+           --makemovie              save video frames as image files
+           --physics                show ball physics for debugging
+
+           --depth [bits]           set the window depth in bits [8,16,24]
+           --width [pixels]         set the window width in pixels
+           --height [pixels]        set the window height in pixels
+
+           --help                   show this help message
+
+3. RUNNING THE PROGRAM
+
+   This distribution includes a sample 'xxx.sta' file, which you can
+   run by doing './bin/balltrack xxx' (NOTE: just put 'xxx' without
+   the '.sta').
+
+3.1 MAIN MENU
+
+   Once you start the program with a 'sta' file, you'll get to a main
+   menu where your options are as follows:
+
+     r  run experiment
+     x  set parameters
+     p  show parameters
+     q  quit program
+
+3.1.1 'r'
+
+   'r' does the obvious, and will run the balltracking experiment
+       according to whatever parameters you have chosen. Returns to
+       the main menu after all the trials have been run.
+
+3.1.2 'x'
+
+   'x' will take you to a screen where you can set the parameters one
+       by one. There are four columns: the first column gives a
+       description of the parameter, the second gives the parameter
+       name as it would appear in the 'sta' file, the third shows the
+       parameter's previous value, and the fourth shows the
+       parameter's new value (if any).As each parameter is
+       highlighted, you can either type a new value for that
+       parameter, followed by <space>, or you can leave the parameter
+       as is, by just typing <space>. The parameters are arranged in
+       four groups:
+
+       (1) The first group concerns the screen layout (window size
+           and arena size). You can't change the window size once
+           the program has started (use the command-line options
+           --width and --height and --depth to do that), but you can
+           change the "arena size", which is the invisible rectangle
+           that bounds the balls as they bounce around.
+
+       (2) Options concerning the length and sequence of
+           ball-tracking trials.
+
+           # cycles .......... Each cycle consists of one or more
+                               "epochs", depending on which --mode
+                               was specified on startup. In
+                               --mode-fmri, we do an alternating
+                               series of CHECK_ONE and PASSIVE
+                               epochs. In --mode-eyetrack, we do an
+                               alternating series of CHECK_ALL,
+                               CHECK_ONE, and PASSIVE. Finally, in
+                               --mode-training, we alternate between
+                               CHECK_ALL and CHECK_ONE. (See code in
+                               ballsexpt.cc).
+
+           wait duration ..... Length of time to wait after pressing
+                               'r', before showing anything on the
+                               screen.
+
+           epoch duration .... Total length of time that each
+                               "epoch" should last.
+
+           pause duration .... Length of time during which
+                               instructions are shown on screen.
+
+           remind duration ... Length of time for which balls are
+                               frozen on screen, both at the
+                               beginning of each trial, and during
+                               each "remind" interval throughout the
+                               trial.
+
+           # reminds per epoch The number of "remind" intervals in
+                               each trial.
+
+           The relationships between the various timing intervals
+           can be seen in the code for Params::ballMotionSeconds()
+           in params.h. Here we see that the length of one epoch is
+           made up of the following components:
+
+           epochSeconds =
+               pauseSeconds        // (while instructions are displayed)
+             + remindSeconds       // (during the initial ball position)
+             + remindsPerEpoch
+               * (  remindSeconds      // (while the balls are paused, expecting a user button press)
+                  + ballMotionSeconds) // (while the balls are moving)
+
+           Following is a flow chart showing the main events in an
+           "epoch".
+
+           one "epoch" (i.e. one 'r' keypress from the main menu)
+           | [BallsExpt::runExperiment()]
+           |
+           +-> wait duration (seconds)
+           |     [gfxWait() call inside runExperiment()]
+           |
+           +-> N cycles
+               | [BallsExpt::runFmriExpt(), or runEyeTrackingExpt(), or runTrainingExpt()
+               |
+               +-> some number of trials, depending on startup --mode
+                   | [Balls::runTrial()]
+                   |
+                   +-> show instruction ("PASSIVE", "ALL", or "TRACK")
+                   |     [drawMessage() in Balls::runTrial()]
+                   |
+                   +-> pause duration
+                   |     [gfxWait() in Balls::runTrial()]
+                   |
+                   +-> show initial ball position, possibly highlighting balls to be tracked
+                   |     [drawNBalls() in Balls::runTrial()]
+                   |
+                   +-> remind duration
+                   |     [gfxWait() in Balls::runTrial()]
+                   |
+                   +-> repeat by # reminds per epoch:
+                       (1) move balls for some length of time,
+                       (2) then pause the balls and do a "remind"
+
+
+       (3) Options concerning the balls themselves: their number,
+           size, speed, collision distance, twist rate.
+
+       (4) Debug options. Currently the only option here is "show
+           ball physics", which, if selected, will cause various
+           additional things to be drawn during the ball display to
+           provide visual feedback as to how the ball motion and
+           rendering algorithm is proceeding.
+
+       Return to the main menu with a final <space> press.
+
+3.1.3 'p'
+
+   'p' just shows the parameters as they would currently exist in the
+       'sta' file. Press <space> to return to the main menu.
+
+3.1.4 'x'
+
+   'x' exits the program, saving the current parameter values back to
+       the 'sta' file
