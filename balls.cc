@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Mon Jun 12 12:15:42 2000
+// written: Mon Jun 12 14:13:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -444,7 +444,7 @@ DOTRACE("Balls::runTrial");
 	 gfx->drawMessage( " ALL" );	 
   }
   else if (ttype == Balls::CHECK_ONE) {
-	 gfx->drawMessage( " TRACK" );
+	 gfx->drawMessage( "TRACK" );
   }
 
   gfx->swapBuffers();
