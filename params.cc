@@ -401,11 +401,12 @@ namespace
 
   struct ParamMenu
   {
-    ParamMenu()
+    ParamMenu() :
+      prefix("      ")
     {
       oss.setf(std::ios::left | std::ios::fixed);
       oss.precision(2);
-      oss << "      ";
+      oss << prefix;
     }
 
     template <class T>
@@ -427,6 +428,26 @@ namespace
       gfx.swapBuffers();
     }
 
+    void setupMenu3()
+    {
+      std::ostringstream s;
+      s.setf(std::ios::left | std::ios::fixed);
+      s.precision(2);
+      s << prefix;
+      for (unsigned int i = 0; i < items.size(); ++i)
+        {
+          if (items[i].dvar != 0)
+            {
+              s << " " << std::setw(6) << *items[i].dvar;
+            }
+          else if (items[i].ivar != 0)
+            {
+              s << " " << std::setw(6) << *items[i].ivar;
+            }
+        }
+      menu[3] = s.str();
+    }
+
     void go(Graphics& gfx)
     {
       for (unsigned int i = 0; i < items.size(); ++i)
@@ -445,6 +466,7 @@ namespace
         }
     }
 
+    const char* prefix;
     std::string menu[4];
     std::ostringstream oss;
     std::vector<MenuItem> items;
@@ -455,9 +477,6 @@ void Params::setGroup1(Graphics& gfx)
 {
 DOTRACE("Params::setGroup1");
 
-  const int bufsize = 256;
-  char buf[bufsize];
-
   ParamMenu pm;
 
   gfx.clearBackBuffer();
@@ -465,13 +484,6 @@ DOTRACE("Params::setGroup1");
   pm.menu[0] = " BALL  NUMBER TRACK  SPEED  SIZE   MINDIS RADIUS SIGMA2 TWIST";
   pm.menu[1] = "";
   pm.menu[2] = "";
-  snprintf(buf, bufsize, "       %-6d %-6d %-6.2f %-6d %-6d %-6.2f %-6.2f %-6.2f",
-           this->ballNumber, this->ballTrackNumber, this->ballSpeed,
-           this->ballPixmapSize, this->ballMinDistance, this->ballRadius,
-           this->ballSigma2, this->ballTwistAngle);
-  pm.menu[3] = buf;
-
-  pm.redraw(gfx);
 
   pm.addItem(this->ballNumber);
   pm.addItem(this->ballTrackNumber);
@@ -481,6 +493,10 @@ DOTRACE("Params::setGroup1");
   pm.addItem(this->ballRadius);
   pm.addItem(this->ballSigma2);
   pm.addItem(this->ballTwistAngle);
+
+  pm.setupMenu3();
+
+  pm.redraw(gfx);
 
   pm.go(gfx);
 }
