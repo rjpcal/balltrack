@@ -403,6 +403,12 @@ namespace
       width = std::max(6u, n.length() + 1);
     }
 
+    bool changed() const
+    {
+      if (dvar != 0) return (*dvar != dorig);
+      return (*ivar != iorig);
+    }
+
     std::string name;
     unsigned int width;
 
@@ -426,7 +432,7 @@ namespace
 
     void showVmenu(Graphics& gfx, unsigned int nitems)
     {
-      std::vector<std::string> vmenu;
+      std::vector<TextLine> vmenu;
 
       unsigned int maxwid = 0;
 
@@ -473,11 +479,21 @@ namespace
               oss << sep << std::setw(6) << "???";
             }
 
-          vmenu.push_back(oss.str());
+          if (i < nitems)
+            {
+              if (items[i].changed())
+                vmenu.push_back(TextLine(oss.str(), 0.7, 0.7, 0.5, 2));
+              else
+                vmenu.push_back(TextLine(oss.str(), 0.5, 0.5, 0.3, 1));
+            }
+          else if (i == nitems)
+            vmenu.push_back(TextLine(oss.str(), 0.2, 1.0, 0.2, 2));
+          else
+            vmenu.push_back(TextLine(oss.str(), 0.5, 0.6, 0.5, 1));
         }
 
       gfx.clearBackBuffer();
-      gfx.drawStrings(&vmenu[0], vmenu.size(), 50, -100, 16, 2);
+      gfx.drawText(&vmenu[0], vmenu.size(), 50, -100, 16);
       gfx.swapBuffers();
     }
 

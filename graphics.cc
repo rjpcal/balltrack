@@ -35,7 +35,8 @@ namespace
 {
   void drawGLText(const std::string& word, int stroke_width,
                   double x_pos, double y_pos,
-                  double char_width, double char_height)
+                  double char_width, double char_height,
+                  double r = 1.0, double g = 1.0, double b = 1.0)
   {
     DOTRACE("<graphics.cc>::drawGLText");
 
@@ -44,7 +45,7 @@ namespace
     const double x_scale = char_width/5.0;
     const double y_scale = char_height/6.0;
 
-    glColor3d(1.0, 1.0, 1.0);
+    glColor3d(r, g, b);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -61,6 +62,8 @@ namespace
       glPopAttrib();
     }
     glPopMatrix();
+
+    glColor3d(1.0, 1.0, 1.0);
   }
 }
 
@@ -192,6 +195,26 @@ DOTRACE("Graphics::drawStrings");
     drawGLText(strings[i], stroke_width,
                xpos, ypos - (2*i*char_height),
                char_width, char_height);
+}
+
+void Graphics::drawText(const TextLine* text, int ntext,
+                        double xpos, double ypos, double char_width)
+{
+DOTRACE("Graphics::drawText");
+
+  const double char_height = char_width*1.5;
+
+  if (xpos < 0.0)
+    xpos = height() + xpos;
+
+  if (ypos < 0.0)
+    ypos = height() + ypos;
+
+  for (int i = 0; i < ntext; ++i)
+    drawGLText(text[i].text, text[i].stroke,
+               xpos, ypos - (2*i*char_height),
+               char_width, char_height,
+               text[i].r, text[i].g, text[i].b);
 }
 
 void Graphics::writePixmap(int x, int y, unsigned char* ptr, int size)

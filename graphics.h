@@ -21,6 +21,22 @@
 
 class Timepoint;
 
+struct TextLine
+{
+  TextLine(const std::string& s, int w=1) :
+    text(s), r(1.0), g(1.0), b(1.0), stroke(w) {}
+
+  TextLine(const std::string& s, double rr, double gg, double bb,
+           int w=1) :
+    text(s), r(rr), g(gg), b(bb), stroke(w) {}
+
+  std::string text;
+  double r;
+  double g;
+  double b;
+  int stroke;
+};
+
 class Graphics : public GlxWindow
 {
 public:
@@ -48,6 +64,9 @@ public:
   void drawStrings(const std::string* strings, int nstrings,
                    double xpos, double ypos, double char_width,
                    int stroke_width);
+
+  void drawText(const TextLine* text, int ntext,
+                double xpos, double ypos, double char_width);
 
   void writePixmap(int x, int y, unsigned char* ptr, int size);
 
