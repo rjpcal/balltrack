@@ -178,7 +178,7 @@ void BallsExpt::runExperiment()
 {
 DOTRACE("BallsExpt::runExperiment");
 
-  ParamFile tmefile(this, APPEND, "tme");
+  ParamFile tmefile(this, 'a', "tme");
 
   Params::logParams(this, tmefile);
 

@@ -157,7 +157,7 @@ void Params::readParams(Application* app, char extension[])
 {
 DOTRACE("Params::readParams");
 
-  ParamFile pmfile(app, READ, extension);
+  ParamFile pmfile(app, 'r', extension);
 
   pmfile.getInt(   DISPLAY_X  );
   pmfile.getInt(   DISPLAY_Y  );
@@ -219,7 +219,7 @@ void Params::writeParams(Application* app, char extension[])
 {
 DOTRACE("Params::writeParams");
 
-  ParamFile pmfile(app, WRITE, extension);
+  ParamFile pmfile(app, 'w', extension);
 
   appendParams(pmfile);
 }
@@ -286,7 +286,7 @@ DOTRACE("Params::displayParams");
 
   writeParams(app, "sta");
 
-  ParamFile pmfile(app, READ, "sta");
+  ParamFile pmfile(app, 'r', "sta");
 
   int curparam = MAXPARAMS - 1;
 

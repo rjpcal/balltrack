@@ -51,10 +51,6 @@ extern char  OBSERVER[];
 #define      RIGHTBUTTON           'r'
 #define      MIDDLEBUTTON          'm'
 
-#define      READ                  'r'
-#define      WRITE                 'w'
-#define      APPEND                'a'
-
 class ParamFile
 {
 private:
