@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:52:28 2000
-// written: Mon Jun 12 15:17:10 2000
+// written: Mon Mar  5 10:25:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,21 +28,6 @@ public:
 private:
   double itsSec;
   double itsUsec;
-};
-
-class VideoTimer {
-public:
-  VideoTimer(double frametime) : itsFrametime(frametime) {}
-
-  void set()
-	 { itsTimer.set(); }
-
-  void wait(int delay_frames)
-	 { itsTimer.wait(delay_frames*itsFrametime / 1000.0); }
-
-private:
-  double itsFrametime;
-  Timer itsTimer;
 };
 
 class Timing {
