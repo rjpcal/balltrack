@@ -27,6 +27,8 @@ public:
   Display* display() { return itsDisplay; }
   Window window() const { return itsWindow; }
 
+  char getKeypress() const;
+
 private:
   int itsWidth;
   int itsHeight;

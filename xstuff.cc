@@ -18,6 +18,7 @@
 #include <cstring>              // for strncpy
 #include <cstdlib>              // for getenv
 #include <cstdio>
+#include <X11/keysym.h>
 
 #include "trace.h"
 #include "debug.h"
@@ -150,6 +151,44 @@ DOTRACE("XStuff::openWindow");
   XSetWMName(itsDisplay, itsWindow, &window_name);
 
   XMapWindow( itsDisplay, itsWindow );
+}
+
+char XStuff::getKeypress() const
+{
+DOTRACE("XStuff::getKeypress");
+
+  while (true)
+    {
+      XEvent event;
+      XNextEvent( itsDisplay, &event );
+
+      if( event.type != KeyPress || event.xkey.window != itsWindow )
+        continue;
+
+      KeySym keysym;
+      char buffer[10];
+
+      // For some reason, if we pass a non-null XComposeStatus* to this
+      // function, the 'buffer' gets screwed up... very weird.
+      int count = XLookupString( (XKeyEvent *) &event, &buffer[0], 9,
+                                 &keysym, (XComposeStatus*) 0  );
+
+      buffer[ count ] = '\0';
+
+      DebugEvalNL(buffer);
+      if ( count > 1 || keysym == XK_Return ||
+           keysym == XK_BackSpace || keysym == XK_Delete )
+        {
+          continue;
+        }
+
+      if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
+           keysym >= XK_space    && keysym <= XK_asciitilde )
+        {
+          DebugEvalNL(buffer[0]);
+          return( buffer[0] );
+        }
+    }
 }
 
 static const char vcid_xstuff_cc[] = "$Header$";

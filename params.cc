@@ -56,8 +56,6 @@ int   BORDER_Y;
 int   FRAMES_PER_REMIND;
 
 // Prototypes
-void GetWord(Application* app, char* buf, int sz);
-
 void EnterInt( Application* app, int* pi );
 void EnterFloat( Application* app, float* pf );
 void EnterText( Application* app, char* ps );
@@ -477,27 +475,12 @@ DOTRACE("SetParameters2");
   RecomputeParams(gfx);
 }
 
-void GetWord(Application* app, char* buf, int sz)
-{
-DOTRACE("GetWord");
-
-  int n = 0;
-  char c;
-
-  while( ( c = app->getKeystroke() ) != ' '  && n < sz )
-    {
-      buf[n++] = c;
-    }
-
-  buf[n] = '\0';
-}
-
 void EnterInt( Application* app, int* pi )
 {
 DOTRACE("EnterInt");
 
   char word[STRINGSIZE];
-  GetWord(app, word, STRINGSIZE);
+  app->graphics().xstuff().getWord(word, STRINGSIZE);
 
   sscanf( word, "%d", pi );
 }
@@ -507,7 +490,7 @@ void EnterFloat( Application* app, float* pf )
 DOTRACE("EnterFloat");
 
   char word[STRINGSIZE];
-  GetWord(app, word, STRINGSIZE);
+  app->graphics().xstuff().getWord(word, STRINGSIZE);
 
   sscanf( word, "%f", pf );
 }
@@ -517,7 +500,7 @@ void EnterText( Application* app, char* ps )
 DOTRACE("EnterText");
 
   char word[STRINGSIZE];
-  GetWord(app, word, STRINGSIZE);
+  app->graphics().xstuff().getWord(word, STRINGSIZE);
 
   sscanf( word, "%s", ps );
 }

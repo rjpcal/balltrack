@@ -195,39 +195,7 @@ char Application::getKeystroke()
 {
 DOTRACE("Application::getKeystroke");
 
-  while (true)
-    {
-      XEvent event;
-      XNextEvent( itsGraphics.xstuff().display(), &event );
-
-      if( event.type != KeyPress ||
-          event.xkey.window != itsGraphics.xstuff().window() )
-        continue;
-
-      KeySym keysym;
-      char buffer[10];
-
-      // For some reason, if we pass a non-null XComposeStatus* to this
-      // function, the 'buffer' gets screwed up... very weird.
-      int count = XLookupString( (XKeyEvent *) &event, &buffer[0], 9,
-                                 &keysym, (XComposeStatus*) 0  );
-
-      buffer[ count ] = '\0';
-
-      DebugEvalNL(buffer);
-      if ( count > 1 || keysym == XK_Return ||
-           keysym == XK_BackSpace || keysym == XK_Delete )
-        {
-          continue;
-        }
-
-      if ( keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
-           keysym >= XK_space    && keysym <= XK_asciitilde )
-        {
-          DebugEvalNL(buffer[0]);
-          return( buffer[0] );
-        }
-    }
+  return itsGraphics.xstuff().getKeypress();
 }
 
 static const char vcid_application_cc[] = "$Header$";
