@@ -91,7 +91,7 @@ private:
   int   fudgeframes;
 public:
   int   remindsPerEpoch; // = 72;
-  int   FMRI_SESSION_NUMBER;
+  int   fmriSessionNumber;
 
 private:
   void recompute(Graphics& gfx);

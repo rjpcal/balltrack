@@ -239,7 +239,7 @@ DOTRACE("BallsExpt::runFmriExpt");
   for (int trial = 0; trial < NUM_TRIALS; ++trial)
     {
       int track_number =
-        TRACK_NUMBERS[ rep->params.FMRI_SESSION_NUMBER-1 ][ trial ];
+        TRACK_NUMBERS[ rep->params.fmriSessionNumber-1 ][ trial ];
 
       if (track_number < 0)
         {

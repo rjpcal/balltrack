@@ -143,7 +143,7 @@ Params::Params(int argc, char** argv) :
   framesPerRemind(),
   fudgeframes(10),
   remindsPerEpoch(),
-  FMRI_SESSION_NUMBER(1)
+  fmriSessionNumber(1)
 {
   this->filestem[0] = '\0';
   this->observer[0] = '\0';
@@ -156,7 +156,7 @@ Params::Params(int argc, char** argv) :
     {
       if (strcmp(argv[i], "--session") == 0)
         {
-          this->FMRI_SESSION_NUMBER = atoi(argv[++i]);
+          this->fmriSessionNumber = atoi(argv[++i]);
         }
       else if (strcmp(argv[i], "--fmri") == 0)
         {
@@ -197,8 +197,8 @@ Params::Params(int argc, char** argv) :
 
   if (Params::FMRI_SESSION == this->appMode)
     {
-      if (this->FMRI_SESSION_NUMBER < 0 ||
-          this->FMRI_SESSION_NUMBER > 4)
+      if (this->fmriSessionNumber < 0 ||
+          this->fmriSessionNumber > 4)
         {
           fprintf(stderr, "session number must be 1, 2, 3, or 4\n");
           exit(1);
@@ -237,7 +237,7 @@ DOTRACE("Params::readFromFile");
   // startup time
   pmfile.ignoreText();
 
-  pmfile.getInt(FMRI_SESSION_NUMBER);
+  pmfile.getInt(fmriSessionNumber);
 
   this->recompute(gfx);
 }
@@ -284,7 +284,7 @@ DOTRACE("Params::appendToFile");
     }
 
   pmfile.putText   (app_mode,         "APPLICATION_MODE");
-  pmfile.putInt    (FMRI_SESSION_NUMBER, "FMRI_SESSION_NUMBER");
+  pmfile.putInt    (fmriSessionNumber, "FMRI_SESSION_NUMBER");
 }
 
 void Params::showSettings(Graphics& gfx)
@@ -468,13 +468,13 @@ DOTRACE("Params::setGroup2");
   sprintf(text[0], "       SESSION_NUMBER");
   sprintf(text[1], "%s", "");
   sprintf(text[2], "%s", "");
-  sprintf(text[3], "       %-8d", FMRI_SESSION_NUMBER);
+  sprintf(text[3], "       %-8d", fmriSessionNumber);
 
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  gfx.xstuff().getInt(&FMRI_SESSION_NUMBER);
-  sprintf(word, "       %-8d", FMRI_SESSION_NUMBER);
+  gfx.xstuff().getInt(&fmriSessionNumber);
+  sprintf(word, "       %-8d", fmriSessionNumber);
   strcat(text[1], word);
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
