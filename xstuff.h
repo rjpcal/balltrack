@@ -18,7 +18,6 @@
 
 typedef void ExposeFunc(void*);
 typedef bool KeyFunc(void*, double xtime, char c);
-typedef void ButtonFunc(void*, double xtime, int button_number);
 
 struct XStuff
 {
