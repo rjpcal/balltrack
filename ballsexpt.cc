@@ -268,7 +268,6 @@ DOTRACE("BallsExpt::makeMenu");
 
   rep->gfx.clearBackBuffer();
   rep->gfx.drawStrings(menu, nitems, 100, -200, 20);
-
   rep->gfx.swapBuffers();
 }
 
@@ -320,12 +319,9 @@ DOTRACE("BallsExpt::runExperiment");
   tmefile.putLine("");
   tmefile.putLine("");
 
-  for (int k = 0; k < 2; ++k)
-    {
-      rep->gfx.clearBackBuffer();
-      rep->gfx.drawCross();
-      rep->gfx.swapBuffers();
-    }
+  rep->gfx.clearBackBuffer();
+  rep->gfx.drawCross();
+  rep->gfx.swapBuffers();
 
   Timer timer;
   timer.reset();
@@ -396,12 +392,9 @@ DOTRACE("BallsExpt::runFmriExpt");
       // If there will be more trials, then do a fixation cross interval
       if (trial < (NUM_TRIALS-1))
         {
-          for (int k = 0; k < 2; ++k)
-            {
-              rep->gfx.clearBackBuffer();
-              rep->gfx.drawCross();
-              rep->gfx.swapBuffers();
-            }
+          rep->gfx.clearBackBuffer();
+          rep->gfx.drawCross();
+          rep->gfx.swapBuffers();
 
           Timer t;
           t.reset();

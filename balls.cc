@@ -344,17 +344,11 @@ DOTRACE("Balls::runTrial");
 
   gfx.clearBackBuffer();
 
-  if (ttype == Balls::PASSIVE)
+  switch (ttype)
     {
-      gfx.drawMessage("PASSIVE");
-    }
-  else if (ttype == Balls::CHECK_ALL)
-    {
-      gfx.drawMessage(" ALL");
-    }
-  else if (ttype == Balls::CHECK_ONE)
-    {
-      gfx.drawMessage("TRACK");
+    case PASSIVE:   gfx.drawMessage("PASSIVE"); break;
+    case CHECK_ALL: gfx.drawMessage(" ALL"); break;
+    case CHECK_ONE: gfx.drawMessage("TRACK"); break;
     }
 
   gfx.swapBuffers();
@@ -377,9 +371,9 @@ DOTRACE("Balls::runTrial");
   timer.reset();
 
   gfx.clearBackBuffer();
-  gfx.drawCross();
 
   drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
+  gfx.drawCross();
 
   if (ttype == Balls::CHECK_ALL || ttype == Balls::CHECK_ONE)
     {
@@ -394,8 +388,8 @@ DOTRACE("Balls::runTrial");
   if (ttype == Balls::CHECK_ALL || ttype == Balls::CHECK_ONE)
     {
       gfx.clearBackBuffer();
-      gfx.drawCross();
       drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
+      gfx.drawCross();
       gfx.swapBuffers();
     }
 
@@ -425,9 +419,9 @@ DOTRACE("Balls::runTrial");
         {
           gfx.clearBackBuffer();
 
-          gfx.drawCross();
           drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
           drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
+          gfx.drawCross();
 
           gfx.swapBuffers();
 
@@ -452,9 +446,9 @@ DOTRACE("Balls::runTrial");
           // Redraw the balls with the random ball highlighted
           gfx.clearBackBuffer();
 
-          gfx.drawCross();
           drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
           drawNHiBalls(gfx, random_ball, random_ball+1, &hilitemap[0]);
+          gfx.drawCross();
 
           gfx.swapBuffers();
 
@@ -472,10 +466,10 @@ DOTRACE("Balls::runTrial");
           // highlighted in order to cue the next trial
           gfx.clearBackBuffer();
 
-          gfx.drawCross();
           drawNHiBalls(gfx, random_ball, random_ball+1, &pixmap[0]);
           drawNBalls(gfx, itsParams.ballTrackNumber, itsParams.ballNumber, &pixmap[0]);
           drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &hilitemap[0]);
+          gfx.drawCross();
 
           gfx.swapBuffers();
 
@@ -487,9 +481,9 @@ DOTRACE("Balls::runTrial");
         }
 
       gfx.clearBackBuffer();
-      gfx.drawCross();
-
       drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
+      gfx.drawCross();
+      gfx.swapBuffers();
     }
 
   gfx.clearBackBuffer();

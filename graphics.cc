@@ -123,16 +123,13 @@ DOTRACE("Graphics::initWindow");
   glLoadIdentity();
   glOrtho(0, width(), 0, height(), -1.0, 1.0);
 
-  glClearIndex(0);
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  // forces the frame time to be computed and then cached in the base class
+  // forces the frame time to be computed and then cached
   frameTime();
 
-  clearBackBuffer();
-  swapBuffers();
-  clearBackBuffer();
-  swapBuffers();
+  this->clearBackBuffer();
+  this->swapBuffers();
+  this->clearBackBuffer();
+  this->swapBuffers();
 }
 
 void Graphics::gfxWait(Timer& t, double delaySeconds)
@@ -293,32 +290,25 @@ DOTRACE("Graphics::stopRecording");
   isItRecording = false;
 }
 
-void Graphics::waitFrameCount(int number)
-{
-DOTRACE("Graphics::waitFrameCount");
-  while (number--)
-    swapBuffers();
-}
-
 double Graphics::computeFrameTime()
 {
 DOTRACE("Graphics::computeFrameTime");
 
-  struct timeval tp[2];
-
   clearBackBuffer();
 
-  waitFrameCount(1);
+  swapBuffers();
 
-  tp[0] = Timing::now();
+  const timeval start = Timing::now();
 
-  waitFrameCount(99);
+  for (int i = 0; i <= 99; ++i)
+    {
+      clearBackBuffer();
+      swapBuffers();
+    }
 
-  tp[1] = Timing::now();
+  const timeval stop = Timing::now();
 
-  double frametime = Timing::elapsedMsec(tp[0], tp[1]) / 100.0;
-
-  return frametime;
+  return Timing::elapsedMsec(start, stop) / 100.0;
 }
 
 static const char vcid_graphics_cc[] = "$Header$";

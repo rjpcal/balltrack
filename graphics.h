@@ -64,7 +64,6 @@ public:
   void stopRecording();
 
 private:
-  void waitFrameCount(int number);
   double computeFrameTime();
 
   const int itsWidth;
