@@ -418,7 +418,7 @@ DOTRACE("Balls::pickInitialPositions");
 
           if (++c > maxtries)
             {
-              std::cerr << "couldn't find a satisfactory initial ball configuration\n"
+              std::cerr << "\nERROR: couldn't find a satisfactory initial ball configuration\n"
                         << "(try increasing DISPLAY_X or DISPLAY_Y, or decreasing BALL_NUMBER)\n";
               exit(1);
             }
@@ -446,8 +446,8 @@ DOTRACE("Balls::pickNextPositions");
                                          itsParams.displayY,
                                          itsParams.ballPixmapSize))
         {
-          std::cerr << "OOPS! A ball sneaked out of the arena (after moving)...\n"
-                    << "Try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER\n";
+          std::cerr << "\nERROR: OOPS! A ball sneaked out of the arena (after moving)...\n"
+                    << "(try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER)\n";
           exit(1);
         }
     }
@@ -475,8 +475,8 @@ DOTRACE("Balls::pickNextPositions");
                                              itsParams.displayY,
                                              itsParams.ballPixmapSize))
             {
-              std::cerr << "OOPS! A ball sneaked out of the arena (after colliding)...\n"
-                        << "Try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER\n";
+              std::cerr << "\nERROR: OOPS! A ball sneaked out of the arena (after colliding)...\n"
+                        << "(try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER)\n";
               exit(1);
             }
 
@@ -485,8 +485,8 @@ DOTRACE("Balls::pickNextPositions");
                                              itsParams.displayY,
                                              itsParams.ballPixmapSize))
             {
-              std::cerr << "OOPS! A ball sneaked out of the arena (after colliding)...\n"
-                        << "Try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER\n";
+              std::cerr << "\nERROR: OOPS! A ball sneaked out of the arena (after colliding)...\n"
+                        << "(try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER)\n";
               exit(1);
             }
         }
@@ -501,8 +501,8 @@ DOTRACE("Balls::pickNextPositions");
                                          itsParams.displayY,
                                          itsParams.ballPixmapSize))
         {
-          std::cerr << "OOPS! A ball sneaked out of the arena (after twisting)...\n"
-                    << "Try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER\n";
+          std::cerr << "\nERROR: OOPS! A ball sneaked out of the arena (after twisting)...\n"
+                    << "(try increasing DISPLAY_X and DISPLAY_Y, or decreasing BALL_NUMBER)\n";
           exit(1);
         }
     }

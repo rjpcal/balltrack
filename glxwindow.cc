@@ -45,7 +45,7 @@ namespace
         ONE_CASE(DirectColor);
 #undef ONE_CASE
       }
-    std::cerr << "unknown visual class " << c_class << "\n";
+    std::cerr << "ERROR: unknown visual class " << c_class << "\n";
     exit(1);
   }
 
@@ -98,9 +98,9 @@ DOTRACE("GlxWindow::GlxWindow");
   if (itsDisplay == 0)
     {
       if (getenv("DISPLAY") == 0)
-        std::cerr << "You need to set the DISPLAY env var\n";
+        std::cerr << "ERROR: you need to set the DISPLAY environment variable\n";
       else
-        std::cerr << "Cannot open DISPLAY "
+        std::cerr << "ERROR: couldn't open DISPLAY "
                   << getenv("DISPLAY") << "\n";
       exit(1);
     }
@@ -120,7 +120,11 @@ DOTRACE("GlxWindow::GlxWindow");
 
   if (vinfo == 0)
     {
-      std::cerr << "XVisualInfo* was null in openWindow()!\n";
+      std::cerr << "ERROR: couldn't find a matching XVisualInfo* for depth "
+                << depth << "\n"
+        "   (look at the output of 'glxinfo' to see which visual\n"
+        "   contexts are available on your system, and then\n"
+        "   try passing a different value to '--depth')\n";
       exit(1);
     }
 
@@ -128,7 +132,11 @@ DOTRACE("GlxWindow::GlxWindow");
 
   if (itsGLXContext == 0)
     {
-      std::cout << "Couldn't get an OpenGL graphics context.\n";
+      std::cerr << "ERROR: couldn't get an OpenGL graphics context for depth "
+                << depth << "\n"
+        "   (look at the output of 'glxinfo' to see which visual\n"
+        "   contexts are available on your system, and then\n"
+        "   try passing a different value to '--depth')\n";
       exit(1);
     }
 

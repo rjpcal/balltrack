@@ -66,7 +66,8 @@ ParamFileIn::ParamFileIn(const std::string& filebase,
 
   if (!itsFstream.is_open() || itsFstream.fail())
     {
-      std::cerr << "couldn't open " << fname << " for reading\n";
+      std::cerr << "\nERROR: couldn't open file '"
+                << fname << "' for reading\n";
       exit(1);
     }
 }
@@ -80,7 +81,7 @@ void ParamFileIn::getInt(int& var, const char* name)
   itsFstream >> actualname >> var;
   if (actualname != name)
     {
-      std::cerr << "param file lines out of order: "
+      std::cerr << "\nERROR: param file lines out of order: "
                 << "expected '" << name << "', "
                 << "got '" << actualname << "'\n";
       exit(1);
@@ -93,7 +94,7 @@ void ParamFileIn::getDouble(double& var, const char* name)
   itsFstream >> actualname >> var;
   if (actualname != name)
     {
-      std::cerr << "param file lines out of order: "
+      std::cerr << "\nERROR: param file lines out of order: "
                 << "expected '" << name << "', "
                 << "got '" << actualname << "'\n";
       exit(1);
@@ -106,7 +107,7 @@ std::string ParamFileIn::getString(const char* name)
   itsFstream >> actualname >> result;
   if (actualname != name)
     {
-      std::cerr << "param file lines out of order: "
+      std::cerr << "\nERROR: param file lines out of order: "
                 << "expected '" << name << "', "
                 << "got '" << actualname << "'\n";
       exit(1);
@@ -139,13 +140,14 @@ ParamFileOut::ParamFileOut(const std::string& filebase, char mode,
     case 'w': itsFstream.open(fname.c_str(), std::ios::out); break;
     case 'a': itsFstream.open(fname.c_str(), std::ios::out|std::ios::app); break;
     default:
-      std::cerr << "unknown file mode '" << mode << "'\n";
+      std::cerr << "\nERROR: unknown file mode '" << mode << "'\n";
       exit(1);
     }
 
   if (!itsFstream.is_open() || itsFstream.fail())
     {
-      std::cerr << "couldn't open " << fname << " in mode '"
+      std::cerr << "\nERROR: couldn't open file '"
+                << fname << "' in mode '"
                 << mode << "'\n";
       exit(1);
     }
@@ -176,6 +178,41 @@ void ParamFileOut::putString(const std::string& str, const char* name)
 void ParamFileOut::putLine(const char* str)
 {
   itsFstream << str << '\n';
+}
+
+namespace
+{
+  void showUsage(const char* progname)
+  {
+    using std::cerr;
+
+    cerr << "usage: " << progname << " [options] <sta-file-name>\n"
+         << "\n"
+      "    <sta-file-name> should be the base name of a file with the extension\n"
+      "        '.sta', that contains initial parameter settings. For example, \n"
+      "        if you have a file named 'sample.sta', then you should pass\n"
+      "        'sample' as the last argument to the progam.\n"
+      "\n"
+      "    [options] can be any of the following, although it is not necessary\n"
+      "        to pass any options at all. If you have problems getting the\n"
+      "        program to start, try including '--depth 16' or '--depth 8'.\n"
+      "        You can check which video modes are available on your system\n"
+      "        by running 'glxinfo'.\n"
+      "\n"
+      "        --mode-fmri              run in fMRI mode\n"
+      "        --mode-train             run in training mode\n"
+      "        --mode-eyetrack          run in eyetracking mode\n"
+      "        --fmri-session-number    select from [1-4] with --mode-fmri\n"
+      "\n"
+      "        --makemovie              save video frames as image files\n"
+      "        --physics                show ball physics for debugging\n"
+      "\n"
+      "        --depth [bits]           set the window depth in bits [8,16,24]\n"
+      "        --width [pixels]         set the window width in pixels\n"
+      "        --height [pixels]        set the window height in pixels\n"
+      "\n"
+      "        --help                   show this help message\n";
+  }
 }
 
 //----------------------------------------------------------
@@ -220,19 +257,19 @@ Params::Params(int argc, char** argv) :
 
   for (int i = 1; i < argc; ++i)
     {
-      if (strcmp(argv[i], "--session") == 0)
+      if (strcmp(argv[i], "--fmri-session-number") == 0)
         {
           this->fmriSessionNumber = atoi(argv[++i]);
         }
-      else if (strcmp(argv[i], "--fmri") == 0)
+      else if (strcmp(argv[i], "--mode-fmri") == 0)
         {
           this->appMode = Params::FMRI_SESSION;
         }
-      else if (strcmp(argv[i], "--train") == 0)
+      else if (strcmp(argv[i], "--mode-train") == 0)
         {
           this->appMode = Params::TRAINING;
         }
-      else if (strcmp(argv[i], "--itrk") == 0)
+      else if (strcmp(argv[i], "--mode-eyetrack") == 0)
         {
           this->appMode = Params::EYE_TRACKING;
         }
@@ -246,36 +283,81 @@ Params::Params(int argc, char** argv) :
         }
       else if (strcmp(argv[i], "--depth") == 0)
         {
-          this->windowDepth = atoi(argv[++i]);
-          std::cout << " windowDepth " << this->windowDepth << "\n";
+          if (i+1 >= argc)
+            {
+              showUsage(argv[0]);
+              std::cerr << "\nERROR: expected an integer argument "
+                "to option '--depth'\n";
+              exit(1);
+            }
+          if (sscanf(argv[++i], "%d", &this->windowDepth) != 1)
+            {
+              showUsage(argv[0]);
+              std::cerr << "\nERROR: expected an integer, but got '"
+                        << argv[i] << "'\n";
+              exit(1);
+            }
+          std::cout << " window depth " << this->windowDepth << "\n";
         }
       else if (strcmp(argv[i], "--width") == 0)
         {
-          this->windowWidth = atoi(argv[++i]);
-          std::cout << " windowWidth " << this->windowWidth << "\n";
+          if (i+1 >= argc)
+            {
+              showUsage(argv[0]);
+              std::cerr << "\nERROR: expected an integer argument "
+                "to option '--width'\n";
+              exit(1);
+            }
+          if (sscanf(argv[++i], "%d", &this->windowWidth) != 1)
+            {
+              showUsage(argv[0]);
+              std::cerr << "\nERROR: expected an integer, but got '"
+                        << argv[i] << "'\n";
+              exit(1);
+            }
+          std::cout << " window width " << this->windowWidth << "\n";
         }
       else if (strcmp(argv[i], "--height") == 0)
         {
-          this->windowHeight = atoi(argv[++i]);
-          std::cout << " windowHeight " << this->windowHeight << "\n";
+          if (i+1 >= argc)
+            {
+              showUsage(argv[0]);
+              std::cerr << "\nERROR: expected an integer argument "
+                "to option '--height'\n";
+              exit(1);
+            }
+          if (sscanf(argv[++i], "%d", &this->windowHeight) != 1)
+            {
+              showUsage(argv[0]);
+              std::cerr << "\nERROR: expected an integer, but got '"
+                        << argv[i] << "'\n";
+              exit(1);
+            }
+          std::cout << " window height " << this->windowHeight << "\n";
         }
-      else if (!got_filename)
+      else if (!got_filename && argv[i][0] != '-')
         {
           this->filestem = argv[i];
           std::cout << " filename '" << argv[i] << "'\n";
           got_filename = true;
         }
+      else if (strcmp(argv[i], "--help") == 0)
+        {
+          showUsage(argv[0]);
+          exit(0);
+        }
       else
         {
-          std::cerr << "unknown command-line argument '"
-                    << argv[i] << "'\n";
+          showUsage(argv[0]);
+          std::cerr << "\nERROR: unknown option '" << argv[i] << "'\n";
           exit(1);
         }
     }
 
   if (!got_filename)
     {
-      std::cerr << "need to specify a file basename\n";
+      showUsage(argv[0]);
+      std::cerr << "\nERROR: need to specify a <sta-file-name>\n";
       exit(1);
     }
 
@@ -284,7 +366,7 @@ Params::Params(int argc, char** argv) :
       if (this->fmriSessionNumber < 0 ||
           this->fmriSessionNumber > 4)
         {
-          std::cerr << "session number must be 1, 2, 3, or 4\n";
+          std::cerr << "\nERROR: fmri session number must be 1, 2, 3, or 4\n";
           exit(1);
         }
     }
