@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Mon Feb 28 19:03:14 2000
+// written: Mon Feb 28 19:05:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,6 +44,8 @@ public:
 
   // called from many
   virtual void clearWindow();
+
+  virtual void clearBackBuffer();
 
   // called from MenuApplication::makeMenu() and <params.c>::SetParametersN()
   virtual void showMenu(char menu[][STRINGSIZE], int nmenu);

@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Mon Feb 28 18:05:29 2000
+// written: Mon Feb 28 19:04:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,8 @@ public:
 
   // called from many
   virtual void clearWindow() = 0;
+
+  virtual void clearBackBuffer() = 0;
 
   // called from MenuApplication::makeMenu() and <params.c>::SetParametersN()
   virtual void showMenu(char menu[][STRINGSIZE], int nmenu) = 0;
