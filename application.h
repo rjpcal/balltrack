@@ -43,8 +43,7 @@ protected:
   virtual bool onKey(char c) = 0;
 
 private:
-  char keyPressAction( XEvent* event );
-
+  static char keyPressAction( XEvent* event );
   static void timeButtonEvent( XEvent* event );
 
   Graphics& itsGraphics;
