@@ -14,6 +14,7 @@
 
 #include "timepoint.h"
 
+#include <cmath>
 #include <vector>
 
 class Graphics;
@@ -21,8 +22,25 @@ class Params;
 
 struct vec
 {
+  vec(double xx=0.0, double yy=0.0) : x(xx), y(yy) {}
+
   double x;
   double y;
+
+  vec operator-(const vec& other) const
+  { return vec(this->x - other.x,
+               this->y - other.y); }
+
+  vec operator+(const vec& other) const
+  { return vec(this->x - other.x,
+               this->y - other.y); }
+
+  vec operator/(double v) const
+  { return vec(this->x / v,
+               this->y / v); }
+
+  double length() const
+  { return sqrt(x*x + y*y); }
 };
 
 class Ball
