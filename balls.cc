@@ -31,14 +31,11 @@ namespace
 
   void makeBallPixmap(std::vector<ubyte>& vec, int size,
                       double radius, double sigma,
-                      ubyte bkg_r, ubyte bkg_g, ubyte bkg_b,
+                      double fg_r, double fg_g, double fg_b,
+                      double bkg_r, double bkg_g, double bkg_b,
                       bool debug)
   {
     DOTRACE("<balls.cc>::makeBallPixmap");
-
-    const double tint_r = 0.0;
-    const double tint_g = 1.0;
-    const double tint_b = 0.5;
 
     const int bytes_per_pixel = 4;
 
@@ -71,16 +68,16 @@ namespace
               {
                 const double t = exp(-rsq/sigma);
 
-                vec[base_loc + 0] = ubyte(255 * t * tint_r);
-                vec[base_loc + 1] = ubyte(255 * t * tint_g);
-                vec[base_loc + 2] = ubyte(255 * t * tint_b);
+                vec[base_loc + 0] = ubyte(255 * t * fg_r);
+                vec[base_loc + 1] = ubyte(255 * t * fg_g);
+                vec[base_loc + 2] = ubyte(255 * t * fg_b);
                 vec[base_loc + 3] = ubyte(255);
               }
             else
               {
-                vec[base_loc + 0] = bkg_r;
-                vec[base_loc + 1] = bkg_g;
-                vec[base_loc + 2] = bkg_b;
+                vec[base_loc + 0] = ubyte(255 * bkg_r);
+                vec[base_loc + 1] = ubyte(255 * bkg_g);
+                vec[base_loc + 2] = ubyte(255 * bkg_b);
                 vec[base_loc + 3] = ubyte(255);
               }
           }
@@ -367,10 +364,14 @@ DOTRACE("Balls::runTrial");
 
   makeBallPixmap(hilitemap, itsParams.ballPixmapSize,
                  itsParams.ballRadius, itsParams.ballSigma2,
-                 255, 255, 255, itsParams.showPhysics);
+                 0.0, 1.0, 0.5, // fg color
+                 1.0, 1.0, 1.0, // bkg color
+                 itsParams.showPhysics);
   makeBallPixmap(pixmap, itsParams.ballPixmapSize,
                  itsParams.ballRadius, itsParams.ballSigma2,
-                 0, 0, 0, itsParams.showPhysics);
+                 0.0, 1.0, 0.5, // fg color
+                 0.0, 0.0, 0.0, // bkg color
+                 itsParams.showPhysics);
 
   gfx.gfxWait(timer, itsParams.pauseSeconds);
 
