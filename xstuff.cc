@@ -300,6 +300,9 @@ DOTRACE("XStuff::buttonPressLoop");
     {
       Assert(event.type == ButtonPress);
 
+      if (event.xbutton.window != itsWindow)
+        continue;
+
       int nbutton = 0;
 
       if (event.xbutton.button == Button1)
