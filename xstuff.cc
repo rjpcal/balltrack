@@ -122,23 +122,11 @@ DOTRACE("XStuff::openWindow");
                     RootWindow(itsDisplay, screen),
                     vinfo->visual, AllocNone);
 
-  XColor mean_color;
-  mean_color.flags = DoRed | DoGreen | DoBlue;
-
-  const int MEANGREY = 127;
-
-  mean_color.red = mean_color.green = mean_color.blue =
-    (unsigned long)(257*MEANGREY);
-
-  XAllocColor(itsDisplay, cmap, &mean_color);
-
 
   XSetWindowAttributes winAttributes;
 
   winAttributes.event_mask = ExposureMask;
   winAttributes.colormap  = cmap;
-  winAttributes.background_pixel = mean_color.pixel;
-  winAttributes.border_pixel = mean_color.pixel;
 
   itsWindow = XCreateWindow(itsDisplay,
                             RootWindow(itsDisplay, screen),
@@ -146,8 +134,7 @@ DOTRACE("XStuff::openWindow");
                             vinfo->depth,
                             InputOutput,
                             vinfo->visual,
-                            (CWBackPixel | CWColormap
-                             | CWBorderPixel | CWEventMask),
+                            (CWColormap | CWEventMask),
                             &winAttributes);
 
   XSelectInput(itsDisplay, itsWindow,
