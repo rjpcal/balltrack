@@ -141,7 +141,7 @@ struct BallsExpt::Impl
       }
     f.putLine("");
 
-    snprintf(buf, 512, " percent correct: %d", int(this->percentCorrect));
+    snprintf(buf, 512, " percent correct: %.2f", this->percentCorrect);
     f.putLine(buf);
     f.putLine("");
   }
