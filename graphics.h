@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Wed Feb 28 14:35:22 2001
+// written: Tue Mar  6 16:54:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,9 +65,15 @@ public:
   // This gives a hook to allow movie frames to be recorded during the delay
   virtual void gfxWait(double delaySeconds);
 
+  // Returns the number of milliseconds per graphics frame
+  double frameTime();
+
 private:
+  virtual double computeFrameTime() = 0;
+
   int itsHeight;
   int itsWidth;
+  double itsFrameTime;
 };
 
 static const char vcid_graphics_h[] = "$Header$";
