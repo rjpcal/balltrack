@@ -53,7 +53,7 @@ struct BallsExpt::Impl
     params(p)
   {}
 
-  /// XXX this needs to be at least as big as (CYCLE_NUMBER+1)*NUM_CONDITIONS
+  /// XXX this needs to be at least as big as (cycleNumber+1)*NUM_CONDITIONS
   timeval timepoints[128];
   int timepointIdx;
   Balls ballset;
@@ -207,7 +207,7 @@ DOTRACE("BallsExpt::runExperiment");
 
   Timing::mainTimer.set();
   Timing::getTime(&rep->timepoints[0]);
-  graphics().gfxWait(rep->params.WAIT_DURATION);
+  graphics().gfxWait(rep->params.waitSeconds);
 
   rep->timepointIdx = 1;
 
@@ -225,7 +225,7 @@ DOTRACE("BallsExpt::runExperiment");
   buttonPressLoop();
 
   Timing::tallyReactionTime(tmefile.fp(),
-                            rep->params.REMIND_DURATION);
+                            rep->params.remindSeconds);
 }
 
 void BallsExpt::runFmriExpt()
@@ -233,8 +233,8 @@ void BallsExpt::runFmriExpt()
 DOTRACE("BallsExpt::runFmriExpt");
 
   if (rep->params.doMovie)
-    graphics().startRecording(rep->params.DISPLAY_X,
-                              rep->params.DISPLAY_Y);
+    graphics().startRecording(rep->params.displayX,
+                              rep->params.displayY);
 
   for (int trial = 0; trial < NUM_TRIALS; ++trial)
     {
@@ -255,7 +255,7 @@ DOTRACE("BallsExpt::runFmriExpt");
         }
       else
         {
-          rep->params.BALL_TRACK_NUMBER = track_number;
+          rep->params.ballTrackNumber = track_number;
 
           // Run active tracking trial with objective check
           rep->ballset.runTrial
@@ -277,7 +277,7 @@ DOTRACE("BallsExpt::runFmriExpt");
 
           Timing::mainTimer.set();
           Timing::getTime(&rep->timepoints[rep->timepointIdx++]);
-          graphics().gfxWait(rep->params.WAIT_DURATION);
+          graphics().gfxWait(rep->params.waitSeconds);
         }
     }
 
@@ -289,7 +289,7 @@ void BallsExpt::runEyeTrackingExpt()
 {
 DOTRACE("BallsExpt::runEyeTrackingExpt");
 
-  for (int cycle=0; cycle < rep->params.CYCLE_NUMBER; ++cycle)
+  for (int cycle=0; cycle < rep->params.cycleNumber; ++cycle)
     {
       // Run active tracking trial
       runFixationCalibration();
@@ -315,7 +315,7 @@ void BallsExpt::runTrainingExpt()
 {
 DOTRACE("BallsExpt::runTrainingExpt");
 
-  for (int cycle=0; cycle < rep->params.CYCLE_NUMBER; ++cycle)
+  for (int cycle=0; cycle < rep->params.cycleNumber; ++cycle)
     {
       // Run active tracking trial
       rep->ballset.runTrial

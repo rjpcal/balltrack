@@ -288,7 +288,7 @@ void Balls::initialize(Graphics& gfx)
 {
 DOTRACE("Balls::initialize");
 
-  for (int i=0; i < itsParams.BALL_NUMBER; ++i)
+  for (int i=0; i < itsParams.ballNumber; ++i)
     {
 
       // Pick a random initial location that is not too close to the other balls
@@ -299,14 +299,14 @@ DOTRACE("Balls::initialize");
           too_close = false;
 
           itsBalls[i].randomPosition(gfx.width(), gfx.height(),
-                                     itsParams.BORDER_X,
-                                     itsParams.BORDER_Y,
-                                     itsParams.BALL_ARRAY_SIZE);
+                                     itsParams.borderX,
+                                     itsParams.borderY,
+                                     itsParams.ballPixmapSize);
 
           for (int j=0; j<i; ++j)
             {
               if (itsBalls[i].isTooClose(itsBalls[j],
-                                         itsParams.BALL_MIN_DISTANCE))
+                                         itsParams.ballMinDistance))
                 {
                   too_close = true;
                   break;
@@ -314,7 +314,7 @@ DOTRACE("Balls::initialize");
             }
         } while (too_close);
 
-    itsBalls[i].randomVelocity(itsParams.BALL_VELOCITY);
+    itsBalls[i].randomVelocity(itsParams.ballVelocity);
   }
 
 }
@@ -323,25 +323,25 @@ void Balls::nextBalls(Graphics& gfx)
 {
 DOTRACE("Balls::nextBalls");
 
-  for (int i=0; i<itsParams.BALL_NUMBER; ++i)
+  for (int i=0; i<itsParams.ballNumber; ++i)
     {
       itsBalls[i].nextPosition(gfx.width(), gfx.height(),
-                               itsParams.BORDER_X, itsParams.BORDER_Y,
-                               itsParams.BALL_ARRAY_SIZE);
+                               itsParams.borderX, itsParams.borderY,
+                               itsParams.ballPixmapSize);
     }
 
-  for (int i=0; i<itsParams.BALL_NUMBER-1; ++i)
+  for (int i=0; i<itsParams.ballNumber-1; ++i)
     {
-      for (int j=i+1; j<itsParams.BALL_NUMBER; ++j)
+      for (int j=i+1; j<itsParams.ballNumber; ++j)
         {
           itsBalls[i].collideIfNeeded(itsBalls[j],
-                                      itsParams.BALL_MIN_DISTANCE);
+                                      itsParams.ballMinDistance);
         }
     }
 
-  for (int i=0; i<itsParams.BALL_NUMBER; ++i)
+  for (int i=0; i<itsParams.ballNumber; ++i)
     {
-      itsBalls[i].twist(itsParams.BALL_TWIST_ANGLE);
+      itsBalls[i].twist(itsParams.ballTwistAngle);
     }
 }
 
@@ -351,9 +351,9 @@ DOTRACE("Balls::moveBalls");
 
   gfx.clearBackBuffer();
 
-  for (int i = 0; i < itsParams.BALL_NUMBER; ++i)
+  for (int i = 0; i < itsParams.ballNumber; ++i)
     {
-      itsBalls[i].draw(gfx, &theirBallmap[0], itsParams.BALL_ARRAY_SIZE);
+      itsBalls[i].draw(gfx, &theirBallmap[0], itsParams.ballPixmapSize);
     }
 
   gfx.drawCross();
@@ -365,7 +365,7 @@ void Balls::copyBalls()
 {
 DOTRACE("Balls::copyBalls");
 
-  for (int i=0; i<itsParams.BALL_NUMBER; ++i)
+  for (int i=0; i<itsParams.ballNumber; ++i)
     {
       itsBalls[i].copy();
     }
@@ -378,7 +378,7 @@ DOTRACE("Balls::drawNBalls");
 
   while (first != last)
     {
-      itsBalls[first].draw(gfx, bitmap, itsParams.BALL_ARRAY_SIZE);
+      itsBalls[first].draw(gfx, bitmap, itsParams.ballPixmapSize);
       ++first;
     }
 }
@@ -397,9 +397,9 @@ DOTRACE("Balls::prepare");
 
   initialize(gfx);
 
-  Local::makeBallMap(theirHimap, itsParams.BALL_ARRAY_SIZE,
+  Local::makeBallMap(theirHimap, itsParams.ballPixmapSize,
                      itsParams.ballRadius, itsParams.ballSigma2, 255);
-  Local::makeBallMap(theirBallmap, itsParams.BALL_ARRAY_SIZE,
+  Local::makeBallMap(theirBallmap, itsParams.ballPixmapSize,
                      itsParams.ballRadius, itsParams.ballSigma2, 0);
 }
 
@@ -463,7 +463,7 @@ DOTRACE("Balls::runTrial");
 
   prepare(gfx);
 
-  gfx.gfxWait(itsParams.PAUSE_DURATION);
+  gfx.gfxWait(itsParams.pauseSeconds);
 
   // Show the initial position of the balls
   Timing::mainTimer.set();
@@ -471,31 +471,31 @@ DOTRACE("Balls::runTrial");
   gfx.clearFrontBuffer();
   gfx.drawCross();
 
-  drawNBalls(gfx, 0, itsParams.BALL_NUMBER, &theirBallmap[0]);
+  drawNBalls(gfx, 0, itsParams.ballNumber, &theirBallmap[0]);
 
   if (ttype == Balls::CHECK_ALL ||
       ttype == Balls::CHECK_ONE)
     {
-      drawNHiBalls(gfx, 0, itsParams.BALL_TRACK_NUMBER, &theirHimap[0]);
+      drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &theirHimap[0]);
       gfx.drawCross();
     }
 
   gfx.swapBuffers();
 
-  gfx.gfxWait(itsParams.REMIND_DURATION);
+  gfx.gfxWait(itsParams.remindSeconds);
 
   if (ttype == Balls::CHECK_ALL ||
       ttype == Balls::CHECK_ONE)
     {
       gfx.clearFrontBuffer();
       gfx.drawCross();
-      drawNBalls(gfx, 0, itsParams.BALL_NUMBER, &theirBallmap[0]);
+      drawNBalls(gfx, 0, itsParams.ballNumber, &theirBallmap[0]);
       gfx.swapBuffers();
     }
 
-  for (int i=0; i<itsParams.REMINDS_PER_EPOCH; ++i)
+  for (int i=0; i<itsParams.remindsPerEpoch; ++i)
     {
-      for (int j=0; j<itsParams.FRAMES_PER_REMIND; ++j)
+      for (int j=0; j<itsParams.framesPerRemind; ++j)
         {
           nextBalls(gfx);
           moveBalls(gfx);
@@ -509,14 +509,14 @@ DOTRACE("Balls::runTrial");
           gfx.clearBackBuffer();
 
           gfx.drawCross();
-          drawNBalls(gfx, 0, itsParams.BALL_NUMBER, &theirBallmap[0]);
-          drawNHiBalls(gfx, 0, itsParams.BALL_TRACK_NUMBER, &theirHimap[0]);
+          drawNBalls(gfx, 0, itsParams.ballNumber, &theirBallmap[0]);
+          drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &theirHimap[0]);
 
           gfx.swapBuffers();
 
           Timing::addToStimulusStack(LEFTBUTTON);
 
-          gfx.gfxWait(itsParams.REMIND_DURATION);
+          gfx.gfxWait(itsParams.remindSeconds);
         }
       else if (ttype == Balls::CHECK_ONE)
         {
@@ -527,27 +527,27 @@ DOTRACE("Balls::runTrial");
           // Pick a random ball
           int random_ball;
           if (pick_target)
-            random_ball = int(itsParams.BALL_TRACK_NUMBER * drand48());
+            random_ball = int(itsParams.ballTrackNumber * drand48());
           else
-            random_ball = int((itsParams.BALL_NUMBER - itsParams.BALL_TRACK_NUMBER) * drand48())
-              + itsParams.BALL_TRACK_NUMBER;
+            random_ball = int((itsParams.ballNumber - itsParams.ballTrackNumber) * drand48())
+              + itsParams.ballTrackNumber;
 
           // Redraw the balls with the random ball highlighted
           gfx.clearBackBuffer();
 
           gfx.drawCross();
-          drawNBalls(gfx, 0, itsParams.BALL_NUMBER, &theirBallmap[0]);
+          drawNBalls(gfx, 0, itsParams.ballNumber, &theirBallmap[0]);
           drawNHiBalls(gfx, random_ball, random_ball+1, &theirHimap[0]);
 
           gfx.swapBuffers();
 
           // Note what the correct response should be for the random ball
-          if (random_ball < itsParams.BALL_TRACK_NUMBER)
+          if (random_ball < itsParams.ballTrackNumber)
             Timing::addToStimulusStack(LEFTBUTTON);
           else
             Timing::addToStimulusStack(MIDDLEBUTTON);
 
-          gfx.gfxWait(itsParams.REMIND_DURATION / 2.0);
+          gfx.gfxWait(itsParams.remindSeconds / 2.0);
 
           Timing::mainTimer.set();
 
@@ -557,22 +557,22 @@ DOTRACE("Balls::runTrial");
 
           gfx.drawCross();
           drawNHiBalls(gfx, random_ball, random_ball+1, &theirBallmap[0]);
-          drawNBalls(gfx, itsParams.BALL_TRACK_NUMBER, itsParams.BALL_NUMBER, &theirBallmap[0]);
-          drawNHiBalls(gfx, 0, itsParams.BALL_TRACK_NUMBER, &theirHimap[0]);
+          drawNBalls(gfx, itsParams.ballTrackNumber, itsParams.ballNumber, &theirBallmap[0]);
+          drawNHiBalls(gfx, 0, itsParams.ballTrackNumber, &theirHimap[0]);
 
           gfx.swapBuffers();
 
-          gfx.gfxWait(itsParams.REMIND_DURATION / 2.0);
+          gfx.gfxWait(itsParams.remindSeconds / 2.0);
       }
       else
         {
-          gfx.gfxWait(itsParams.REMIND_DURATION);
+          gfx.gfxWait(itsParams.remindSeconds);
         }
 
       gfx.clearFrontBuffer();
       gfx.drawCross();
 
-      drawNBalls(gfx, 0, itsParams.BALL_NUMBER, &theirBallmap[0]);
+      drawNBalls(gfx, 0, itsParams.ballNumber, &theirBallmap[0]);
     }
 
   gfx.clearFrontBuffer();

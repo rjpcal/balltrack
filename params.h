@@ -71,24 +71,26 @@ public:
   char  observer[STRINGSIZE];
   float ballRadius;
   float ballSigma2;
-  float BALL_TWIST_ANGLE;  // = PI/16.0;
-  float EPOCH_DURATION;
-  float PAUSE_DURATION;
-  float REMIND_DURATION;
-  float WAIT_DURATION;
-  int   BALL_ARRAY_SIZE;     // = 16;
-  int   BALL_MIN_DISTANCE; // = 24;
-  int   BALL_NUMBER;                 // = 8;
-  int   BALL_TRACK_NUMBER; // = 2;
-  int   BALL_VELOCITY;       // = 3;
-  int   BORDER_X;                    // = (width - 120) / 2;
-  int   BORDER_Y;                    // = (height - 120) / 2;
-  int   CYCLE_NUMBER;
-  int   DISPLAY_X;
-  int   DISPLAY_Y;
-  int   FRAMES_PER_REMIND; // = 11;
-  int   FUDGEFRAME;
-  int   REMINDS_PER_EPOCH; // = 72;
+  float ballTwistAngle;  // = PI/16.0;
+  float epochSeconds;
+  float pauseSeconds;
+  float remindSeconds;
+  float waitSeconds;
+  int   ballPixmapSize;     // = 16;
+  int   ballMinDistance; // = 24;
+  int   ballNumber;                 // = 8;
+  int   ballTrackNumber; // = 2;
+  int   ballVelocity;       // = 3;
+  int   borderX;                    // = (width - 120) / 2;
+  int   borderY;                    // = (height - 120) / 2;
+  int   cycleNumber;
+  int   displayX;
+  int   displayY;
+  int   framesPerRemind; // = 11;
+private:
+  int   fudgeframes;
+public:
+  int   remindsPerEpoch; // = 72;
   int   FMRI_SESSION_NUMBER;
 
 private:
