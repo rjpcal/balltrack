@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Tue Feb 22 20:07:10 2000
+// written: Wed Feb 23 14:28:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,13 +32,9 @@ class Application {
 
   void timeButtonEvent( XEvent* event );
 
-  static Application* theAppPtr;
-
 public:
-  static Application& app();
+  Application(int argc, char** argv);
 
-  void initialize(int argc, char** argv);
-  void install();
   void run();
   void quit(int code);
   
