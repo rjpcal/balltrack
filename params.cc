@@ -391,18 +391,34 @@ namespace
 {
   struct ParamInfo
   {
-    ParamInfo(const std::string& d, const std::string& n, int& v, bool imm = false) :
-      descr(d), name(n), immutable(imm), dvar(0), ivar(&v), dorig(0.0), iorig(v)
+    ParamInfo(const std::string& d, const std::string& n, double& v, bool imm = false) :
+      descr(d), name(n), immutable(imm),
+      dvar(&v), dorig(v),
+      ivar(0), iorig(),
+      bvar(0), borig()
     {}
 
-    ParamInfo(const std::string& d, const std::string& n, double& v, bool imm = false) :
-      descr(d), name(n), immutable(imm), dvar(&v), ivar(0), dorig(v), iorig(0)
+    ParamInfo(const std::string& d, const std::string& n, int& v, bool imm = false) :
+      descr(d), name(n), immutable(imm),
+      dvar(0), dorig(),
+      ivar(&v), iorig(v),
+      bvar(0), borig()
+    {}
+
+    ParamInfo(const std::string& d, const std::string& n, bool& v, bool imm = false) :
+      descr(d), name(n), immutable(imm),
+      dvar(0), dorig(),
+      ivar(0), iorig(),
+      bvar(&v), borig(v)
     {}
 
     bool changed() const
     {
-      if (dvar != 0) return (*dvar != dorig);
-      return (*ivar != iorig);
+      if (immutable)      return false;
+      else if (dvar != 0) return (*dvar != dorig);
+      else if (ivar != 0) return (*ivar != iorig);
+      else if (bvar != 0) return (*bvar != borig);
+      return false;
     }
 
     void putvar(std::ostream& s) const
@@ -411,12 +427,14 @@ namespace
 
       else if (dvar != 0)  s << *dvar;
       else if (ivar != 0)  s << *ivar;
+      else if (bvar != 0)  s << *bvar;
     }
 
     void putorig(std::ostream& s) const
     {
       if      (dvar != 0)  s << dorig;
       else if (ivar != 0)  s << iorig;
+      else if (bvar != 0)  s << borig;
     }
 
     void getvalue(Graphics & gfx)
@@ -424,6 +442,8 @@ namespace
       if (immutable) { /* do nothing */ }
       else if (dvar != 0) gfx.getValueFromKeyboard(*dvar);
       else if (ivar != 0) gfx.getValueFromKeyboard(*ivar);
+      else if (bvar != 0)
+        { int b=*bvar; gfx.getValueFromKeyboard(b); *bvar=bool(b); }
     }
 
     std::string descr;
@@ -433,10 +453,13 @@ namespace
 
   private:
     double* dvar;
-    int* ivar;
-
     double dorig;
+
+    int* ivar;
     int iorig;
+
+    bool* bvar;
+    bool borig;
   };
 
   void showVmenu(Graphics& gfx, std::vector<ParamInfo>& items,
@@ -503,7 +526,7 @@ namespace
       }
 
     gfx.clearBackBuffer();
-    gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 14);
+    gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 13);
     gfx.swapBuffers();
   }
 
@@ -548,6 +571,8 @@ DOTRACE("Params::setParams");
   items.push_back(ParamInfo("ball twist angle (radians)",       "BALL_TWIST_ANGLE", this->ballTwistAngle));
 
   items.push_back(ParamInfo("fMRI session #",                   "FMRI_SESSION_NUMBER", this->fmriSessionNumber));
+
+  items.push_back(ParamInfo("DEBUG: show ball physics",         "", this->showPhysics));
 
   doVmenu(gfx, items);
 }
