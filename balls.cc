@@ -31,6 +31,9 @@ namespace
   std::vector<unsigned char> theirBallmap;
   std::vector<unsigned char> theirHimap;
 
+  const int BALL_COLOR_MIN = 8;
+  const int BALL_COLOR_MAX = 63;
+
   void makeBallPixmap(std::vector<unsigned char>& vec, int size,
                       float radius, float sigma,
                       unsigned char background)
