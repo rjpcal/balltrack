@@ -25,56 +25,6 @@
 #include "trace.h"
 #include "debug.h"
 
-MenuApplication::MenuApplication(Graphics& gfx) :
-  Application(gfx)
-{
-DOTRACE("MenuApplication::MenuApplication");
-
-  Params::readParams(this, "sta");
-}
-
-MenuApplication::~MenuApplication()
-{
-DOTRACE("MenuApplication::~MenuApplication");
-}
-
-void MenuApplication::wrap()
-{
-DOTRACE("MenuApplication::wrap");
-  Params::writeParams(this, "sta");
-
-  graphics().wrapGraphics();
-}
-
-void MenuApplication::onExpose()
-{
-DOTRACE("MenuApplication::onExpose");
-
-  makeMenu();
-}
-
-void MenuApplication::makeMenu()
-{
-DOTRACE("MenuApplication::makeMenu");
-
-  const int nmenu = 8;
-  char menu[nmenu][STRINGSIZE];
-
-  fillMenu(menu, nmenu);
-
-  graphics().clearFrontBuffer();
-
-  for (int ii = 0; ii < 2; ++ii)
-    {
-      graphics().clearBackBuffer();
-      graphics().swapBuffers();
-    }
-
-  graphics().showMenu(menu, nmenu);
-
-  graphics().swapBuffers();
-}
-
 namespace
 {
   const int NUM_TRIALS = 8;
@@ -116,10 +66,13 @@ struct BallsExpt::Impl
 
 
 BallsExpt::BallsExpt(Graphics& gfx) :
-  MenuApplication(gfx),
+  Application(gfx),
   itsImpl(new Impl)
 {
 DOTRACE("BallsExpt::BallsExpt");
+
+  Params::readParams(this, "sta");
+
   Balls::generateColors();
 }
 
@@ -129,27 +82,19 @@ DOTRACE("BallsExpt::~BallsExpt");
   delete itsImpl;
 }
 
-
-void BallsExpt::fillMenu(char menu[][STRINGSIZE], int nitems)
+void BallsExpt::wrap()
 {
-DOTRACE("BallsExpt::fillMenu");
+DOTRACE("BallsExpt::wrap");
+  Params::writeParams(this, "sta");
 
-  if (nitems < 8)
-    {
-      strcpy( menu[0], "insufficient space to create menu" );
-    }
-  else
-    {
-      strcpy( menu[0], "r     run experiment");
-      strcpy( menu[1], "x     set parameters 1");
-      strcpy( menu[2], "y     set parameters 2");
-      strcpy( menu[3], "z     set parameters 3");
-      strcpy( menu[4], "p     show parameters");
-      strcpy( menu[5], "q     quit program");
-      strcpy( menu[6], "");
-      sprintf( menu[7], "recent percent correct: %d",
-               int(Timing::recentPercentCorrect()) );
-    }
+  graphics().wrapGraphics();
+}
+
+void BallsExpt::onExpose()
+{
+DOTRACE("BallsExpt::onExpose");
+
+  makeMenu();
 }
 
 void BallsExpt::onMenuChoice(char c)
@@ -185,6 +130,50 @@ DOTRACE("BallsExpt::onMenuChoice");
     default:
       makeMenu();
       break;
+    }
+}
+
+void BallsExpt::makeMenu()
+{
+DOTRACE("BallsExpt::makeMenu");
+
+  const int nmenu = 8;
+  char menu[nmenu][STRINGSIZE];
+
+  fillMenu(menu, nmenu);
+
+  graphics().clearFrontBuffer();
+
+  for (int ii = 0; ii < 2; ++ii)
+    {
+      graphics().clearBackBuffer();
+      graphics().swapBuffers();
+    }
+
+  graphics().showMenu(menu, nmenu);
+
+  graphics().swapBuffers();
+}
+
+void BallsExpt::fillMenu(char menu[][STRINGSIZE], int nitems)
+{
+DOTRACE("BallsExpt::fillMenu");
+
+  if (nitems < 8)
+    {
+      strcpy( menu[0], "insufficient space to create menu" );
+    }
+  else
+    {
+      strcpy( menu[0], "r     run experiment");
+      strcpy( menu[1], "x     set parameters 1");
+      strcpy( menu[2], "y     set parameters 2");
+      strcpy( menu[3], "z     set parameters 3");
+      strcpy( menu[4], "p     show parameters");
+      strcpy( menu[5], "q     quit program");
+      strcpy( menu[6], "");
+      sprintf( menu[7], "recent percent correct: %d",
+               int(Timing::recentPercentCorrect()) );
     }
 }
 

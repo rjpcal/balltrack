@@ -16,28 +16,19 @@
 
 class Graphics;
 
-class MenuApplication : public Application
-{
-public:
-  MenuApplication(Graphics& gfx);
-  virtual ~MenuApplication();
-
-protected:
-  virtual void wrap();
-  virtual void onExpose();
-
-  void makeMenu();
-
-  virtual void fillMenu(char menu[][STRINGSIZE], int nitems) = 0;
-};
-
-class BallsExpt : public MenuApplication
+class BallsExpt : public Application
 {
 public:
   BallsExpt(Graphics& gfx);
   virtual ~BallsExpt();
 
 protected:
+  virtual void wrap();
+  virtual void onExpose();
+  virtual void onMenuChoice(char c);
+
+  void makeMenu();
+
   virtual void fillMenu(char menu[][STRINGSIZE], int nitems);
 
 private:
@@ -47,8 +38,6 @@ private:
   void runFmriExpt();
   void runEyeTrackingExpt();
   void runTrainingExpt();
-
-  virtual void onMenuChoice(char c);
 
   struct Impl;
   Impl* itsImpl;
