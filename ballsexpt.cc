@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Wed Feb 28 15:30:29 2001
+// written: Tue Mar  6 18:50:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ DOTRACE("BallsExpt::onMenuChoice");
 	 break;
 
   case 'p':
-	 ListParams(this);
+	 Params::displayParams(this);
 	 break;
 
   default:
@@ -159,9 +159,9 @@ DOTRACE("BallsExpt::runFixationCalibration");
 void BallsExpt::runExperiment() {
 DOTRACE("BallsExpt::runExperiment");
 
-  FILE *fl;
-  Openfile(this, &fl, APPEND, "tme");
-  LogParams(this, fl);
+  ParamFile tmefile(this, APPEND, "tme");
+
+  Params::logParams(this, tmefile);
 
   graphics()->writeAllPlanes();
 
@@ -189,15 +189,13 @@ DOTRACE("BallsExpt::runExperiment");
 
   Timing::getTime( &itsImpl->itsTimePoints[itsImpl->itsTpIndex++] );
 
-  itsImpl->logTimePoints(fl);
+  itsImpl->logTimePoints(tmefile.fp());
 
   graphics()->writeAllPlanes();
 
   buttonPressLoop();
 
-  Timing::tallyReactionTime( fl );
-
-  Closefile( fl );
+  Timing::tallyReactionTime( tmefile.fp() );
 }
 
 void BallsExpt::runFmriExpt() {

@@ -67,73 +67,121 @@ void process_id( char pid[] );
 /************************************************/
 
 
-namespace {
-  char LINE[STRINGSIZE];
-  char TEXT[STRINGSIZE];
+FILE* ParamFile::openfile(Application* app, char mode, char extension[]) {
+DOTRACE("ParamFile::openfile");
+
+  FILE* fp; 
+
+  char fname[STRINGSIZE];
+
+  sprintf( fname, "%s.%s", FILENAME, extension );
+
+  char mode_string[2] = { mode, '\0' };
+
+  if( ( fp = fopen( fname, mode_string) ) == NULL )
+	 {
+		printf( "cannot open %s in mode '%s'\n", fname, mode_string);
+		app->quit(0);
+	 }
+
+  return fp;
 }
 
-#define GETINT(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %d",TEXT,&(name));}
-#define GETCHAR(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %c",TEXT,&(name));}
-#define GETFLOAT(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %f",TEXT,&(name));}
-#define GETTEXT(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %s",TEXT,(name));}
-#define GETINTL(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %d %d %d %d",TEXT,&(name)[0],&(name)[1],&(name)[2],&(name)[3]);}
-#define GETTEXTL(name) {fgets(LINE,120,fp);sscanf(LINE,"%s %s %s %s %s",TEXT,(name)[0],(name)[1],(name)[2],(name)[3]);}
+void ParamFile::fetchLine()
+{
+  fgets(itsLine, 120, itsFile);
+}
 
-#define GETTEXTDUMMY(var) {fgets(LINE,120,fp);sscanf(LINE,"%s %s",TEXT,(var));}
+ParamFile::ParamFile(Application* app, char mode, char extension[]) :
+  itsFile(openfile(app, mode, extension))
+{}
 
+ParamFile::~ParamFile()
+{
+  fclose(itsFile);
+}
 
-#define PUTINT(name,text) {fprintf(fp,"%-19s %d\n",(text),(name));}
-#define PUTCHAR(name,text) {fprintf(fp,"%-19s %c\n",(text),(name));}
-#define PUTFLOAT(name,text) {fprintf(fp,"%-19s %.2f\n",(text),(name));}
-#define PUTTEXT(name,text) {fprintf(fp,"%-19s %+s\n",(text),(name));}
-#define PUTINTL(name,text) {fprintf(fp,"%-19s %d %d %d %d\n",(text),(name)[0],(name)[1],(name)[2],(name)[3]);}
-#define PUTTEXTL(name,text) {fprintf(fp,"%-19s %+s %+s %+s %+s\n",(text),(name)[0],(name)[1],(name)[2],(name)[3]);}
+void ParamFile::getInt(int& var)
+{
+  fetchLine();
+  sscanf(itsLine, "%s %d", itsText, &var);
+}
 
-#define PRINTINT(name,text) {printf( "%-19s %d\n",(text),(name));}
-#define PRINTCHAR(name,text) {printf( "%-19s %c\n",(text),(name));}
-#define PRINTFLOAT(name,text) {printf( "%-19s %.2f\n",(text),(name));}
-#define PRINTTEXT(name,text) {printf( "%-19s %+s\n",(text),(name));}
-#define PRINTINTL(name,text) {printf( "%-19s %d %d %d %d\n",(text),(name)[0],(name)[1],(name)[2],(name)[3]);}
-#define PRINTTEXTL(name,text) {printf( "%-19s %+s %+s %+s %+s\n",(text),(name)[0],(name)[1],(name)[2],(name)[3]);}
+void ParamFile::getChar(char& var)
+{
+  fetchLine();
+  sscanf(itsLine, "%s %c", itsText, &var);
+}
 
-void ReadParams(Application* app, char extension[]) {
-DOTRACE("ReadParams");
+void ParamFile::getFloat(float& var)
+{
+  fetchLine();
+  sscanf(itsLine, "%s %f", itsText, &var);
+}
 
-  FILE *fp;
+void ParamFile::getText(char* var)
+{
+  fetchLine();
+  sscanf(itsLine, "%s %s", itsText, var);
+}
 
-  Openfile(app, &fp, OPTIONAL, extension );
+void ParamFile::ignoreText()
+{
+  char dummy[STRINGSIZE];
+  getText(dummy);
+}
 
-  if( fp == NULL )
-	 return;
+void ParamFile::putInt(int var, const char* name)
+{
+  fprintf(itsFile, "%-19s %d\n", name, var);
+}
 
-  GETINT(   (DISPLAY_X) );         
-  GETINT(   (DISPLAY_Y) );         
-  GETINT(   (CYCLE_NUMBER) );
-  GETFLOAT( (WAIT_DURATION) );       
-  GETFLOAT( (EPOCH_DURATION) );       
-  GETFLOAT( (PAUSE_DURATION) );       
-  GETFLOAT( (REMIND_DURATION) );
-  GETINT(   (REMINDS_PER_EPOCH) );
-  GETINT(   (FRAMES_PER_REMIND) );
-  GETINT(   (BALL_NUMBER) );
-  GETINT(   (BALL_TRACK_NUMBER) );
-  GETINT(   (BALL_VELOCITY) );
-  GETINT(   (BALL_ARRAY_SIZE) );
-  GETINT(   (BALL_MIN_DISTANCE) );
-  GETFLOAT( (BALL_RADIUS) );
-  GETFLOAT( (BALL_SIGMA2) );
-  GETFLOAT( (BALL_TWIST_ANGLE) );
-  GETTEXT(  (OBSERVER) );
-  GETTEXT(  (FILENAME) );
+void ParamFile::putChar(char var, const char* name)
+{
+  fprintf(itsFile, "%-19s %c\n", name, var);
+}
 
-  // we read into a dummy variable since the actual application mode
-  // is set at startup time
-  char dummyAppMode[80];
-  GETTEXTDUMMY(dummyAppMode);
+void ParamFile::putFloat(float var, const char* name)
+{
+  fprintf(itsFile, "%-19s %.2f\n", name, var);
+}
 
-  GETINT( (FMRI_SESSION_NUMBER) );
+void ParamFile::putText(const char* var, const char* name)
+{
+  fprintf(itsFile, "%-19s %+s\n", name, var);
+}
 
-  Closefile( fp );
+void Params::readParams(Application* app, char extension[]) {
+DOTRACE("Params::readParams");
+
+  ParamFile pmfile(app, READ, extension);
+
+  pmfile.getInt(   DISPLAY_X  );         
+  pmfile.getInt(   DISPLAY_Y  );         
+  pmfile.getInt(   CYCLE_NUMBER  );
+  pmfile.getFloat( WAIT_DURATION  );       
+  pmfile.getFloat( EPOCH_DURATION  );       
+  pmfile.getFloat( PAUSE_DURATION  );       
+  pmfile.getFloat( REMIND_DURATION  );
+  pmfile.getInt(   REMINDS_PER_EPOCH  );
+  pmfile.getInt(   FRAMES_PER_REMIND  );
+  pmfile.getInt(   BALL_NUMBER  );
+  pmfile.getInt(   BALL_TRACK_NUMBER  );
+  pmfile.getInt(   BALL_VELOCITY  );
+  pmfile.getInt(   BALL_ARRAY_SIZE  );
+  pmfile.getInt(   BALL_MIN_DISTANCE  );
+  pmfile.getFloat( BALL_RADIUS  );
+  pmfile.getFloat( BALL_SIGMA2  );
+  pmfile.getFloat( BALL_TWIST_ANGLE  );
+  pmfile.getText(  OBSERVER  );
+  pmfile.getText(  FILENAME  );
+
+  // this is a placeholder for the application mode, but we ignore the
+  // value in the file since the actual application mode is set at
+  // startup time
+  pmfile.ignoreText();
+
+  pmfile.getInt( (FMRI_SESSION_NUMBER) );
 
   RecomputeParams(app->graphics());
 }
@@ -163,32 +211,36 @@ DOTRACE("RecomputeParams");
   DebugEvalNL(FRAMES_PER_REMIND);
 }
 
-void WriteParams(Application* app, char extension[]) {
-DOTRACE("WriteParams");
+void Params::writeParams(Application* app, char extension[]) {
+DOTRACE("Params::writeParams");
 
-  FILE *fp;
+  ParamFile pmfile(app, WRITE, extension);
 
-  Openfile(app, &fp, WRITE, extension );
+  appendParams(pmfile);
+}
 
-  PUTINT(   (DISPLAY_X),        ("DISPLAY_X") );         
-  PUTINT(   (DISPLAY_Y),        ("DISPLAY_Y") );         
-  PUTINT(   (CYCLE_NUMBER),     ("CYCLE_NUMBER") );
-  PUTFLOAT( (WAIT_DURATION),    ("WAIT_DURATION") );       
-  PUTFLOAT( (EPOCH_DURATION),   ("EPOCH_DURATION") );       
-  PUTFLOAT( (PAUSE_DURATION),   ("PAUSE_DURATION") );       
-  PUTFLOAT( (REMIND_DURATION),  ("REMIND_DURATION") );
-  PUTINT(   (REMINDS_PER_EPOCH),("REMINDS_PER_EPOCH") );
-  PUTINT(   (FRAMES_PER_REMIND),("FRAMES_PER_REMIND") );
-  PUTINT(   (BALL_NUMBER),      ("BALL_NUMBER") );
-  PUTINT(   (BALL_TRACK_NUMBER),("BALL_TRACK_NUMBER") );
-  PUTINT(   (BALL_VELOCITY),    ("BALL_VELOCITY") );
-  PUTINT(   (BALL_ARRAY_SIZE),  ("BALL_ARRAY_SIZE") );
-  PUTINT(   (BALL_MIN_DISTANCE),("BALL_MIN_DISTANCE") );
-  PUTFLOAT( (BALL_RADIUS),      ("BALL_RADIUS") );
-  PUTFLOAT( (BALL_SIGMA2),      ("BALL_SIGMA2") );
-  PUTFLOAT( (BALL_TWIST_ANGLE), ("BALL_TWIST_ANGLE") );
-  PUTTEXT(  (OBSERVER),         ("OBSERVER") );
-  PUTTEXT(  (FILENAME),         ("FILENAME") );
+void Params::appendParams(ParamFile& pmfile) {
+DOTRACE("Params::appendParams");
+
+  pmfile.putInt(   (DISPLAY_X),        ("DISPLAY_X") );         
+  pmfile.putInt(   (DISPLAY_Y),        ("DISPLAY_Y") );         
+  pmfile.putInt(   (CYCLE_NUMBER),     ("CYCLE_NUMBER") );
+  pmfile.putFloat( (WAIT_DURATION),    ("WAIT_DURATION") );       
+  pmfile.putFloat( (EPOCH_DURATION),   ("EPOCH_DURATION") );       
+  pmfile.putFloat( (PAUSE_DURATION),   ("PAUSE_DURATION") );       
+  pmfile.putFloat( (REMIND_DURATION),  ("REMIND_DURATION") );
+  pmfile.putInt(   (REMINDS_PER_EPOCH),("REMINDS_PER_EPOCH") );
+  pmfile.putInt(   (FRAMES_PER_REMIND),("FRAMES_PER_REMIND") );
+  pmfile.putInt(   (BALL_NUMBER),      ("BALL_NUMBER") );
+  pmfile.putInt(   (BALL_TRACK_NUMBER),("BALL_TRACK_NUMBER") );
+  pmfile.putInt(   (BALL_VELOCITY),    ("BALL_VELOCITY") );
+  pmfile.putInt(   (BALL_ARRAY_SIZE),  ("BALL_ARRAY_SIZE") );
+  pmfile.putInt(   (BALL_MIN_DISTANCE),("BALL_MIN_DISTANCE") );
+  pmfile.putFloat( (BALL_RADIUS),      ("BALL_RADIUS") );
+  pmfile.putFloat( (BALL_SIGMA2),      ("BALL_SIGMA2") );
+  pmfile.putFloat( (BALL_TWIST_ANGLE), ("BALL_TWIST_ANGLE") );
+  pmfile.putText(  (OBSERVER),         ("OBSERVER") );
+  pmfile.putText(  (FILENAME),         ("FILENAME") );
 
   const char* app_mode = "unknown";
   switch (APPLICATION_MODE) {
@@ -197,91 +249,49 @@ DOTRACE("WriteParams");
   case FMRI_SESSION:  app_mode = "FMRI_SESSION"; break;
   }
 
-  PUTTEXT(   (app_mode),         ("APPLICATION_MODE") );
-  PUTINT(    (FMRI_SESSION_NUMBER),("FMRI_SESSION_NUMBER") );
-
-  Closefile( fp );
+  pmfile.putText(   (app_mode),         ("APPLICATION_MODE") );
+  pmfile.putInt(    (FMRI_SESSION_NUMBER),("FMRI_SESSION_NUMBER") );
 }
 
-void LogParams(Application* app, FILE* fl) {
-DOTRACE("LogParams");
+void Params::logParams(Application* app, ParamFile& logfile) {
+DOTRACE("Params::logParams");
 
-  FILE *fp;
-  char line[480], Cname[ 120 ];
-
-  WriteParams(app, "cur");
-
-  Openfile(app, &fp, READ, "cur" );
+  writeParams(app, "cur");
 
   char text[STRINGSIZE];
   date(text);
-  fprintf( fl, "\n\n%s\n\n", text);
+  fprintf( logfile.fp(), "\n\n%s\n\n", text);
 
-  while( fgets( line, 120, fp) !=  NULL)
-    {
-		fputs( line, fl);
-    }
+  appendParams(logfile);
 
-  Closefile( fp );
-
-  fprintf( fl, "\n\n");
+  fprintf( logfile.fp(), "\n\n");
 }
 
-void ListParams(Application* app) {
-DOTRACE("ListParams");
+void Params::displayParams(Application* app) {
+DOTRACE("Params::displayParams");
 
-  FILE *fp;
+  const int MAXPARAMS = 60; 
+
   int nparams = 0;
-  char params[60][STRINGSIZE];
+  char params[MAXPARAMS][STRINGSIZE];
 
-  WriteParams(app, "sta");
+  writeParams(app, "sta");
 
-  Openfile(app, &fp, READ, "sta");
+  ParamFile pmfile(app, READ, "sta");
 
-  while( fgets( params[nparams], STRINGSIZE, fp) !=  NULL && nparams < 60 )
+  int curparam = MAXPARAMS - 1;
+
+  while( curparam >= 0 &&
+			fgets( params[curparam], STRINGSIZE, pmfile.fp()) !=  NULL )
     {    
-		params[nparams][ strlen( params[nparams] ) - 1 ] = '\0';
-		nparams++;
+		--curparam;
+		++nparams;
     }
-
-  Closefile( fp );
 
   app->graphics()->clearFrontBuffer();
   app->graphics()->clearBackBuffer();
-  app->graphics()->showParams(params, nparams);
+  app->graphics()->showParams(params+curparam+1, nparams);
   app->graphics()->swapBuffers();
-}
-
-void Openfile(Application* app, FILE** fp, char mode, char extension[]) {
-DOTRACE("Openfile");
-
-  char fname[STRINGSIZE];
-
-  sprintf( fname, "%s.%s", FILENAME, extension );
-
-  if (mode == OPTIONAL) {
-	 if( ( *fp = fopen( fname, "r") ) == NULL )
-		{
-		  printf( "cannot read from %s, will create it\n", fname );
-		  *fp = NULL;
-		}
-  }
-  else {
-	 char mode_string[2] = { mode, '\0' };
-
-	 if( ( *fp = fopen( fname, mode_string) ) == NULL )
-		{
-		  printf( "cannot open %s in mode '%s'\n", fname, mode_string);
-		  app->quit(0);
-		}
-  }
-}
-
-void Closefile( FILE* fp ) {
-DOTRACE("Closefile");
-
-  if(fp != NULL)
-	 fclose(fp);
 }
 
 void SetParameters1(Application* app) {

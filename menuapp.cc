@@ -26,7 +26,7 @@ MenuApplication::MenuApplication(const XHints& hints) :
 {
 DOTRACE("MenuApplication::MenuApplication");
 
-  ReadParams(this, "sta");
+  Params::readParams(this, "sta");
 }
 
 MenuApplication::~MenuApplication() {
@@ -35,7 +35,7 @@ DOTRACE("MenuApplication::~MenuApplication");
 
 void MenuApplication::wrap() {
 DOTRACE("MenuApplication::wrap");
-  WriteParams(this, "sta");
+  Params::writeParams(this, "sta");
 
   graphics()->wrapGraphics();
 }

@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:05:04 2000
-// written: Tue Mar  6 17:27:57 2001
+// written: Tue Mar  6 19:00:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,20 +54,46 @@ extern char  OBSERVER[];
 #define      READ            	   'r'
 #define      WRITE           	   'w'
 #define      APPEND          	   'a'
-#define      OPTIONAL        	   'o'
 
-void ReadParams(Application* app, char extension[]);
+class ParamFile {
+private:
+  FILE* itsFile;
+  char itsLine[120];
+  char itsText[120];
+
+  static FILE* openfile(Application* app, char mode, char extension[]);
+
+  void fetchLine();
+
+public:
+  ParamFile(Application* app, char mode, char extension[]);
+  ~ParamFile();
+
+  FILE* fp() { return itsFile; }
+
+  void getInt(int& var);
+  void getChar(char& var);
+  void getFloat(float& var);
+  void getText(char* var);
+
+  void ignoreText();
+
+  void putInt(int var, const char* name);
+  void putChar(char var, const char* name);
+  void putFloat(float var, const char* name);
+  void putText(const char* var, const char* name);
+};
+
+class Params {
+public:
+  static void readParams(Application* app, char extension[]);
+  static void writeParams(Application* app, char extension[]);
+  static void appendParams(ParamFile& pmfile);
+  static void logParams(Application* app, ParamFile& logfile);
+  static void displayParams(Application* app);
+};
+
 void RecomputeParams(Graphics* gfx);
-void WriteParams(Application* app, char extension[]);
-
-// Called from BallsExpt::runExperiment
-void LogParams(Application* app, FILE* fl);
-void ListParams(Application* app);
-
-// Called from BallsExpt::runExperiment, ReadParams, WriteParams,
-// LogParams, ListParams
-void Openfile(Application* app, FILE** fp, char mode, char extension[] );
-void Closefile( FILE* fp );
 
 void SetParameters1(Application* app);
 void SetParameters2(Application* app);

@@ -27,11 +27,11 @@ ifeq ($(ARCH),irix6)
 endif
 
 OBJ   = \
-	$(ARCH)/applic.o \
 	$(ARCH)/application.o \
 	$(ARCH)/balls.o \
 	$(ARCH)/ballsexpt.o \
 	$(ARCH)/graphics.o \
+	$(ARCH)/menuapp.o \
 	$(ARCH)/params.o \
 	$(ARCH)/simplemovie.o \
 	$(ARCH)/timing.o \
@@ -60,23 +60,23 @@ XHINTS_H = xhints.h
 XSTUFF_H = xstuff.h
 
 # Level 1
-APPLIC_H = $(APPLICATION_H) applic.h
+MENUAPP_H = $(APPLICATION_H) menuapp.h
 GRAPHICS_H = $(DEFS_H) graphics.h
 
 # Level 2
-BALLSEXPT_H = $(APPLIC_H) ballsexpt.h
+BALLSEXPT_H = $(MENUAPP_H) ballsexpt.h
 OPENGLGFX_H = $(GRAPHICS_H) openglgfx.h
 STARBASEGFX_H = $(GRAPHICS_H) starbasegfx.h
 
-APPLIC_CC = $(APPLIC_H) $(DEFS_H) $(GRAPHICS_H) \
-	$(PARAMS_H) $(TRACE_H) $(DEBUG_H) applic.c
+MENUAPP_CC = $(MENUAPP_H) $(DEFS_H) $(GRAPHICS_H) \
+	$(PARAMS_H) $(TRACE_H) $(DEBUG_H) menuapp.cc
 
 APPLICATION_CC = $(APPLICATION_H) $(DEFS_H) $(OPENGLGFX_H) \
 	$(PARAMS_H) $(STARBASEGFX_H) $(TIMING_H) $(XHINTS_H) \
 	$(XSTUFF_H) $(TRACE_H) $(DEBUG_H) application.cc
 
 BALLS_CC = $(BALLS_H) $(DEFS_H) $(GRAPHICS_H) $(PARAMS_H) $(TIMING_H) \
-	$(TRACE_H) $(DEBUG_H) balls.c
+	$(TRACE_H) $(DEBUG_H) balls.cc
 
 BALLSEXPT_CC = $(BALLSEXPT_H) $(BALLS_H) $(GRAPHICS_H) $(PARAMS_H) \
 	$(TIMING_H) $(XHINTS_H) $(TRACE_H) $(DEBUG_H) ballsexpt.cc
@@ -85,14 +85,14 @@ GLFONT_CC = $(GLFONT_H) $(TRACE_H) $(DEBUG_H) glfont.cc
 
 GRAPHICS_CC = $(GRAPHICS_H) $(TIMING_H) $(TRACE_H) $(TIMING_H) graphics.cc
 
-MAIN_CC = $(BALLSEXPT_H) $(PARAMS_H) $(XHINTS_H) main.c
+MAIN_CC = $(BALLSEXPT_H) $(PARAMS_H) $(XHINTS_H) main.cc
 
 OPENGLGFX_CC = $(OPENGLGFX_H) $(GLFONT_H) $(PARAMS_H) \
 	$(SIMPLEMOVIE_H) $(TIMING_H) $(XHINTS_H) $(XSTUFF_H) \
 	$(TRACE_H) $(DEBUG_H) openglgfx.cc
 
 PARAMS_CC = $(PARAMS_H) $(APPLICATION_H) $(DEFS_H) $(GRAPHICS_H) \
-	$(TRACE_H) $(DEBUG_H) params.c
+	$(TRACE_H) $(DEBUG_H) params.cc
 
 SIMPLEMOVIE_CC = $(SIMPLEMOVIE_H) simplemovie.cc
 
@@ -100,7 +100,7 @@ STARBASEGFX_CC = $(STARBASEGFX_H) $(PARAMS_H) $(TIMING_H) \
 	$(XSTUFF_H) $(TRACE_H) $(DEBUG_H) starbasegfx.cc
 
 TIMING_CC = $(TIMING_H) $(APPLICATION_H) $(DEFS_H) $(PARAMS_H) \
-	$(DEBUG_H) $(TRACE_H) timing.c
+	$(DEBUG_H) $(TRACE_H) timing.cc
 
 TRACE_CC = $(TRACE_H) trace.cc
 
@@ -110,10 +110,6 @@ XSTUFF_CC = $(XSTUFF_H) $(DEFS_H) $(XHINTS_H) $(TRACE_H) $(DEBUG_H) xstuff.cc
 # Targets
 #
 
-$(MOVIE_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION -DMAKE_MOVIE main.c \
-		$(OBJ) -o $@ $(LFLAGS) $(LIB)
-
 all:	$(ALL)
 
 mvtest: mvtest.cc
@@ -122,14 +118,18 @@ mvtest: mvtest.cc
 clean:
 	rm -f core *.o *.a $(ALL)
 
-$(TRAIN_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_TRAINING main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
-
 $(ITRK_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_EYE_TRACKING main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+	time $(CC) $(CFLAGS) -DMODE_EYE_TRACKING main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB) 
 
 $(FMRI_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.c $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+
+$(TRAIN_TARGET): $(OBJ) $(MAIN_CC)
+	time $(CC) $(CFLAGS) -DMODE_TRAINING main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+
+$(MOVIE_TARGET): $(OBJ) $(MAIN_CC)
+	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION -DMAKE_MOVIE main.cc \
+		$(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 serial: serial.c eventnames.h
 	cc -o $@ $< -L/usr/lib/X11R6 -lXwindow -lsb -lXhp11 -lX11 -lm -ldld
@@ -137,15 +137,12 @@ serial: serial.c eventnames.h
 $(ARCH)/%.o : %.cc
 	time $(CC) $(CFLAGS) -c $< -o $@ 
 
-$(ARCH)/%.o : %.c
-	time $(CC) $(CFLAGS) -c $< -o $@ 
-
-$(ARCH)/applic.o: $(APPLIC_CC)
 $(ARCH)/application.o: $(APPLICATION_CC)
 $(ARCH)/balls.o: $(BALLS_CC)
 $(ARCH)/ballsexpt.o: $(BALLSEXPT_CC)
 $(ARCH)/glfont.o: $(GLFONT_CC)
 $(ARCH)/graphics.o: $(GRAPHICS_CC)
+$(ARCH)/menuapp.o: $(MENUAPP_CC)
 $(ARCH)/openglgfx.o: $(OPENGLGFX_CC)
 $(ARCH)/params.o: $(PARAMS_CC)
 $(ARCH)/simplemovie.o: $(SIMPLEMOVIE_CC)
@@ -154,5 +151,5 @@ $(ARCH)/timing.o: $(TIMING_CC)
 $(ARCH)/trace.o: $(TRACE_CC)
 $(ARCH)/xstuff.o: $(XSTUFF_CC)
 
-TAGS: *.[ch]
-	etags *.[ch]*
+TAGS: *.h *.cc *.c
+	etags $+
