@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Thu Mar 30 17:05:51 2000
+// written: Mon Jun 12 14:22:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -128,9 +128,18 @@ DOTRACE("StarbaseGfx::drawMessage");
 
   writeUpperPlanes();
 
-  setText(200, 250);
 
-  dctext( fildes(), width()/2 - 500, height()/2+100, word );
+  if (APPLICATION_MODE == FMRI_SESSION)
+	 {
+		// Use mirror-reversed text if we are in magnet
+		setText(-150, 300);
+		dctext( fildes(), width()/2 + 500, height()/2+100, word );
+	 }
+  else
+	 {
+		setText(150, 300);
+		dctext( fildes(), width()/2 - 500, height()/2+100, word );
+	 }
 
   writeLowerPlanes();
 }
