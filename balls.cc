@@ -385,8 +385,10 @@ DOTRACE("Balls::runTrial");
       timeval t0 = tstart;
 
       // Here's the main loop where the balls are moving randomly
-      for (int j=0; j<itsParams.framesPerRemind; ++j)
+      int nframes = 0;
+      while (true)
         {
+          ++nframes;
           gfx.clearBackBuffer();
           drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
           gfx.drawCross();
@@ -394,7 +396,17 @@ DOTRACE("Balls::runTrial");
 
           timeval t1 = Timing::now();
 
-          pickNextPositions(gfx, Timing::elapsedMsec(t0, t1)/1000.0);
+          // amount of time lapsed in the previous frame
+          const double lapsed_sec = Timing::elapsedMsec(t0, t1)/1000.0;
+
+          pickNextPositions(gfx, lapsed_sec);
+
+          // amount of time lapsed in the entire motion sequence so far
+          const double total_lapsed_sec =
+            Timing::elapsedMsec(tstart, t1)/1000.0;
+
+          if (total_lapsed_sec >= itsParams.ballMotionSeconds())
+            break;
 
           t0 = t1;
         }
@@ -403,10 +415,9 @@ DOTRACE("Balls::runTrial");
 
       const double lapse = Timing::elapsedMsec(tstart, tstop);
 
-      std::cout << " " << itsParams.framesPerRemind
-                << " frames in " << lapse << " msec ("
-                << lapse/itsParams.framesPerRemind
-                << " msec per frame)\n";
+      std::cout << " " << nframes << " frames in "
+                << lapse << " msec ("
+                << lapse/nframes << " msec per frame)\n";
 
       timer.reset();
 

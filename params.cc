@@ -164,7 +164,6 @@ Params::Params(int argc, char** argv) :
   displayX(),
   displayY(),
   fmriSessionNumber(1),
-  framesPerRemind(),
   remindsPerEpoch(),
   windowDepth(24),
   windowHeight(1024),
@@ -248,6 +247,8 @@ DOTRACE("Params::readFromFile");
 
   ParamFileIn pmfile(this->filestem, extension);
 
+  int dummy;
+
   pmfile.getInt   (this->displayX);
   pmfile.getInt   (this->displayY);
   pmfile.getInt   (this->cycleNumber);
@@ -256,7 +257,7 @@ DOTRACE("Params::readFromFile");
   pmfile.getDouble(this->pauseSeconds);
   pmfile.getDouble(this->remindSeconds);
   pmfile.getInt   (this->remindsPerEpoch);
-  pmfile.getInt   (this->framesPerRemind);
+  pmfile.getInt   (dummy); // FIXME used to be framesPerRemind
   pmfile.getInt   (this->ballNumber);
   pmfile.getInt   (this->ballTrackNumber);
   pmfile.getDouble(this->ballSpeed);
@@ -298,7 +299,7 @@ DOTRACE("Params::appendToFile");
   pmfile.putDouble(this->pauseSeconds,      "PAUSE_DURATION");
   pmfile.putDouble(this->remindSeconds  ,   "REMIND_DURATION");
   pmfile.putInt   (this->remindsPerEpoch,   "REMINDS_PER_EPOCH");
-  pmfile.putInt   (this->framesPerRemind,   "FRAMES_PER_REMIND");
+  pmfile.putInt   (0,                       "<defunct>");// FIXME
   pmfile.putInt   (this->ballNumber,        "BALL_NUMBER");
   pmfile.putInt   (this->ballTrackNumber,   "BALL_TRACK_NUMBER");
   pmfile.putDouble(this->ballSpeed,         "BALL_SPEED");
@@ -513,21 +514,6 @@ DOTRACE("Params::recompute");
 
   this->borderX = (gfx.width() - displayX) / 2;
   this->borderY = (gfx.height() - displayY) / 2;
-
-  const double time_between_reminds =
-    (epochSeconds - pauseSeconds - remindSeconds) / remindsPerEpoch;
-
-  const double frametime = gfx.frameTime();
-
-  this->framesPerRemind =
-    int(1000.0*(time_between_reminds-this->remindSeconds) / frametime);
-
-  std::cout << " epochSeconds " << epochSeconds << '\n';
-  std::cout << " pauseSeconds " << pauseSeconds << '\n';
-  std::cout << " remindSeconds " << remindSeconds << '\n';
-  std::cout << " time_between_reminds " << time_between_reminds << '\n';
-  std::cout << " video frame time " << frametime << " msec\n";
-  std::cout << " framesPerRemind " << framesPerRemind << " frames\n";
 }
 
 static const char vcid_params_cc[] = "$Header$";

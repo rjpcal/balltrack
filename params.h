@@ -91,11 +91,17 @@ public:
   int    displayX;
   int    displayY;
   int    fmriSessionNumber;
-  int    framesPerRemind;       // = 11;
   int    remindsPerEpoch;       // = 72;
   int    windowDepth;
   int    windowHeight;
   int    windowWidth;
+
+  double ballMotionSeconds() const
+  {
+    return
+      ((epochSeconds - pauseSeconds - remindSeconds)
+       / remindsPerEpoch) - remindSeconds;
+  }
 
 private:
   void recompute(Graphics& gfx);
