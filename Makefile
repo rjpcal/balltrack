@@ -1,6 +1,6 @@
 #########################################################################
 #
-# Makefile for Balls3 psychophysics experiment
+# Makefile for balltracking psychophysics experiment
 #
 # Rob Peters rjpeters@klab.caltech.edu
 # created: Feb 2000
