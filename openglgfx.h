@@ -3,7 +3,7 @@
 // openglgfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:03:44 2000
-// written: Wed Feb 28 14:39:20 2001
+// written: Tue Mar  6 16:59:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,6 +67,8 @@ public:
   virtual void gfxWait(double delaySeconds);
 
 private:
+  virtual double computeFrameTime() const;
+
   void clearBackBufferRegion(bool use_scissor);
 
   void waitFrameCount(int number);

@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Thu Mar 30 17:15:54 2000
+// written: Tue Mar  6 16:56:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,6 +53,8 @@ public:
   virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
 
 private:
+  virtual double computeFrameTime() const;
+
   int fildes() const { return itsFildes; }
 
   // called from showMenu(), showParams()
