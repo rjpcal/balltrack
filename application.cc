@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Tue Feb 29 16:05:42 2000
+// written: Tue Feb 29 16:22:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "application.h"
 
 #include <cstdlib>				  // for exit
+#include <cstring>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <X11/Xutil.h>
@@ -51,7 +52,7 @@ Application::Application(const XHints& hints) :
 {
 DOTRACE("Application::Application");
 
-  WhoAreYou( this );
+  whoAreYou();
 
   itsXStuff->openWindow(hints);
   itsXStuff->mapWindow(hints.name());
@@ -63,6 +64,19 @@ DOTRACE("Application::Application");
   struct timeval tp;
   Timing::getTime(&tp);
   srand48( tp.tv_sec );
+}
+
+void Application::whoAreYou() {
+DOTRACE("Application::whoAreYou");
+  if( argc() < 2 )
+    {
+		printf( " Who are you?\n" );
+		quit(0);
+    }
+
+  strcpy( PROGRAM,  argv(0) );
+  strcpy( OBSERVER, argv(1) );
+  strcpy( FILENAME, argv(1) );
 }
 
 Application::~Application() {

@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Fri Feb 25 13:29:26 2000
+// written: Tue Feb 29 16:18:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,8 @@ protected:
   virtual void onMenuChoice(char c);
 
 private:
+  void whoAreYou();
+
   void keyPressAction( XEvent* event );
 
   void timeButtonEvent( XEvent* event );
