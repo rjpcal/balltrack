@@ -12,9 +12,7 @@
 #ifndef TIMING_H_DEFINED
 #define TIMING_H_DEFINED
 
-#include <cstdio>
 #include <sys/time.h>
-#include <vector>
 
 class Timer
 {
