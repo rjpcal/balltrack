@@ -3,7 +3,7 @@
 // ballsexpt.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:20 2000
-// written: Tue Jun 13 14:13:00 2000
+// written: Tue Mar  6 17:31:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,8 +11,8 @@
 #ifndef BALLSEXPT_H_DEFINED
 #define BALLSEXPT_H_DEFINED
 
-#ifndef APPLIC_H_DEFINED
-#include "applic.h"
+#ifndef MENUAPP_H_DEFINED
+#include "menuapp.h"
 #endif
 
 class BallsExpt : public MenuApplication {
