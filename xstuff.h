@@ -14,6 +14,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#include <string>
+
 struct XStuff
 {
 public:
@@ -28,18 +30,17 @@ public:
   Window window() const { return itsWindow; }
 
   char getKeypress() const;
-  // FIXME use std::string
-  void getWord(char* buf, int sz) const;
 
   void getInt(int* pi) const;
   void getFloat(float* pf) const;
 
 private:
+  std::string getWord() const;
+
   int itsWidth;
   int itsHeight;
   Display* itsDisplay;
   Window itsWindow;
-  XVisualInfo itsVisInfo;
 };
 
 static const char vcid_xstuff_h[] = "$Header$";

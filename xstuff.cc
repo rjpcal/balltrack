@@ -52,8 +52,7 @@ XStuff::XStuff(int width, int height) :
   itsWidth(width),
   itsHeight(height),
   itsDisplay(0),
-  itsWindow(0),
-  itsVisInfo()
+  itsWindow(0)
 {
 DOTRACE("XStuff::XStuff");
 
@@ -90,14 +89,12 @@ DOTRACE("XStuff::openWindow");
       exit(1);
     }
 
-  itsVisInfo = *vinfo;
-
   const int screen = DefaultScreen(itsDisplay);
 
   Colormap cmap =
     XCreateColormap(itsDisplay,
                     RootWindow(itsDisplay, screen),
-                    itsVisInfo.visual, AllocNone);
+                    vinfo->visual, AllocNone);
 
   XColor mean_color;
   mean_color.flags = DoRed | DoGreen | DoBlue;
@@ -120,9 +117,9 @@ DOTRACE("XStuff::openWindow");
   itsWindow = XCreateWindow(itsDisplay,
                             RootWindow(itsDisplay, screen),
                             0, 0, itsWidth, itsHeight, 2,
-                            itsVisInfo.depth,
+                            vinfo->depth,
                             InputOutput,
-                            itsVisInfo.visual,
+                            vinfo->visual,
                             (CWBackPixel | CWColormap
                              | CWBorderPixel | CWEventMask),
                             &winAttributes);
@@ -134,9 +131,9 @@ DOTRACE("XStuff::openWindow");
   XSync(itsDisplay, False);
 
 
-  std::cout << " window with " << visual_class_name(itsVisInfo.c_class)
-            << " visual " << itsVisInfo.visualid
-            << " of depth " << itsVisInfo.depth << std::endl;
+  std::cout << " window with " << visual_class_name(vinfo->c_class)
+            << " visual " << vinfo->visualid
+            << " of depth " << vinfo->depth << std::endl;
 
   char temp_name[256];
   strncpy(temp_name, winname, 256);
@@ -188,39 +185,38 @@ DOTRACE("XStuff::getKeypress");
     }
 }
 
-void XStuff::getWord(char* buf, int sz) const
+std::string XStuff::getWord() const
 {
 DOTRACE("XStuff::getWord");
 
-  int n = 0;
   char c;
 
-  while ((c = this->getKeypress()) != ' '  && n < sz)
+  std::string result;
+
+  while ((c = this->getKeypress()) != ' ')
     {
-      buf[n++] = c;
+      result += c;
     }
 
-  buf[n] = '\0';
+  return result;
 }
 
 void XStuff::getInt(int* pi) const
 {
 DOTRACE("XStuff::getInt");
 
-  char word[STRINGSIZE];
-  this->getWord(word, STRINGSIZE);
+  const std::string buf = this->getWord();
 
-  sscanf(word, "%d", pi);
+  sscanf(&buf[0], "%d", pi);
 }
 
 void XStuff::getFloat(float* pf) const
 {
 DOTRACE("XStuff::getFloat");
 
-  char word[STRINGSIZE];
-  this->getWord(word, STRINGSIZE);
+  const std::string buf = this->getWord();
 
-  sscanf(word, "%f", pf);
+  sscanf(&buf[0], "%f", pf);
 }
 
 static const char vcid_xstuff_cc[] = "$Header$";

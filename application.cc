@@ -19,6 +19,7 @@
 #include <cstdlib>              // for srand48()
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
+#include <X11/Xutil.h>
 
 #include "trace.h"
 #include "debug.h"

@@ -71,7 +71,6 @@ Graphics::Graphics(const char* winname,
   itsFrameTime(-1.0),
   itsXStuff(width, height),
   itsGLXContext(0),
-  itsClearIndex(0),
   itsMovie(0),
   isItRecording(false)
 {

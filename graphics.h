@@ -73,8 +73,6 @@ private:
   XStuff itsXStuff;
   GLXContext itsGLXContext;
 
-  int itsClearIndex;
-
   SimpleMovie* itsMovie;
   bool isItRecording;
 };
