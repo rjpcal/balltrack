@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:55:05 2000
-// written: Tue Feb 22 20:03:03 2000
+// written: Wed Feb 23 14:15:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 
 class Application;
 
-void WhoAreYou(Application* app);
 void InitApplication(Application* app);
 void WrapApplication(Application* app);
 void SwitchApplication( Application* app, char c );
