@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Tue Feb 29 16:16:58 2000
+// written: Tue Feb 29 16:45:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,9 +29,10 @@ BallsExpt::BallsExpt(const XHints& hints) :
 {
 DOTRACE("BallsExpt::BallsExpt");
   Balls::generateColors();
-#ifdef COLOR_INDEX
-  graphics()->loadColormap(Balls::theColors, Balls::COLOR_NUMBER);
-#endif
+
+  if ( !hints.rgba() ) {
+	 graphics()->loadColormap(Balls::theColors, Balls::COLOR_NUMBER);
+  }
 }
 
 void BallsExpt::fillMenu(char menu[][STRINGSIZE], int nitems) {
