@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// balls.c
+// balls.cc
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
@@ -9,8 +9,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BALLS_C_DEFINED
-#define BALLS_C_DEFINED
+#ifndef BALLS_CC_DEFINED
+#define BALLS_CC_DEFINED
 
 #include "balls.h"
 
@@ -568,5 +568,5 @@ DOTRACE("Balls::runTrial");
   gfx->swapBuffers();
 }
 
-static const char vcid_balls_c[] = "$Header$";
-#endif // !BALLS_C_DEFINED
+static const char vcid_balls_cc[] = "$Header$";
+#endif // !BALLS_CC_DEFINED
