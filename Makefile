@@ -26,6 +26,14 @@ ifeq ($(ARCH),irix6)
 	GFXOBJ = $(ARCH)/glfont.o $(ARCH)/openglgfx.o
 endif
 
+ifeq ($(ARCH),i686)
+	CC  = g++3
+	CFLAGS=  -DI686
+	LFLAGS= -L/usr/X11R6/lib
+	LIB   = -lGLU -lGL -lX11 -lm
+	GFXOBJ = $(ARCH)/glfont.o $(ARCH)/openglgfx.o
+endif
+
 OBJ   = \
 	$(ARCH)/application.o \
 	$(ARCH)/balls.o \
@@ -49,6 +57,9 @@ ifeq ($(ARCH),hp9000s700)
 endif
 ifeq ($(ARCH),irix6)
 	ALL   = $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET) $(MOVIE_TARGET)
+endif
+ifeq ($(ARCH),i686)
+	ALL   = $(TRAIN_TARGET) $(ITRK_TARGET) $(FMRI_TARGET)
 endif
 
 # Level 0

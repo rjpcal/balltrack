@@ -3,7 +3,7 @@
 // main.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 12:27:11 2000
-// written: Wed Feb 28 12:36:13 2001
+// written: Wed Jun 27 14:13:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ const bool PRIVATE_CMAP = true;
 const bool DOUBLEBUFFER = false;
 const bool USE_RGBA = false;
 
-#elif defined(IRIX6)
+#elif defined(IRIX6) || defined(I686)
 
 const int DEPTH_HINT = 24;
 const char* VISUAL_CLASS = "TrueColor";
@@ -76,31 +76,31 @@ int main( int argc, char** argv ) {
   XHints hints;
 
   hints
-	 .argc(argc)
-	 .argv(argv)
-	 .name(WINDOW_NAME)
-	 .width(WINDOW_X)
-	 .height(WINDOW_Y)
-	 .depth(DEPTH_HINT)
-	 .visualClass(VISUAL_CLASS)
-	 .privateCmap(PRIVATE_CMAP)
-	 .doubleBuffer(DOUBLEBUFFER)
-	 .rgba(USE_RGBA);
+    .argc(argc)
+    .argv(argv)
+    .name(WINDOW_NAME)
+    .width(WINDOW_X)
+    .height(WINDOW_Y)
+    .depth(DEPTH_HINT)
+    .visualClass(VISUAL_CLASS)
+    .privateCmap(PRIVATE_CMAP)
+    .doubleBuffer(DOUBLEBUFFER)
+    .rgba(USE_RGBA);
 
   if (FMRI_SESSION == APPLICATION_MODE && argc >= 3)
-	 {
-		istrstream ist(argv[2]);
-		ist >> FMRI_SESSION_NUMBER;
-		if ( FMRI_SESSION_NUMBER < 0 || FMRI_SESSION_NUMBER > 4 )
-		  {
-			 cout << "session number must be 1, 2, 3, or 4" << endl;
-			 return 0;
-		  }
-	 }
+    {
+      istrstream ist(argv[2]);
+      ist >> FMRI_SESSION_NUMBER;
+      if ( FMRI_SESSION_NUMBER < 0 || FMRI_SESSION_NUMBER > 4 )
+        {
+          cout << "session number must be 1, 2, 3, or 4" << endl;
+          return 0;
+        }
+    }
 
-  BallsExpt theApp(hints); 
+  BallsExpt theApp(hints);
 
-#ifndef IRIX6
+#ifdef HP9000S700
   system("./serial&");
 #endif
 
