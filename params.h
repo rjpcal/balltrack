@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:05:04 2000
-// written: Tue Mar  6 17:02:45 2001
+// written: Tue Mar  6 17:27:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ extern char  OBSERVER[];
 #define      OPTIONAL        	   'o'
 
 void ReadParams(Application* app, char extension[]);
-void CheckParams(Graphics* gfx);
+void RecomputeParams(Graphics* gfx);
 void WriteParams(Application* app, char extension[]);
 
 // Called from BallsExpt::runExperiment
