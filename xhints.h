@@ -39,8 +39,6 @@ public:
   XHints& depth(int hint) { itsDepth = hint; return *this; }
   int depth() const { return itsDepth; }
 
-  const char* visualClass() const { return "TrueColor"; }
-
 private:
   int itsArgc;
   char** itsArgv;

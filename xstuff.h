@@ -22,42 +22,20 @@ public:
   XStuff(const XHints& hints);
 
   void openWindow(const XHints& hints);
-  void mapWindow(const char* name);
-  void printWindowInfo();
   void wrapX();
 
   Display* display() { return itsDisplay; }
   Window window() const { return itsWindow; }
-  void storeColor(unsigned int index, double red, double green, double blue);
 
   void setPrefVisInfo(const XVisualInfo* vinfo);
 
 private:
-  void openDisplay();
-  void createVisual(const XHints& hints);
-  void createColormap(const XHints& hints);
-  void createWindow(const char* name);
-  void selectInput();
-
-  void setWmProperty(char* name);
-  void setWmProtocol();
-
-  int itsArgc;
-  char** itsArgv;
-
   int itsWidth;
   int itsHeight;
-
   Display* itsDisplay;
-  int itsScreen;
   Window itsWindow;
-  Visual* itsVisual;
-  int itsDepth;
-  Colormap itsColormap;
-  XColor itsMeanColor;
   XVisualInfo itsVisInfo;
-  XVisualInfo itsPrefVisInfo;
-  bool itsHasPrefVisInfo;
+  bool itsHasVisInfo;
 };
 
 static const char vcid_xstuff_h[] = "$Header$";

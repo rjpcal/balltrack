@@ -12,6 +12,7 @@
 #define GRAPHICS_H_DEFINED
 
 #include "defs.h"
+#include "xstuff.h"
 
 #include <GL/gl.h>
 #include <GL/glx.h>
@@ -27,7 +28,7 @@ public:
 
   ~Graphics();
 
-  XStuff& xstuff() const { return *itsXStuff; }
+  XStuff& xstuff() { return itsXStuff; }
 
   void initWindow();
 
@@ -80,7 +81,7 @@ private:
   int itsHeight;
   double itsFrameTime;
 
-  XStuff* itsXStuff;
+  XStuff itsXStuff;
   GLXContext itsGLXContext;
 
   int itsClearIndex;

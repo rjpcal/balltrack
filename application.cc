@@ -47,8 +47,6 @@ DOTRACE("Application::Application");
   whoAreYou();
 
   itsGraphics->xstuff().openWindow(hints);
-  itsGraphics->xstuff().mapWindow(hints.name());
-  itsGraphics->xstuff().printWindowInfo();
 
   itsGraphics->initWindow();
 

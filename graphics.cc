@@ -71,7 +71,7 @@ Graphics::Graphics(const XHints& hints, int wid, int hgt) :
   itsWidth(wid),
   itsHeight(hgt),
   itsFrameTime(-1.0),
-  itsXStuff(new XStuff(hints)),
+  itsXStuff(hints),
   itsGLXContext(0),
   itsClearIndex(0),
   itsMovie(0),
@@ -91,13 +91,13 @@ DOTRACE("Graphics::Graphics");
 
   attribList.push_back(None);
 
-  XVisualInfo* vi = glXChooseVisual(itsXStuff->display(),
-                                    DefaultScreen(itsXStuff->display()),
+  XVisualInfo* vi = glXChooseVisual(itsXStuff.display(),
+                                    DefaultScreen(itsXStuff.display()),
                                     &attribList[0]);
 
-  itsXStuff->setPrefVisInfo(vi);
+  itsXStuff.setPrefVisInfo(vi);
 
-  itsGLXContext = glXCreateContext(itsXStuff->display(), vi, 0, GL_TRUE);
+  itsGLXContext = glXCreateContext(itsXStuff.display(), vi, 0, GL_TRUE);
 
   if ( itsGLXContext == 0 )
     {
@@ -121,7 +121,7 @@ void Graphics::initWindow()
 {
 DOTRACE("Graphics::initWindow");
 
-  glXMakeCurrent(itsXStuff->display(), itsXStuff->window(), itsGLXContext);
+  glXMakeCurrent(itsXStuff.display(), itsXStuff.window(), itsGLXContext);
 
   glViewport(0, 0, width(), height());
 
@@ -151,7 +151,7 @@ DOTRACE("Graphics::initWindow");
 void Graphics::wrapGraphics()
 {
 DOTRACE("Graphics::wrapGraphics");
-  glXDestroyContext(itsXStuff->display(), itsGLXContext);
+  glXDestroyContext(itsXStuff.display(), itsGLXContext);
 }
 
 void Graphics::gfxWait(double delaySeconds)
@@ -245,7 +245,7 @@ DOTRACE("Graphics::waitVerticalRetrace");
 void Graphics::swapBuffers()
 {
 DOTRACE("Graphics::swapBuffers");
-  glXSwapBuffers(itsXStuff->display(), itsXStuff->window());
+  glXSwapBuffers(itsXStuff.display(), itsXStuff.window());
   glXWaitGL();
   glXWaitX();
 
@@ -365,7 +365,7 @@ DOTRACE("Graphics::showMenu");
   glIndexi(1);
 
   glFlush();
-  glXSwapBuffers(itsXStuff->display(), itsXStuff->window());
+  glXSwapBuffers(itsXStuff.display(), itsXStuff.window());
 
   int char_width = 16;
   int char_height = 25;
