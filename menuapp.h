@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// applic.h
+// menuapp.h
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:55:05 2000
@@ -9,8 +9,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef APPLIC_H_DEFINED
-#define APPLIC_H_DEFINED
+#ifndef MENUAPP_H_DEFINED
+#define MENUAPP_H_DEFINED
 
 #ifndef APPLICATION_H_DEFINED
 #include "application.h"
@@ -34,5 +34,5 @@ protected:
   virtual void fillMenu(char menu[][STRINGSIZE], int nitems) = 0;
 };
 
-static const char vcid_applic_h[] = "$Header$";
-#endif // !APPLIC_H_DEFINED
+static const char vcid_menuapp_h[] = "$Header$";
+#endif // !MENUAPP_H_DEFINED
