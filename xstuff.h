@@ -41,6 +41,8 @@ public:
                  ExposeFunc* onExpose,
                  KeyFunc* onKey);
 
+  void buttonPressLoop();
+
 private:
   std::string getWord() const;
 

@@ -28,13 +28,7 @@ public:
   Application(XStuff& x);
   virtual ~Application();
 
-  void buttonPressLoop();
-
-  char getKeystroke();
-
 private:
-  static void timeButtonEvent(XEvent* event);
-
   XStuff& itsXStuff;
 };
 

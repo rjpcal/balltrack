@@ -13,7 +13,6 @@
 
 #include "ballsexpt.h"
 
-#include "application.h"
 #include "balls.h"
 #include "graphics.h"
 #include "params.h"
@@ -48,7 +47,6 @@ namespace
 struct BallsExpt::Impl
 {
   Impl(Params& p, Graphics& g) :
-    appl(g.xstuff()),
     timepoints(),
     timepointIdx(0),
     ballset(p),
@@ -57,7 +55,6 @@ struct BallsExpt::Impl
   {}
 
   /// XXX this needs to be at least as big as (cycleNumber+1)*NUM_CONDITIONS
-  Application appl;
   timeval timepoints[128];
   int timepointIdx;
   Balls ballset;
@@ -253,7 +250,7 @@ DOTRACE("BallsExpt::runExperiment");
 
   rep->logTimePoints(tmefile);
 
-  rep->appl.buttonPressLoop();
+  rep->gfx.xstuff().buttonPressLoop();
 
   Timing::tallyReactionTime(tmefile,
                             rep->params.remindSeconds);
