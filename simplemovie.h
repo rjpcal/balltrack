@@ -25,7 +25,6 @@ public:
 
   size_t frameSize() const { return itsFrameSize; }
 
-  // Packing of pixel data shoud be 32-bit (4-byte) XRGB format
   void appendFrames(int frameCount, void* buffer);
 
   char* tempFrameBuffer();
