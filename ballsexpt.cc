@@ -162,7 +162,7 @@ DOTRACE("BallsExpt::makeMenu");
   menu[7] = "recent percent correct: "
     + makestring(int(Timing::recentPercentCorrect()));
 
-  graphics().showMenu(menu, nitems);
+  graphics().drawStrings(menu, nitems, 100, -200, 20);
 
   graphics().swapBuffers();
 }

@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <vector>
 
 #include "trace.h"
 #include "debug.h"
@@ -290,27 +291,25 @@ void Params::showSettings(Graphics& gfx)
 {
 DOTRACE("Params::showSettings");
 
-  const int MAXPARAMS = 60;
-
-  int nparams = 0;
-  char params[MAXPARAMS][STRINGSIZE];
-
   writeToFile("sta");
 
+  const int bufsize = 256;
+  char buf[bufsize];
+
+  std::vector<std::string> params;
+
+  // FIXME iostreams;
   ParamFile pmfile(filestem, 'r', "sta");
 
-  int curparam = MAXPARAMS - 1;
-
-  while (curparam >= 0 &&
-         fgets(params[curparam], STRINGSIZE, pmfile.fp()) !=  NULL)
+  while (fgets(buf, bufsize, pmfile.fp()) !=  NULL)
     {
-      --curparam;
-      ++nparams;
+      params.push_back(std::string(&buf[0]));
     }
 
   gfx.clearFrontBuffer();
   gfx.clearBackBuffer();
-  gfx.showParams(params+curparam+1, nparams);
+  gfx.drawStrings(&params[0], params.size(),
+                  50, gfx.height() - 50, 10 /* cwidth */);
   gfx.swapBuffers();
 }
 
@@ -339,55 +338,55 @@ DOTRACE("Params::setGroup1");
            ballSigma2, ballTwistAngle);
   menu[3] = buf;
 
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&ballNumber);
   snprintf(buf, bufsize, "       %-6d", ballNumber);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&ballTrackNumber);
   snprintf(buf, bufsize, " %-6d", ballTrackNumber);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&ballVelocity);
   snprintf(buf, bufsize, " %-6d", ballVelocity);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&ballPixmapSize);
   snprintf(buf, bufsize, " %-6d", ballPixmapSize);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&ballMinDistance);
   snprintf(buf, bufsize, " %-6d", ballMinDistance);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&ballRadius);
   snprintf(buf, bufsize, " %-6.1f", ballRadius);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&ballSigma2);
   snprintf(buf, bufsize, " %-6.1f", ballSigma2);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&ballTwistAngle);
   snprintf(buf, bufsize, " %-6.3f", ballTwistAngle);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   this->recompute(gfx);
@@ -417,43 +416,43 @@ DOTRACE("Params::setGroup2");
           pauseSeconds, remindsPerEpoch, remindSeconds);
   menu[3] = buf;
 
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&cycleNumber);
   snprintf(buf, bufsize, "       %-8d", cycleNumber);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&waitSeconds);
   snprintf(buf, bufsize, " %-8.2f", waitSeconds);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&epochSeconds);
   snprintf(buf, bufsize, " %-8.2f", epochSeconds);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&pauseSeconds);
   snprintf(buf, bufsize, " %-8.2f", pauseSeconds);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&remindsPerEpoch);
   snprintf(buf, bufsize, " %-8d", remindsPerEpoch);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getFloat(&remindSeconds);
   snprintf(buf, bufsize, " %-8.2f", remindSeconds);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   this->recompute(gfx);
@@ -481,13 +480,13 @@ DOTRACE("Params::setGroup2");
   snprintf(buf, bufsize, "       %-8d", fmriSessionNumber);
   menu[3] = buf;
 
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   gfx.xstuff().getInt(&fmriSessionNumber);
   snprintf(buf, bufsize, "       %-8d", fmriSessionNumber);
   menu[1] += buf;
-  gfx.showMenu(menu, 4);
+  gfx.drawStrings(menu, 4, 100, -200, 16);
   gfx.swapBuffers();
 
   this->recompute(gfx);

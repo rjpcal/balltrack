@@ -33,15 +33,15 @@
 namespace
 {
   void drawGLText(const std::string& word, int stroke_width,
-                  int x_pos, int y_pos,
-                  int char_width, int char_height)
+                  double x_pos, double y_pos,
+                  double char_width, double char_height)
   {
-  DOTRACE("<graphics.cc>::drawGLText");
+    DOTRACE("<graphics.cc>::drawGLText");
 
-    unsigned int listbase = GLFont::getStrokeFontListBase();
+    const unsigned int listbase = GLFont::getStrokeFontListBase();
 
-    double x_scale = char_width/5.0;
-    double y_scale = char_height/6.0;
+    const double x_scale = char_width/5.0;
+    const double y_scale = char_height/6.0;
 
     glColor3d(1.0, 1.0, 1.0);
 
@@ -233,8 +233,8 @@ DOTRACE("Graphics::drawMessage");
       availWidth = itsMovie->width();
     }
 
-  const int charWidth = availWidth / word.length();
-  const int charHeight = int (charWidth * 1.4);
+  const double charWidth = availWidth / word.length();
+  const double charHeight = charWidth * 1.5;
 
   drawGLText(word, 4,
              (width()-availWidth)/2, (height()-charHeight)/2,
@@ -261,43 +261,27 @@ DOTRACE("Graphics::drawCross");
   glEnd();
 }
 
-void Graphics::showMenu(const std::string* strings, int nstrings)
+void Graphics::drawStrings(const std::string* strings, int nstrings,
+                           double xpos, double ypos, double char_width)
 {
-DOTRACE("Graphics::showMenu");
+DOTRACE("Graphics::drawStrings");
   clearFrontBuffer();
-
-  glIndexi(1);
 
   glFlush();
   glXSwapBuffers(itsXStuff.display(), itsXStuff.window());
 
-  int char_width = 16;
-  int char_height = 25;
+  const double char_height = char_width*1.5;
+
+  if (xpos < 0.0)
+    xpos = height() + xpos;
+
+  if (ypos < 0.0)
+    ypos = height() + ypos;
 
   for (int i = 0; i < nstrings; ++i)
     drawGLText(strings[i], 2,
-               100, height() - 200 - i * (char_height*2),
+               xpos, ypos - (2*i*char_height),
                char_width, char_height);
-}
-
-void Graphics::showParams(char params[][STRINGSIZE], int nparams)
-{
-DOTRACE("Graphics::showParams");
-  int col1 = (nparams < 23) ? nparams : 23;
-  int col2 = (nparams < 23) ? 0       : nparams;
-
-  for (int i=0; i<col1; ++i)
-    drawGLText(params[i], 2,
-               width()/2 - 500, height()/2 -  450 + i * 40,
-               10, 15);
-
-  if (col1+1 < col2)
-    {
-      for (int i=col1+1; i<col2; ++i)
-        drawGLText(params[i], 2,
-                   width()/2 + 100, height()/2 - 1370 + i * 40,
-                   10, 15);
-    }
 }
 
 void Graphics::writePixmap(int x, int y, unsigned char* ptr, int size)

@@ -53,8 +53,8 @@ public:
   void drawCross();
   void drawCross(int x, int y);
 
-  void showMenu(const std::string* strings, int nstrings);
-  void showParams(char params[][STRINGSIZE], int nparams);
+  void drawStrings(const std::string* strings, int nstrings,
+                   double xpos, double ypos, double char_width);
 
   void writePixmap(int x, int y, unsigned char* ptr, int size);
 
