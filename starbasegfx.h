@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Tue Mar  6 17:02:00 2001
+// written: Wed Jun 27 15:31:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,8 +53,6 @@ public:
   virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
 
 private:
-  virtual double computeFrameTime();
-
   int fildes() const { return itsFildes; }
 
   // called from showMenu(), showParams()
@@ -65,7 +63,7 @@ private:
   // called from initWindow()
   void sizeColormap();
   void saveColormap();
-  void restoreColormap();	// called from MenuApplication::wrap()
+  void restoreColormap();  // called from MenuApplication::wrap()
 
   XStuff* itsXStuff;
 

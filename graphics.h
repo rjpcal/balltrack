@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Tue Mar  6 16:54:35 2001
+// written: Wed Jun 27 15:30:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ public:
   double frameTime();
 
 private:
-  virtual double computeFrameTime() = 0;
+  double computeFrameTime();
 
   int itsHeight;
   int itsWidth;
