@@ -146,14 +146,7 @@ DOTRACE("XStuff::openWindow");
             << " visual " << vinfo->visualid
             << " of depth " << vinfo->depth << std::endl;
 
-  char temp_name[256];
-  strncpy(temp_name, winname, 256);
-  char* nameptr = &temp_name[0];
-
-  XTextProperty window_name;
-  XStringListToTextProperty(&nameptr, 1, &window_name);
-
-  XSetWMName(itsDisplay, itsWindow, &window_name);
+  XStoreName(itsDisplay, itsWindow, winname);
 
   XMapWindow(itsDisplay, itsWindow);
 }
