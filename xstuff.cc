@@ -47,10 +47,9 @@ namespace
 
     char buffer[10];
     KeySym keysym;
-    XComposeStatus compose;
 
-    int count = XLookupString((XKeyEvent*) event, buffer, 9,
-                              &keysym, &compose);
+    int count = XLookupString(&event->xkey, buffer, 9,
+                              &keysym, (XComposeStatus*)0);
     buffer[ count ] = '\0';
 
     if (count > 1 || keysym == XK_Return ||
@@ -186,29 +185,10 @@ DOTRACE("XStuff::getKeypress");
       if (event.type != KeyPress || event.xkey.window != itsWindow)
         continue;
 
-      KeySym keysym;
-      char buffer[10];
+      const char key = extractKey(&event);
 
-      // For some reason, if we pass a non-null XComposeStatus* to this
-      // function, the 'buffer' gets screwed up... very weird.
-      const int count = XLookupString(&event.xkey, &buffer[0], 9,
-                                      &keysym, (XComposeStatus*) 0);
-
-      buffer[ count ] = '\0';
-
-      DebugEvalNL(buffer);
-      if (count > 1 || keysym == XK_Return ||
-          keysym == XK_BackSpace || keysym == XK_Delete)
-        {
-          continue;
-        }
-
-      if (keysym >= XK_KP_Space && keysym <= XK_KP_9 ||
-          keysym >= XK_space    && keysym <= XK_asciitilde)
-        {
-          DebugEvalNL(buffer[0]);
-          return buffer[0];
-        }
+      if (key != '\0')
+        return key;
     }
 }
 
