@@ -20,7 +20,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <time.h>
 
 #include "trace.h"
 #include "debug.h"
@@ -211,9 +210,9 @@ Params::Params(int argc, char** argv) :
     }
 }
 
-void Params::readParams(Graphics& gfx, char extension[])
+void Params::readFromFile(Graphics& gfx, char extension[])
 {
-DOTRACE("Params::readParams");
+DOTRACE("Params::readFromFile");
 
   ParamFile pmfile(FILENAME, 'r', extension);
 
@@ -247,18 +246,18 @@ DOTRACE("Params::readParams");
   this->recompute(gfx);
 }
 
-void Params::writeParams(char extension[])
+void Params::writeToFile(char extension[])
 {
-DOTRACE("Params::writeParams");
+DOTRACE("Params::writeToFile");
 
   ParamFile pmfile(FILENAME, 'w', extension);
 
-  appendParams(pmfile);
+  appendToFile(pmfile);
 }
 
-void Params::appendParams(ParamFile& pmfile)
+void Params::appendToFile(ParamFile& pmfile)
 {
-DOTRACE("Params::appendParams");
+DOTRACE("Params::appendToFile");
 
   pmfile.putInt(   DISPLAY_X,         "DISPLAY_X" );
   pmfile.putInt(   DISPLAY_Y,         "DISPLAY_Y" );
@@ -292,31 +291,16 @@ DOTRACE("Params::appendParams");
   pmfile.putInt(    FMRI_SESSION_NUMBER, "FMRI_SESSION_NUMBER" );
 }
 
-void Params::logParams(ParamFile& logfile)
+void Params::showSettings(Graphics& gfx)
 {
-DOTRACE("Params::logParams");
-
-  writeParams("cur");
-
-  time_t t = time(0);
-  char* p = ctime(&t);
-  fprintf( logfile.fp(), "\n\n%s\n\n", p);
-
-  appendParams(logfile);
-
-  fprintf( logfile.fp(), "\n\n");
-}
-
-void Params::displayParams(Graphics& gfx)
-{
-DOTRACE("Params::displayParams");
+DOTRACE("Params::showSettings");
 
   const int MAXPARAMS = 60;
 
   int nparams = 0;
   char params[MAXPARAMS][STRINGSIZE];
 
-  writeParams("sta");
+  writeToFile("sta");
 
   ParamFile pmfile(FILENAME, 'r', "sta");
 

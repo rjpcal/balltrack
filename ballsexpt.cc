@@ -21,6 +21,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <time.h>
 
 #include "trace.h"
 #include "debug.h"
@@ -78,7 +79,7 @@ BallsExpt::BallsExpt(Graphics& gfx, Params& p) :
 {
 DOTRACE("BallsExpt::BallsExpt");
 
-  rep->params.readParams(gfx, "sta");
+  rep->params.readFromFile(gfx, "sta");
 
   Balls::generateColors();
 }
@@ -87,7 +88,7 @@ BallsExpt::~BallsExpt()
 {
 DOTRACE("BallsExpt::~BallsExpt");
 
-  rep->params.writeParams("sta");
+  rep->params.writeToFile("sta");
 
   delete rep;
 }
@@ -126,7 +127,7 @@ DOTRACE("BallsExpt::onKey");
       break;
 
     case 'p':
-      rep->params.displayParams(this->graphics());
+      rep->params.showSettings(this->graphics());
       break;
 
     default:
@@ -187,7 +188,15 @@ DOTRACE("BallsExpt::runExperiment");
 
   ParamFile tmefile(rep->params.FILENAME, 'a', "tme");
 
-  rep->params.logParams(tmefile);
+  rep->params.writeToFile("cur");
+
+  time_t t = time(0);
+  char* p = ctime(&t);
+  fprintf( tmefile.fp(), "\n\n%s\n\n", p);
+
+  rep->params.appendToFile(tmefile);
+
+  fprintf( tmefile.fp(), "\n\n");
 
   graphics().clearFrontBuffer();
 

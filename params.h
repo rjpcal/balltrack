@@ -55,11 +55,10 @@ class Params
 public:
   Params(int argc, char** argv);
 
-  void readParams(Graphics& gfx, char extension[]);
-  void writeParams(char extension[]);
-  void appendParams(ParamFile& pmfile);
-  void logParams(ParamFile& logfile);
-  void displayParams(Graphics& gfx);
+  void readFromFile(Graphics& gfx, char extension[]);
+  void writeToFile(char extension[]);
+  void appendToFile(ParamFile& pmfile);
+  void showSettings(Graphics& gfx);
 
   void setGroup1(Graphics& gfx);
   void setGroup2(Graphics& gfx);
