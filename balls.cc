@@ -424,7 +424,8 @@ DOTRACE("Balls::runTrial");
 
       std::cout << " " << nframes << " frames in "
                 << lapse << " msec ("
-                << lapse/nframes << " msec per frame)\n";
+                << lapse/nframes << " msec/frame, "
+                << 1000*nframes/lapse << " frames/sec)\n";
 
       timer.reset();
 
