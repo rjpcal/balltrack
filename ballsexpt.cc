@@ -58,9 +58,6 @@ class ResponseData
 public:
   ResponseData();
 
-  // Used in BallsExpt::onButton
-  void addToResponseStack(double xtime, int nbutton);
-
   std::vector<Stimulus> itsStimuli;
   std::vector<Response> itsResponses;
 
@@ -78,18 +75,6 @@ ResponseData::ResponseData() :
   itsPercentCorrect(0.0)
 {}
 
-
-void ResponseData::addToResponseStack(double xtime, int nbutton)
-{
-DOTRACE("ResponseData::addToResponseStack");
-
-  double delta = xtime - itsResponseTime0;
-
-  if (delta < 0.0)
-    delta = delta + 4294967295.0;
-
-  itsResponses.push_back(Response(delta, nbutton));
-}
 
 struct BallsExpt::Impl
 {
@@ -274,12 +259,18 @@ void BallsExpt::onButton(void* cdata, double xtime, int button_number)
 {
 DOTRACE("BallsExpt::onButton");
   BallsExpt* p = static_cast<BallsExpt*>(cdata);
+
+  double delta = xtime - p->rep->rdata.itsResponseTime0;
+
+  if (delta < 0.0)
+    delta = delta + 4294967295.0;
+
   switch (button_number)
     {
-    case 1:  p->rep->rdata.addToResponseStack(xtime, BUTTON1); break;
-    case 2:  p->rep->rdata.addToResponseStack(xtime, BUTTON2); break;
-    case 3:  p->rep->rdata.addToResponseStack(xtime, BUTTON3); break;
-    default: p->rep->rdata.addToResponseStack(xtime, 0); break;
+    case 1:  p->rep->rdata.itsResponses.push_back(Response(delta, BUTTON1)); break;
+    case 2:  p->rep->rdata.itsResponses.push_back(Response(delta, BUTTON2)); break;
+    case 3:  p->rep->rdata.itsResponses.push_back(Response(delta, BUTTON3)); break;
+    default: p->rep->rdata.itsResponses.push_back(Response(delta, 0)); break;
     }
 }
 
