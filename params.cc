@@ -392,13 +392,13 @@ namespace
   struct ParamInfo
   {
     ParamInfo(const std::string& n, int& v) :
-      name(n), width(6), dvar(0), ivar(&v), dorig(0.0), iorig(v)
+      descr(n), width(6), dvar(0), ivar(&v), dorig(0.0), iorig(v)
     {
       width = std::max(6u, n.length() + 1);
     }
 
     ParamInfo(const std::string& n, double& v) :
-      name(n), width(6), dvar(&v), ivar(0), dorig(v), iorig(0)
+      descr(n), width(6), dvar(&v), ivar(0), dorig(v), iorig(0)
     {
       width = std::max(6u, n.length() + 1);
     }
@@ -409,7 +409,7 @@ namespace
       return (*ivar != iorig);
     }
 
-    std::string name;
+    std::string descr;
     unsigned int width;
 
     double* dvar;
@@ -452,7 +452,7 @@ namespace
         {
           oss.str("");
           oss.setf(std::ios::right);
-          oss << std::setw(maxwid) << items[i].name;
+          oss << std::setw(maxwid) << items[i].descr;
 
           if (items[i].dvar != 0)
             {
