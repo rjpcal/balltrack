@@ -21,7 +21,7 @@ ifeq ($(ARCH),irix6)
 	CC  = /opt/MIPSpro/bin/CC
 	CFLAGS=  -I/usr/include/X11R6 -I/cit/rjpeters/include \
 		-I/cit/rjpeters/include/cppheaders -DIRIX6
-	LFLAGS= 
+	LFLAGS=
 	LIB   = -lmoviefile -ldmedia -lGLU -lGL -lX11 -lm
 	GFXOBJ = $(ARCH)/glfont.o $(ARCH)/openglgfx.o
 endif
@@ -138,13 +138,13 @@ clean:
 	rm -f core *.o *.a $(ALL)
 
 $(ITRK_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_EYE_TRACKING main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+	time $(CC) $(CFLAGS) -DMODE_EYE_TRACKING main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 $(FMRI_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 $(TRAIN_TARGET): $(OBJ) $(MAIN_CC)
-	time $(CC) $(CFLAGS) -DMODE_TRAINING main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB) 
+	time $(CC) $(CFLAGS) -DMODE_TRAINING main.cc $(OBJ) -o $@ $(LFLAGS) $(LIB)
 
 $(MOVIE_TARGET): $(OBJ) $(MAIN_CC)
 	time $(CC) $(CFLAGS) -DMODE_FMRI_SESSION -DMAKE_MOVIE main.cc \
