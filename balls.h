@@ -64,6 +64,13 @@ struct Stimulus
   bool reaction_correct;
 };
 
+enum Buttons
+  {
+    BUTTON1,
+    BUTTON2,
+    BUTTON3
+  };
+
 class Balls
 {
 private:

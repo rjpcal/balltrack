@@ -16,15 +16,6 @@
 #include <sys/time.h>
 #include <vector>
 
-class ParamFile;
-
-enum Buttons
-  {
-    BUTTON1,
-    BUTTON2,
-    BUTTON3
-  };
-
 class Timer
 {
 public:
