@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Feb 29 17:33:31 2000
+// written: Tue Feb 29 17:57:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,18 +120,14 @@ DOTRACE("OpenglGfx::initWindow");
   checkFrameTime();
 
   if (isDoubleBuffered()) {
-    clearBackBuffer();
+    clearBackBufferRegion(false);
     swapBuffers();
-    clearBackBuffer();
+    clearBackBufferRegion(false);
     swapBuffers();
   }
   else {
     clearFrontBuffer();
   }
-
-  glEnable(GL_SCISSOR_TEST);
-  glScissor( (width() - DISPLAY_X)/2, (height() - DISPLAY_Y)/2,
-				 DISPLAY_X, DISPLAY_Y );
 }
 
 void OpenglGfx::wrapGraphics() {
@@ -241,17 +237,30 @@ DOTRACE("OpenglGfx::loadColormap");
 void OpenglGfx::clearFrontBuffer() {
 DOTRACE("OpenglGfx::clearFrontBuffer");
 
-  GLint mask;
-  glGetIntegerv(GL_INDEX_WRITEMASK, &mask);
-
-  glClearIndex(itsClearIndex);
   glClear(GL_COLOR_BUFFER_BIT); 
+}
+
+void OpenglGfx::clearBackBufferRegion(bool use_scissor) {
+DOTRACE("OpenglGfx::clearBackBufferRegion");
+
+  if (use_scissor) { 
+	 glEnable(GL_SCISSOR_TEST);
+	 glScissor( (width() - DISPLAY_X)/2, (height() - DISPLAY_Y)/2,
+					DISPLAY_X, DISPLAY_Y );
+  }
+
+  glDrawBuffer(GL_BACK); 
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  if (use_scissor) {
+	 glDisable(GL_SCISSOR_TEST);
+  }
 }
 
 void OpenglGfx::clearBackBuffer() {
 DOTRACE("OpenglGfx::clearBackBuffer");
-  glDrawBuffer(GL_BACK); 
-  glClear(GL_COLOR_BUFFER_BIT);
+
+  clearBackBufferRegion(true);
 }
 
 void OpenglGfx::showMenu(char menu[][STRINGSIZE], int nmenu) {
