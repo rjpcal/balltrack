@@ -37,6 +37,9 @@ struct vec
 
   double length() const
   { return sqrt(x*x + y*y); }
+
+  double lengthsq() const
+  { return x*x + y*y; }
 };
 
 inline double dot(const vec& v1, const vec& v2)
@@ -68,6 +71,17 @@ inline vec unit(const vec& w)
 inline vec rot90(const vec& w)
 { return vec( -w.y,
                w.x ); }
+
+inline vec rotate(const vec& w, double angle /* radians */)
+{
+  const double a11  =  cos(angle);
+  const double a12  =  sin(angle);
+  const double a21  = -sin(angle);
+  const double a22  =  cos(angle);
+
+  return vec(a11*w.x + a12*w.y,
+             a21*w.x + a22*w.y);
+}
 
 class Ball
 {

@@ -195,76 +195,63 @@ void Ball::collideIfNeeded(Ball& other, int min_dist,
 DOTRACE("Ball::collideIfNeeded");
 
   const vec ij =
-    this->next - other.next; // [units pixels] vector from (this) to (other)
+    this->next - other.next; // vector from (this) to (other)
 
   if (fabs(ij.x) >= min_dist || fabs(ij.y) >= min_dist)
     return;
 
-  const vec a = unit(ij); // [unitless] (unit vector along ij)
-  const vec o = rot90(a); // [unitless] (unit vector normal to ij)
+  /* The collision algorithm has two rules:
 
-  // These are the velocities of (this) and (other) along the vector
-  // pointing from (this) to (other)
-  const double vai  = dot(this->vel, a); // [pix/sec]
-  const double vaj  = dot(other.vel, a); // [pix/sec]
+     (1) The colliding objects each maintain the same velocity
+         magnitude
 
-  // If (this) is moving more slowly along the connecting line than
-  // (other), then we'll have a collision:
-  if (vai < vaj)
-    {
-      // Projections of the velocities of (this) and (other) along a
-      // line perpendicular to the one connecting them
-      const double voi  = dot(this->vel, o); // [pix/sec]
-      const double voj  = dot(other.vel, o); // [pix/sec]
+     (2) The collision only affects the component of the objects'
+         velocities that is parallel to the collision path (i.e. the
+         vector connecting the two objects)
+  */
 
-      if (0)
-        {
-          // just to illustrate the geometry, we can retrieve the old
-          // directions for this as follows:
-          const vec ovi = vai*a + voi*o;
-          const vec ovj = vaj*a + voj*o;
+  const vec a = unit(ij); // unit vector along direction of ij
+  const vec o = rot90(a); // unit vector normal to ij
 
-          Assert((ovi - this->vel).length() < 0.01);
-          Assert((ovj - other.vel).length() < 0.01);
-        }
+  // Velocity magnitudes of (this) and (other) along the vector
+  // pointing from (this) to (other):
+  const double vai = dot(this->vel, a);
+  const double vaj = dot(other.vel, a);
 
-      // new directions for (this) and (other)
-      const vec nvi = (voi*o + vaj*a); // [pix/sec]
-      const vec nvj = (voj*o + vai*a); // [pix/sec]
+  // If (this) is moving more quickly along the connecting line than
+  // (other), then there's no collision:
+  if (vai >= vaj)
+    return;
 
-      const double vij2 = vai*vai - vaj*vaj; // [pix^2/sec^2] always negative
+  // Velocity magnitudes of (this) and (other) along a vector
+  // perpendicular to the one connecting them:
+  const double voi = dot(this->vel, o);
+  const double voj = dot(other.vel, o);
 
-      Assert(vij2 < 0.0);
+  // New directions for (this) and (other); the objects keep maintain
+  // the component of their velocity that is perpendicular to the
+  // collision path, and they swap the components that lie along the
+  // collision path:
+  const vec nvi = (voi*o + vaj*a);
+  const vec nvj = (voj*o + vai*a);
 
-      const double fi = sqrt(1. + vij2 / nvi.lengthsq()); // [unitless]
-      const double fj = sqrt(1. - vij2 / nvj.lengthsq()); // [unitless]
+  // Change directions but maintain magnitudes:
+  this->vel = this->vel.length() * unit(nvi);
+  other.vel = other.vel.length() * unit(nvj);
 
-      this->vel = fi * nvi; // [pix/sec]
-      other.vel = fj * nvj; // [pix/sec]
-
-      this->next = this->pos + (this->vel * lapsed_seconds);
-      other.next = other.pos + (other.vel * lapsed_seconds);
-    }
+  this->next = this->pos + (this->vel * lapsed_seconds);
+  other.next = other.pos + (other.vel * lapsed_seconds);
 }
 
 void Ball::twist(double maxangle)
 {
 DOTRACE("Ball::twist");
 
-  // Rotate the velocity vector by either +angle or -angle
+  // Rotate the velocity by an amount between -maxangle and +angle
 
   const double angle = 2 * (drand48() - 0.5) * maxangle;
 
-  const double a11  =  cos(angle);
-  const double a12  =  sin(angle);
-  const double a21  = -sin(angle);
-  const double a22  =  cos(angle);
-
-  const double x = this->vel.x;
-  const double y = this->vel.y;
-
-  this->vel.x = a11*x + a12*y;
-  this->vel.y = a21*x + a22*y;
+  this->vel = rotate(this->vel, angle);
 }
 
 void Ball::copy()
