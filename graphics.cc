@@ -68,7 +68,6 @@ namespace
 Graphics::Graphics(const char* winname,
                    int w, int h, int depth) :
   itsGlx(w, h),
-  itsGLXContext(0),
   itsUsingVsync(false),
   isItRecording(false),
   itsFrameCounter(0),
@@ -76,42 +75,7 @@ Graphics::Graphics(const char* winname,
 {
 DOTRACE("Graphics::Graphics");
 
-  int attribList[] =
-    {
-      GLX_DOUBLEBUFFER,
-      GLX_RGBA,
-      GLX_BUFFER_SIZE,
-      depth,
-      None
-    };
-
-  XVisualInfo* vi = glXChooseVisual(itsGlx.display(),
-                                    DefaultScreen(itsGlx.display()),
-                                    &attribList[0]);
-
-  itsGLXContext = glXCreateContext(itsGlx.display(), vi, 0, GL_TRUE);
-
-  if (itsGLXContext == 0)
-    {
-      std::cout << "Couldn't get an OpenGL graphics context.\n";
-      exit(1);
-    }
-
-  glPixelStorei(GL_PACK_ALIGNMENT, 4);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-  itsGlx.openWindow(winname, vi);
-
-  XFree(vi);
-
-  glXMakeCurrent(itsGlx.display(), itsGlx.window(),
-                 itsGLXContext);
-
-  glViewport(0, 0, width(), height());
-
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0, width(), 0, height(), -1.0, 1.0);
+  itsGlx.openWindow(winname, depth);
 
   const std::string extensions =
     glXQueryExtensionsString(itsGlx.display(),
@@ -143,7 +107,6 @@ DOTRACE("Graphics::Graphics");
 Graphics::~Graphics()
 {
 DOTRACE("Graphics::~Graphics");
-  glXDestroyContext(itsGlx.display(), itsGLXContext);
 }
 
 void Graphics::gfxWait(const Timepoint& t, double delaySeconds)

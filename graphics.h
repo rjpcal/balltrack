@@ -69,7 +69,6 @@ private:
   void dumpFrames(int count);
 
   GlxWindow itsGlx;
-  GLXContext itsGLXContext;
 
   bool itsUsingVsync;
   bool isItRecording;

@@ -11,8 +11,9 @@
 #ifndef XSTUFF_H_DEFINED
 #define XSTUFF_H_DEFINED
 
+#include <GL/gl.h>
+#include <GL/glx.h>
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
 
 #include <string>
 
@@ -25,10 +26,12 @@ public:
   GlxWindow(int width, int height);
   ~GlxWindow();
 
-  void openWindow(const char* winname, const XVisualInfo* vinfo);
+  void openWindow(const char* winname, int depth);
 
   Display* display() { return itsDisplay; }
   Window window() const { return itsWindow; }
+
+  GLXContext context() const { return itsGLXContext; }
 
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
@@ -49,6 +52,7 @@ private:
 
   int itsWidth;
   int itsHeight;
+  GLXContext itsGLXContext;
   Display* itsDisplay;
   Window itsWindow;
 };

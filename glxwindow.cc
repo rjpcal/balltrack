@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <iostream>
 #include <X11/keysym.h>
+#include <X11/Xutil.h>
 
 #include "trace.h"
 #include "debug.h"
@@ -77,6 +78,7 @@ namespace
 GlxWindow::GlxWindow(int width, int height) :
   itsWidth(width),
   itsHeight(height),
+  itsGLXContext(0),
   itsDisplay(0),
   itsWindow(0)
 {
@@ -99,20 +101,45 @@ DOTRACE("GlxWindow::GlxWindow");
 GlxWindow::~GlxWindow()
 {
 DOTRACE("GlxWindow::~GlxWindow");
+  glXDestroyContext(itsDisplay, itsGLXContext);
   XDestroyWindow(itsDisplay, itsWindow);
   XCloseDisplay(itsDisplay);
 }
 
 void GlxWindow::openWindow(const char* winname,
-                           const XVisualInfo* vinfo)
+                           int depth)
 {
 DOTRACE("GlxWindow::openWindow");
+
+  int attribList[] =
+    {
+      GLX_DOUBLEBUFFER,
+      GLX_RGBA,
+      GLX_BUFFER_SIZE,
+      depth,
+      None
+    };
+
+  XVisualInfo* vinfo = glXChooseVisual(itsDisplay,
+                                       DefaultScreen(itsDisplay),
+                                       &attribList[0]);
 
   if (vinfo == 0)
     {
       std::cerr << "XVisualInfo* was null in openWindow()!\n";
       exit(1);
     }
+
+  itsGLXContext = glXCreateContext(itsDisplay, vinfo, 0, GL_TRUE);
+
+  if (itsGLXContext == 0)
+    {
+      std::cout << "Couldn't get an OpenGL graphics context.\n";
+      exit(1);
+    }
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 4);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
   const int screen = DefaultScreen(itsDisplay);
 
@@ -148,6 +175,16 @@ DOTRACE("GlxWindow::openWindow");
   XStoreName(itsDisplay, itsWindow, winname);
 
   XMapWindow(itsDisplay, itsWindow);
+
+  XFree(vinfo);
+
+  glXMakeCurrent(itsDisplay, itsWindow, itsGLXContext);
+
+  glViewport(0, 0, itsWidth, itsHeight);
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0, itsWidth, 0, itsHeight, -1.0, 1.0);
 }
 
 char GlxWindow::getKeypress() const
