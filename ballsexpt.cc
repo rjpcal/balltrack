@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Thu Mar 30 17:27:57 2000
+// written: Mon Apr  3 18:02:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,6 +71,7 @@ DOTRACE("BallsExpt::runFixationCalibration");
 		graphics()->waitVerticalRetrace();
 		graphics()->clearFrontBuffer();
 		graphics()->drawCross(x[seq[i]], y[seq[i]]);
+		graphics()->swapBuffers();
 		Timing::mainTimer.set();
 		Timing::mainTimer.wait( 1.0 );
 	 }
@@ -132,8 +133,6 @@ DOTRACE("BallsExpt::runExperiment");
 		  theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ALL);
 		  // Run active tracking trial with objective check
 		  theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
-		  // Run passive trial
-		  theBalls.runTrial(graphics(), &tp[timepoint++], Balls::PASSIVE);
 		}
 
 	 if (FMRI_SESSION == APPLICATION_MODE)
