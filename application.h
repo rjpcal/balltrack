@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Thu Feb 24 14:20:46 2000
+// written: Thu Feb 24 14:32:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,8 +48,6 @@ protected:
   virtual void onMenuChoice(char c);
 
 private:
-  void mapImageWindow();
-
   void keyPressAction( XEvent* event );
 
   void timeButtonEvent( XEvent* event );
