@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Wed Sep  3 16:24:26 2003
+// written: Tue Feb  3 16:56:40 2004
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ DOTRACE("Application::timeButtonEvent");
           break;
         default:
           nbutton = 0;
-        break;
+          break;
         }
 
       Timing::addToResponseStack( (long) event->xkey.subwindow /* sec */,
