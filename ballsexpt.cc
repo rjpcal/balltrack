@@ -306,8 +306,6 @@ DOTRACE("BallsExpt::runExperiment");
 
   ParamFile tmefile(rep->params.filestem, 'a', "tme");
 
-  rep->params.writeToFile("cur");
-
   time_t t = time(0);
   char* p = ctime(&t);
 
