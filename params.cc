@@ -508,7 +508,7 @@ namespace
         }
 
       gfx.clearBackBuffer();
-      gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 12);
+      gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 14);
       gfx.swapBuffers();
     }
 
@@ -535,26 +535,26 @@ DOTRACE("Params::setParams");
 
   ParamMenu pm;
 
-  pm.addItem("arena width",                                 "DISPLAY_X", this->displayX);
-  pm.addItem("arena height",                                "DISPLAY_Y", this->displayY);
+  pm.addItem("arena width",                      "DISPLAY_X", this->displayX);
+  pm.addItem("arena height",                     "DISPLAY_Y", this->displayY);
 
-  pm.addItem("# of cycles",                                 "CYCLE_NUMBER", this->cycleNumber);
-  pm.addItem("wait duration (seconds)",                     "WAIT_DURATION", this->waitSeconds);
-  pm.addItem("epoch duration (seconds)",                    "EPOCH_DURATION", this->epochSeconds);
-  pm.addItem("pause duration (seconds)",                    "PAUSE_DURATION", this->pauseSeconds);
-  pm.addItem("remind duration (seconds)",                   "REMIND_DURATION", this->remindSeconds);
-  pm.addItem("# of reminds per epoch",                      "REMINDS_PER_EPOCH", this->remindsPerEpoch);
+  pm.addItem("# of cycles",                      "CYCLE_NUMBER", this->cycleNumber);
+  pm.addItem("wait duration (seconds)",          "WAIT_DURATION", this->waitSeconds);
+  pm.addItem("epoch duration (seconds)",         "EPOCH_DURATION", this->epochSeconds);
+  pm.addItem("pause duration (seconds)",         "PAUSE_DURATION", this->pauseSeconds);
+  pm.addItem("remind duration (seconds)",        "REMIND_DURATION", this->remindSeconds);
+  pm.addItem("# of reminds per epoch",           "REMINDS_PER_EPOCH", this->remindsPerEpoch);
 
-  pm.addItem("number of balls (total) ",                    "BALL_NUMBER", this->ballNumber);
-  pm.addItem("number of balls to track",                    "BALL_TRACK_NUMBER", this->ballTrackNumber);
-  pm.addItem("ball speed (ball widths/second)",             "BALL_SPEED", this->ballSpeed);
-  pm.addItem("ball pixmap size (#pixels)",                  "BALL_ARRAY_SIZE", this->ballPixmapSize);
-  pm.addItem("minimum distance before collision (#pixels)", "BALL_MIN_DISTANCE", this->ballMinDistance);
-  pm.addItem("ball radius (#pixels)",                       "BALL_RADIUS", this->ballRadius);
-  pm.addItem("ball sigma^2 (#pixels)",                      "BALL_SIGMA2", this->ballSigma2);
-  pm.addItem("ball twist angle (radians)",                  "BALL_TWIST_ANGLE", this->ballTwistAngle);
+  pm.addItem("number of balls  (total)",         "BALL_NUMBER", this->ballNumber);
+  pm.addItem("number of balls to track",         "BALL_TRACK_NUMBER", this->ballTrackNumber);
+  pm.addItem("ball speed (ball widths/second)",  "BALL_SPEED", this->ballSpeed);
+  pm.addItem("ball pixmap size (#pixels)",       "BALL_ARRAY_SIZE", this->ballPixmapSize);
+  pm.addItem("collision radius (#pixels)",       "BALL_MIN_DISTANCE", this->ballMinDistance);
+  pm.addItem("ball radius (#pixels)",            "BALL_RADIUS", this->ballRadius);
+  pm.addItem("ball sigma^2 (#pixels)",           "BALL_SIGMA2", this->ballSigma2);
+  pm.addItem("ball twist angle (radians)",       "BALL_TWIST_ANGLE", this->ballTwistAngle);
 
-  pm.addItem("fMRI session #",                              "FMRI_SESSION_NUMBER", this->fmriSessionNumber);
+  pm.addItem("fMRI session #",                   "FMRI_SESSION_NUMBER", this->fmriSessionNumber);
 
   pm.goVert(gfx);
 }
