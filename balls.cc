@@ -436,7 +436,7 @@ DOTRACE("Balls::runTrial");
 
           gfx.swapBuffers();
 
-          timing.addToStimulusStack(LEFTBUTTON);
+          timing.addToStimulusStack(BUTTON1);
 
           gfx.gfxWait(timer, itsParams.remindSeconds);
         }
@@ -465,9 +465,9 @@ DOTRACE("Balls::runTrial");
 
           // Note what the correct response should be for the random ball
           if (random_ball < itsParams.ballTrackNumber)
-            timing.addToStimulusStack(LEFTBUTTON);
+            timing.addToStimulusStack(BUTTON1);
           else
-            timing.addToStimulusStack(MIDDLEBUTTON);
+            timing.addToStimulusStack(BUTTON2);
 
           gfx.gfxWait(timer, itsParams.remindSeconds / 2.0);
 

@@ -18,9 +18,12 @@
 
 class ParamFile;
 
-#define      LEFTBUTTON            'l'
-#define      RIGHTBUTTON           'r'
-#define      MIDDLEBUTTON          'm'
+enum Buttons
+  {
+    BUTTON1,
+    BUTTON2,
+    BUTTON3
+  };
 
 class Timer
 {

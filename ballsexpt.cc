@@ -159,9 +159,9 @@ DOTRACE("BallsExpt::onButton");
   BallsExpt* p = static_cast<BallsExpt*>(cdata);
   switch (button_number)
     {
-    case 1:  p->rep->timing.addToResponseStack(xtime, LEFTBUTTON); break;
-    case 2:  p->rep->timing.addToResponseStack(xtime, MIDDLEBUTTON); break;
-    case 3:  p->rep->timing.addToResponseStack(xtime, RIGHTBUTTON); break;
+    case 1:  p->rep->timing.addToResponseStack(xtime, BUTTON1); break;
+    case 2:  p->rep->timing.addToResponseStack(xtime, BUTTON2); break;
+    case 3:  p->rep->timing.addToResponseStack(xtime, BUTTON3); break;
     default: p->rep->timing.addToResponseStack(xtime, 0); break;
     }
 }
