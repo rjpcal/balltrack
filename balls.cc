@@ -30,9 +30,6 @@ namespace
 {
   typedef unsigned char ubyte;
 
-  std::vector<ubyte> theirBallmap;
-  std::vector<ubyte> theirHimap;
-
   void makeBallPixmap(std::vector<ubyte>& vec, int size,
                       double radius, double sigma,
                       ubyte bkg_r, ubyte bkg_g, ubyte bkg_b)
@@ -254,7 +251,6 @@ DOTRACE("Balls::initialize");
 
   for (int i=0; i < itsParams.ballNumber; ++i)
     {
-
       // Pick a random initial location that is not too close to the other balls
       bool too_close;
 
@@ -280,7 +276,6 @@ DOTRACE("Balls::initialize");
 
     itsBalls[i].randomVelocity(itsParams.ballVelocity);
   }
-
 }
 
 void Balls::nextBalls(Graphics& gfx)
@@ -307,22 +302,6 @@ DOTRACE("Balls::nextBalls");
     {
       itsBalls[i].twist(itsParams.ballTwistAngle);
     }
-}
-
-void Balls::moveBalls(Graphics& gfx)
-{
-DOTRACE("Balls::moveBalls");
-
-  gfx.clearBackBuffer();
-
-  for (int i = 0; i < itsParams.ballNumber; ++i)
-    {
-      itsBalls[i].draw(gfx, &theirBallmap[0], itsParams.ballPixmapSize);
-    }
-
-  gfx.drawCross();
-
-  gfx.swapBuffers();
 }
 
 void Balls::copyBalls()
@@ -355,20 +334,6 @@ DOTRACE("Balls::drawNHiBalls");
   drawNBalls(gfx, first, last, bitmap);
 }
 
-void Balls::prepare(Graphics& gfx)
-{
-DOTRACE("Balls::prepare");
-
-  initialize(gfx);
-
-  makeBallPixmap(theirHimap, itsParams.ballPixmapSize,
-                 itsParams.ballRadius, itsParams.ballSigma2,
-                 255, 255, 255);
-  makeBallPixmap(theirBallmap, itsParams.ballPixmapSize,
-                 itsParams.ballRadius, itsParams.ballSigma2,
-                 0, 0, 0);
-}
-
 void Balls::runTrial(Graphics& gfx, timeval* starttime, TrialType ttype)
 {
 DOTRACE("Balls::runTrial");
@@ -395,7 +360,17 @@ DOTRACE("Balls::runTrial");
 
   gfx.swapBuffers();
 
-  prepare(gfx);
+  initialize(gfx);
+
+  std::vector<ubyte> theirBallmap;
+  std::vector<ubyte> theirHimap;
+
+  makeBallPixmap(theirHimap, itsParams.ballPixmapSize,
+                 itsParams.ballRadius, itsParams.ballSigma2,
+                 255, 255, 255);
+  makeBallPixmap(theirBallmap, itsParams.ballPixmapSize,
+                 itsParams.ballRadius, itsParams.ballSigma2,
+                 0, 0, 0);
 
   gfx.gfxWait(itsParams.pauseSeconds);
 
@@ -432,7 +407,18 @@ DOTRACE("Balls::runTrial");
       for (int j=0; j<itsParams.framesPerRemind; ++j)
         {
           nextBalls(gfx);
-          moveBalls(gfx);
+
+          gfx.clearBackBuffer();
+
+          for (int i = 0; i < itsParams.ballNumber; ++i)
+            {
+              itsBalls[i].draw(gfx, &theirBallmap[0],
+                               itsParams.ballPixmapSize);
+            }
+
+          gfx.drawCross();
+          gfx.swapBuffers();
+
           copyBalls();
         }
 

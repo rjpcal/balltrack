@@ -47,12 +47,9 @@ private:
 class Balls
 {
 private:
-  void prepare(Graphics& gfx);
-
   void initialize(Graphics& gfx);
 
   void nextBalls(Graphics& gfx);
-  void moveBalls(Graphics& gfx);
   void copyBalls();
 
   void drawNBalls(Graphics& gfx, int first, int last, unsigned char* bitmap);
