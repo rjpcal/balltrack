@@ -33,11 +33,8 @@ namespace
   std::vector<ubyte> theirBallmap;
   std::vector<ubyte> theirHimap;
 
-  const int BALL_COLOR_MIN = 0;
-  const int BALL_COLOR_MAX = 255;
-
   void makeBallPixmap(std::vector<ubyte>& vec, int size,
-                      float radius, float sigma,
+                      double radius, double sigma,
                       ubyte bkg_r, ubyte bkg_g, ubyte bkg_b)
   {
     DOTRACE("<balls.cc>::makeBallPixmap");
@@ -46,45 +43,40 @@ namespace
     const double tint_g = 0.5;
     const double tint_b = 0.0;
 
-    const double lmin =   0.0;
-    const double lmax = 196.0;
-
     const int bytes_per_pixel = 4;
 
     const int num_bytes = size*size*bytes_per_pixel;
 
     vec.resize(num_bytes);
 
+    const double bound = radius*radius;
+
     for (int i=0; i<size; ++i)
       {
         for (int j=0; j<size; ++j)
           {
-            const float x   = float(i - size/2 + 0.5);
-            const float y   = float(j - size/2 + 0.5);
+            const double x   = double(i - size/2 + 0.5);
+            const double y   = double(j - size/2 + 0.5);
 
-            const float rsq = x*x + y*y;
+            const double rsq = x*x + y*y;
 
             const size_t base_loc = bytes_per_pixel*(i*size + j);
 
-            if (x*x+y*y < radius*radius)
+            if (rsq < bound)
               {
-                const ubyte n = ubyte (255 * exp(-rsq/sigma));
+                const double t = exp(-rsq/sigma);
 
-                const double t =
-                  lmin/lmax +
-                  ((lmax-lmin)*n / (lmax*255));
-
-                vec[base_loc + 0] = ubyte(0xff * t * tint_r);
-                vec[base_loc + 1] = ubyte(0xff * t * tint_g);
-                vec[base_loc + 2] = ubyte(0xff * t * tint_b);
-                vec[base_loc + 3] = ubyte(0xff);
+                vec[base_loc + 0] = ubyte(255 * t * tint_r);
+                vec[base_loc + 1] = ubyte(255 * t * tint_g);
+                vec[base_loc + 2] = ubyte(255 * t * tint_b);
+                vec[base_loc + 3] = ubyte(255);
               }
             else
               {
                 vec[base_loc + 0] = bkg_r;
                 vec[base_loc + 1] = bkg_g;
                 vec[base_loc + 2] = bkg_b;
-                vec[base_loc + 3] = ubyte(0xff);
+                vec[base_loc + 3] = ubyte(255);
               }
           }
       }
