@@ -88,8 +88,6 @@ DOTRACE("Timer::wait");
 Timer Timing::mainTimer;
 Timer Timing::logTimer;
 
-/*************************************************/
-
 void Timing::getTime(timeval* tp)
 {
 DOTRACE("Timing::getTime");
@@ -109,9 +107,6 @@ DOTRACE("Timing::elapsedMsec");
 
   return delta;
 }
-
-
-/***********************************************************/
 
 
 #define MAXTIMESTACKSIZE 1000
