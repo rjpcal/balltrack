@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Feb 29 17:22:18 2000
+// written: Tue Feb 29 17:33:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,7 +119,19 @@ DOTRACE("OpenglGfx::initWindow");
 
   checkFrameTime();
 
-  clearFrontBuffer();
+  if (isDoubleBuffered()) {
+    clearBackBuffer();
+    swapBuffers();
+    clearBackBuffer();
+    swapBuffers();
+  }
+  else {
+    clearFrontBuffer();
+  }
+
+  glEnable(GL_SCISSOR_TEST);
+  glScissor( (width() - DISPLAY_X)/2, (height() - DISPLAY_Y)/2,
+				 DISPLAY_X, DISPLAY_Y );
 }
 
 void OpenglGfx::wrapGraphics() {
