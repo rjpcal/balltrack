@@ -118,7 +118,8 @@ void Graphics::initWindow()
 {
 DOTRACE("Graphics::initWindow");
 
-  glXMakeCurrent(itsXStuff.display(), itsXStuff.window(), itsGLXContext);
+  glXMakeCurrent(itsXStuff.display(), itsXStuff.window(),
+                 itsGLXContext);
 
   glViewport(0, 0, width(), height());
 
