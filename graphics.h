@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Tue Feb 29 17:20:23 2000
+// written: Thu Mar 30 17:03:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,7 @@ public:
 
   virtual void drawMessage(char word[]) = 0;
   virtual void drawCross() = 0;
+  virtual void drawCross(int x, int y) = 0;
 
   virtual void loadColormap(float colors[][3], int ncolors) = 0;
 

@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Feb 29 18:06:26 2000
+// written: Thu Mar 30 17:06:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -197,6 +197,11 @@ DOTRACE("OpenglGfx::drawMessage");
 
 void OpenglGfx::drawCross() {
 DOTRACE("OpenglGfx::drawCross");
+  drawCross( width()/2, height()/2 );
+}
+
+void OpenglGfx::drawCross(int x, int y) {
+DOTRACE("OpenglGfx::drawCross");
 
   writeUpperPlanes();
 
@@ -206,10 +211,10 @@ DOTRACE("OpenglGfx::drawCross");
 	 glIndexi(192);
 
   glBegin(GL_LINES);
-  glVertex2i(width()/2-50, height()/2);
-  glVertex2i(width()/2+50, height()/2);
-  glVertex2i(width()/2, height()/2-50);
-  glVertex2i(width()/2, height()/2+50);
+  glVertex2i(x-50, y);
+  glVertex2i(x+50, y);
+  glVertex2i(x, y-50);
+  glVertex2i(x, y+50);
   glEnd();
 
   writeLowerPlanes();

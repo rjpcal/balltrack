@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Tue Feb 29 17:21:16 2000
+// written: Thu Mar 30 17:05:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,14 +137,19 @@ DOTRACE("StarbaseGfx::drawMessage");
 
 void StarbaseGfx::drawCross() {
 DOTRACE("StarbaseGfx::drawCross");
+  drawCross( width()/2, height()/2 );
+}
+
+void StarbaseGfx::drawCross(int x, int y) {
+DOTRACE("StarbaseGfx::drawCross(int, int)");
 
   writeUpperPlanes();
 
   line_color_index( fildes(), 192 );
-  dcmove( fildes(), width()/2-50, height()/2 );
-  dcdraw( fildes(), width()/2+50, height()/2 );
-  dcmove( fildes(), width()/2, height()/2-50 );
-  dcdraw( fildes(), width()/2, height()/2+50 );
+  dcmove( fildes(), x-50, y );
+  dcdraw( fildes(), x+50, y );
+  dcmove( fildes(), x, y-50 );
+  dcdraw( fildes(), x, y+50 );
 
   writeLowerPlanes();
 }
