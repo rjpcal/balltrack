@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Tue Feb 29 10:16:45 2000
+// written: Tue Feb 29 10:46:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,6 @@ public:
   virtual void drawCross();
   virtual void clearUpperPlanes();
 
-  virtual void setOpaque();
   virtual void setTransparent();
 
   // called from Application::Application()
@@ -53,9 +52,6 @@ public:
   // called from <params.c>::ListParams()
   virtual void showParams(char params[][STRINGSIZE], int nparams);
 
-  // called from BallsExpt:runApplication()
-  virtual void setMessage();
-
   // called from Ball::move()
   virtual void moveBlock(int x, int y, int xsz, int ysz, int nx, int ny);
 
@@ -67,7 +63,9 @@ public:
 private:
   int fildes() const { return itsFildes; }
 
-  // called from showMenu(), showParams(), setMessage()
+  void setOpaque();
+
+  // called from showMenu(), showParams()
   void setText(int wd, int ht);
 
   void waitFrameCount(int number);
