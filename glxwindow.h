@@ -34,6 +34,9 @@ public:
   void getIntFromKeyboard(int& i) const;
   void getDoubleFromKeyboard(double& d) const;
 
+  void getValueFromKeyboard(int& i) const { getIntFromKeyboard(i); }
+  void getValueFromKeyboard(double& d) const { getDoubleFromKeyboard(d); }
+
   void eventLoop(void* cdata,
                  ExposeFunc* onExpose,
                  KeyFunc* onKey);
