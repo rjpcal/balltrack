@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Mon Mar  5 10:12:52 2001
+// written: Tue Mar  6 17:03:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,6 @@ float BALL_TWIST_ANGLE;
 char  PROGRAM[STRINGSIZE];
 char  FILENAME[STRINGSIZE];
 char  OBSERVER[STRINGSIZE];
-double FRAMETIME;
 
 int   BORDER_X;
 int   BORDER_Y;
@@ -155,11 +154,15 @@ DOTRACE("CheckParams");
   time_between_reminds = ( EPOCH_DURATION - PAUSE_DURATION - REMIND_DURATION )
 	 / REMINDS_PER_EPOCH;
 
+  double frametime = gfx->frameTime();
+
+  printf( " Video frame time %7.4lf ms\n", frametime );
+
   FRAMES_PER_REMIND    = (int)( 1000.0*(time_between_reminds-REMIND_DURATION)
-										  / FRAMETIME ) - FUDGEFRAME;
+										  / frametime ) - FUDGEFRAME;
 
   DebugEval(time_between_reminds);
-  DebugEval(FRAMETIME);
+  DebugEval(frametime);
   DebugEvalNL(FUDGEFRAME);
 
   DebugEvalNL(FRAMES_PER_REMIND);
