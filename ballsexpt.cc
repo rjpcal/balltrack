@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Mon Apr  3 18:02:47 2000
+// written: Mon Jun 12 11:29:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,15 @@
 
 #include "trace.h"
 #include "debug.h"
+
+namespace {
+  int TRACK_NUMBERS[4][4] = {
+	 {2,4,3,5},
+	 {3,2,5,4},
+	 {4,5,2,3},
+	 {5,3,4,2}
+  };
+}
 
 BallsExpt::BallsExpt(const XHints& hints) :
   MenuApplication(hints)
@@ -83,7 +92,7 @@ DOTRACE("BallsExpt::runExperiment");
   const int NUM_CONDITIONS = 3; 
 
   /// XXX this needs to be at least as big as (CYCLE_NUMBER+1)*NUM_CONDITIONS
-  struct timeval tp[32];
+  struct timeval tp[128];
 
   Balls theBalls;
 
@@ -109,48 +118,86 @@ DOTRACE("BallsExpt::runExperiment");
 
   int timepoint = 1;
 
-  int cycle;
-  for( cycle=0; cycle<CYCLE_NUMBER; ++cycle ) {
 
-	 if (EYE_TRACKING == APPLICATION_MODE)
-		{
-		  // Run active tracking trial
-		  runFixationCalibration();
-		  theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ALL);
+  if (FMRI_SESSION == APPLICATION_MODE)
+	 {
+		for (int block = 0; block < 4; ++block)
+		  {
+			 BALL_TRACK_NUMBER =
+				TRACK_NUMBERS[ FMRI_SESSION_NUMBER-1 ][ block ];
 
-		  // Run active tracking trial with objective check
-		  runFixationCalibration();
-		  theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
+			 // Run active tracking trial with objective check
+			 theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
 
-		  // Run passive trial
-		  runFixationCalibration();
-		  theBalls.runTrial(graphics(), &tp[timepoint++], Balls::PASSIVE);
+
+			 graphics()->writeAllPlanes();
+
+			 graphics()->clearFrontBuffer();
+
+			 for (int k = 0; k < 2; ++k) {
+				graphics()->clearBackBuffer();
+				graphics()->drawCross();
+				graphics()->swapBuffers();
+			 }
+
+			 Timing::mainTimer.set();
+			 Timing::getTime( &tp[timepoint++] );
+			 Timing::mainTimer.wait( WAIT_DURATION );
+
+			 // Run passive trial
+			 theBalls.runTrial(graphics(), &tp[timepoint++], Balls::PASSIVE);
+
+
+			 graphics()->writeAllPlanes();
+			 graphics()->clearFrontBuffer();
+
+			 for (int kk = 0; kk < 2; ++kk) {
+				graphics()->clearBackBuffer();
+				graphics()->drawCross();
+				graphics()->swapBuffers();
+			 }
+
+			 Timing::mainTimer.set();
+			 Timing::getTime( &tp[timepoint++] );
+			 Timing::mainTimer.wait( WAIT_DURATION );
+		  }
+	 }
+  else 
+	 {
+		for( int cycle=0; cycle<CYCLE_NUMBER; ++cycle ) {
+
+		  if (EYE_TRACKING == APPLICATION_MODE)
+			 {
+				// Run active tracking trial
+				runFixationCalibration();
+				theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ALL);
+
+				// Run active tracking trial with objective check
+				runFixationCalibration();
+				theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
+
+				// Run passive trial
+				runFixationCalibration();
+				theBalls.runTrial(graphics(), &tp[timepoint++], Balls::PASSIVE);
+			 }
+
+		  if (TRAINING == APPLICATION_MODE)
+			 {
+				// Run active tracking trial
+				theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ALL);
+				// Run active tracking trial with objective check
+				theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
+			 }
 		}
+	 }
 
-	 if (TRAINING == APPLICATION_MODE)
-		{
-		  // Run active tracking trial
-		  theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ALL);
-		  // Run active tracking trial with objective check
-		  theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
-		}
-
-	 if (FMRI_SESSION == APPLICATION_MODE)
-		{
-		  // Run active tracking trial with objective check
-		  theBalls.runTrial(graphics(), &tp[timepoint++], Balls::CHECK_ONE);
-		  // Run passive trial
-		  theBalls.runTrial(graphics(), &tp[timepoint++], Balls::PASSIVE);
-		}
-  }
-
-  Timing::mainTimer.set();
+//   Timing::mainTimer.set();
 
   Timing::getTime( &tp[timepoint++] );
 
-  Timing::mainTimer.wait( WAIT_DURATION );
+//   Timing::mainTimer.wait( WAIT_DURATION );
 
-  Timing::getTime( &tp[timepoint++] );
+//   Timing::getTime( &tp[timepoint++] );
 
   for( int i=0; i<timepoint; i++ )
     {
