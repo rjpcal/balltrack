@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Wed Feb 28 15:03:33 2001
+// written: Mon Mar  5 10:46:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -395,7 +395,7 @@ DOTRACE("OpenglGfx::startRecording");
 void OpenglGfx::stopRecording() {
 DOTRACE("OpenglGfx::stopRecording");
 
-  if (MAKING_MOVIE && (itsMovie != 0))
+  if (itsMovie != 0)
 	 itsMovie->flush();
 
   itsIsRecording = false;
