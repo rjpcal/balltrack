@@ -56,8 +56,6 @@ TAGS: $(ALL_SRCS)
 	etags $+
 
 DISTNAME := balltrack_$(shell date +%Y%m%d)
-CVS_ROOT := $(shell test -e ./CVS/Root && cat ./CVS/Root)
-CVS_REPO := $(shell test -e ./CVS/Root && cat ./CVS/Repository)
 
 export:
 	echo $(DISTNAME)
