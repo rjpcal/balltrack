@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Thu Mar 30 16:50:41 2000
+// written: Mon Jun 12 11:44:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,8 +30,9 @@
 // #define      QUIT            	   'q'
 
 AppMode APPLICATION_MODE = EYE_TRACKING;
+int FMRI_SESSION_NUMBER = 1;
 
-int   FUDGEFRAME = 7;
+int   FUDGEFRAME = 16;
 
 int   DISPLAY_X;
 int   DISPLAY_Y;
@@ -188,6 +189,7 @@ DOTRACE("WriteParams");
   }
 
   PUTTEXT(   (app_mode),         ("APPLICATION_MODE") );
+  PUTINT(    (FMRI_SESSION_NUMBER),("FMRI_SESSION_NUMBER") );
 
   Closefile( fp );
 }
