@@ -389,6 +389,16 @@ DOTRACE("Params::showSettings");
 
 namespace
 {
+  class MenuItem
+  {
+  public:
+    MenuItem(int& v)    : dvar(0), ivar(&v) {}
+    MenuItem(double& v) : dvar(&v), ivar(0) {}
+
+    double* dvar;
+    int* ivar;
+  };
+
   struct ParamMenu
   {
     ParamMenu()
@@ -396,6 +406,12 @@ namespace
       oss.setf(std::ios::left | std::ios::fixed);
       oss.precision(2);
       oss << "      ";
+    }
+
+    template <class T>
+    void addItem(T& v)
+    {
+      items.push_back(MenuItem(v));
     }
 
     template <class T>
@@ -411,34 +427,27 @@ namespace
       gfx.swapBuffers();
     }
 
-    std::string menu[4];
-    std::ostringstream oss;
-  };
-
-  class MenuItem
-  {
-  public:
-    MenuItem(int& v)    : dvar(0), ivar(&v) {}
-    MenuItem(double& v) : dvar(&v), ivar(0) {}
-
-    void doit(ParamMenu& pm, Graphics& gfx)
+    void go(Graphics& gfx)
     {
-      if (dvar != 0)
+      for (unsigned int i = 0; i < items.size(); ++i)
         {
-          gfx.getValueFromKeyboard(*dvar);
-          pm.putValue(*dvar);
-          pm.redraw(gfx);
-        }
-      else if (ivar != 0)
-        {
-          gfx.getValueFromKeyboard(*ivar);
-          pm.putValue(*ivar);
-          pm.redraw(gfx);
+          if (items[i].dvar != 0)
+            {
+              gfx.getValueFromKeyboard(*items[i].dvar);
+              this->putValue(*items[i].dvar);
+            }
+          else if (items[i].ivar != 0)
+            {
+              gfx.getValueFromKeyboard(*items[i].ivar);
+              this->putValue(*items[i].ivar);
+            }
+          this->redraw(gfx);
         }
     }
 
-    double* dvar;
-    int* ivar;
+    std::string menu[4];
+    std::ostringstream oss;
+    std::vector<MenuItem> items;
   };
 }
 
@@ -464,19 +473,16 @@ DOTRACE("Params::setGroup1");
 
   pm.redraw(gfx);
 
-  std::vector<MenuItem> items;
+  pm.addItem(this->ballNumber);
+  pm.addItem(this->ballTrackNumber);
+  pm.addItem(this->ballSpeed);
+  pm.addItem(this->ballPixmapSize);
+  pm.addItem(this->ballMinDistance);
+  pm.addItem(this->ballRadius);
+  pm.addItem(this->ballSigma2);
+  pm.addItem(this->ballTwistAngle);
 
-  items.push_back(MenuItem(this->ballNumber));
-  items.push_back(MenuItem(this->ballTrackNumber));
-  items.push_back(MenuItem(this->ballSpeed));
-  items.push_back(MenuItem(this->ballPixmapSize));
-  items.push_back(MenuItem(this->ballMinDistance));
-  items.push_back(MenuItem(this->ballRadius));
-  items.push_back(MenuItem(this->ballSigma2));
-  items.push_back(MenuItem(this->ballTwistAngle));
-
-  for (unsigned int i = 0; i < items.size(); ++i)
-    items[i].doit(pm, gfx);
+  pm.go(gfx);
 }
 
 void Params::setGroup2(Graphics& gfx)
