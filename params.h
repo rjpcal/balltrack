@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:05:04 2000
-// written: Mon Jun 12 16:17:22 2000
+// written: Wed Feb 28 12:44:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@ class Application;
 class Graphics;
 
 enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
+extern bool MAKING_MOVIE;
 extern AppMode APPLICATION_MODE;
 extern int FMRI_SESSION_NUMBER;
 
