@@ -62,8 +62,6 @@ public:
   void stopRecording();
 
 private:
-  double computeFrameTime();
-
   const int itsWidth;
   const int itsHeight;
 

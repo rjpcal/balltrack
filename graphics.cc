@@ -321,26 +321,5 @@ DOTRACE("Graphics::stopRecording");
   isItRecording = false;
 }
 
-double Graphics::computeFrameTime()
-{
-DOTRACE("Graphics::computeFrameTime");
-
-  clearBackBuffer();
-
-  swapBuffers();
-
-  const timeval start = Timing::now();
-
-  for (int i = 0; i <= 100; ++i)
-    {
-      clearBackBuffer();
-      swapBuffers();
-    }
-
-  const timeval stop = Timing::now();
-
-  return Timing::elapsedMsec(start, stop) / 100.0;
-}
-
 static const char vcid_graphics_cc[] = "$Header$";
 #endif // !GRAPHICS_CC_DEFINED
