@@ -65,11 +65,10 @@ public:
   void setGroup3(Graphics& gfx);
 
   enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
-  AppMode APPLICATION_MODE;
-  bool  MAKING_MOVIE;
-  char  FILENAME[STRINGSIZE];
-  char  OBSERVER[STRINGSIZE];
-  char  PROGRAM[STRINGSIZE];
+  AppMode appMode;
+  bool  doMovie;
+  char  filestem[STRINGSIZE];
+  char  observer[STRINGSIZE];
   float BALL_RADIUS;
   float BALL_SIGMA2;
   float BALL_TWIST_ANGLE;  // = PI/16.0;

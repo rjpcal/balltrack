@@ -119,11 +119,10 @@ void ParamFile::putText(const char* var, const char* name)
 //----------------------------------------------------------
 
 Params::Params(int argc, char** argv) :
-  APPLICATION_MODE(EYE_TRACKING),
-  MAKING_MOVIE(false),
-  FILENAME(),
-  OBSERVER(),
-  PROGRAM(),
+  appMode(EYE_TRACKING),
+  doMovie(false),
+  filestem(),
+  observer(),
   BALL_RADIUS(),
   BALL_SIGMA2(),
   BALL_TWIST_ANGLE(),
@@ -146,13 +145,10 @@ Params::Params(int argc, char** argv) :
   REMINDS_PER_EPOCH(),
   FMRI_SESSION_NUMBER(1)
 {
-  this->FILENAME[0] = '\0';
-  this->OBSERVER[0] = '\0';
-  this->PROGRAM[0] = '\0';
+  this->filestem[0] = '\0';
+  this->observer[0] = '\0';
 
-  this->APPLICATION_MODE = Params::TRAINING;
-
-  strncpy(this->PROGRAM, argv[0], STRINGSIZE);
+  this->appMode = Params::TRAINING;
 
   bool got_filename = false;
 
@@ -164,24 +160,24 @@ Params::Params(int argc, char** argv) :
         }
       else if (strcmp(argv[i], "--fmri") == 0)
         {
-          this->APPLICATION_MODE = Params::FMRI_SESSION;
+          this->appMode = Params::FMRI_SESSION;
         }
       else if (strcmp(argv[i], "--train") == 0)
         {
-          this->APPLICATION_MODE = Params::TRAINING;
+          this->appMode = Params::TRAINING;
         }
       else if (strcmp(argv[i], "--itrk") == 0)
         {
-          this->APPLICATION_MODE = Params::EYE_TRACKING;
+          this->appMode = Params::EYE_TRACKING;
         }
       else if (strcmp(argv[i], "--makemovie") == 0)
         {
-          this->MAKING_MOVIE = true;
+          this->doMovie = true;
         }
       else if (!got_filename)
         {
-          strncpy(this->FILENAME, argv[i], STRINGSIZE);
-          strncpy(this->OBSERVER, argv[i], STRINGSIZE);
+          strncpy(this->filestem, argv[i], STRINGSIZE);
+          strncpy(this->observer, argv[i], STRINGSIZE);
           fprintf(stdout, " filename '%s'\n", argv[i]);
           got_filename = true;
         }
@@ -199,7 +195,7 @@ Params::Params(int argc, char** argv) :
       exit(1);
     }
 
-  if (Params::FMRI_SESSION == this->APPLICATION_MODE)
+  if (Params::FMRI_SESSION == this->appMode)
     {
       if (this->FMRI_SESSION_NUMBER < 0 ||
           this->FMRI_SESSION_NUMBER > 4)
@@ -214,7 +210,7 @@ void Params::readFromFile(Graphics& gfx, char extension[])
 {
 DOTRACE("Params::readFromFile");
 
-  ParamFile pmfile(FILENAME, 'r', extension);
+  ParamFile pmfile(filestem, 'r', extension);
 
   pmfile.getInt(   DISPLAY_X  );
   pmfile.getInt(   DISPLAY_Y  );
@@ -233,8 +229,8 @@ DOTRACE("Params::readFromFile");
   pmfile.getFloat( BALL_RADIUS  );
   pmfile.getFloat( BALL_SIGMA2  );
   pmfile.getFloat( BALL_TWIST_ANGLE  );
-  pmfile.getText(  OBSERVER  );
-  pmfile.getText(  FILENAME  );
+  pmfile.getText(  observer  );
+  pmfile.getText(  filestem  );
 
   // this is a placeholder for the application mode, but we ignore the
   // value in the file since the actual application mode is set at
@@ -250,7 +246,7 @@ void Params::writeToFile(char extension[])
 {
 DOTRACE("Params::writeToFile");
 
-  ParamFile pmfile(FILENAME, 'w', extension);
+  ParamFile pmfile(filestem, 'w', extension);
 
   appendToFile(pmfile);
 }
@@ -276,11 +272,11 @@ DOTRACE("Params::appendToFile");
   pmfile.putFloat( BALL_RADIUS,       "BALL_RADIUS" );
   pmfile.putFloat( BALL_SIGMA2,       "BALL_SIGMA2" );
   pmfile.putFloat( BALL_TWIST_ANGLE,  "BALL_TWIST_ANGLE" );
-  pmfile.putText(  OBSERVER,          "OBSERVER" );
-  pmfile.putText(  FILENAME,          "FILENAME" );
+  pmfile.putText(  observer,          "OBSERVER" );
+  pmfile.putText(  filestem,          "FILENAME" );
 
   const char* app_mode = "unknown";
-  switch (APPLICATION_MODE)
+  switch (appMode)
     {
     case TRAINING:      app_mode = "TRAINING";     break;
     case EYE_TRACKING:  app_mode = "EYE_TRACKING"; break;
@@ -302,7 +298,7 @@ DOTRACE("Params::showSettings");
 
   writeToFile("sta");
 
-  ParamFile pmfile(FILENAME, 'r', "sta");
+  ParamFile pmfile(filestem, 'r', "sta");
 
   int curparam = MAXPARAMS - 1;
 

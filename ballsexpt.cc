@@ -186,7 +186,7 @@ void BallsExpt::runExperiment()
 {
 DOTRACE("BallsExpt::runExperiment");
 
-  ParamFile tmefile(rep->params.FILENAME, 'a', "tme");
+  ParamFile tmefile(rep->params.filestem, 'a', "tme");
 
   rep->params.writeToFile("cur");
 
@@ -213,11 +213,11 @@ DOTRACE("BallsExpt::runExperiment");
 
   rep->timepointIdx = 1;
 
-  if (Params::FMRI_SESSION == rep->params.APPLICATION_MODE)
+  if (Params::FMRI_SESSION == rep->params.appMode)
     runFmriExpt();
-  else if (Params::EYE_TRACKING == rep->params.APPLICATION_MODE)
+  else if (Params::EYE_TRACKING == rep->params.appMode)
     runEyeTrackingExpt();
-  else if (Params::TRAINING == rep->params.APPLICATION_MODE)
+  else if (Params::TRAINING == rep->params.appMode)
     runTrainingExpt();
 
   Timing::getTime( &rep->timepoints[rep->timepointIdx++] );
@@ -234,7 +234,7 @@ void BallsExpt::runFmriExpt()
 {
 DOTRACE("BallsExpt::runFmriExpt");
 
-  if (rep->params.MAKING_MOVIE)
+  if (rep->params.doMovie)
     graphics().startRecording(rep->params.DISPLAY_X,
                               rep->params.DISPLAY_Y);
 
@@ -283,7 +283,7 @@ DOTRACE("BallsExpt::runFmriExpt");
         }
     }
 
-  if (rep->params.MAKING_MOVIE)
+  if (rep->params.doMovie)
     graphics().stopRecording();
 }
 
