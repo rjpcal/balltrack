@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Wed Feb 28 14:38:55 2001
+// written: Wed Feb 28 15:30:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,15 +28,16 @@
 namespace {
   const int NUM_TRIALS = 8;
 
-  const int TRACK_NUMBERS[8][NUM_TRIALS] = {
-	 {2, 0, 4, 5, 3, 0, 5, 2}, 
-	 {3, 4, 2, 0, 5, 3, 4, 0}, 
-	 {4, 0, 5, 3, 2, 0, 3, 4}, 
-	 {5, 2, 3, 0, 4, 5, 2, 0}, 
-	 {2, 0, 4, 5, 3, 0, 5, 2}, 
-	 {3, 4, 2, 0, 5, 3, 4, 0}, 
-	 {4, 0, 5, 3, 2, 0, 3, 4}, 
+  const int TRACK_NUMBERS[9][NUM_TRIALS] = {
+	 {2, 0, 4, 5, 3, 0, 5, 2},
+	 {3, 4, 2, 0, 5, 3, 4, 0},
+	 {4, 0, 5, 3, 2, 0, 3, 4},
 	 {5, 2, 3, 0, 4, 5, 2, 0},
+	 {2, -1, 4, 5, 3, -1, 5, 2},
+	 {3, 4, 2, -1, 5, 3, 4, -1},
+	 {4, -1, 5, 3, 2, -1, 3, 4},
+	 {5, 2, 3, -1, 4, 5, 2, -1},
+	 {-1, -1, -1, 0, 2, 3, 4, 5}
   };
 }
 
@@ -210,15 +211,17 @@ DOTRACE("BallsExpt::runFmriExpt");
 		int track_number = 
 		  TRACK_NUMBERS[ FMRI_SESSION_NUMBER-1 ][ trial ];
 
-		if (track_number == 0)
+		if (track_number < 0)
 		  {
-			 if (FMRI_SESSION_NUMBER <= 4)
-				{
-				  // Run passive trial
-				  itsImpl->itsBalls.runTrial(
+			 // do nothing; skip this trial
+			 continue;
+		  }
+		else if (track_number == 0)
+		  {
+			 // Run passive trial
+			 itsImpl->itsBalls.runTrial(
                   graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
 						Balls::PASSIVE);
-				}
 		  }
 		else
 		  {
