@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:30:51 2000
-// written: Tue Feb 29 16:21:30 2000
+// written: Thu Mar 30 16:40:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@
 // #define      READY           	   ' '
 // #define      QUIT            	   'q'
 
+AppMode APPLICATION_MODE = EYE_TRACKING;
 
 int   FUDGEFRAME = 7;
 
