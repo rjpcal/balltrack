@@ -453,6 +453,7 @@ namespace
 
     void redraw(Graphics& gfx)
     {
+      gfx.clearBackBuffer();
       gfx.drawStrings(menu, 4, 100, -200, 16, 2);
       gfx.swapBuffers();
     }
@@ -499,8 +500,6 @@ void Params::setGroup1(Graphics& gfx)
 DOTRACE("Params::setGroup1");
 
   ParamMenu pm;
-
-  gfx.clearBackBuffer();
 
   pm.addItem("BALL#", this->ballNumber);
   pm.addItem("TRACK#", this->ballTrackNumber);
