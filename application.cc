@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Mon Feb 28 19:15:36 2000
+// written: Tue Feb 29 14:50:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ DOTRACE("Application::Application");
   itsXStuff->mapWindow(hints.name());
   itsXStuff->printWindowInfo();
 
-  itsGraphics->makeCurrent();
+  itsGraphics->initWindow();
 
   // seed the random number generator based on the time
   struct timeval tp;
