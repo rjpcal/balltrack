@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Tue Feb 29 14:53:28 2000
+// written: Tue Feb 29 15:30:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,13 +32,7 @@
 #include "trace.h"
 #include "debug.h"
 
-#define CMAP_NUMBER  3
-#define COLOR_NUMBER 256
-
 namespace {
-  float Color[CMAP_NUMBER][COLOR_NUMBER][3];
-
-
   void drawGLText(const char* word, int stroke_width,
 						int x_pos, int y_pos,
 						int char_width, int char_height) {
@@ -130,14 +124,6 @@ DOTRACE("OpenglGfx::initWindow");
   glClearIndex(0);
   glClear(GL_COLOR_BUFFER_BIT);
 
-//   sizeColormap();
-
-//   saveColormap();
-
-  newColormap();
-
-  setTransparent();
-
   checkFrameTime();
 
   clearFrontBuffer();
@@ -145,8 +131,6 @@ DOTRACE("OpenglGfx::initWindow");
 
 void OpenglGfx::wrapGraphics() {
 DOTRACE("OpenglGfx::wrapGraphics");
-  restoreColormap();
-
   glXDestroyContext(itsXStuff->display(), itsGLXContext);
 }
 
@@ -228,18 +212,13 @@ DOTRACE("OpenglGfx::clearUpperPlanes");
   writeLowerPlanes();
 }
 
-void OpenglGfx::setTransparent() {
-DOTRACE("OpenglGfx::setTransparent");
+void OpenglGfx::loadColormap(float colors[][3], int ncolors) {
+DOTRACE("OpenglGfx::loadColormap");
 
-#ifdef COLOR_INDEX
   waitVerticalRetrace();
-  for (int i = 0; i < COLOR_NUMBER; ++i) {
-	 itsXStuff->storeColor(i,
-								  Color[0][i][0],
-								  Color[0][i][1],
-								  Color[0][i][2]);
+  for (int i = 0; i < ncolors; ++i) {
+	 itsXStuff->storeColor(i, colors[i][0], colors[i][1], colors[i][2]);
   }
-#endif
 }
 
 void OpenglGfx::clearFrontBuffer() {
@@ -341,61 +320,6 @@ DOTRACE("OpenglGfx::checkFrameTime");
   FRAMETIME = Timing::elapsedMsec( &tp[0], &tp[1] ) / 100.0;
 
   printf( " Video frame time %7.4lf ms\n", FRAMETIME );  
-}
-
-void OpenglGfx::sizeColormap() {
-DOTRACE("OpenglGfx::sizeColormap");
-
-//   float dummy[2][3];
-//   int color_number;
-
-//   inquire_sizes( fildes(), dummy, dummy[0],
-// 					  dummy[0], dummy[0], &color_number);
-
-//   if( color_number != COLOR_NUMBER )
-//     {
-// 		printf( " Colormap is of size %d instead of %d\n",
-// 				  color_number, COLOR_NUMBER );
-
-// 		exit(0);
-//     }
-}
-
-void OpenglGfx::saveColormap() {
-DOTRACE("OpenglGfx::saveColormap");
-//   inquire_color_table( fildes(), 0, COLOR_NUMBER, Color[2] );
-}
-
-void OpenglGfx::newColormap() {
-DOTRACE("OpenglGfx::newColormap");
-
-  float lmin =   0.;
-  float lmax = 196.;
-
-  int n;
-  float ratio;
-
-  for( n=0; n<BALL_COLOR_MIN; n++ )
-	 Color[0][n][0] = Color[0][n][1] = Color[0][n][2] = 0.;
-
-  for( n=BALL_COLOR_MIN; n<=BALL_COLOR_MAX; n++ )
-    {
-		ratio = lmin/lmax +
-		  ( (lmax-lmin)*(n-BALL_COLOR_MIN)/
-			 (lmax*(BALL_COLOR_MAX-BALL_COLOR_MIN)) );
-
-		Color[0][n][0] = 1.0*ratio;
-		Color[0][n][1] = 0.5*ratio;
-		Color[0][n][2] = 0.0*ratio;
-    }
-
-  for( n=BALL_COLOR_MAX+1; n<COLOR_NUMBER; n++ )
-	 Color[0][n][0] = Color[0][n][1] = Color[0][n][2] = 1.;
-}
-
-void OpenglGfx::restoreColormap() {
-DOTRACE("OpenglGfx::restoreColormap");
-//   define_color_table( fildes(), 0, COLOR_NUMBER, Color[2] );
 }
 
 static const char vcid_openglgfx_cc[] = "$Header$";

@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 15:58:20 2000
-// written: Mon Feb 28 13:59:57 2000
+// written: Tue Feb 29 15:55:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,6 +58,10 @@ public:
   enum TrialType { PASSIVE, CHECK_ALL, CHECK_ONE };
 
   void runTrial(Graphics* gfx, timeval* starttime, TrialType ttype);
+
+  static const int COLOR_NUMBER = 256;
+  static float theColors[COLOR_NUMBER][3];
+  static void generateColors();
 
 private:
   Ball itsBalls[MAX_BALLS];

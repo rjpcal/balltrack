@@ -3,7 +3,7 @@
 // ballsexpt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Feb 23 15:41:51 2000
-// written: Tue Feb 29 14:45:09 2000
+// written: Tue Feb 29 15:52:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,16 @@
 #include "trace.h"
 #include "debug.h"
 
+BallsExpt::BallsExpt(const XHints& hints) :
+  MenuApplication(hints)
+{
+DOTRACE("BallsExpt::BallsExpt");
+  Balls::generateColors();
+#ifdef COLOR_INDEX
+  graphics()->loadColormap(Balls::theColors, Balls::COLOR_NUMBER);
+#endif
+}
+
 void BallsExpt::runExperiment() {
 DOTRACE("BallsExpt::runExperiment");
 
@@ -43,7 +53,6 @@ DOTRACE("BallsExpt::runExperiment");
   for (int k = 0; k < 2; ++k) {
 	 graphics()->clearFrontBuffer();
 	 graphics()->drawCross();
-	 graphics()->setTransparent();
 	 graphics()->swapBuffers();
   }
 

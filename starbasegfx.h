@@ -3,7 +3,7 @@
 // starbasegfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:52:52 2000
-// written: Tue Feb 29 14:52:15 2000
+// written: Tue Feb 29 15:26:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ public:
   virtual void drawMessage(char word[]);
   virtual void drawCross();
 
-  virtual void setTransparent();
+  virtual void loadColormap(float colors[][3], int ncolors);
 
   virtual void showMenu(char menu[][STRINGSIZE], int nmenu);
   virtual void showParams(char params[][STRINGSIZE], int nparams);
@@ -51,8 +51,6 @@ public:
 private:
   int fildes() const { return itsFildes; }
 
-  void setOpaque();
-
   // called from showMenu(), showParams()
   void setText(int wd, int ht);
 
@@ -62,7 +60,6 @@ private:
   void checkFrameTime();
   void sizeColormap();
   void saveColormap();
-  void newColormap();
   void restoreColormap();	// called from MenuApplication::wrap()
 
   XStuff* itsXStuff;

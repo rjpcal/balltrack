@@ -3,7 +3,7 @@
 // starbasegfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:55:42 2000
-// written: Tue Feb 29 14:53:03 2000
+// written: Tue Feb 29 15:28:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,9 +26,10 @@
 #include "trace.h"
 #include "debug.h"
 
-#define CMAP_NUMBER  3
-#define COLOR_NUMBER 256
-float Color[CMAP_NUMBER][COLOR_NUMBER][3];
+namespace {
+  const int COLOR_NUMBER = 256;
+  float ORIGINAL_COLORS[COLOR_NUMBER][3];
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -66,15 +67,11 @@ DOTRACE("StarbaseGfx::initWindow");
 
   saveColormap();
 
-  newColormap();
-
   intvdc_extent( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
 
   intview_port( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
 
   intview_window( fildes(), 0, 0, 100*(width()-1), 100*(height()-1) );
-
-  setTransparent();
 
   checkFrameTime();
 
@@ -155,18 +152,11 @@ DOTRACE("StarbaseGfx::clearUpperPlanes");
   writeLowerPlanes();
 }
 
-void StarbaseGfx::setOpaque() {
-DOTRACE("StarbaseGfx::setOpaque");
+void StarbaseGfx::loadColormap(float colors[][3], int ncolors) {
+DOTRACE("StarbaseGfx::loadColormap");
 
   waitVerticalRetrace();
-  define_color_table( fildes(), 0, COLOR_NUMBER, Color[1] );
-}
-
-void StarbaseGfx::setTransparent() {
-DOTRACE("StarbaseGfx::setTransparent");
-
-  waitVerticalRetrace();
-  define_color_table( fildes(), 0, COLOR_NUMBER, Color[0] );
+  define_color_table( fildes(), 0, ncolors, colors );
 }
 
 void StarbaseGfx::clearFrontBuffer() {
@@ -226,7 +216,6 @@ DOTRACE("StarbaseGfx::showParams");
 void StarbaseGfx::setText(int wd, int ht) {
 DOTRACE("StarbaseGfx::setText");
 
-  define_color_table( fildes(), 0, 256, Color[0] );
   background_color_index( fildes(), 0 );
   text_color_index( fildes(), 192 );
   dccharacter_height( fildes(), ht );
@@ -294,39 +283,12 @@ DOTRACE("StarbaseGfx::sizeColormap");
 
 void StarbaseGfx::saveColormap() {
 DOTRACE("StarbaseGfx::saveColormap");
-  inquire_color_table( fildes(), 0, COLOR_NUMBER, Color[2] );
-}
-
-void StarbaseGfx::newColormap() {
-DOTRACE("StarbaseGfx::newColormap");
-
-  float lmin =   0.;
-  float lmax = 196.;
-
-  int n;
-  float ratio;
-
-  for( n=0; n<BALL_COLOR_MIN; n++ )
-	 Color[0][n][0] = Color[0][n][1] = Color[0][n][2] = 0.;
-
-  for( n=BALL_COLOR_MIN; n<=BALL_COLOR_MAX; n++ )
-    {
-		ratio = lmin/lmax +
-		  ( (lmax-lmin)*(n-BALL_COLOR_MIN)/
-			 (lmax*(BALL_COLOR_MAX-BALL_COLOR_MIN)) );
-
-		Color[0][n][0] = 1.0*ratio;
-		Color[0][n][1] = 0.5*ratio;
-		Color[0][n][2] = 0.0*ratio;
-    }
-
-  for( n=BALL_COLOR_MAX+1; n<COLOR_NUMBER; n++ )
-	 Color[0][n][0] = Color[0][n][1] = Color[0][n][2] = 1.;
+  inquire_color_table( fildes(), 0, COLOR_NUMBER, ORIGINAL_COLORS );
 }
 
 void StarbaseGfx::restoreColormap() {
 DOTRACE("StarbaseGfx::restoreColormap");
-  define_color_table( fildes(), 0, COLOR_NUMBER, Color[2] );
+  define_color_table( fildes(), 0, COLOR_NUMBER, ORIGINAL_COLORS );
 }
 
 static const char vcid_starbasegfx_cc[] = "$Header$";

@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Tue Feb 29 14:45:09 2000
+// written: Tue Feb 29 15:54:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,15 +25,17 @@
 #include "trace.h"
 #include "debug.h"
 
-const int VELOSCALE = 1000;
+namespace {
+  const int VELOSCALE = 1000;
 
 #if defined(COLOR_INDEX)
-const int BYTES_PER_PIXEL = 1;
+  const int BYTES_PER_PIXEL = 1;
 #elif defined(RGBA)
-const int BYTES_PER_PIXEL = 4;
+  const int BYTES_PER_PIXEL = 4;
+#else
+#  error No color format macro.
 #endif
 
-namespace {
   // XXX These need to be big enough for BALL_ARRAY_SIZE^2
   unsigned char theirBallmap[128*128*BYTES_PER_PIXEL];
   unsigned char theirHimap[128*128*BYTES_PER_PIXEL];
@@ -48,11 +50,7 @@ namespace Local {
 						  float radius, float sigma,
 						  unsigned char background);
 
-  const int COLOR_NUMBER = 256;
-
-  float Colors[COLOR_NUMBER][3];
-
-  void generateColors();
+  bool colorsAlreadyGenerated = false;
 }
 
 struct timeval tp[2];
@@ -92,7 +90,7 @@ void Local::makeBallMap( unsigned char* ptr, int size,
 								 unsigned char background ) {
 DOTRACE("Local::makeBallMap");
 
-  generateColors(); 
+  Balls::generateColors(); 
 
   for( int i=0; i<size; i++ ) {
     for( int j=0; j<size; j++ ) {
@@ -116,41 +114,15 @@ DOTRACE("Local::makeBallMap");
 #if defined(COLOR_INDEX)
 		*ptr++ = index;
 #elif defined(RGBA)
-		ptr[0] = (unsigned char)(255 * Colors[index][0]); // Red
-		ptr[1] = (unsigned char)(255 * Colors[index][1]); // Green
-		ptr[2] = (unsigned char)(255 * Colors[index][2]); // Blue
+		ptr[0] = (unsigned char)(255 * theColors[index][0]); // Red
+		ptr[1] = (unsigned char)(255 * theColors[index][1]); // Green
+		ptr[2] = (unsigned char)(255 * theColors[index][2]); // Blue
 		ptr[3] = (unsigned char)(255); // Alpha
 		ptr += 4;
 #endif
 
 	 }
   }
-}
-
-void Local::generateColors() {
-DOTRACE("Local::generateColors");
-  float lmin =   0.;
-  float lmax = 196.;
-
-  int n;
-  float ratio;
-
-  for( n=0; n<BALL_COLOR_MIN; n++ )
-	 Colors[n][0] = Colors[n][1] = Colors[n][2] = 0.;
-
-  for( n=BALL_COLOR_MIN; n<=BALL_COLOR_MAX; n++ )
-    {
-		ratio = lmin/lmax +
-		  ( (lmax-lmin)*(n-BALL_COLOR_MIN)/
-			 (lmax*(BALL_COLOR_MAX-BALL_COLOR_MIN)) );
-
-		Colors[n][0] = 1.0*ratio;
-		Colors[n][1] = 0.5*ratio;
-		Colors[n][2] = 0.0*ratio;
-    }
-
-  for( n=BALL_COLOR_MAX+1; n<COLOR_NUMBER; n++ )
-	 Colors[n][0] = Colors[n][1] = Colors[n][2] = 1.;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -315,6 +287,8 @@ DOTRACE("Ball::draw");
 ///////////////////////////////////////////////////////////////////////
 
 const int Balls::MAX_BALLS;
+const int Balls::COLOR_NUMBER;
+float Balls::theColors[Balls::COLOR_NUMBER][3];
 
 void Balls::initialize(Graphics* gfx) {
 DOTRACE("Balls::initialize");
@@ -421,6 +395,37 @@ DOTRACE("Balls::prepare");
 							 BALL_RADIUS, BALL_SIGMA2, 255 );
   Local::makeBallMap( theirBallmap, BALL_ARRAY_SIZE,
 							 BALL_RADIUS, BALL_SIGMA2, 0 );
+}
+
+void Balls::generateColors() {
+DOTRACE("Balls::generateColors");
+
+  if (Local::colorsAlreadyGenerated) return;
+
+  float lmin =   0.;
+  float lmax = 196.;
+
+  int n;
+  float ratio;
+
+  for( n=0; n<BALL_COLOR_MIN; n++ )
+	 theColors[n][0] = theColors[n][1] = theColors[n][2] = 0.;
+
+  for( n=BALL_COLOR_MIN; n<=BALL_COLOR_MAX; n++ )
+    {
+		ratio = lmin/lmax +
+		  ( (lmax-lmin)*(n-BALL_COLOR_MIN)/
+			 (lmax*(BALL_COLOR_MAX-BALL_COLOR_MIN)) );
+
+		theColors[n][0] = 1.0*ratio;
+		theColors[n][1] = 0.5*ratio;
+		theColors[n][2] = 0.0*ratio;
+    }
+
+  for( n=BALL_COLOR_MAX+1; n<COLOR_NUMBER; n++ )
+	 theColors[n][0] = theColors[n][1] = theColors[n][2] = 1.;
+
+  Local::colorsAlreadyGenerated = true;
 }
 
 void Balls::runTrial(Graphics* gfx, timeval* starttime, TrialType ttype) {
