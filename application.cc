@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Tue Feb 22 20:40:05 2000
+// written: Wed Feb 23 14:29:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,27 +52,15 @@ static char *visual_class[]= {
 //
 ///////////////////////////////////////////////////////////////////////
 
-Application* Application::theAppPtr = 0;
-
-Application& Application::app() {
-DOTRACE("Application::app");
-  if (theAppPtr == 0) {
-	 printf("No Application has been installed.\n");
-	 exit(-1);
-  }
-
-  return *theAppPtr;
-}
-
-void Application::initialize(int argc, char** argv) {
-DOTRACE("Application::initialize");
+Application::Application(int argc, char** argv) {
+DOTRACE("Application::Application");
 
   itsArgc = argc;
   itsArgv = argv;
 
   itsWidth  = WINDOW_X;
   itsHeight = WINDOW_Y;
-  strcpy( itsName, WINDOW_NAME);
+  strcpy(itsName, WINDOW_NAME);
 
   openDisplay();
   createVisual();
@@ -81,11 +69,8 @@ DOTRACE("Application::initialize");
   selectInput();
   mapImageWindow();
   windowInfo();
-}
 
-void Application::install() {
-DOTRACE("Application::install");
-  theAppPtr = this;
+  WhoAreYou( this );
 }
 
 void Application::openDisplay() {
@@ -333,8 +318,8 @@ DOTRACE("Application::run");
 		  case KeyPress:
 			 if ( event.xkey.window == itsWindow )
 				{
-				  SetLogTimer();
-				  SetTimer();
+				  Timing::logTimer.set();
+				  Timing::mainTimer.set();
 
 				  keyPressAction( &event );
 				}
@@ -396,7 +381,7 @@ DOTRACE("Application::keyPressAction");
 	 struct timezone tzp;
 	 gettimeofday( &tp, &tzp );
 
-	 InitTimeStack( (double) event->xkey.time, &tp );
+	 Timing::initTimeStack( (double) event->xkey.time, &tp );
 
 	 SwitchApplication( this, buffer[0] );
   }
@@ -418,7 +403,7 @@ DOTRACE("Application::timeButtonEvent");
 		else
         nbutton = 0;
 
-  AddToResponseStack( this, (double) event->xbutton.time, nbutton );
+  Timing::addToResponseStack( this, (double) event->xbutton.time, nbutton );
 }
 
 char Application::getKeystroke() {
