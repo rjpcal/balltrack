@@ -201,7 +201,7 @@ DOTRACE("Graphics::swapBuffers");
   if (isItRecording)
     {
       dumpFrames(1);
-      return 33.0;
+      return 1/30.0;
     }
 
   return itsFrameTimer.elapsedSecAndReset();
