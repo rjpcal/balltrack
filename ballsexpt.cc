@@ -108,15 +108,15 @@ DOTRACE("BallsExpt::onKey");
       break;
 
     case 'x':
-      SetParameters1(this->graphics());
+      rep->params.setGroup1(this->graphics());
       break;
 
     case 'y':
-      SetParameters2(this->graphics());
+      rep->params.setGroup2(this->graphics());
       break;
 
     case 'z':
-      SetParameters3(this->graphics());
+      rep->params.setGroup3(this->graphics());
       break;
 
     case 'p':

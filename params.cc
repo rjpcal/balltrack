@@ -170,33 +170,7 @@ DOTRACE("Params::readParams");
 
   pmfile.getInt(FMRI_SESSION_NUMBER);
 
-  RecomputeParams(gfx);
-}
-
-void RecomputeParams(Graphics& gfx)
-{
-DOTRACE("RecomputeParams");
-
-  float time_between_reminds;
-
-  BORDER_X    = ( gfx.width() - DISPLAY_X ) / 2;
-  BORDER_Y    = ( gfx.height() - DISPLAY_Y ) / 2;
-
-  time_between_reminds = ( EPOCH_DURATION - PAUSE_DURATION - REMIND_DURATION )
-         / REMINDS_PER_EPOCH;
-
-  double frametime = gfx.frameTime();
-
-  printf( " Video frame time %7.4lf ms\n", frametime );
-
-  FRAMES_PER_REMIND    = (int)( 1000.0*(time_between_reminds-REMIND_DURATION)
-                                / frametime ) - FUDGEFRAME;
-
-  DebugEval(time_between_reminds);
-  DebugEval(frametime);
-  DebugEvalNL(FUDGEFRAME);
-
-  DebugEvalNL(FRAMES_PER_REMIND);
+  this->recompute(gfx);
 }
 
 void Params::writeParams(char extension[])
@@ -287,9 +261,9 @@ DOTRACE("Params::displayParams");
   gfx.swapBuffers();
 }
 
-void SetParameters1(Graphics& gfx)
+void Params::setGroup1(Graphics& gfx)
 {
-DOTRACE("SetParameters1");
+DOTRACE("Params::setGroup1");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
 
@@ -304,9 +278,9 @@ DOTRACE("SetParameters1");
   sprintf( text[1], "%s", "" );
   sprintf( text[2], "%s", "" );
   sprintf( text[3], "       %-6d %-6d %-6d %-6d %-6d %-6.1f %-6.1f %-6.3f",
-                          BALL_NUMBER, BALL_TRACK_NUMBER, BALL_VELOCITY,
-                          BALL_ARRAY_SIZE, BALL_MIN_DISTANCE, BALL_RADIUS,
-                          BALL_SIGMA2, BALL_TWIST_ANGLE );
+           BALL_NUMBER, BALL_TRACK_NUMBER, BALL_VELOCITY,
+           BALL_ARRAY_SIZE, BALL_MIN_DISTANCE, BALL_RADIUS,
+           BALL_SIGMA2, BALL_TWIST_ANGLE );
 
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
@@ -359,12 +333,12 @@ DOTRACE("SetParameters1");
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  RecomputeParams(gfx);
+  this->recompute(gfx);
 }
 
-void SetParameters2(Graphics& gfx)
+void Params::setGroup2(Graphics& gfx)
 {
-DOTRACE("SetParameters2");
+DOTRACE("Params::setGroup2");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
 
@@ -379,8 +353,8 @@ DOTRACE("SetParameters2");
   sprintf( text[1], "%s", "");
   sprintf( text[2], "%s", "");
   sprintf( text[3], "       %-8d %-8.2f %-8.2f %-8.2f %-8d %-8.2f",
-                          CYCLE_NUMBER, WAIT_DURATION, EPOCH_DURATION,
-                          PAUSE_DURATION, REMINDS_PER_EPOCH, REMIND_DURATION );
+           CYCLE_NUMBER, WAIT_DURATION, EPOCH_DURATION,
+           PAUSE_DURATION, REMINDS_PER_EPOCH, REMIND_DURATION );
 
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
@@ -421,12 +395,12 @@ DOTRACE("SetParameters2");
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  RecomputeParams(gfx);
+  this->recompute(gfx);
 }
 
-void SetParameters3(Graphics& gfx)
+void Params::setGroup3(Graphics& gfx)
 {
-DOTRACE("SetParameters2");
+DOTRACE("Params::setGroup2");
 
   char word[STRINGSIZE], text[4][STRINGSIZE];
 
@@ -440,8 +414,7 @@ DOTRACE("SetParameters2");
   sprintf( text[0], "       SESSION_NUMBER" );
   sprintf( text[1], "%s", "");
   sprintf( text[2], "%s", "");
-  sprintf( text[3], "       %-8d",
-                          FMRI_SESSION_NUMBER );
+  sprintf( text[3], "       %-8d", FMRI_SESSION_NUMBER );
 
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
@@ -452,9 +425,34 @@ DOTRACE("SetParameters2");
   gfx.showMenu(text, 4);
   gfx.swapBuffers();
 
-  RecomputeParams(gfx);
+  this->recompute(gfx);
 }
 
+void Params::recompute(Graphics& gfx)
+{
+DOTRACE("Params::recompute");
+
+  float time_between_reminds;
+
+  BORDER_X    = ( gfx.width() - DISPLAY_X ) / 2;
+  BORDER_Y    = ( gfx.height() - DISPLAY_Y ) / 2;
+
+  time_between_reminds = ( EPOCH_DURATION - PAUSE_DURATION - REMIND_DURATION )
+         / REMINDS_PER_EPOCH;
+
+  double frametime = gfx.frameTime();
+
+  printf( " Video frame time %7.4lf ms\n", frametime );
+
+  FRAMES_PER_REMIND    = (int)( 1000.0*(time_between_reminds-REMIND_DURATION)
+                                / frametime ) - FUDGEFRAME;
+
+  DebugEval(time_between_reminds);
+  DebugEval(frametime);
+  DebugEvalNL(FUDGEFRAME);
+
+  DebugEvalNL(FRAMES_PER_REMIND);
+}
 
 static const char vcid_params_cc[] = "$Header$";
 #endif // !PARAMS_CC_DEFINED

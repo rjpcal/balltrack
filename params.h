@@ -85,13 +85,14 @@ public:
   void appendParams(ParamFile& pmfile);
   void logParams(ParamFile& logfile);
   void displayParams(Graphics& gfx);
+
+  void setGroup1(Graphics& gfx);
+  void setGroup2(Graphics& gfx);
+  void setGroup3(Graphics& gfx);
+
+private:
+  void recompute(Graphics& gfx);
 };
-
-void RecomputeParams(Graphics& gfx);
-
-void SetParameters1(Graphics& gfx);
-void SetParameters2(Graphics& gfx);
-void SetParameters3(Graphics& gfx);
 
 static const char vcid_params_h[] = "$Header$";
 #endif // !PARAMS_H_DEFINED
