@@ -271,9 +271,9 @@ DOTRACE("Balls::pickInitialPositions");
     }
 }
 
-void Balls::nextBalls(Graphics& gfx)
+void Balls::pickNextPositions(Graphics& gfx)
 {
-DOTRACE("Balls::nextBalls");
+DOTRACE("Balls::pickNextPositions");
 
   for (int i=0; i<itsParams.ballNumber; ++i)
     {
@@ -295,11 +295,6 @@ DOTRACE("Balls::nextBalls");
     {
       itsBalls[i].twist(itsParams.ballTwistAngle);
     }
-}
-
-void Balls::copyBalls()
-{
-DOTRACE("Balls::copyBalls");
 
   for (int i=0; i<itsParams.ballNumber; ++i)
     {
@@ -380,14 +375,12 @@ DOTRACE("Balls::runTrial");
       // Here's the main loop where the balls are moving randomly
       for (int j=0; j<itsParams.framesPerRemind; ++j)
         {
-          nextBalls(gfx);
-
           gfx.clearBackBuffer();
           drawNBalls(gfx, 0, itsParams.ballNumber, &pixmap[0]);
           gfx.drawCross();
           gfx.swapBuffers();
 
-          copyBalls();
+          pickNextPositions(gfx);
         }
 
       timer.reset();

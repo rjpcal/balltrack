@@ -71,8 +71,7 @@ class Balls
 private:
   void pickInitialPositions(Graphics& gfx);
 
-  void nextBalls(Graphics& gfx);
-  void copyBalls();
+  void pickNextPositions(Graphics& gfx);
 
   void drawNBalls(Graphics& gfx, int first, int last,
                   unsigned char* bitmap);
