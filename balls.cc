@@ -132,8 +132,7 @@ DOTRACE("Ball::nextPosition");
   const int xborder = (width-xdisplay)/2;
   const int yborder = (height-ydisplay)/2;
 
-  this->next.x = this->pos.x + (lapsed_seconds * this->vel.x);
-  this->next.y = this->pos.y + (lapsed_seconds * this->vel.y);
+  this->next = this->pos + (this->vel * lapsed_seconds);
 
   if (this->next.x < xborder || this->next.x > width - xborder - arraysize)
     {
@@ -235,11 +234,8 @@ DOTRACE("Ball::collideIfNeeded");
       other.vel.x = fj * (voj * o.x + vai * a.x); // [pix/sec]
       other.vel.y = fj * (voj * o.y + vai * a.y); // [pix/sec]
 
-      this->next.x = this->pos.x + (lapsed_seconds * this->vel.x);
-      this->next.y = this->pos.y + (lapsed_seconds * this->vel.y);
-
-      other.next.x = other.pos.x + (lapsed_seconds * other.vel.x);
-      other.next.y = other.pos.y + (lapsed_seconds * other.vel.y);
+      this->next = this->pos + (this->vel * lapsed_seconds);
+      other.next = other.pos + (other.vel * lapsed_seconds);
     }
 }
 
@@ -267,8 +263,7 @@ void Ball::copy()
 {
 DOTRACE("Ball::copy");
 
-  this->pos.x = this->next.x;
-  this->pos.y = this->next.y;
+  this->pos = this->next;
 }
 
 void Ball::draw(Graphics& gfx, unsigned char* bitmap, int size,
