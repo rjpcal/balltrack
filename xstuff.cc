@@ -117,29 +117,27 @@ DOTRACE("XStuff::openWindow");
 
   const int screen = DefaultScreen(itsDisplay);
 
-  Colormap cmap =
-    XCreateColormap(itsDisplay,
-                    RootWindow(itsDisplay, screen),
-                    vinfo->visual, AllocNone);
+  const Window parent = RootWindow(itsDisplay, screen);
 
+  Colormap cmap = XCreateColormap(itsDisplay,
+                                  parent,
+                                  vinfo->visual, AllocNone);
 
   XSetWindowAttributes winAttributes;
 
-  winAttributes.event_mask = ExposureMask;
+  winAttributes.event_mask =
+    ExposureMask | StructureNotifyMask |
+    ButtonPressMask | KeyPressMask;
   winAttributes.colormap  = cmap;
 
   itsWindow = XCreateWindow(itsDisplay,
-                            RootWindow(itsDisplay, screen),
+                            parent,
                             0, 0, itsWidth, itsHeight, 2,
                             vinfo->depth,
                             InputOutput,
                             vinfo->visual,
                             (CWColormap | CWEventMask),
                             &winAttributes);
-
-  XSelectInput(itsDisplay, itsWindow,
-               ExposureMask|StructureNotifyMask|
-               ButtonPressMask|KeyPressMask);
 
   XSync(itsDisplay, False);
 
