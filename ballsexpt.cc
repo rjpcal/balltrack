@@ -113,6 +113,9 @@ struct BallsExpt::Impl
 
         unsigned int j;
 
+        // FIXME switch to do the getButtonPress() loop here rather
+        // than above
+
         // Find the first response (j'th) that came after the i'th
         // stimulus
         for (j = 0; j < responses.size(); ++j)
