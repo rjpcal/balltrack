@@ -4,7 +4,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //   created by Achim Braun
 // created: Tue Feb  1 16:12:25 2000
-// written: Tue Feb 29 17:17:43 2000
+// written: Tue Feb 29 17:24:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -337,19 +337,19 @@ void Balls::moveBalls(Graphics* gfx) {
 DOTRACE("Balls::moveBalls");
   gfx->waitVerticalRetrace();
 
-  gfx->clearBackBuffer();
+  if (gfx->isDoubleBuffered()) {
 
-#if defined(IRIX6)
-  for(int i = 0; i < BALL_NUMBER; ++i) {
-	 itsBalls[i].draw(gfx, &theirBallmap[0]);
+	 gfx->clearBackBuffer();
+
+	 for(int i = 0; i < BALL_NUMBER; ++i) {
+		itsBalls[i].draw(gfx, &theirBallmap[0]);
+	 }
   }
-#elif defined(HP9000S700)
-  for(int i = 0; i < BALL_NUMBER; ++i) {
-	 itsBalls[i].move(gfx);
+  else {
+	 for(int i = 0; i < BALL_NUMBER; ++i) {
+		itsBalls[i].move(gfx);
+	 }
   }
-#else
-#  error No architecture macro.
-#endif
 
   gfx->drawCross();
 
