@@ -185,12 +185,6 @@ DOTRACE("Graphics::clearBackBuffer");
   clearBackBufferRegion(true);
 }
 
-void Graphics::waitVerticalRetrace()
-{
-DOTRACE("Graphics::waitVerticalRetrace");
-  /* do nothing */;
-}
-
 void Graphics::swapBuffers()
 {
 DOTRACE("Graphics::swapBuffers");

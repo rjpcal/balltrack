@@ -151,7 +151,6 @@ DOTRACE("BallsExpt::runFixationCalibration");
 
   for (int i = 0; i < 11; ++i)
     {
-      graphics().waitVerticalRetrace();
       graphics().clearFrontBuffer();
       graphics().drawCross(x[seq[i]], y[seq[i]]);
       graphics().swapBuffers();
@@ -252,7 +251,7 @@ DOTRACE("BallsExpt::runFmriExpt");
     }
 
   if (MAKING_MOVIE)
-         graphics().stopRecording();
+    graphics().stopRecording();
 }
 
 void BallsExpt::runEyeTrackingExpt()

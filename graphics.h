@@ -35,7 +35,8 @@ public:
 
   void wrapGraphics();
 
-  // This gives a hook to allow movie frames to be recorded during the delay
+  // This gives a hook to allow movie frames to be recorded during the
+  // delay
   void gfxWait(double delaySeconds);
 
   // Returns the number of milliseconds per graphics frame
@@ -47,7 +48,6 @@ public:
   void clearFrontBuffer();
   void clearBackBuffer();
 
-  void waitVerticalRetrace();
   void swapBuffers();
 
   void drawMessage(char word[]);

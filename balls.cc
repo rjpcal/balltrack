@@ -355,7 +355,6 @@ DOTRACE("Balls::nextBalls");
 void Balls::moveBalls(Graphics& gfx)
 {
 DOTRACE("Balls::moveBalls");
-  gfx.waitVerticalRetrace();
 
   gfx.clearBackBuffer();
 
@@ -514,7 +513,6 @@ DOTRACE("Balls::runTrial");
 
       if (ttype == Balls::CHECK_ALL)
         {
-          gfx.waitVerticalRetrace();
           gfx.clearBackBuffer();
 
           gfx.drawCross();
@@ -542,7 +540,6 @@ DOTRACE("Balls::runTrial");
               + BALL_TRACK_NUMBER;
 
           // Redraw the balls with the random ball highlighted
-          gfx.waitVerticalRetrace();
           gfx.clearBackBuffer();
 
           gfx.drawCross();
@@ -563,7 +560,6 @@ DOTRACE("Balls::runTrial");
 
           // Redraw the balls, but now with the correct balls
           // highlighted in order to cue the next trial
-          gfx.waitVerticalRetrace();
           gfx.clearBackBuffer();
 
           gfx.drawCross();
