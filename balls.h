@@ -59,9 +59,6 @@ struct Stimulus
 
   double msecFrom(const timeval& time0) const
   { return Timing::elapsedMsec(time0, this->time); }
-
-  double reaction_time;
-  bool reaction_correct;
 };
 
 enum Buttons
