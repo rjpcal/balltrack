@@ -392,24 +392,31 @@ namespace
   struct ParamInfo
   {
     ParamInfo(const std::string& d, const std::string& n, double& v, bool imm = false) :
-      descr(d), name(n), immutable(imm),
+      descr(d), name(n), immutable(imm), empty(false),
       dvar(&v), dorig(v),
       ivar(0), iorig(),
       bvar(0), borig()
     {}
 
     ParamInfo(const std::string& d, const std::string& n, int& v, bool imm = false) :
-      descr(d), name(n), immutable(imm),
+      descr(d), name(n), immutable(imm), empty(false),
       dvar(0), dorig(),
       ivar(&v), iorig(v),
       bvar(0), borig()
     {}
 
     ParamInfo(const std::string& d, const std::string& n, bool& v, bool imm = false) :
-      descr(d), name(n), immutable(imm),
+      descr(d), name(n), immutable(imm), empty(false),
       dvar(0), dorig(),
       ivar(0), iorig(),
       bvar(&v), borig(v)
+    {}
+
+    ParamInfo() :
+      descr(), name(), immutable(false), empty(true),
+      dvar(0), dorig(),
+      ivar(0), iorig(),
+      bvar(0), borig()
     {}
 
     bool changed() const
@@ -428,6 +435,7 @@ namespace
       else if (dvar != 0)  s << *dvar;
       else if (ivar != 0)  s << *ivar;
       else if (bvar != 0)  s << *bvar;
+      else if (empty)      s << "";
     }
 
     void putorig(std::ostream& s) const
@@ -435,6 +443,7 @@ namespace
       if      (dvar != 0)  s << dorig;
       else if (ivar != 0)  s << iorig;
       else if (bvar != 0)  s << borig;
+      else if (empty)      s << "";
     }
 
     void getvalue(Graphics & gfx)
@@ -450,6 +459,7 @@ namespace
     std::string name;
 
     bool immutable;
+    bool empty;
 
   private:
     double* dvar;
@@ -495,8 +505,11 @@ namespace
         oss.setf(std::ios::right);
         oss << std::setw(descrwid) << items[i].descr;
 
-        oss << sep << std::setw(namewid+2)
-            << ('(' + items[i].name + ')');
+        if (items[i].name.length() > 0)
+          oss << sep << std::setw(namewid+2)
+              << ('(' + items[i].name + ')');
+        else
+          oss << sep << std::setw(namewid+2) << "";
 
         oss << sep << std::setw(6);
         items[i].putorig(oss);
@@ -526,7 +539,7 @@ namespace
       }
 
     gfx.clearBackBuffer();
-    gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 13);
+    gfx.drawText(&vmenu[0], vmenu.size(), 50, -50, 12);
     gfx.swapBuffers();
   }
 
@@ -553,6 +566,7 @@ DOTRACE("Params::setParams");
   items.push_back(ParamInfo("window height",                    "", this->windowHeight, true));
   items.push_back(ParamInfo("arena width",                      "DISPLAY_X", this->displayX));
   items.push_back(ParamInfo("arena height",                     "DISPLAY_Y", this->displayY));
+  items.push_back(ParamInfo());
 
   items.push_back(ParamInfo("# of cycles",                      "CYCLE_NUMBER", this->cycleNumber));
   items.push_back(ParamInfo("wait duration (seconds)",          "WAIT_DURATION", this->waitSeconds));
@@ -560,6 +574,8 @@ DOTRACE("Params::setParams");
   items.push_back(ParamInfo("pause duration (seconds)",         "PAUSE_DURATION", this->pauseSeconds));
   items.push_back(ParamInfo("remind duration (seconds)",        "REMIND_DURATION", this->remindSeconds));
   items.push_back(ParamInfo("# of reminds per epoch",           "REMINDS_PER_EPOCH", this->remindsPerEpoch));
+  items.push_back(ParamInfo("fMRI session #",                   "FMRI_SESSION_NUMBER", this->fmriSessionNumber));
+  items.push_back(ParamInfo());
 
   items.push_back(ParamInfo("number of balls  (total)",         "BALL_NUMBER", this->ballNumber));
   items.push_back(ParamInfo("number of balls to track",         "BALL_TRACK_NUMBER", this->ballTrackNumber));
@@ -569,8 +585,7 @@ DOTRACE("Params::setParams");
   items.push_back(ParamInfo("ball radius (#pixels)",            "BALL_RADIUS", this->ballRadius));
   items.push_back(ParamInfo("ball sigma^2 (#pixels)",           "BALL_SIGMA2", this->ballSigma2));
   items.push_back(ParamInfo("ball twist angle (radians)",       "BALL_TWIST_ANGLE", this->ballTwistAngle));
-
-  items.push_back(ParamInfo("fMRI session #",                   "FMRI_SESSION_NUMBER", this->fmriSessionNumber));
+  items.push_back(ParamInfo());
 
   items.push_back(ParamInfo("DEBUG: show ball physics",         "", this->showPhysics));
 
