@@ -415,6 +415,30 @@ namespace
       items.push_back(MenuItem(v));
     }
 
+    void go(Graphics& gfx)
+    {
+      this->setupMenu3();
+
+      this->redraw(gfx);
+
+      for (unsigned int i = 0; i < items.size(); ++i)
+        {
+          if (items[i].dvar != 0)
+            {
+              gfx.getValueFromKeyboard(*items[i].dvar);
+              this->putValue(*items[i].dvar);
+            }
+          else if (items[i].ivar != 0)
+            {
+              gfx.getValueFromKeyboard(*items[i].ivar);
+              this->putValue(*items[i].ivar);
+            }
+          this->redraw(gfx);
+        }
+    }
+
+  private:
+
     template <class T>
     void putValue(const T& v)
     {
@@ -448,24 +472,7 @@ namespace
       menu[3] = s.str();
     }
 
-    void go(Graphics& gfx)
-    {
-      for (unsigned int i = 0; i < items.size(); ++i)
-        {
-          if (items[i].dvar != 0)
-            {
-              gfx.getValueFromKeyboard(*items[i].dvar);
-              this->putValue(*items[i].dvar);
-            }
-          else if (items[i].ivar != 0)
-            {
-              gfx.getValueFromKeyboard(*items[i].ivar);
-              this->putValue(*items[i].ivar);
-            }
-          this->redraw(gfx);
-        }
-    }
-
+  public:
     const char* prefix;
     std::string menu[4];
     std::ostringstream oss;
@@ -493,10 +500,6 @@ DOTRACE("Params::setGroup1");
   pm.addItem(this->ballRadius);
   pm.addItem(this->ballSigma2);
   pm.addItem(this->ballTwistAngle);
-
-  pm.setupMenu3();
-
-  pm.redraw(gfx);
 
   pm.go(gfx);
 }
