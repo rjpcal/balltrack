@@ -260,25 +260,25 @@ void Params::appendParams(ParamFile& pmfile)
 {
 DOTRACE("Params::appendParams");
 
-  pmfile.putInt(   (DISPLAY_X),        ("DISPLAY_X") );
-  pmfile.putInt(   (DISPLAY_Y),        ("DISPLAY_Y") );
-  pmfile.putInt(   (CYCLE_NUMBER),     ("CYCLE_NUMBER") );
-  pmfile.putFloat( (WAIT_DURATION),    ("WAIT_DURATION") );
-  pmfile.putFloat( (EPOCH_DURATION),   ("EPOCH_DURATION") );
-  pmfile.putFloat( (PAUSE_DURATION),   ("PAUSE_DURATION") );
-  pmfile.putFloat( (REMIND_DURATION),  ("REMIND_DURATION") );
-  pmfile.putInt(   (REMINDS_PER_EPOCH),("REMINDS_PER_EPOCH") );
-  pmfile.putInt(   (FRAMES_PER_REMIND),("FRAMES_PER_REMIND") );
-  pmfile.putInt(   (BALL_NUMBER),      ("BALL_NUMBER") );
-  pmfile.putInt(   (BALL_TRACK_NUMBER),("BALL_TRACK_NUMBER") );
-  pmfile.putInt(   (BALL_VELOCITY),    ("BALL_VELOCITY") );
-  pmfile.putInt(   (BALL_ARRAY_SIZE),  ("BALL_ARRAY_SIZE") );
-  pmfile.putInt(   (BALL_MIN_DISTANCE),("BALL_MIN_DISTANCE") );
-  pmfile.putFloat( (BALL_RADIUS),      ("BALL_RADIUS") );
-  pmfile.putFloat( (BALL_SIGMA2),      ("BALL_SIGMA2") );
-  pmfile.putFloat( (BALL_TWIST_ANGLE), ("BALL_TWIST_ANGLE") );
-  pmfile.putText(  (OBSERVER),         ("OBSERVER") );
-  pmfile.putText(  (FILENAME),         ("FILENAME") );
+  pmfile.putInt(   DISPLAY_X,         "DISPLAY_X" );
+  pmfile.putInt(   DISPLAY_Y,         "DISPLAY_Y" );
+  pmfile.putInt(   CYCLE_NUMBER,      "CYCLE_NUMBER" );
+  pmfile.putFloat( WAIT_DURATION,     "WAIT_DURATION" );
+  pmfile.putFloat( EPOCH_DURATION,    "EPOCH_DURATION" );
+  pmfile.putFloat( PAUSE_DURATION,    "PAUSE_DURATION" );
+  pmfile.putFloat( REMIND_DURATION,   "REMIND_DURATION" );
+  pmfile.putInt(   REMINDS_PER_EPOCH, "REMINDS_PER_EPOCH" );
+  pmfile.putInt(   FRAMES_PER_REMIND, "FRAMES_PER_REMIND" );
+  pmfile.putInt(   BALL_NUMBER,       "BALL_NUMBER" );
+  pmfile.putInt(   BALL_TRACK_NUMBER, "BALL_TRACK_NUMBER" );
+  pmfile.putInt(   BALL_VELOCITY,     "BALL_VELOCITY" );
+  pmfile.putInt(   BALL_ARRAY_SIZE,   "BALL_ARRAY_SIZE" );
+  pmfile.putInt(   BALL_MIN_DISTANCE, "BALL_MIN_DISTANCE" );
+  pmfile.putFloat( BALL_RADIUS,       "BALL_RADIUS" );
+  pmfile.putFloat( BALL_SIGMA2,       "BALL_SIGMA2" );
+  pmfile.putFloat( BALL_TWIST_ANGLE,  "BALL_TWIST_ANGLE" );
+  pmfile.putText(  OBSERVER,          "OBSERVER" );
+  pmfile.putText(  FILENAME,          "FILENAME" );
 
   const char* app_mode = "unknown";
   switch (APPLICATION_MODE)
@@ -288,8 +288,8 @@ DOTRACE("Params::appendParams");
     case FMRI_SESSION:  app_mode = "FMRI_SESSION"; break;
     }
 
-  pmfile.putText(   (app_mode),         ("APPLICATION_MODE") );
-  pmfile.putInt(    (FMRI_SESSION_NUMBER),("FMRI_SESSION_NUMBER") );
+  pmfile.putText(   app_mode,         "APPLICATION_MODE" );
+  pmfile.putInt(    FMRI_SESSION_NUMBER, "FMRI_SESSION_NUMBER" );
 }
 
 void Params::logParams(ParamFile& logfile)
