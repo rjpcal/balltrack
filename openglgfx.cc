@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Wed Jun 27 15:31:39 2001
+// written: Wed Jun 27 17:26:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,9 @@ OpenglGfx::OpenglGfx(XStuff* xinfo, const XHints& hints,
   itsGLXContext(0),
   itsClearIndex(0),
   itsMovie(0),
-  itsIsRecording(false)
+  isItRecording(false),
+  isItRgba(0),
+  isItDoubleBuffered(0)
 {
 DOTRACE("OpenglGfx::OpenglGfx");
   std::vector<int> attribList;
@@ -104,10 +106,15 @@ DOTRACE("OpenglGfx::OpenglGfx");
       fprintf( stdout,"Couldn't get an OpenGL graphics context.\n" );
       exit( -1 );
     }
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 4);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
 OpenglGfx::~OpenglGfx()
 {
+  delete isItDoubleBuffered;
+  delete isItRgba;
   delete itsMovie;
 }
 
@@ -149,17 +156,27 @@ DOTRACE("OpenglGfx::wrapGraphics");
 bool OpenglGfx::isRgba()
 {
 DOTRACE("OpenglGfx::isRgba");
-  GLboolean is_rgba;
-  glGetBooleanv(GL_RGBA_MODE, &is_rgba);
-  return bool(is_rgba);
+
+  if (isItRgba == 0)
+    {
+      GLboolean is_rgba;
+      glGetBooleanv(GL_RGBA_MODE, &is_rgba);
+      isItRgba = new bool(is_rgba == GL_TRUE ? true : false);
+    }
+  return *isItRgba;
 }
 
 bool OpenglGfx::isDoubleBuffered()
 {
 DOTRACE("OpenglGfx::isDoubleBuffered");
-  GLboolean is_db;
-  glGetBooleanv(GL_DOUBLEBUFFER, &is_db);
-  return bool(is_db);
+
+  if (isItDoubleBuffered == 0)
+    {
+      GLboolean is_db;
+      glGetBooleanv(GL_DOUBLEBUFFER, &is_db);
+      isItDoubleBuffered = new bool(is_db == GL_TRUE ? true : false);
+    }
+  return *isItDoubleBuffered;
 }
 
 void OpenglGfx::writeUpperPlanes()
@@ -193,7 +210,7 @@ DOTRACE("OpenglGfx::swapBuffers");
   glXWaitGL();
   glXWaitX();
 
-  if (itsMovie && itsIsRecording) {
+  if (itsMovie && isItRecording) {
     static int f = 0;
     ++f;
 
@@ -244,9 +261,9 @@ DOTRACE("OpenglGfx::drawMessage");
   char* p = &word[0];
   while (*p) { ++p; ++nchars; }
 
-  int availWidth = 0.8 * width();
+  int availWidth = int(0.8 * width());
 
-  if (itsMovie && itsIsRecording)
+  if (itsMovie && isItRecording)
     {
       availWidth = itsMovie->width();
     }
@@ -403,9 +420,11 @@ DOTRACE("OpenglGfx::writeBitmap");
 void OpenglGfx::writeTrueColorMap(unsigned char* ptr, int x, int y, int size)
 {
 DOTRACE("OpenglGfx::writeTrueColorMap");
+
   glRasterPos2i(x,y);
 
   glDrawPixels(size, size, GL_RGBA, GL_UNSIGNED_BYTE, ptr);
+
 }
 
 void OpenglGfx::startRecording()
@@ -416,7 +435,7 @@ DOTRACE("OpenglGfx::startRecording");
     itsMovie = new SimpleMovie("ballmovie.mov", MV_FORMAT_QT,
                                DISPLAY_X, DISPLAY_Y);
 
-  itsIsRecording = true;
+  isItRecording = true;
 }
 
 void OpenglGfx::stopRecording()
@@ -426,15 +445,15 @@ DOTRACE("OpenglGfx::stopRecording");
   if (itsMovie != 0)
     itsMovie->flush();
 
-  itsIsRecording = false;
+  isItRecording = false;
 }
 
 void OpenglGfx::gfxWait(double delaySeconds)
 {
 DOTRACE("OpenglGfx::gfxWait");
-  if (itsMovie && itsIsRecording)
+  if (itsMovie && isItRecording)
     {
-      int nframes = delaySeconds * itsMovie->frameRate();
+      int nframes = int(delaySeconds * itsMovie->frameRate());
 
       // Repeat frames of whatever was most recently appended
       for (int i = 0; i < nframes; ++i)

@@ -3,7 +3,7 @@
 // openglgfx.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:03:44 2000
-// written: Wed Jun 27 15:34:08 2001
+// written: Wed Jun 27 16:45:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,7 +81,10 @@ private:
   int itsClearIndex;
 
   SimpleMovie* itsMovie;
-  bool itsIsRecording;
+  bool isItRecording;
+
+  bool* isItRgba;
+  bool* isItDoubleBuffered;
 };
 
 static const char vcid_openglgfx_h[] = "$Header$";
