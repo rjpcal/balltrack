@@ -39,7 +39,7 @@ public:
 class ParamFileOut
 {
 private:
-  std::ofstream* itsFstream;
+  std::ofstream itsFstream;
 
 public:
   ParamFileOut(const std::string& filebase, char mode,
@@ -52,7 +52,7 @@ public:
 
   void putLine(const char* str);
 
-  std::ofstream& stream() { return *itsFstream; }
+  std::ofstream& stream() { return itsFstream; }
 };
 
 class Params

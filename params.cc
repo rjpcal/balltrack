@@ -86,7 +86,7 @@ bool ParamFileIn::getLine(std::string& str)
 
 ParamFileOut::ParamFileOut(const std::string& filebase, char mode,
                            const char* extension) :
-  itsFstream(0)
+  itsFstream()
 {
   DOTRACE("<params.cc>::openfile");
 
@@ -94,14 +94,14 @@ ParamFileOut::ParamFileOut(const std::string& filebase, char mode,
 
   switch (mode)
     {
-    case 'w': itsFstream = new std::ofstream(fname.c_str(), std::ios::out); break;
-    case 'a': itsFstream = new std::ofstream(fname.c_str(), std::ios::out|std::ios::app); break;
+    case 'w': itsFstream.open(fname.c_str(), std::ios::out); break;
+    case 'a': itsFstream.open(fname.c_str(), std::ios::out|std::ios::app); break;
     default:
       std::cerr << "unknown file mode '" << mode << "'\n";
       exit(1);
     }
 
-  if (!itsFstream->is_open() || itsFstream->fail())
+  if (!itsFstream.is_open() || itsFstream.fail())
     {
       std::cerr << "couldn't open " << fname << " in mode '"
                 << mode << "'\n";
@@ -110,32 +110,30 @@ ParamFileOut::ParamFileOut(const std::string& filebase, char mode,
 }
 
 ParamFileOut::~ParamFileOut()
-{
-  delete itsFstream;
-}
+{}
 
 void ParamFileOut::putInt(int var, const char* name)
 {
-  *itsFstream << std::left << std::setw(19) << name << " "
-              << var << '\n';
+  itsFstream << std::left << std::setw(19) << name << " "
+             << var << '\n';
 }
 
 void ParamFileOut::putDouble(double var, const char* name)
 {
-  *itsFstream << std::left << std::setw(19) << name << " "
-              << std::showpoint << std::fixed << std::setprecision(2)
-              << var << '\n';
+  itsFstream << std::left << std::setw(19) << name << " "
+             << std::showpoint << std::fixed << std::setprecision(2)
+             << var << '\n';
 }
 
 void ParamFileOut::putString(const std::string& str, const char* name)
 {
-  *itsFstream << std::left << std::setw(19) << name << " "
-              << str << '\n';
+  itsFstream << std::left << std::setw(19) << name << " "
+             << str << '\n';
 }
 
 void ParamFileOut::putLine(const char* str)
 {
-  *itsFstream << str << '\n';
+  itsFstream << str << '\n';
 }
 
 //----------------------------------------------------------
