@@ -80,11 +80,11 @@ public:
 class Params
 {
 public:
-  static void readParams(Graphics& gfx, char extension[]);
-  static void writeParams(char extension[]);
-  static void appendParams(ParamFile& pmfile);
-  static void logParams(ParamFile& logfile);
-  static void displayParams(Graphics& gfx);
+  void readParams(Graphics& gfx, char extension[]);
+  void writeParams(char extension[]);
+  void appendParams(ParamFile& pmfile);
+  void logParams(ParamFile& logfile);
+  void displayParams(Graphics& gfx);
 };
 
 void RecomputeParams(Graphics& gfx);

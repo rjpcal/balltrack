@@ -46,20 +46,21 @@ namespace
 struct BallsExpt::Impl
 {
   /// XXX this needs to be at least as big as (CYCLE_NUMBER+1)*NUM_CONDITIONS
-  timeval itsTimePoints[128];
-  int itsTpIndex;
-  Balls itsBalls;
+  timeval timepoints[128];
+  int timepointIdx;
+  Balls ballset;
+  Params params;
 
   void logTimePoints(FILE* fp)
   {
-    for( int i = 0; i < itsTpIndex; ++i )
+    for( int i = 0; i < timepointIdx; ++i )
       {
         printf( " %d %lf\n", i,
-                Timing::elapsedMsec( &itsTimePoints[0],
-                                     &itsTimePoints[i] ) );
+                Timing::elapsedMsec( &timepoints[0],
+                                     &timepoints[i] ) );
         fprintf( fp, " %d %lf\n", i,
-                 Timing::elapsedMsec( &itsTimePoints[0],
-                                      &itsTimePoints[i] ) );
+                 Timing::elapsedMsec( &timepoints[0],
+                                      &timepoints[i] ) );
       }
   }
 };
@@ -67,11 +68,11 @@ struct BallsExpt::Impl
 
 BallsExpt::BallsExpt(Graphics& gfx) :
   Application(gfx),
-  itsImpl(new Impl)
+  rep(new Impl)
 {
 DOTRACE("BallsExpt::BallsExpt");
 
-  Params::readParams(gfx, "sta");
+  rep->params.readParams(gfx, "sta");
 
   Balls::generateColors();
 }
@@ -80,9 +81,9 @@ BallsExpt::~BallsExpt()
 {
 DOTRACE("BallsExpt::~BallsExpt");
 
-  Params::writeParams("sta");
+  rep->params.writeParams("sta");
 
-  delete itsImpl;
+  delete rep;
 }
 
 void BallsExpt::onExpose()
@@ -119,7 +120,7 @@ DOTRACE("BallsExpt::onKey");
       break;
 
     case 'p':
-      Params::displayParams(this->graphics());
+      rep->params.displayParams(this->graphics());
       break;
 
     default:
@@ -180,7 +181,7 @@ DOTRACE("BallsExpt::runExperiment");
 
   ParamFile tmefile('a', "tme");
 
-  Params::logParams(tmefile);
+  rep->params.logParams(tmefile);
 
   graphics().clearFrontBuffer();
 
@@ -192,10 +193,10 @@ DOTRACE("BallsExpt::runExperiment");
     }
 
   Timing::mainTimer.set();
-  Timing::getTime( &itsImpl->itsTimePoints[0] );
+  Timing::getTime( &rep->timepoints[0] );
   graphics().gfxWait( WAIT_DURATION );
 
-  itsImpl->itsTpIndex = 1;
+  rep->timepointIdx = 1;
 
   if (FMRI_SESSION == APPLICATION_MODE)
     runFmriExpt();
@@ -204,9 +205,9 @@ DOTRACE("BallsExpt::runExperiment");
   else if (TRAINING == APPLICATION_MODE)
     runTrainingExpt();
 
-  Timing::getTime( &itsImpl->itsTimePoints[itsImpl->itsTpIndex++] );
+  Timing::getTime( &rep->timepoints[rep->timepointIdx++] );
 
-  itsImpl->logTimePoints(tmefile.fp());
+  rep->logTimePoints(tmefile.fp());
 
   buttonPressLoop();
 
@@ -233,8 +234,8 @@ DOTRACE("BallsExpt::runFmriExpt");
       else if (track_number == 0)
         {
           // Run passive trial
-          itsImpl->itsBalls.runTrial
-            (graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+          rep->ballset.runTrial
+            (graphics(), &rep->timepoints[rep->timepointIdx++],
              Balls::PASSIVE);
         }
       else
@@ -242,8 +243,8 @@ DOTRACE("BallsExpt::runFmriExpt");
           BALL_TRACK_NUMBER = track_number;
 
           // Run active tracking trial with objective check
-          itsImpl->itsBalls.runTrial
-            (graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+          rep->ballset.runTrial
+            (graphics(), &rep->timepoints[rep->timepointIdx++],
              Balls::CHECK_ONE);
         }
 
@@ -260,7 +261,7 @@ DOTRACE("BallsExpt::runFmriExpt");
             }
 
           Timing::mainTimer.set();
-          Timing::getTime( &itsImpl->itsTimePoints[itsImpl->itsTpIndex++] );
+          Timing::getTime( &rep->timepoints[rep->timepointIdx++] );
           graphics().gfxWait( WAIT_DURATION );
         }
     }
@@ -277,20 +278,20 @@ DOTRACE("BallsExpt::runEyeTrackingExpt");
     {
       // Run active tracking trial
       runFixationCalibration();
-      itsImpl->itsBalls.runTrial
-        (graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+      rep->ballset.runTrial
+        (graphics(), &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ALL);
 
       // Run active tracking trial with objective check
       runFixationCalibration();
-      itsImpl->itsBalls.runTrial
-        (graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+      rep->ballset.runTrial
+        (graphics(), &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ONE);
 
       // Run passive trial
       runFixationCalibration();
-      itsImpl->itsBalls.runTrial
-        (graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+      rep->ballset.runTrial
+        (graphics(), &rep->timepoints[rep->timepointIdx++],
          Balls::PASSIVE);
     }
 }
@@ -302,12 +303,12 @@ DOTRACE("BallsExpt::runTrainingExpt");
   for( int cycle=0; cycle<CYCLE_NUMBER; ++cycle )
     {
       // Run active tracking trial
-      itsImpl->itsBalls.runTrial
-        (graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+      rep->ballset.runTrial
+        (graphics(), &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ALL);
       // Run active tracking trial with objective check
-      itsImpl->itsBalls.runTrial
-        (graphics(), &itsImpl->itsTimePoints[itsImpl->itsTpIndex++],
+      rep->ballset.runTrial
+        (graphics(), &rep->timepoints[rep->timepointIdx++],
          Balls::CHECK_ONE);
     }
 }

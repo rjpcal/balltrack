@@ -39,7 +39,7 @@ private:
   void runTrainingExpt();
 
   struct Impl;
-  Impl* itsImpl;
+  Impl* rep;
 };
 
 static const char vcid_ballsexpt_h[] = "$Header$";
