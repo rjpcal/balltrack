@@ -56,7 +56,6 @@ struct BallsExpt::Impl
     rdata()
   {}
 
-  /// XXX this needs to be at least as big as (cycleNumber+1)*NUM_CONDITIONS
   std::vector<timeval> timepoints;
   Balls ballset;
   Params& params;
