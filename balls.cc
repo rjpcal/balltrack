@@ -195,38 +195,45 @@ void Ball::collideIfNeeded(Ball& other, int min_dist,
 {
 DOTRACE("Ball::collideIfNeeded");
 
-  const vec ij = this->next - other.next; // units pixels
+  const vec ij =
+    this->next - other.next; // [units pixels] vector from (this) to (other)
 
   if (fabs(ij.x) >= min_dist || fabs(ij.y) >= min_dist)
     return;
 
-  const vec a       =  ij.unit(); // unitless (unit vector in direction of ij)
-  const vec o       =  a.rot90(); // unitless (unit vector in direction normal to ij)
+  const vec a = ij.unit(); // [unitless] (unit vector along ij)
+  const vec o = a.rot90(); // [unitless] (unit vector normal to ij)
 
-  const double vai  = dot(this->vel, a); // units pix/sec
-  const double vaj  = dot(other.vel, a); // units pix/sec
+  // These are the velocities of (this) and (other) along the vector
+  // pointing from (this) to (other)
+  const double vai  = dot(this->vel, a); // [pix/sec]
+  const double vaj  = dot(other.vel, a); // [pix/sec]
 
-  if (vai - vaj < 0.0)
+  // If (this) is moving more slowly along the connecting line than
+  // (other), then we'll have a collision:
+  if (vai < vaj)
     {
-      const double voi  = dot(this->vel, o); // pix/sec
-      const double voj  = dot(other.vel, o); // pix/sec
+      // Projections of the velocities of (this) and (other) along a
+      // line perpendicular to the one connecting them
+      const double voi  = dot(this->vel, o); // [pix/sec]
+      const double voj  = dot(other.vel, o); // [pix/sec]
       /*
         ovi2 = vai*vai + voi*voi;
         ovj2 = vaj*vaj + voj*voj;
       */
-      const double nvi2 = vaj*vaj + voi*voi; // pix^2/sec^2
-      const double nvj2 = vai*vai + voj*voj; // pix^2/sec^2
+      const double nvi2 = vaj*vaj + voi*voi; // [pix^2/sec^2]
+      const double nvj2 = vai*vai + voj*voj; // [pix^2/sec^2]
 
-      const double vij2 = vai*vai - vaj*vaj; // pix^2/sec^2
+      const double vij2 = vai*vai - vaj*vaj; // [pix^2/sec^2]
 
-      const double fi   = sqrt(1. + vij2 / nvi2); // unitless
-      const double fj   = sqrt(1. - vij2 / nvj2); // unitless
+      const double fi   = sqrt(1. + vij2 / nvi2); // [unitless]
+      const double fj   = sqrt(1. - vij2 / nvj2); // [unitless]
 
-      this->vel.x = fi * (voi * o.x + vaj * a.x); // pix/sec
-      this->vel.y = fi * (voi * o.y + vaj * a.y); // pix/sec
+      this->vel.x = fi * (voi * o.x + vaj * a.x); // [pix/sec]
+      this->vel.y = fi * (voi * o.y + vaj * a.y); // [pix/sec]
 
-      other.vel.x = fj * (voj * o.x + vai * a.x); // pix/sec
-      other.vel.y = fj * (voj * o.y + vai * a.y); // pix/sec
+      other.vel.x = fj * (voj * o.x + vai * a.x); // [pix/sec]
+      other.vel.y = fj * (voj * o.y + vai * a.y); // [pix/sec]
 
       this->next.x = this->pos.x + (lapsed_seconds * this->vel.x);
       this->next.y = this->pos.y + (lapsed_seconds * this->vel.y);
