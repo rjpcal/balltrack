@@ -21,6 +21,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <time.h>
 
 #include "trace.h"
 #include "debug.h"
@@ -54,52 +55,6 @@ char  OBSERVER[STRINGSIZE] = { '\0' };
 int   BORDER_X;
 int   BORDER_Y;
 int   FRAMES_PER_REMIND;
-
-namespace
-{
-  void date( char* p )
-  {
-    DOTRACE("date");
-
-    FILE *fp;
-
-    if ( ( fp =    popen( "date", "r")) ==  NULL)
-      {
-        printf( "cannot access date");
-        return;
-      }
-    if ( fgets( p, 50, fp) ==  NULL)
-      {
-        printf( "cannot read date");
-        return;
-      }
-    pclose(fp);
-  }
-
-  void process_id( char pid[] )
-  {
-    DOTRACE("process_id");
-
-    FILE *fp;
-    char line[ STRINGSIZE ];
-
-    sprintf( line, "ps | grep %s", PROGRAM );
-
-    if ( ( fp =    popen( line, "r")) ==    NULL)
-      {
-        printf( "cannot access PID");
-        return;
-      }
-    if ( fgets( line, STRINGSIZE, fp) ==  NULL)
-      {
-        printf( "cannot read PID");
-        return;
-      }
-    pclose(fp);
-
-    sscanf( line, "%s", pid );
-  }
-}
 
 /************************************************/
 
@@ -302,9 +257,9 @@ DOTRACE("Params::logParams");
 
   writeParams("cur");
 
-  char text[STRINGSIZE];
-  date(text);
-  fprintf( logfile.fp(), "\n\n%s\n\n", text);
+  time_t t = time(0);
+  char* p = ctime(&t);
+  fprintf( logfile.fp(), "\n\n%s\n\n", p);
 
   appendParams(logfile);
 
