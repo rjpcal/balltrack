@@ -1,15 +1,15 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// timing.c
+// timing.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb  1 16:42:55 2000
-// written: Mon Jun 12 15:20:39 2000
+// written: Tue Mar  6 17:43:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TIMING_C_DEFINED
-#define TIMING_C_DEFINED
+#ifndef TIMING_CC_DEFINED
+#define TIMING_CC_DEFINED
 
 #include "timing.h"
 
@@ -314,5 +314,5 @@ DOTRACE("Timing::recentPercentCorrect");
   return percent_correct;
 }
 
-static const char vcid_timing_c[] = "$Header$";
-#endif // !TIMING_C_DEFINED
+static const char vcid_timing_cc[] = "$Header$";
+#endif // !TIMING_CC_DEFINED
