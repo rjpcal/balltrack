@@ -55,13 +55,81 @@ int   BORDER_X;
 int   BORDER_Y;
 int   FRAMES_PER_REMIND;
 
-// Prototypes
-void EnterInt( Application* app, int* pi );
-void EnterFloat( Application* app, float* pf );
-void EnterText( Application* app, char* ps );
-void date( char* p);
-void process_id( char pid[] );
+namespace
+{
+  void EnterInt( Application* app, int* pi )
+  {
+    DOTRACE("EnterInt");
 
+    char word[STRINGSIZE];
+    app->graphics().xstuff().getWord(word, STRINGSIZE);
+
+    sscanf( word, "%d", pi );
+  }
+
+  void EnterFloat( Application* app, float* pf )
+  {
+    DOTRACE("EnterFloat");
+
+    char word[STRINGSIZE];
+    app->graphics().xstuff().getWord(word, STRINGSIZE);
+
+    sscanf( word, "%f", pf );
+  }
+
+  void EnterText( Application* app, char* ps )
+  {
+    DOTRACE("EnterText");
+
+    char word[STRINGSIZE];
+    app->graphics().xstuff().getWord(word, STRINGSIZE);
+
+    sscanf( word, "%s", ps );
+  }
+
+  void date( char* p )
+  {
+    DOTRACE("date");
+
+    FILE *fp;
+
+    if ( ( fp =    popen( "date", "r")) ==  NULL)
+      {
+        printf( "cannot access date");
+        return;
+      }
+    if ( fgets( p, 50, fp) ==  NULL)
+      {
+        printf( "cannot read date");
+        return;
+      }
+    pclose(fp);
+  }
+
+  void process_id( char pid[] )
+  {
+    DOTRACE("process_id");
+
+    FILE *fp;
+    char line[ STRINGSIZE ];
+
+    sprintf( line, "ps | grep %s", PROGRAM );
+
+    if ( ( fp =    popen( line, "r")) ==    NULL)
+      {
+        printf( "cannot access PID");
+        return;
+      }
+    if ( fgets( line, STRINGSIZE, fp) ==  NULL)
+      {
+        printf( "cannot read PID");
+        return;
+      }
+    pclose(fp);
+
+    sscanf( line, "%s", pid );
+  }
+}
 
 /************************************************/
 
@@ -473,79 +541,6 @@ DOTRACE("SetParameters2");
   gfx.swapBuffers();
 
   RecomputeParams(gfx);
-}
-
-void EnterInt( Application* app, int* pi )
-{
-DOTRACE("EnterInt");
-
-  char word[STRINGSIZE];
-  app->graphics().xstuff().getWord(word, STRINGSIZE);
-
-  sscanf( word, "%d", pi );
-}
-
-void EnterFloat( Application* app, float* pf )
-{
-DOTRACE("EnterFloat");
-
-  char word[STRINGSIZE];
-  app->graphics().xstuff().getWord(word, STRINGSIZE);
-
-  sscanf( word, "%f", pf );
-}
-
-void EnterText( Application* app, char* ps )
-{
-DOTRACE("EnterText");
-
-  char word[STRINGSIZE];
-  app->graphics().xstuff().getWord(word, STRINGSIZE);
-
-  sscanf( word, "%s", ps );
-}
-
-void date( char* p )
-{
-DOTRACE("date");
-
-  FILE *fp;
-
-  if ( ( fp =    popen( "date", "r")) ==  NULL)
-    {
-      printf( "cannot access date");
-      return;
-    }
-  if ( fgets( p, 50, fp) ==  NULL)
-    {
-      printf( "cannot read date");
-      return;
-    }
-  pclose(fp);
-}
-
-void process_id( char pid[] )
-{
-DOTRACE("process_id");
-
-  FILE *fp;
-  char line[ STRINGSIZE ];
-
-  sprintf( line, "ps | grep %s", PROGRAM );
-
-  if ( ( fp =    popen( line, "r")) ==    NULL)
-    {
-      printf( "cannot access PID");
-      return;
-    }
-  if ( fgets( line, STRINGSIZE, fp) ==  NULL)
-    {
-      printf( "cannot read PID");
-      return;
-    }
-  pclose(fp);
-
-  sscanf( line, "%s", pid );
 }
 
 
