@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:06:46 2000
-// written: Wed Feb 23 14:34:38 2000
+// written: Wed Feb 23 15:54:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,21 +17,6 @@
 #include "defs.h"
 
 class Application {
-  void openDisplay();
-  void createVisual();
-  void createColormap();
-  void createWindow();
-  void selectInput();
-  void mapImageWindow();
-  void setWmProperty();
-  void setWmProtocol();
-  void windowInfo();
-  void wrapWindow();
-
-  void keyPressAction( XEvent* event );
-
-  void timeButtonEvent( XEvent* event );
-
 public:
   Application(int argc, char** argv);
   virtual ~Application();
@@ -53,7 +38,27 @@ public:
 
   int fildes() const { return itsFildes; }
 
+protected:
+  virtual void wrap();
+  virtual void onExpose();
+  virtual void onMenuChoice(char c);
+
 private:
+  void openDisplay();
+  void createVisual();
+  void createColormap();
+  void createWindow();
+  void selectInput();
+  void mapImageWindow();
+  void setWmProperty();
+  void setWmProtocol();
+  void windowInfo();
+  void wrapWindow();
+
+  void keyPressAction( XEvent* event );
+
+  void timeButtonEvent( XEvent* event );
+
   int itsArgc;
   char** itsArgv;
 
