@@ -3,7 +3,7 @@
 // main.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 12:27:11 2000
-// written: Thu Mar 30 16:55:55 2000
+// written: Mon Jun 12 10:49:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,9 @@
 
 #include "params.h"
 #include "xhints.h"
+
+#include <iostream.h>
+#include <strstream.h>
 
 const char* WINDOW_NAME = "tracking";
 
@@ -66,6 +69,17 @@ int main( int argc, char** argv ) {
 	 .privateCmap(PRIVATE_CMAP)
 	 .doubleBuffer(DOUBLEBUFFER)
 	 .rgba(USE_RGBA);
+
+  if (FMRI_SESSION == APPLICATION_MODE && argc >= 3)
+	 {
+		istrstream ist(argv[2]);
+		ist >> FMRI_SESSION_NUMBER;
+		if ( FMRI_SESSION_NUMBER < 0 || FMRI_SESSION_NUMBER > 4 )
+		  {
+			 cout << "session number must be 1, 2, 3, or 4" << endl;
+			 return 0;
+		  }
+	 }
 
   BallsExpt theApp(hints); 
 
