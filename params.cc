@@ -119,7 +119,7 @@ void ParamFile::putText(const char* var, const char* name)
 //
 //----------------------------------------------------------
 
-Params::Params() :
+Params::Params(int argc, char** argv) :
   APPLICATION_MODE(EYE_TRACKING),
   MAKING_MOVIE(false),
   FILENAME(),
@@ -147,9 +147,68 @@ Params::Params() :
   REMINDS_PER_EPOCH(),
   FMRI_SESSION_NUMBER(1)
 {
-  FILENAME[0] = '\0';
-  OBSERVER[0] = '\0';
-  PROGRAM[0] = '\0';
+  this->FILENAME[0] = '\0';
+  this->OBSERVER[0] = '\0';
+  this->PROGRAM[0] = '\0';
+
+  this->APPLICATION_MODE = Params::TRAINING;
+
+  strncpy(this->PROGRAM, argv[0], STRINGSIZE);
+
+  bool got_filename = false;
+
+  for (int i = 1; i < argc; ++i)
+    {
+      if (strcmp(argv[i], "--session") == 0)
+        {
+          this->FMRI_SESSION_NUMBER = atoi(argv[++i]);
+        }
+      else if (strcmp(argv[i], "--fmri") == 0)
+        {
+          this->APPLICATION_MODE = Params::FMRI_SESSION;
+        }
+      else if (strcmp(argv[i], "--train") == 0)
+        {
+          this->APPLICATION_MODE = Params::TRAINING;
+        }
+      else if (strcmp(argv[i], "--itrk") == 0)
+        {
+          this->APPLICATION_MODE = Params::EYE_TRACKING;
+        }
+      else if (strcmp(argv[i], "--makemovie") == 0)
+        {
+          this->MAKING_MOVIE = true;
+        }
+      else if (!got_filename)
+        {
+          strncpy(this->FILENAME, argv[i], STRINGSIZE);
+          strncpy(this->OBSERVER, argv[i], STRINGSIZE);
+          fprintf(stdout, " filename '%s'\n", argv[i]);
+          got_filename = true;
+        }
+      else
+        {
+          fprintf(stderr, "unknown command-line argument '%s'\n",
+                  argv[i]);
+          exit(1);
+        }
+    }
+
+  if (!got_filename)
+    {
+      fprintf(stderr, "need to specify a file basename\n");
+      exit(1);
+    }
+
+  if (Params::FMRI_SESSION == this->APPLICATION_MODE)
+    {
+      if (this->FMRI_SESSION_NUMBER < 0 ||
+          this->FMRI_SESSION_NUMBER > 4)
+        {
+          fprintf(stderr, "session number must be 1, 2, 3, or 4\n");
+          exit(1);
+        }
+    }
 }
 
 void Params::readParams(Graphics& gfx, char extension[])

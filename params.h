@@ -53,7 +53,7 @@ public:
 class Params
 {
 public:
-  Params();
+  Params(int argc, char** argv);
 
   void readParams(Graphics& gfx, char extension[]);
   void writeParams(char extension[]);
@@ -67,7 +67,7 @@ public:
 
   enum AppMode { TRAINING, EYE_TRACKING, FMRI_SESSION };
   AppMode APPLICATION_MODE;
-  bool MAKING_MOVIE;
+  bool  MAKING_MOVIE;
   char  FILENAME[STRINGSIZE];
   char  OBSERVER[STRINGSIZE];
   char  PROGRAM[STRINGSIZE];
