@@ -3,7 +3,7 @@
 // xstuff.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 14:21:55 2000
-// written: Wed Jun 27 15:01:56 2001
+// written: Wed Sep  3 12:56:28 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -188,7 +188,6 @@ void XStuff::createWindow(const char* name) {
 DOTRACE("XStuff::createWindow");
 
   XSetWindowAttributes winAttributes;
-  XSizeHints   hints;
 
   winAttributes.event_mask = ExposureMask;
   winAttributes.colormap   = itsColormap;

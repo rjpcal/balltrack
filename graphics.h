@@ -3,7 +3,7 @@
 // graphics.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 13:00:48 2000
-// written: Wed Jun 27 15:33:46 2001
+// written: Wed Sep  3 12:53:14 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,8 +74,8 @@ protected:
 private:
   double computeFrameTime();
 
-  int itsHeight;
   int itsWidth;
+  int itsHeight;
   double itsFrameTime;
 };
 

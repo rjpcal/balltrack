@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 20:10:02 2000
-// written: Wed Jun 27 14:53:50 2001
+// written: Wed Sep  3 12:51:55 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,6 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <X11/Xutil.h>
-#include <iostream.h>
 
 #include "trace.h"
 #include "debug.h"
@@ -222,7 +221,7 @@ DOTRACE("Application::timeButtonEvent");
 
       Timing::addToResponseStack( (double) event->xbutton.time, nbutton );
     }
-  else if (event->type = KeyPress)
+  else if (event->type == KeyPress)
     {
       int keycode = event->xkey.keycode;
 

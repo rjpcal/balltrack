@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////
 // trace.cc
-// Rob Peters 
+// Rob Peters
 // created: Jan-99
-// written: Tue Feb  8 19:16:16 2000
+// written: Wed Sep  3 12:55:00 2003
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -12,16 +12,18 @@
 #define LOCAL_PROF
 #include "trace.h"
 
-#include <iomanip.h>
+#include <iomanip>
 
 int MAX_TRACE_LEVEL = 6;
 
 int TRACE_LEVEL = 0;
 
-Util::Prof::~Prof() {
+Util::Prof::~Prof()
+{
+  using namespace std;
   cout << setw(10) << long(avgTime()) << " " << setw(5) << count()
-		 << " " << setw(12) << long(avgTime()) * count()
-		 << " " << funcName << endl;
+                 << " " << setw(12) << long(avgTime()) * count()
+                 << " " << funcName << endl;
 }
 
 static const char vcid_trace_cc[] = "$Header$";

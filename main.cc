@@ -3,7 +3,7 @@
 // main.c
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Feb 22 12:27:11 2000
-// written: Wed Jun 27 17:22:26 2001
+// written: Wed Sep  3 12:49:57 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,7 @@
 #include "xhints.h"
 
 #include <cstdlib>
-#include <iostream.h>
-#include <strstream.h>
+#include <iostream>
 
 const char* WINDOW_NAME = "tracking";
 
@@ -97,11 +96,10 @@ int main( int argc, char** argv ) {
 
   if (FMRI_SESSION == APPLICATION_MODE && argc >= 3)
     {
-      istrstream ist(argv[2]);
-      ist >> FMRI_SESSION_NUMBER;
+      FMRI_SESSION_NUMBER = atoi(argv[2]);
       if ( FMRI_SESSION_NUMBER < 0 || FMRI_SESSION_NUMBER > 4 )
         {
-          cout << "session number must be 1, 2, 3, or 4" << endl;
+          std::cout << "session number must be 1, 2, 3, or 4" << std::endl;
           return 0;
         }
     }

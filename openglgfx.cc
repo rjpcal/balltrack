@@ -3,7 +3,7 @@
 // openglgfx.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 24 15:05:30 2000
-// written: Wed Jun 27 17:26:10 2001
+// written: Wed Sep  3 12:56:46 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@
 #include "xhints.h"
 #include "xstuff.h"
 
+#define LOCAL_PROF
 #include "trace.h"
 #include "debug.h"
 
@@ -225,7 +226,7 @@ DOTRACE("OpenglGfx::swapBuffers");
 
     unsigned int* buf = (unsigned int*) itsMovie->tempFrameBuffer();
 
-    for (int i = 0; i < itsMovie->frameSize()/4; ++i)
+    for (unsigned int i = 0; i < itsMovie->frameSize()/4; ++i)
       {
         unsigned int reformat = 0;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 28 12:21:07 2001
-// written: Wed Jun 27 15:21:46 2001
+// written: Wed Sep  3 12:54:24 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,11 +16,11 @@
 #include "simplemovie.h"
 
 #include <cstdlib>
-#include <iostream.h>
+#include <iostream>
 
 void SimpleMovie::handleError(const char* message)
 {
-  cerr << message << endl;
+  std::cerr << message << '\n';
   exit(1);
 }
 
@@ -132,14 +132,15 @@ void SimpleMovie::addSillyFrames()
   char* buf1 = new char[itsFrameSize];
   char* buf2 = new char[itsFrameSize];
 
-  for (int k = 0; k < itsFrameSize; ++k) {
-    buf1[k] = char(k / 256);
-    buf2[k] = ~buf1[k];
-  }
+  for (unsigned int k = 0; k < itsFrameSize; ++k)
+    {
+      buf1[k] = char(k / 256);
+      buf2[k] = ~buf1[k];
+    }
 
   for (int i = 0; i < 10; ++i)
     {
-      cerr << i << endl;
+      std::cerr << i << '\n';
       appendFrames(1, buf1);
       appendFrames(1, buf2);
     }

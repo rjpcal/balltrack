@@ -27,8 +27,8 @@ ifeq ($(ARCH),irix6)
 endif
 
 ifeq ($(ARCH),i686)
-	CC  = g++3
-	CFLAGS=  -DI686
+	CC  = g++-3
+	CFLAGS=  -DI686 -Wall -Werror
 	LFLAGS= -L/usr/X11R6/lib
 	LIB   = -lGLU -lGL -lX11 -lm
 	GFXOBJ = $(ARCH)/glfont.o $(ARCH)/openglgfx.o
@@ -151,7 +151,7 @@ serial: serial.c eventnames.h
 	cc -o $@ $< -L/usr/lib/X11R6 -lXwindow -lsb -lXhp11 -lX11 -lm -ldld
 
 $(ARCH)/%.o : %.cc
-	time $(CC) $(CFLAGS) -c $< -o $@ 
+	time $(CC) $(CFLAGS) -c $< -o $@
 
 $(ARCH)/application.o: $(APPLICATION_CC)
 $(ARCH)/balls.o: $(BALLS_CC)
