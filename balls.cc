@@ -230,11 +230,11 @@ DOTRACE("Ball::collideIfNeeded");
       const double fi   = sqrt(1. + vij2 / nvi2); // [unitless]
       const double fj   = sqrt(1. - vij2 / nvj2); // [unitless]
 
-      this->vel = fi * vec(voi * o.x + vaj * a.x,
-                           voi * o.y + vaj * a.y); // [pix/sec]
+      this->vel = fi * (vec(voi * o.x, voi * o.y) +
+                        vec(vaj * a.x, vaj * a.y)); // [pix/sec]
 
-      other.vel = fj * vec(voj * o.x + vai * a.x,
-                           voj * o.y + vai * a.y); // [pix/sec]
+      other.vel = fj * (vec(voj * o.x, voj * o.y) +
+                        vec(vai * a.x, vai * a.y)); // [pix/sec]
 
       this->next = this->pos + (this->vel * lapsed_seconds);
       other.next = other.pos + (other.vel * lapsed_seconds);
