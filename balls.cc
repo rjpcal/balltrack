@@ -395,11 +395,8 @@ void Balls::drawNHiBalls(Graphics& gfx, int first, int last,
                          unsigned char* bitmap)
 {
 DOTRACE("Balls::drawNHiBalls");
-  gfx.writeUpperPlanes();
 
   drawNBalls(gfx, first, last, bitmap);
-
-  gfx.writeLowerPlanes();
 }
 
 void Balls::prepare(Graphics& gfx)
@@ -590,7 +587,6 @@ DOTRACE("Balls::runTrial");
       drawNBalls(gfx, 0, BALL_NUMBER, &theirBallmap[0]);
     }
 
-  gfx.writeAllPlanes();
   gfx.clearFrontBuffer();
   gfx.clearBackBuffer();
   gfx.drawCross();

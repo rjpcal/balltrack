@@ -51,10 +51,6 @@ public:
   void waitVerticalRetrace();
   void swapBuffers();
 
-  void writeUpperPlanes();
-  void writeLowerPlanes();
-  void writeAllPlanes();
-
   void drawMessage(char word[]);
   void drawCross();
   void drawCross(int x, int y);

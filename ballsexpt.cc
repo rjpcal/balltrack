@@ -151,7 +151,6 @@ DOTRACE("BallsExpt::runFixationCalibration");
 
   for (int i = 0; i < 11; ++i)
     {
-      graphics().writeAllPlanes();
       graphics().waitVerticalRetrace();
       graphics().clearFrontBuffer();
       graphics().drawCross(x[seq[i]], y[seq[i]]);
@@ -168,8 +167,6 @@ DOTRACE("BallsExpt::runExperiment");
   ParamFile tmefile(this, APPEND, "tme");
 
   Params::logParams(this, tmefile);
-
-  graphics().writeAllPlanes();
 
   graphics().clearFrontBuffer();
 
@@ -196,8 +193,6 @@ DOTRACE("BallsExpt::runExperiment");
   Timing::getTime( &itsImpl->itsTimePoints[itsImpl->itsTpIndex++] );
 
   itsImpl->logTimePoints(tmefile.fp());
-
-  graphics().writeAllPlanes();
 
   buttonPressLoop();
 
@@ -241,7 +236,6 @@ DOTRACE("BallsExpt::runFmriExpt");
       // If there will be more trials, then do a fixation cross interval
       if ( trial < (NUM_TRIALS-1) )
         {
-          graphics().writeAllPlanes();
           graphics().clearFrontBuffer();
 
           for (int k = 0; k < 2; ++k)

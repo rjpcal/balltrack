@@ -189,11 +189,7 @@ void Graphics::clearUpperPlanes()
 {
 DOTRACE("Graphics::clearUpperPlanes");
 
-  writeUpperPlanes();
-
   clearFrontBuffer();
-
-  writeLowerPlanes();
 }
 
 void Graphics::waitVerticalRetrace()
@@ -243,29 +239,9 @@ DOTRACE("Graphics::swapBuffers");
     }
 }
 
-void Graphics::writeUpperPlanes()
-{
-DOTRACE("Graphics::writeUpperPlanes");
-  glIndexMask(0xc0);
-}
-
-void Graphics::writeLowerPlanes()
-{
-DOTRACE("Graphics::writeLowerPlanes");
-  glIndexMask(0x3f);
-}
-
-void Graphics::writeAllPlanes()
-{
-DOTRACE("Graphics::writeAllPlanes");
-  glIndexMask(0xff);
-}
-
 void Graphics::drawMessage(char word[])
 {
 DOTRACE("Graphics::drawMessage");
-
-  writeUpperPlanes();
 
   int nchars = 0;
 
@@ -285,8 +261,6 @@ DOTRACE("Graphics::drawMessage");
   drawGLText(word, 4,
              (width()-availWidth)/2, (height()-charHeight)/2,
              charWidth, charHeight);
-
-  writeLowerPlanes();
 }
 
 void Graphics::drawCross()
@@ -299,8 +273,6 @@ void Graphics::drawCross(int x, int y)
 {
 DOTRACE("Graphics::drawCross");
 
-  writeUpperPlanes();
-
   glColor3d(1.0, 1.0, 1.0);
 
   glBegin(GL_LINES);
@@ -309,8 +281,6 @@ DOTRACE("Graphics::drawCross");
   glVertex2i(x, y-50);
   glVertex2i(x, y+50);
   glEnd();
-
-  writeLowerPlanes();
 }
 
 void Graphics::showMenu(char menu[][STRINGSIZE], int nmenu)
