@@ -14,14 +14,13 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-class XHints;
-
 struct XStuff
 {
 public:
-  XStuff(const XHints& hints);
+  XStuff(int width, int height);
 
-  void openWindow(const XHints& hints);
+  void openWindow(const char* winname,
+                  int width, int height, int depth);
   void wrapX();
 
   Display* display() { return itsDisplay; }

@@ -18,7 +18,6 @@
 #include "simplemovie.h"
 #include "timing.h"
 #include "trace.h"
-#include "xhints.h"
 #include "xstuff.h"
 
 #include <GL/glu.h>
@@ -67,11 +66,12 @@ namespace
   }
 }
 
-Graphics::Graphics(const XHints& hints) :
-  itsWidth(hints.width()),
-  itsHeight(hints.height()),
+Graphics::Graphics(const char* winname,
+                   int width, int height, int depth) :
+  itsWidth(width),
+  itsHeight(height),
   itsFrameTime(-1.0),
-  itsXStuff(hints),
+  itsXStuff(width, height),
   itsGLXContext(0),
   itsClearIndex(0),
   itsMovie(0),
@@ -87,7 +87,7 @@ DOTRACE("Graphics::Graphics");
   attribList.push_back(GLX_RGBA);
 
   attribList.push_back(GLX_BUFFER_SIZE);
-  attribList.push_back(hints.depth());
+  attribList.push_back(depth);
 
   attribList.push_back(None);
 

@@ -14,7 +14,6 @@
 #include "ballsexpt.h"
 #include "graphics.h"
 #include "params.h"
-#include "xhints.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -80,23 +79,17 @@ int main( int argc, char** argv )
         }
     }
 
-  XHints hints;
+  Graphics gfx("tracking", // window name
+               1280, // window width
+               1024, // window height
+               24    // window bit depth
+               );
 
-  const char* WINDOW_NAME = "tracking";
-
-  const int WINDOW_X = 1280;
-  const int WINDOW_Y = 1024;
-
-  hints
-    .name(WINDOW_NAME)
-    .width(WINDOW_X)
-    .height(WINDOW_Y)
-    .depth(24)
-    ;
-
-  Graphics gfx(hints);
-
-  gfx.xstuff().openWindow(hints);
+  gfx.xstuff().openWindow("tracking", // window name
+                          1280, // window width
+                          1024, // window height
+                          24    // window bit depth
+                          );
 
   gfx.initWindow();
 

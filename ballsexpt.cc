@@ -20,7 +20,6 @@
 #include "graphics.h"
 #include "params.h"
 #include "timing.h"
-#include "xhints.h"
 
 #include "trace.h"
 #include "debug.h"

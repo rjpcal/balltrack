@@ -17,7 +17,6 @@
 #include "graphics.h"
 #include "params.h"
 #include "timing.h"
-#include "xhints.h"
 #include "xstuff.h"
 
 #include <cstdlib>              // for exit

@@ -13,13 +13,12 @@
 
 #include "xstuff.h"
 
+#include "defs.h"
+
 #include <cstring>              // for strcpy
 #include <cstdlib>              // for getenv
 #include <cstdio>
 #include <X11/Xutil.h>
-
-#include "defs.h"
-#include "xhints.h"
 
 #include "trace.h"
 #include "debug.h"
@@ -50,9 +49,9 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-XStuff::XStuff(const XHints& hints) :
-  itsWidth(hints.width()),
-  itsHeight(hints.height()),
+XStuff::XStuff(int width, int height) :
+  itsWidth(width),
+  itsHeight(height),
   itsDisplay(0),
   itsWindow(0),
   itsVisInfo(),
@@ -83,7 +82,8 @@ DOTRACE("XStuff::setPrefVisInfo");
     }
 }
 
-void XStuff::openWindow(const XHints& hints)
+void XStuff::openWindow(const char* winname,
+                        int width, int height, int depth)
 {
 DOTRACE("XStuff::openWindow");
 
@@ -144,7 +144,7 @@ DOTRACE("XStuff::openWindow");
   fflush( stdout );
 
   char temp_name[256];
-  strncpy(temp_name, hints.name(), 256);
+  strncpy(temp_name, winname, 256);
   char* nameptr = &temp_name[0];
 
   XTextProperty window_name;
