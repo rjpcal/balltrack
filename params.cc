@@ -33,58 +33,49 @@
 //
 //----------------------------------------------------------
 
-ParamFileIn::ParamFileIn(const std::string& filebase, char mode,
+ParamFileIn::ParamFileIn(const std::string& filebase,
                          const char* extension) :
-  itsFstream(0)
+  itsFstream()
 {
   DOTRACE("<params.cc>::openfile");
 
   std::string fname = filebase + "." + extension;
 
-  switch (mode)
-    {
-    case 'r': itsFstream = new std::ifstream(fname.c_str(), std::ios::in); break;
-    default:
-      std::cerr << "unknown file mode '" << mode << "'\n";
-      exit(1);
-    }
+  itsFstream.open(fname.c_str());
 
-  if (!itsFstream->is_open() || itsFstream->fail())
+  if (!itsFstream.is_open() || itsFstream.fail())
     {
-      std::cerr << "couldn't open " << fname << " in mode '"
-                << mode << "'\n";
+      std::cerr << "couldn't open " << fname << " for reading\n";
       exit(1);
     }
 }
 
 ParamFileIn::~ParamFileIn()
-{
-  delete itsFstream;
-}
+{}
 
 void ParamFileIn::getInt(int& var)
 {
   std::string dummy;
-  *itsFstream >> dummy >> var;
+  itsFstream >> dummy >> var;
 }
 
 void ParamFileIn::getDouble(double& var)
 {
   std::string dummy;
-  *itsFstream >> dummy >> var;
+  itsFstream >> dummy >> var;
 }
 
 std::string ParamFileIn::getString()
 {
   std::string dummy, result;
-  *itsFstream >> dummy >> result;
+  itsFstream >> dummy >> result;
   return result;
 }
 
 bool ParamFileIn::getLine(std::string& str)
 {
-  std::getline(*itsFstream, str);
-  return *itsFstream;
+  std::getline(itsFstream, str);
+  return itsFstream;
 }
 
 //----------------------------------------------------------
@@ -258,7 +249,7 @@ void Params::readFromFile(Graphics& gfx, const char* extension)
 {
 DOTRACE("Params::readFromFile");
 
-  ParamFileIn pmfile(this->filestem, 'r', extension);
+  ParamFileIn pmfile(this->filestem, extension);
 
   pmfile.getInt   (this->displayX);
   pmfile.getInt   (this->displayY);
@@ -293,7 +284,7 @@ void Params::writeToFile(const char* extension)
 {
 DOTRACE("Params::writeToFile");
 
-  ParamFileOut pmfile(filestem, 'w', extension);
+  ParamFileOut pmfile(this->filestem, 'w', extension);
 
   appendToFile(pmfile);
 }
@@ -341,7 +332,7 @@ DOTRACE("Params::showSettings");
 
   std::vector<std::string> params;
 
-  ParamFileIn pmfile(filestem, 'r', "sta");
+  ParamFileIn pmfile(this->filestem, "sta");
 
   std::string buf;
   while (pmfile.getLine(buf))

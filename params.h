@@ -12,7 +12,7 @@
 #ifndef PARAMS_H_DEFINED
 #define PARAMS_H_DEFINED
 
-#include <iosfwd>
+#include <fstream>
 #include <string>
 
 class Graphics;
@@ -20,10 +20,10 @@ class Graphics;
 class ParamFileIn
 {
 private:
-  std::ifstream* itsFstream;
+  std::ifstream itsFstream;
 
 public:
-  ParamFileIn(const std::string& filebase, char mode,
+  ParamFileIn(const std::string& filebase,
               const char* extension);
   ~ParamFileIn();
 
@@ -33,7 +33,7 @@ public:
 
   bool getLine(std::string& str);
 
-  std::ifstream& stream() { return *itsFstream; }
+  std::ifstream& stream() { return itsFstream; }
 };
 
 class ParamFileOut
