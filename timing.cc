@@ -13,12 +13,12 @@
 
 #include "timing.h"
 
-#include <cmath>
-#include <cstdlib>
-
 #include "application.h"
 #include "defs.h"
 #include "params.h"
+
+#include <cmath>
+#include <cstdlib>
 
 #include "debug.h"
 #include "trace.h"
